@@ -1,3 +1,6 @@
+out/
+dependencies/
+
 # Prerequisites
 *.d
 
