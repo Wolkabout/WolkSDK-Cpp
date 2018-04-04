@@ -35,7 +35,8 @@ public:
       std::shared_ptr<Message> message) const = 0;
 
     virtual std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 std::vector<std::shared_ptr<SensorReading>> sensorReadings) const = 0;
+                                                 std::vector<std::shared_ptr<SensorReading>> sensorReadings,
+                                                 const std::string& delimiter = "") const = 0;
     virtual std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
                                                  std::vector<std::shared_ptr<Alarm>> alarms) const = 0;
     virtual std::shared_ptr<Message> makeMessage(

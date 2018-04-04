@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef ALARM_H
+#define ALARM_H
 
 #include "model/Reading.h"
 

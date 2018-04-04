@@ -21,10 +21,10 @@
 
 namespace wolkabout
 {
-Alarm::Alarm() : Reading("", "") {}
+Alarm::Alarm() : Reading({""}, "") {}
 
 Alarm::Alarm(std::string value, std::string reference, unsigned long long int rtc)
-: Reading(std::move(value), std::move(reference), rtc)
+: Reading({std::move(value)}, std::move(reference), rtc)
 {
 }
 

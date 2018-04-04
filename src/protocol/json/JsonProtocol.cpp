@@ -161,19 +161,48 @@ const std::vector<std::string>& JsonProtocol::getInboundChannels() const
 }
 
 std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
-                                                   std::vector<std::shared_ptr<SensorReading>> sensorReadings) const
+                                                   std::vector<std::shared_ptr<SensorReading>> sensorReadings,
+                                                   const std::string& delimiter) const
 {
     if (sensorReadings.size() == 0)
     {
         return nullptr;
     }
 
-    const json jPayload(sensorReadings);
-    const std::string payload = jPayload.dump();
     const std::string topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
                               REFERENCE_PATH_PREFIX + sensorReadings.front()->getReference();
 
-    return std::make_shared<Message>(payload, topic);
+    if (delimiter.empty())
+    {
+        const json jPayload(sensorReadings);
+        const std::string payload = jPayload.dump();
+
+        return std::make_shared<Message>(payload, topic);
+    }
+
+    std::vector<json> payload(sensorReadings.size());
+    std::transform(sensorReadings.begin(), sensorReadings.end(), payload.begin(),
+                   [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
+                       const std::vector<std::string> readingValues = sensorReading->getValues();
+
+                       const std::string data = std::accumulate(
+                         readingValues.begin(), readingValues.end(), std::string(),
+                         [&](std::string& ss, const std::string& s) { return ss.empty() ? s : ss + delimiter + s; });
+
+                       if (sensorReading->getRtc() == 0)
+                       {
+                           return json{{"data", data}};
+                       }
+                       else
+                       {
+                           return json{{"utc", sensorReading->getRtc()}, {"data", data}};
+                       }
+                   });
+
+    const json jPayload(payload);
+    const std::string content = jPayload.dump();
+
+    return std::make_shared<Message>(content, topic);
 }
 
 std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,

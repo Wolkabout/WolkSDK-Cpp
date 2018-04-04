@@ -45,7 +45,8 @@ public:
       std::shared_ptr<Message> message) const override;
 
     std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
-                                         std::vector<std::shared_ptr<SensorReading>> sensorReadings) const override;
+                                         std::vector<std::shared_ptr<SensorReading>> sensorReadings,
+                                         const std::string& delimiter) const override;
     std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
                                          std::vector<std::shared_ptr<Alarm>> alarms) const override;
     std::shared_ptr<Message> makeMessage(const std::string& deviceKey,

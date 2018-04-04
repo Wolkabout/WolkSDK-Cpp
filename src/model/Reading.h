@@ -18,6 +18,7 @@
 #define READING_H
 
 #include <string>
+#include <vector>
 
 namespace wolkabout
 {
@@ -39,18 +40,20 @@ public:
 class Reading
 {
 public:
-    Reading(std::string value, std::string reference, unsigned long long int rtc = 0);
+    Reading(std::vector<std::string> values, std::string reference, unsigned long long int rtc = 0);
 
     virtual ~Reading() = default;
 
+    const std::vector<std::string>& getValues() const;
     const std::string& getValue() const;
+
     const std::string& getReference() const;
     unsigned long long int getRtc() const;
 
     virtual void acceptVisit(ReadingVisitor& visitor) = 0;
 
 private:
-    std::string m_value;
+    std::vector<std::string> m_values;
     std::string m_reference;
     unsigned long long int m_rtc;
 };

@@ -54,6 +54,8 @@ public:
     static bool mqttTopicMatch(const std::string& wildcardTopic, const std::string& topic);
 
     static std::string toUpperCase(const std::string& string);
+
+    static const std::string EMPTY_STRING;
 };
 }    // namespace wolkabout
 

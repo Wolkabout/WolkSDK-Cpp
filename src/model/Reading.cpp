@@ -15,17 +15,28 @@
  */
 
 #include "model/Reading.h"
+#include "utilities/StringUtils.h"
 
 namespace wolkabout
 {
-Reading::Reading(std::string value, std::string reference, unsigned long long int rtc)
-: m_value(std::move(value)), m_reference(std::move(reference)), m_rtc(rtc)
+Reading::Reading(std::vector<std::string> values, std::string reference, unsigned long long int rtc)
+: m_values(std::move(values)), m_reference(std::move(reference)), m_rtc(rtc)
 {
+}
+
+const std::vector<std::string>& Reading::getValues() const
+{
+    return m_values;
 }
 
 const std::string& Reading::getValue() const
 {
-    return m_value;
+    if (m_values.empty())
+    {
+        return StringUtils::EMPTY_STRING;
+    }
+
+    return m_values.at(0);
 }
 
 const std::string& Reading::getReference() const
