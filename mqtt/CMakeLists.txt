@@ -6,7 +6,7 @@ include_directories(SYSTEM "${OPENSSL_INCLUDE_DIR}")
 
 file(GLOB_RECURSE PAHO_MQTT_SRC "./*.c" "./*.cpp")
 
-link_directories(${PROJECT_SOURCE_DIR}/out/lib)
+link_directories(${CMAKE_BINARY_DIR}/lib)
 
 add_library(paho-mqtt SHARED ${PAHO_MQTT_SRC})
 target_link_libraries(paho-mqtt crypto ssl pthread)
