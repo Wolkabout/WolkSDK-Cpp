@@ -19,6 +19,7 @@
 #include "model/ActuatorSetCommand.h"
 #include "model/ActuatorStatus.h"
 #include "model/Alarm.h"
+#include "model/ConfigurationSetCommand.h"
 #include "model/Message.h"
 #include "model/SensorReading.h"
 #include "utilities/Logger.h"
@@ -48,16 +49,16 @@ const std::string JsonProtocol::PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
 const std::string JsonProtocol::SENSOR_READING_TOPIC_ROOT = "d2p/sensor_reading/";
 const std::string JsonProtocol::EVENTS_TOPIC_ROOT = "d2p/events/";
 const std::string JsonProtocol::ACTUATION_STATUS_TOPIC_ROOT = "d2p/actuator_status/";
-const std::string JsonProtocol::CONFIGURATION_SET_RESPONSE_TOPIC_ROOT = "d2p/configuration_set/";
-const std::string JsonProtocol::CONFIGURATION_GET_RESPONSE_TOPIC_ROOT = "d2p/configuration_get/";
+const std::string JsonProtocol::CONFIGURATION_RESPONSE_TOPIC_ROOT = "d2p/configuration_get/";
 
 const std::string JsonProtocol::ACTUATION_SET_TOPIC_ROOT = "p2d/actuator_set/";
 const std::string JsonProtocol::ACTUATION_GET_TOPIC_ROOT = "p2d/actuator_get/";
 const std::string JsonProtocol::CONFIGURATION_SET_REQUEST_TOPIC_ROOT = "p2d/configuration_set/";
 const std::string JsonProtocol::CONFIGURATION_GET_REQUEST_TOPIC_ROOT = "p2d/configuration_get/";
 
-const std::vector<std::string> JsonProtocol::INBOUND_CHANNELS = {ACTUATION_GET_TOPIC_ROOT + CHANNEL_WILDCARD,
-                                                                 ACTUATION_SET_TOPIC_ROOT + CHANNEL_WILDCARD};
+const std::vector<std::string> JsonProtocol::INBOUND_CHANNELS = {
+  ACTUATION_GET_TOPIC_ROOT + CHANNEL_WILDCARD, ACTUATION_SET_TOPIC_ROOT + CHANNEL_WILDCARD,
+  CONFIGURATION_GET_REQUEST_TOPIC_ROOT + CHANNEL_WILDCARD, CONFIGURATION_SET_REQUEST_TOPIC_ROOT + CHANNEL_WILDCARD};
 
 void from_json(const json& j, SensorReading& reading)
 {
@@ -169,8 +170,8 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
 
     const json jPayload(sensorReadings);
     const std::string payload = jPayload.dump();
-    const std::string topic = SENSOR_READING_TOPIC_ROOT + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
-                              sensorReadings.front()->getReference();
+    const std::string topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+                              REFERENCE_PATH_PREFIX + sensorReadings.front()->getReference();
 
     return std::make_shared<Message>(payload, topic);
 }
@@ -185,8 +186,8 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
 
     const json jPayload(alarms);
     const std::string payload = jPayload.dump();
-    const std::string topic =
-      EVENTS_TOPIC_ROOT + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX + alarms.front()->getReference();
+    const std::string topic = EVENTS_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+                              REFERENCE_PATH_PREFIX + alarms.front()->getReference();
 
     return std::make_shared<Message>(payload, topic);
 }
@@ -195,7 +196,7 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
                                                    std::vector<std::shared_ptr<ActuatorStatus>> actuatorStatuses) const
 {
     // JSON_SINGLE allows only 1 ActuatorStatus per Message
-    if (actuatorStatuses.size() == 1)
+    if (actuatorStatuses.size() != 1)
     {
         return nullptr;
     }
@@ -204,6 +205,16 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
     const std::string payload = jPayload.dump();
     const std::string topic = ACTUATION_STATUS_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
                               REFERENCE_PATH_PREFIX + actuatorStatuses.front()->getReference();
+
+    return std::make_shared<Message>(payload, topic);
+}
+
+std::shared_ptr<Message> JsonProtocol::makeFromConfiguration(
+  const std::string& deviceKey, const std::map<std::string, std::string> configuration) const
+{
+    const json jPayload(configuration);
+    const std::string payload = jPayload.dump();
+    const std::string topic = CONFIGURATION_RESPONSE_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
 
     return std::make_shared<Message>(payload, topic);
 }
@@ -257,6 +268,31 @@ std::unique_ptr<ActuatorGetCommand> JsonProtocol::makeActuatorGetCommand(std::sh
     }
 }
 
+std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetCommand(
+  std::shared_ptr<Message> message) const
+{
+    try
+    {
+        json j = json::parse(message->getContent());
+
+        std::map<std::string, std::string> values;
+        if (j.is_object())
+        {
+            for (const auto& configurationEntry : j.get<json::object_t>())
+            {
+                values[configurationEntry.first] = configurationEntry.second.get<std::string>();
+            }
+        }
+
+        return std::unique_ptr<ConfigurationSetCommand>(new ConfigurationSetCommand(values));
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "Unable to parse ConfigurationSetCommand: " << message->getContent();
+        return nullptr;
+    }
+}
+
 bool JsonProtocol::isActuatorSetMessage(const std::string& channel) const
 {
     return StringUtils::startsWith(channel, ACTUATION_SET_TOPIC_ROOT);
@@ -265,6 +301,16 @@ bool JsonProtocol::isActuatorSetMessage(const std::string& channel) const
 bool JsonProtocol::isActuatorGetMessage(const std::string& channel) const
 {
     return StringUtils::startsWith(channel, ACTUATION_GET_TOPIC_ROOT);
+}
+
+bool JsonProtocol::isConfigurationSetMessage(const std::string& channel) const
+{
+    return StringUtils::startsWith(channel, CONFIGURATION_SET_REQUEST_TOPIC_ROOT);
+}
+
+bool JsonProtocol::isConfigurationGetMessage(const std::string& channel) const
+{
+    return StringUtils::startsWith(channel, CONFIGURATION_GET_REQUEST_TOPIC_ROOT);
 }
 
 std::string JsonProtocol::extractReferenceFromChannel(const std::string& topic) const
