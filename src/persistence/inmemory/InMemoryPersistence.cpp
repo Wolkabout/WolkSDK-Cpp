@@ -55,6 +55,7 @@ void InMemoryPersistence::removeSensorReadings(const std::string& key, uint_fast
     std::vector<std::shared_ptr<SensorReading>>& readings = getOrCreateSensorReadingsByKey(key);
     auto size = static_cast<uint_fast64_t>(readings.size());
     readings.erase(readings.begin(), readings.begin() + (count < size ? count : size));
+    readings.shrink_to_fit();
 }
 
 std::vector<std::string> InMemoryPersistence::getSensorReadingsKeys()
@@ -99,6 +100,7 @@ void InMemoryPersistence::removeAlarms(const std::string& key, uint_fast64_t cou
     std::vector<std::shared_ptr<Alarm>>& alarms = getOrCreateAlarmsByKey(key);
     auto size = static_cast<uint_fast64_t>(alarms.size());
     alarms.erase(alarms.begin(), alarms.begin() + (count < size ? count : size));
+    alarms.shrink_to_fit();
 }
 
 std::vector<std::string> InMemoryPersistence::getAlarmsKeys()
@@ -131,7 +133,7 @@ void InMemoryPersistence::removeActuatorStatus(const std::string& key)
     m_actuatorStatuses.erase(key);
 }
 
-std::vector<std::string> InMemoryPersistence::getGetActuatorStatusesKeys()
+std::vector<std::string> InMemoryPersistence::getActuatorStatusesKeys()
 {
     std::vector<std::string> keys;
     for (const std::pair<std::string, std::shared_ptr<ActuatorStatus>>& pair : m_actuatorStatuses)
@@ -165,5 +167,40 @@ std::vector<std::shared_ptr<Alarm>>& InMemoryPersistence::getOrCreateAlarmsByKey
     }
 
     return m_alarms.at(key);
+}
+
+bool InMemoryPersistence::putConfiguration(const std::string& key,
+                                           const std::map<std::string, std::string>& configuration)
+{
+    m_configurations[key] = std::make_shared<std::map<std::string, std::string>>(configuration);
+    return true;
+}
+
+std::shared_ptr<std::map<std::string, std::string>> InMemoryPersistence::getConfiguration(const std::string& key)
+{
+    auto it = m_configurations.find(key);
+
+    if (it != m_configurations.end())
+    {
+        return it->second;
+    }
+
+    return nullptr;
+}
+
+void InMemoryPersistence::removeConfiguration(const std::string& key)
+{
+    m_configurations.erase(key);
+}
+
+std::vector<std::string> InMemoryPersistence::getConfigurationKeys()
+{
+    std::vector<std::string> keys;
+    for (const auto& pair : m_configurations)
+    {
+        keys.push_back(pair.first);
+    }
+
+    return keys;
 }
 }    // namespace wolkabout
