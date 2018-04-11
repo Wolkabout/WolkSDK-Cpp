@@ -27,6 +27,8 @@ static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                         "0123456789+/";
 
 const std::string StringUtils::EMPTY_STRING = "";
+const std::string StringUtils::BOOL_TRUE = "true";
+const std::string StringUtils::BOOL_FALSE = "false";
 
 bool StringUtils::contains(const std::string& string, char c)
 {

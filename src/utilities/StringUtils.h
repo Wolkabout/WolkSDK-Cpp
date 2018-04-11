@@ -55,7 +55,32 @@ public:
 
     static std::string toUpperCase(const std::string& string);
 
+    template <typename T> static std::string toString(const T& value);
+
     static const std::string EMPTY_STRING;
+    static const std::string BOOL_TRUE;
+    static const std::string BOOL_FALSE;
+};
+
+template <typename T> std::string StringUtils::toString(const T& value)
+{
+    return std::to_string(value);
+}
+
+template <> inline std::string StringUtils::toString<bool>(const bool& value)
+{
+    return value ? BOOL_TRUE : BOOL_FALSE;
+}
+
+template <> inline std::string StringUtils::toString<char*>(char* const& value)
+{
+    return std::string{value};
+}
+
+template <> inline std::string StringUtils::toString<const char*>(const char* const& value)
+{
+    return std::string{value};
+}
 };
 }    // namespace wolkabout
 
