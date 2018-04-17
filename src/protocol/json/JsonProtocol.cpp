@@ -241,7 +241,7 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
 std::shared_ptr<Message> JsonProtocol::makeFromConfiguration(
   const std::string& deviceKey, const std::map<std::string, std::string> configuration) const
 {
-    const json jPayload(configuration);
+    const json jPayload({"values", configuration});
     const std::string payload = jPayload.dump();
     const std::string topic = CONFIGURATION_RESPONSE_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
 
