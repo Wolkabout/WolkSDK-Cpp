@@ -81,7 +81,6 @@ void to_json(json& j, const ConfigurationManifest& configurationManifest)
         {"defaultValue", configurationManifest.getDefaultValue()},
         {"dataType", dataType},
         {"description", configurationManifest.getDescription()},
-        {"optional", configurationManifest.isOptional()},
         {"nullValue", configurationManifest.getNullValue()},
         {"reference", configurationManifest.getReference()},
         {"unit", configurationManifest.getUnit()},
@@ -130,9 +129,9 @@ void from_json(const json& j, ConfigurationManifest& configurationManifest)
                 j.at("collapseKey").get<std::string>(),
                 j.at("defaultValue").get<std::string>(),
                 j.at("nullValue").get<std::string>(),
-                j.at("optional").get<bool>(),
                 j.at("size").get<unsigned int>(),
-                j.at("delimiter").get<std::string>()
+                j.at("delimiter").get<std::string>(),
+                j.at("labels").get<std::vector<std::string>>()
             );
     // clang-format on
 }

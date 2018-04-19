@@ -19,6 +19,7 @@
 #include "model/ActuatorSetCommand.h"
 #include "model/ActuatorStatus.h"
 #include "model/Alarm.h"
+#include "model/ConfigurationItem.h"
 #include "model/ConfigurationSetCommand.h"
 #include "model/Message.h"
 #include "model/SensorReading.h"
@@ -59,20 +60,6 @@ const std::string JsonProtocol::CONFIGURATION_GET_REQUEST_TOPIC_ROOT = "p2d/conf
 const std::vector<std::string> JsonProtocol::INBOUND_CHANNELS = {
   ACTUATION_GET_TOPIC_ROOT + CHANNEL_WILDCARD, ACTUATION_SET_TOPIC_ROOT + CHANNEL_WILDCARD,
   CONFIGURATION_GET_REQUEST_TOPIC_ROOT + CHANNEL_WILDCARD, CONFIGURATION_SET_REQUEST_TOPIC_ROOT + CHANNEL_WILDCARD};
-
-void from_json(const json& j, SensorReading& reading)
-{
-    const std::string value = [&]() -> std::string {
-        if (j.find("value") != j.end())
-        {
-            return j.at("value").get<std::string>();
-        }
-
-        return "";
-    }();
-
-    reading = SensorReading("", value);
-}
 
 void to_json(json& j, const SensorReading& p)
 {
@@ -160,8 +147,8 @@ const std::vector<std::string>& JsonProtocol::getInboundChannels() const
     return INBOUND_CHANNELS;
 }
 
-std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
-                                                   std::vector<std::shared_ptr<SensorReading>> sensorReadings,
+std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
+                                                   const std::vector<std::shared_ptr<SensorReading>>& sensorReadings,
                                                    const std::string& delimiter) const
 {
     if (sensorReadings.size() == 0)
@@ -177,7 +164,7 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
         const json jPayload(sensorReadings);
         const std::string payload = jPayload.dump();
 
-        return std::make_shared<Message>(payload, topic);
+        return std::unique_ptr<Message>(new Message(payload, topic));
     }
 
     std::vector<json> payload(sensorReadings.size());
@@ -185,9 +172,7 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
                    [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
                        const std::vector<std::string> readingValues = sensorReading->getValues();
 
-                       const std::string data = std::accumulate(
-                         readingValues.begin(), readingValues.end(), std::string(),
-                         [&](std::string& ss, const std::string& s) { return ss.empty() ? s : ss + delimiter + s; });
+                       const std::string data = joinReadings(readingValues, delimiter);
 
                        if (sensorReading->getRtc() == 0)
                        {
@@ -202,11 +187,11 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
     const json jPayload(payload);
     const std::string content = jPayload.dump();
 
-    return std::make_shared<Message>(content, topic);
+    return std::unique_ptr<Message>(new Message(content, topic));
 }
 
-std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
-                                                   std::vector<std::shared_ptr<Alarm>> alarms) const
+std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
+                                                   const std::vector<std::shared_ptr<Alarm>>& alarms) const
 {
     if (alarms.size() == 0)
     {
@@ -218,11 +203,11 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
     const std::string topic = EVENTS_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
                               REFERENCE_PATH_PREFIX + alarms.front()->getReference();
 
-    return std::make_shared<Message>(payload, topic);
+    return std::unique_ptr<Message>(new Message(payload, topic));
 }
 
-std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
-                                                   std::vector<std::shared_ptr<ActuatorStatus>> actuatorStatuses) const
+std::unique_ptr<Message> JsonProtocol::makeMessage(
+  const std::string& deviceKey, const std::vector<std::shared_ptr<ActuatorStatus>>& actuatorStatuses) const
 {
     // JSON_SINGLE allows only 1 ActuatorStatus per Message
     if (actuatorStatuses.size() != 1)
@@ -235,24 +220,42 @@ std::shared_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
     const std::string topic = ACTUATION_STATUS_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
                               REFERENCE_PATH_PREFIX + actuatorStatuses.front()->getReference();
 
-    return std::make_shared<Message>(payload, topic);
+    return std::unique_ptr<Message>(new Message(payload, topic));
 }
 
-std::shared_ptr<Message> JsonProtocol::makeFromConfiguration(
-  const std::string& deviceKey, const std::map<std::string, std::string> configuration) const
+std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
+                                                   const std::vector<ConfigurationItem>& configuration,
+                                                   const std::map<std::string, std::string>& delimiters) const
 {
-    const json jPayload({"values", configuration});
+    json data{};
+
+    for (const auto& item : configuration)
+    {
+        data.emplace(item.getReference(), [&] {
+            if (item.getValues().size() == 1)
+                return item.getValues().at(0);
+
+            auto delimiterIt = delimiters.find(item.getReference());
+
+            if (delimiterIt != delimiters.end() && item.getValues().size() > 1)
+                return joinReadings(item.getValues(), delimiterIt->second);
+
+            return std::string{""};
+        }());
+    }
+
+    const json jPayload{{"values", data}};
     const std::string payload = jPayload.dump();
     const std::string topic = CONFIGURATION_RESPONSE_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
 
-    return std::make_shared<Message>(payload, topic);
+    return std::unique_ptr<Message>(new Message(payload, topic));
 }
 
-std::unique_ptr<ActuatorSetCommand> JsonProtocol::makeActuatorSetCommand(std::shared_ptr<Message> message) const
+std::unique_ptr<ActuatorSetCommand> JsonProtocol::makeActuatorSetCommand(const Message& message) const
 {
     try
     {
-        json j = json::parse(message->getContent());
+        json j = json::parse(message.getContent());
 
         const std::string value = [&]() -> std::string {
             if (j.find("value") != j.end())
@@ -263,7 +266,7 @@ std::unique_ptr<ActuatorSetCommand> JsonProtocol::makeActuatorSetCommand(std::sh
             return "";
         }();
 
-        const auto reference = extractReferenceFromChannel(message->getChannel());
+        const auto reference = extractReferenceFromChannel(message.getChannel());
         if (reference.empty())
         {
             return nullptr;
@@ -273,16 +276,16 @@ std::unique_ptr<ActuatorSetCommand> JsonProtocol::makeActuatorSetCommand(std::sh
     }
     catch (...)
     {
-        LOG(DEBUG) << "Unable to parse ActuatorSetCommand: " << message->getContent();
+        LOG(DEBUG) << "Unable to parse ActuatorSetCommand: " << message.getContent();
         return nullptr;
     }
 }
 
-std::unique_ptr<ActuatorGetCommand> JsonProtocol::makeActuatorGetCommand(std::shared_ptr<Message> message) const
+std::unique_ptr<ActuatorGetCommand> JsonProtocol::makeActuatorGetCommand(const Message& message) const
 {
     try
     {
-        const auto reference = extractReferenceFromChannel(message->getChannel());
+        const auto reference = extractReferenceFromChannel(message.getChannel());
         if (reference.empty())
         {
             return nullptr;
@@ -292,17 +295,16 @@ std::unique_ptr<ActuatorGetCommand> JsonProtocol::makeActuatorGetCommand(std::sh
     }
     catch (...)
     {
-        LOG(DEBUG) << "Unable to parse ActuatorGetCommand: " << message->getContent();
+        LOG(DEBUG) << "Unable to parse ActuatorGetCommand: " << message.getContent();
         return nullptr;
     }
 }
 
-std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetCommand(
-  std::shared_ptr<Message> message) const
+std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetCommand(const Message& message) const
 {
     try
     {
-        json j = json::parse(message->getContent());
+        json j = json::parse(message.getContent());
 
         std::map<std::string, std::string> values;
         if (j.is_object())
@@ -317,7 +319,7 @@ std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetComma
     }
     catch (...)
     {
-        LOG(DEBUG) << "Unable to parse ConfigurationSetCommand: " << message->getContent();
+        LOG(DEBUG) << "Unable to parse ConfigurationSetCommand: " << message.getContent();
         return nullptr;
     }
 }
@@ -382,5 +384,13 @@ std::string JsonProtocol::extractDeviceKeyFromChannel(const std::string& topic) 
     }
 
     return "";
+}
+
+std::string JsonProtocol::joinReadings(const std::vector<std::string>& values, const std::string& delimiter) const
+{
+    return std::accumulate(values.begin(), values.end(), std::string{},
+                           [&](std::string& first, const std::string& second) {
+                               return first.empty() ? second : first + delimiter + second;
+                           });
 }
 }    // namespace wolkabout

@@ -15,6 +15,7 @@ class ActuatorGetCommand;
 class ActuatorStatus;
 class Alarm;
 class ConfigurationSetCommand;
+class ConfigurationItem;
 class SensorReading;
 
 class DataProtocol : public Protocol
@@ -28,22 +29,24 @@ public:
     virtual bool isConfigurationSetMessage(const std::string& channel) const = 0;
     virtual bool isConfigurationGetMessage(const std::string& channel) const = 0;
 
-    virtual std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(std::shared_ptr<Message> message) const = 0;
-    virtual std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(std::shared_ptr<Message> message) const = 0;
+    virtual std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const = 0;
+    virtual std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const = 0;
 
-    virtual std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(
-      std::shared_ptr<Message> message) const = 0;
+    virtual std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(const Message& message) const = 0;
 
-    virtual std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 std::vector<std::shared_ptr<SensorReading>> sensorReadings,
+    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                                 const std::vector<std::shared_ptr<SensorReading>>& sensorReadings,
                                                  const std::string& delimiter = "") const = 0;
-    virtual std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 std::vector<std::shared_ptr<Alarm>> alarms) const = 0;
-    virtual std::shared_ptr<Message> makeMessage(
-      const std::string& deviceKey, std::vector<std::shared_ptr<ActuatorStatus>> actuatorStatuses) const = 0;
 
-    virtual std::shared_ptr<Message> makeFromConfiguration(
-      const std::string& deviceKey, const std::map<std::string, std::string> configuration) const = 0;
+    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                                 const std::vector<std::shared_ptr<Alarm>>& alarms) const = 0;
+
+    virtual std::unique_ptr<Message> makeMessage(
+      const std::string& deviceKey, const std::vector<std::shared_ptr<ActuatorStatus>>& actuatorStatuses) const = 0;
+
+    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                                 const std::vector<ConfigurationItem>& configuration,
+                                                 const std::map<std::string, std::string>& delimiters = {}) const = 0;
 
     inline Type getType() const override final { return Protocol::Type::DATA; }
 };

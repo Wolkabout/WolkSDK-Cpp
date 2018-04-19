@@ -38,27 +38,32 @@ public:
     bool isConfigurationSetMessage(const std::string& channel) const override;
     bool isConfigurationGetMessage(const std::string& channel) const override;
 
-    std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(std::shared_ptr<Message> message) const override;
-    std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(std::shared_ptr<Message> message) const override;
+    std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const override;
+    std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const override;
 
-    std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(
-      std::shared_ptr<Message> message) const override;
+    std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(const Message& message) const override;
 
-    std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
-                                         std::vector<std::shared_ptr<SensorReading>> sensorReadings,
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                         const std::vector<std::shared_ptr<SensorReading>>& sensorReadings,
                                          const std::string& delimiter) const override;
-    std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
-                                         std::vector<std::shared_ptr<Alarm>> alarms) const override;
-    std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
-                                         std::vector<std::shared_ptr<ActuatorStatus>> actuatorStatuses) const override;
 
-    std::shared_ptr<Message> makeFromConfiguration(
-      const std::string& deviceKey, const std::map<std::string, std::string> configuration) const override;
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                         const std::vector<std::shared_ptr<Alarm>>& alarms) const override;
+
+    std::unique_ptr<Message> makeMessage(
+      const std::string& deviceKey,
+      const std::vector<std::shared_ptr<ActuatorStatus>>& actuatorStatuses) const override;
+
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                         const std::vector<ConfigurationItem>& configuration,
+                                         const std::map<std::string, std::string>& delimiters) const override;
 
     std::string extractReferenceFromChannel(const std::string& topic) const override;
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
 private:
+    std::string joinReadings(const std::vector<std::string>& values, const std::string& delimiter) const;
+
     static const std::string NAME;
 
     static const std::string CHANNEL_DELIMITER;
