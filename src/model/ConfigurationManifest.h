@@ -35,12 +35,12 @@ public:
     ConfigurationManifest() = default;
     ConfigurationManifest(std::string name, std::string reference, std::string description, std::string unit,
                           ConfigurationManifest::DataType dataType, double minimum, double maximum,
-                          std::string collapseKey, std::string defaultValue, std::string nullValue, unsigned int size);
+                          std::string defaultValue, std::string nullValue = "");
 
     ConfigurationManifest(std::string name, std::string reference, std::string description, std::string unit,
                           ConfigurationManifest::DataType dataType, double minimum, double maximum,
-                          std::string collapseKey, std::string defaultValue, std::string nullValue, unsigned int size,
-                          std::string delimiter, std::vector<std::string> labels);
+                          std::string defaultValue, unsigned int size, std::string delimiter,
+                          std::vector<std::string> labels, std::string nullValue = "");
 
     virtual ~ConfigurationManifest() = default;
 
@@ -68,9 +68,6 @@ public:
     unsigned int getSize() const;
     ConfigurationManifest& setSize(unsigned int size);
 
-    const std::string& getCollapseKey() const;
-    ConfigurationManifest& setCollapseKey(const std::string& collapseKey);
-
     const std::string& getDefaultValue() const;
     ConfigurationManifest& setDefaultValue(const std::string& defaultValue);
 
@@ -96,14 +93,13 @@ private:
     double m_minimum;
     double m_maximum;
 
+    std::string m_defaultValue;
+
     unsigned int m_size;
 
     std::string m_delimiter;
     std::vector<std::string> m_labels;
 
-    std::string m_collapseKey;
-
-    std::string m_defaultValue;
     std::string m_nullValue;
 };
 }    // namespace wolkabout

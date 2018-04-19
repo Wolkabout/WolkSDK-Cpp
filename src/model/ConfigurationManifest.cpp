@@ -17,6 +17,7 @@
 #include "ConfigurationManifest.h"
 
 #include <cmath>
+#include <stdexcept>
 #include <string>
 #include <utility>
 
@@ -24,8 +25,7 @@ namespace wolkabout
 {
 ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, std::string description,
                                              std::string unit, ConfigurationManifest::DataType dataType, double minimum,
-                                             double maximum, std::string collapseKey, std::string defaultValue,
-                                             std::string nullValue, unsigned int size)
+                                             double maximum, std::string defaultValue, std::string nullValue)
 : m_name(std::move(name))
 , m_reference(std::move(reference))
 , m_description(std::move(description))
@@ -33,18 +33,17 @@ ConfigurationManifest::ConfigurationManifest(std::string name, std::string refer
 , m_dataType(dataType)
 , m_minimum(minimum)
 , m_maximum(maximum)
-, m_size(size)
-, m_collapseKey(std::move(collapseKey))
 , m_defaultValue(std::move(defaultValue))
+, m_size(1)
 , m_nullValue(std::move(nullValue))
 {
 }
 
 ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, std::string description,
                                              std::string unit, ConfigurationManifest::DataType dataType, double minimum,
-                                             double maximum, std::string collapseKey, std::string defaultValue,
-                                             std::string nullValue, unsigned int size, std::string delimiter,
-                                             std::vector<std::string> labels)
+                                             double maximum, std::string defaultValue, unsigned int size,
+                                             std::string delimiter, std::vector<std::string> labels,
+                                             std::string nullValue)
 : m_name(std::move(name))
 , m_reference(std::move(reference))
 , m_description(std::move(description))
@@ -52,13 +51,31 @@ ConfigurationManifest::ConfigurationManifest(std::string name, std::string refer
 , m_dataType(dataType)
 , m_minimum(minimum)
 , m_maximum(maximum)
+, m_defaultValue(std::move(defaultValue))
 , m_size(size)
 , m_delimiter(std::move(delimiter))
 , m_labels(std::move(labels))
-, m_collapseKey(std::move(collapseKey))
-, m_defaultValue(std::move(defaultValue))
 , m_nullValue(std::move(nullValue))
 {
+    if (labels.size() == 0)
+    {
+        m_size = 1;
+    }
+
+    if (labels.size() == 1)
+    {
+        throw std::logic_error("Labels must not be defined for configuration item of size 1");
+    }
+
+    if (labels.size() > 1 && size != labels.size())
+    {
+        throw std::logic_error("Number of labels for configuration item must match specified size");
+    }
+
+    if (labels.size() > 1 && delimiter.empty())
+    {
+        throw std::logic_error("Delimiter must not be empty for multy value configuration item");
+    }
 }
 
 const std::string& ConfigurationManifest::getName() const
@@ -171,17 +188,6 @@ ConfigurationManifest& ConfigurationManifest::setLabels(const std::vector<std::s
     return *this;
 }
 
-const std::string& ConfigurationManifest::getCollapseKey() const
-{
-    return m_collapseKey;
-}
-
-ConfigurationManifest& ConfigurationManifest::setCollapseKey(const std::string& collapseKey)
-{
-    m_collapseKey = collapseKey;
-    return *this;
-}
-
 const std::string& ConfigurationManifest::getDefaultValue() const
 {
     return m_defaultValue;
@@ -217,7 +223,7 @@ bool ConfigurationManifest::operator==(ConfigurationManifest& rhs) const
         return false;
     }
 
-    if (m_size != rhs.m_size || m_delimiter != rhs.m_delimiter || m_collapseKey != rhs.m_collapseKey)
+    if (m_size != rhs.m_size || m_delimiter != rhs.m_delimiter)
     {
         return false;
     }
