@@ -32,7 +32,8 @@ public:
     virtual std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const = 0;
     virtual std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const = 0;
 
-    virtual std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(const Message& message) const = 0;
+    virtual std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(
+      const Message& message, const std::map<std::string, std::string>& delimiters = {}) const = 0;
 
     virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                                  const std::vector<std::shared_ptr<SensorReading>>& sensorReadings,

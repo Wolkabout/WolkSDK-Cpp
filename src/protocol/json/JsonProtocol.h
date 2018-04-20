@@ -41,7 +41,8 @@ public:
     std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const override;
     std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const override;
 
-    std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(const Message& message) const override;
+    std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(
+      const Message& message, const std::map<std::string, std::string>& delimiters) const override;
 
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const std::vector<std::shared_ptr<SensorReading>>& sensorReadings,
@@ -62,7 +63,8 @@ public:
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
 private:
-    std::string joinReadings(const std::vector<std::string>& values, const std::string& delimiter) const;
+    std::string joinMultiValues(const std::vector<std::string>& values, const std::string& delimiter) const;
+    std::vector<std::string> parseMultiValues(const std::string& values, const std::string& delimiter) const;
 
     static const std::string NAME;
 

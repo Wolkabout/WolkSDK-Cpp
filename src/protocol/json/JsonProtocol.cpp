@@ -172,7 +172,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
                    [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
                        const std::vector<std::string> readingValues = sensorReading->getValues();
 
-                       const std::string data = joinReadings(readingValues, delimiter);
+                       const std::string data = joinMultiValues(readingValues, delimiter);
 
                        if (sensorReading->getRtc() == 0)
                        {
@@ -238,7 +238,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
             auto delimiterIt = delimiters.find(item.getReference());
 
             if (delimiterIt != delimiters.end() && item.getValues().size() > 1)
-                return joinReadings(item.getValues(), delimiterIt->second);
+                return joinMultiValues(item.getValues(), delimiterIt->second);
 
             return std::string{""};
         }());
@@ -300,22 +300,35 @@ std::unique_ptr<ActuatorGetCommand> JsonProtocol::makeActuatorGetCommand(const M
     }
 }
 
-std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetCommand(const Message& message) const
+std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetCommand(
+  const Message& message, const std::map<std::string, std::string>& delimiters) const
 {
     try
     {
         json j = json::parse(message.getContent());
 
-        std::map<std::string, std::string> values;
+        std::vector<ConfigurationItem> items;
         if (j.is_object())
         {
             for (const auto& configurationEntry : j.get<json::object_t>())
             {
-                values[configurationEntry.first] = configurationEntry.second.get<std::string>();
+                const std::string reference = configurationEntry.first;
+                const auto it = delimiters.find(reference);
+
+                if (it != delimiters.end())
+                {
+                    const auto values = parseMultiValues(configurationEntry.second.get<std::string>(), it->second);
+
+                    items.push_back(ConfigurationItem{values, reference});
+                }
+                else
+                {
+                    items.push_back(ConfigurationItem{{configurationEntry.second.get<std::string>()}, reference});
+                }
             }
         }
 
-        return std::unique_ptr<ConfigurationSetCommand>(new ConfigurationSetCommand(values));
+        return std::unique_ptr<ConfigurationSetCommand>(new ConfigurationSetCommand(items));
     }
     catch (...)
     {
@@ -386,11 +399,16 @@ std::string JsonProtocol::extractDeviceKeyFromChannel(const std::string& topic) 
     return "";
 }
 
-std::string JsonProtocol::joinReadings(const std::vector<std::string>& values, const std::string& delimiter) const
+std::string JsonProtocol::joinMultiValues(const std::vector<std::string>& values, const std::string& delimiter) const
 {
     return std::accumulate(values.begin(), values.end(), std::string{},
                            [&](std::string& first, const std::string& second) {
                                return first.empty() ? second : first + delimiter + second;
                            });
+}
+
+std::vector<std::string> JsonProtocol::parseMultiValues(const std::string& values, const std::string& delimiter) const
+{
+    return StringUtils::tokenize(values, delimiter);
 }
 }    // namespace wolkabout

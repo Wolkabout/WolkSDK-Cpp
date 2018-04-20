@@ -16,20 +16,22 @@
 #ifndef CONFIGURATIONSETCOMMAND_H
 #define CONFIGURATIONSETCOMMAND_H
 
-#include <map>
+#include "model/ConfigurationItem.h"
+
 #include <string>
+#include <vector>
 
 namespace wolkabout
 {
 class ConfigurationSetCommand
 {
 public:
-    ConfigurationSetCommand(std::map<std::string, std::string> values);
+    ConfigurationSetCommand(std::vector<ConfigurationItem> values);
 
-    const std::map<std::string, std::string>& getValues() const;
+    const std::vector<ConfigurationItem>& getValues() const;
 
 private:
-    std::map<std::string, std::string> m_values;
+    std::vector<ConfigurationItem> m_values;
 };
 }    // namespace wolkabout
 
