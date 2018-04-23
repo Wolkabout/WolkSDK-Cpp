@@ -31,7 +31,7 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -Weffc++ -pedantic    
                                             -Wstrict-aliasing=2                                                        \
                                             -Werror=unreachable-code -Wunused                                          \
                                             -Wvariadic-macros                                                          \
-                                            -Wwrite-strings -Werror=non-virtual-dtor")
+                                            -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
 
 # ssl
 IF (NOT OPENSSL_INCLUDE_DIR)
