@@ -18,6 +18,7 @@
 #define CONFIGMANIFEST_H
 
 #include <string>
+#include <vector>
 
 namespace wolkabout
 {
@@ -34,8 +35,12 @@ public:
     ConfigurationManifest() = default;
     ConfigurationManifest(std::string name, std::string reference, std::string description, std::string unit,
                           ConfigurationManifest::DataType dataType, double minimum, double maximum,
-                          std::string collapseKey, std::string defaultValue, std::string nullValue, bool isOptional,
-                          unsigned int size, std::string delimiter);
+                          std::string defaultValue, std::string nullValue = "");
+
+    ConfigurationManifest(std::string name, std::string reference, std::string description, std::string unit,
+                          ConfigurationManifest::DataType dataType, double minimum, double maximum,
+                          std::string defaultValue, unsigned int size, std::string delimiter,
+                          std::vector<std::string> labels, std::string nullValue = "");
 
     virtual ~ConfigurationManifest() = default;
 
@@ -63,20 +68,17 @@ public:
     unsigned int getSize() const;
     ConfigurationManifest& setSize(unsigned int size);
 
-    const std::string& getDelimiter() const;
-    ConfigurationManifest& setDelimiter(const std::string delimiter);
-
-    const std::string& getCollapseKey() const;
-    ConfigurationManifest& setCollapseKey(const std::string& collapseKey);
-
     const std::string& getDefaultValue() const;
     ConfigurationManifest& setDefaultValue(const std::string& defaultValue);
 
     const std::string& getNullValue() const;
     ConfigurationManifest& setNullValue(const std::string& nullValue);
 
-    bool isOptional() const;
-    ConfigurationManifest& setIsOptional(bool isOptional);
+    const std::string& getDelimiter() const;
+    ConfigurationManifest& setDelimiter(const std::string& delimited);
+
+    const std::vector<std::string>& getLabels() const;
+    ConfigurationManifest& setLabels(const std::vector<std::string>& labels);
 
     bool operator==(ConfigurationManifest& rhs) const;
     bool operator!=(ConfigurationManifest& rhs) const;
@@ -91,14 +93,14 @@ private:
     double m_minimum;
     double m_maximum;
 
-    unsigned int m_size;
-    std::string m_delimiter;
-    std::string m_collapseKey;
-
     std::string m_defaultValue;
-    std::string m_nullValue;
 
-    bool m_isOptional;
+    unsigned int m_size;
+
+    std::string m_delimiter;
+    std::vector<std::string> m_labels;
+
+    std::string m_nullValue;
 };
 }    // namespace wolkabout
 

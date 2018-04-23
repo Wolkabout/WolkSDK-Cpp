@@ -17,6 +17,7 @@
 #include "ConfigurationManifest.h"
 
 #include <cmath>
+#include <stdexcept>
 #include <string>
 #include <utility>
 
@@ -24,9 +25,7 @@ namespace wolkabout
 {
 ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, std::string description,
                                              std::string unit, ConfigurationManifest::DataType dataType, double minimum,
-                                             double maximum, std::string collapseKey, std::string defaultValue,
-                                             std::string nullValue, bool isOptional, unsigned int size,
-                                             std::string delimiter)
+                                             double maximum, std::string defaultValue, std::string nullValue)
 : m_name(std::move(name))
 , m_reference(std::move(reference))
 , m_description(std::move(description))
@@ -34,13 +33,49 @@ ConfigurationManifest::ConfigurationManifest(std::string name, std::string refer
 , m_dataType(dataType)
 , m_minimum(minimum)
 , m_maximum(maximum)
+, m_defaultValue(std::move(defaultValue))
+, m_size(1)
+, m_nullValue(std::move(nullValue))
+{
+}
+
+ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, std::string description,
+                                             std::string unit, ConfigurationManifest::DataType dataType, double minimum,
+                                             double maximum, std::string defaultValue, unsigned int size,
+                                             std::string delimiter, std::vector<std::string> labels,
+                                             std::string nullValue)
+: m_name(std::move(name))
+, m_reference(std::move(reference))
+, m_description(std::move(description))
+, m_unit(std::move(unit))
+, m_dataType(dataType)
+, m_minimum(minimum)
+, m_maximum(maximum)
+, m_defaultValue(std::move(defaultValue))
 , m_size(size)
 , m_delimiter(std::move(delimiter))
-, m_collapseKey(std::move(collapseKey))
-, m_defaultValue(std::move(defaultValue))
+, m_labels(std::move(labels))
 , m_nullValue(std::move(nullValue))
-, m_isOptional(isOptional)
 {
+    if (labels.size() == 0)
+    {
+        m_size = 1;
+    }
+
+    if (labels.size() == 1)
+    {
+        throw std::logic_error("Labels must not be defined for configuration item of size 1");
+    }
+
+    if (labels.size() > 1 && size != labels.size())
+    {
+        throw std::logic_error("Number of labels for configuration item must match specified size");
+    }
+
+    if (labels.size() > 1 && delimiter.empty())
+    {
+        throw std::logic_error("Delimiter must not be empty for multy value configuration item");
+    }
 }
 
 const std::string& ConfigurationManifest::getName() const
@@ -136,20 +171,20 @@ const std::string& ConfigurationManifest::getDelimiter() const
     return m_delimiter;
 }
 
-ConfigurationManifest& ConfigurationManifest::setDelimiter(const std::string delimiter)
+ConfigurationManifest& ConfigurationManifest::setDelimiter(const std::string& delimiter)
 {
     m_delimiter = delimiter;
     return *this;
 }
 
-const std::string& ConfigurationManifest::getCollapseKey() const
+const std::vector<std::string>& ConfigurationManifest::getLabels() const
 {
-    return m_collapseKey;
+    return m_labels;
 }
 
-ConfigurationManifest& ConfigurationManifest::setCollapseKey(const std::string& collapseKey)
+ConfigurationManifest& ConfigurationManifest::setLabels(const std::vector<std::string>& labels)
 {
-    m_collapseKey = collapseKey;
+    m_labels = labels;
     return *this;
 }
 
@@ -175,17 +210,6 @@ ConfigurationManifest& ConfigurationManifest::setNullValue(const std::string& nu
     return *this;
 }
 
-bool ConfigurationManifest::isOptional() const
-{
-    return m_isOptional;
-}
-
-ConfigurationManifest& ConfigurationManifest::setIsOptional(bool isOptional)
-{
-    m_isOptional = isOptional;
-    return *this;
-}
-
 bool ConfigurationManifest::operator==(ConfigurationManifest& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description ||
@@ -199,14 +223,27 @@ bool ConfigurationManifest::operator==(ConfigurationManifest& rhs) const
         return false;
     }
 
-    if (m_size != rhs.m_size || m_delimiter != rhs.m_delimiter || m_collapseKey != rhs.m_collapseKey)
+    if (m_size != rhs.m_size || m_delimiter != rhs.m_delimiter)
     {
         return false;
     }
 
-    if (m_defaultValue != rhs.m_defaultValue || m_nullValue != rhs.m_nullValue || m_isOptional != rhs.m_isOptional)
+    if (m_defaultValue != rhs.m_defaultValue || m_nullValue != rhs.m_nullValue)
     {
         return false;
+    }
+
+    if (m_labels.size() != rhs.m_labels.size())
+    {
+        return false;
+    }
+
+    for (size_t i = 0; i < m_labels.size(); ++i)
+    {
+        if (m_labels[i] != rhs.m_labels[i])
+        {
+            return false;
+        }
     }
 
     return true;

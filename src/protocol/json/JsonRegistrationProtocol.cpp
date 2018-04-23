@@ -81,16 +81,15 @@ void to_json(json& j, const ConfigurationManifest& configurationManifest)
         {"defaultValue", configurationManifest.getDefaultValue()},
         {"dataType", dataType},
         {"description", configurationManifest.getDescription()},
-        {"optional", configurationManifest.isOptional()},
         {"nullValue", configurationManifest.getNullValue()},
         {"reference", configurationManifest.getReference()},
         {"unit", configurationManifest.getUnit()},
         {"size", configurationManifest.getSize()},
         {"delimiter", configurationManifest.getDelimiter()},
-        {"collapseKey", configurationManifest.getCollapseKey()},
         {"name", configurationManifest.getName()},
         {"maximum", configurationManifest.getMaximum()},
-        {"minimum", configurationManifest.getMinimum()}
+        {"minimum", configurationManifest.getMinimum()},
+        {"labels", configurationManifest.getLabels()}
     };
     // clang-format on
 }
@@ -127,12 +126,11 @@ void from_json(const json& j, ConfigurationManifest& configurationManifest)
                 dataType,
                 j.at("minimum").get<double>(),
                 j.at("maximum").get<double>(),
-                j.at("collapseKey").get<std::string>(),
                 j.at("defaultValue").get<std::string>(),
-                j.at("nullValue").get<std::string>(),
-                j.at("optional").get<bool>(),
                 j.at("size").get<unsigned int>(),
-                j.at("delimiter").get<std::string>()
+                j.at("delimiter").get<std::string>(),
+                j.at("labels").get<std::vector<std::string>>(),
+                j.at("nullValue").get<std::string>()
             );
     // clang-format on
 }
@@ -282,7 +280,7 @@ void from_json(const json& j, ActuatorManifest& actuatorManifest)
     actuatorManifest = ActuatorManifest(
       j.at("name").get<std::string>(), j.at("reference").get<std::string>(), j.at("description").get<std::string>(),
       j.at("unit").get<std::string>(), j.at("readingType").get<std::string>(), dataType,
-      j.at("precision").get<unsigned int>(), j.at("minimum").get<long long>(), j.at("maximum").get<long long>());
+      j.at("precision").get<unsigned int>(), j.at("minimum").get<double>(), j.at("maximum").get<double>());
 
     std::string delimiter = j.at("delimiter").get<std::string>();
     std::string labelsStr = j.at("labels").get<std::string>();
@@ -376,7 +374,7 @@ void from_json(const json& j, SensorManifest& sensorManifest)
     sensorManifest = SensorManifest(
       j.at("name").get<std::string>(), j.at("reference").get<std::string>(), j.at("description").get<std::string>(),
       j.at("unit").get<std::string>(), j.at("readingType").get<std::string>(), dataType,
-      j.at("precision").get<unsigned int>(), j.at("minimum").get<long long>(), j.at("maximum").get<long long>());
+      j.at("precision").get<unsigned int>(), j.at("minimum").get<double>(), j.at("maximum").get<double>());
 
     std::string delimiter = j.at("delimiter").get<std::string>();
     std::string labelsStr = j.at("labels").get<std::string>();

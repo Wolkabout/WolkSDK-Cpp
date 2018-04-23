@@ -18,12 +18,9 @@
 
 namespace wolkabout
 {
-ConfigurationSetCommand::ConfigurationSetCommand(std::map<std::string, std::string> values)
-: m_values(std::move(values))
-{
-}
+ConfigurationSetCommand::ConfigurationSetCommand(std::vector<ConfigurationItem> values) : m_values(std::move(values)) {}
 
-const std::map<std::string, std::string>& ConfigurationSetCommand::getValues() const
+const std::vector<ConfigurationItem>& ConfigurationSetCommand::getValues() const
 {
     return m_values;
 }

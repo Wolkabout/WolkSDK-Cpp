@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef CONFIGURATIONSETCOMMAND_H
-#define CONFIGURATIONSETCOMMAND_H
+#ifndef CONFIGURATIONPROVIDER_H
+#define CONFIGURATIONPROVIDER_H
 
 #include "model/ConfigurationItem.h"
 
@@ -23,16 +23,24 @@
 
 namespace wolkabout
 {
-class ConfigurationSetCommand
+class ConfigurationProvider
 {
 public:
-    ConfigurationSetCommand(std::vector<ConfigurationItem> values);
+    virtual ~ConfigurationProvider() = default;
 
-    const std::vector<ConfigurationItem>& getValues() const;
+    std::vector<ConfigurationItem> operator()(const std::string& deviceKey) { return getConfiguration(deviceKey); }
 
 private:
-    std::vector<ConfigurationItem> m_values;
+    /**
+     * @brief Device configuration provider callback
+     *        Reads device configuration and returns it as std::vector<ConfigurationItem>.<br>
+     *
+     *        Must be implemented as non blocking<br>
+     *        Must be implemented as thread safe
+     * @return Device configuration as std::vector<ConfigurationItem>
+     */
+    virtual std::vector<ConfigurationItem> getConfiguration(const std::string& deviceKey) = 0;
 };
 }    // namespace wolkabout
 
-#endif    // CONFIGURATIONSETCOMMAND_H
+#endif    // CONFIGURATIONPROVIDER_H

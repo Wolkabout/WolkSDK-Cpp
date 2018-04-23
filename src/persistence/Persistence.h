@@ -19,10 +19,9 @@
 
 #include "model/ActuatorStatus.h"
 #include "model/Alarm.h"
+#include "model/ConfigurationItem.h"
 #include "model/SensorReading.h"
 
-#include <cstdint>
-#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -135,8 +134,7 @@ public:
     /**
      * @brief Inserts the wolkabout::ActuatorStatus.
      *
-     * @param key            with which wolkabout::ActuatorStatus should be
-     * associated.
+     * @param key  with which wolkabout::ActuatorStatus should be associated.
      * @param actuatorStatus to be inserted
      * @return {@code true} if successful, or {@code false} if
      * element can not be inserted
@@ -173,19 +171,21 @@ public:
     /**
      * @brief Inserts the device configuration.
      *
-     * @param configuration {@code std::map<std::string, std::string>} containing device configuration
+     * @param key  with which configuration should be associated.
+     * @param configuration  to be inserted
      * @return {@code true} if successful, or {@code false} if
      * element can not be inserted
      */
-    virtual bool putConfiguration(const std::string& key, const std::map<std::string, std::string>& configuration) = 0;
+    virtual bool putConfiguration(const std::string& key,
+                                  std::shared_ptr<std::vector<ConfigurationItem>> configuration) = 0;
 
     /**
      * @brief Retrieves device configuration contained in this storage.
      *
-     * @return Device configuration as {@code std::shared_ptr<std::map<std::string, std::string>>}, or {@code nullptr}
+     * @return Device configuration as {@code std::shared_ptr<std::vector<ConfigurationItem>>}, or {@code nullptr}
      * if this storage does not contain persisted device configuration
      */
-    virtual std::shared_ptr<std::map<std::string, std::string>> getConfiguration(const std::string& key) = 0;
+    virtual std::shared_ptr<std::vector<ConfigurationItem>> getConfiguration(const std::string& key) = 0;
 
     /**
      * @brief Removes device configuration from this storage, associated with given {@code key}.

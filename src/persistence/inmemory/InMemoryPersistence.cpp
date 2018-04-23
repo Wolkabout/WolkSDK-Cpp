@@ -170,13 +170,13 @@ std::vector<std::shared_ptr<Alarm>>& InMemoryPersistence::getOrCreateAlarmsByKey
 }
 
 bool InMemoryPersistence::putConfiguration(const std::string& key,
-                                           const std::map<std::string, std::string>& configuration)
+                                           std::shared_ptr<std::vector<ConfigurationItem>> configuration)
 {
-    m_configurations[key] = std::make_shared<std::map<std::string, std::string>>(configuration);
+    m_configurations[key] = configuration;
     return true;
 }
 
-std::shared_ptr<std::map<std::string, std::string>> InMemoryPersistence::getConfiguration(const std::string& key)
+std::shared_ptr<std::vector<ConfigurationItem>> InMemoryPersistence::getConfiguration(const std::string& key)
 {
     auto it = m_configurations.find(key);
 

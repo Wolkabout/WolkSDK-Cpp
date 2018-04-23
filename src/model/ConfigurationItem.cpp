@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef CONFIGURATIONSETCOMMAND_H
-#define CONFIGURATIONSETCOMMAND_H
 
 #include "model/ConfigurationItem.h"
 
-#include <string>
-#include <vector>
-
 namespace wolkabout
 {
-class ConfigurationSetCommand
+ConfigurationItem::ConfigurationItem(std::vector<std::string> values, std::string reference)
+: m_values{std::move(values)}, m_reference{std::move(reference)}
 {
-public:
-    ConfigurationSetCommand(std::vector<ConfigurationItem> values);
+}
 
-    const std::vector<ConfigurationItem>& getValues() const;
+const std::vector<std::string>& ConfigurationItem::getValues() const
+{
+    return m_values;
+}
 
-private:
-    std::vector<ConfigurationItem> m_values;
-};
-}    // namespace wolkabout
-
-#endif    // CONFIGURATIONSETCOMMAND_H
+const std::string& ConfigurationItem::getReference() const
+{
+    return m_reference;
+}
+}
