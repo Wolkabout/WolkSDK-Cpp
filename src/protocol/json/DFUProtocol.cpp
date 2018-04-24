@@ -15,7 +15,6 @@
  */
 
 #include "protocol/json/DFUProtocol.h"
-#include "model/FilePacketRequest.h"
 #include "model/FirmwareUpdateCommand.h"
 #include "model/FirmwareUpdateResponse.h"
 #include "model/Message.h"
@@ -34,13 +33,11 @@ const std::string DFUProtocol::CHANNEL_DELIMITER = "/";
 const std::string DFUProtocol::CHANNEL_WILDCARD = "#";
 
 const std::string DFUProtocol::FIRMWARE_UPDATE_STATUS_TOPIC_ROOT = "service/status/firmware/";
-const std::string DFUProtocol::FILE_HANDLING_STATUS_TOPIC_ROOT = "service/status/file/";
 const std::string DFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "firmware/version/";
 
 const std::string DFUProtocol::FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT = "service/commands/firmware/";
-const std::string DFUProtocol::BINARY_TOPIC_ROOT = "service/binary/";
 
-const std::vector<std::string> DFUProtocol::INBOUND_CHANNELS = {FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT, BINARY_TOPIC_ROOT};
+const std::vector<std::string> DFUProtocol::INBOUND_CHANNELS = {FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT};
 
 /*** FIRMWARE UPDATE RESPONSE ***/
 void to_json(json& j, const FirmwareUpdateResponse& p)
@@ -80,18 +77,6 @@ void to_json(json& j, const std::shared_ptr<FirmwareUpdateResponse>& p)
     to_json(j, *p);
 }
 /*** FIRMWARE UPDATE RESPONSE ***/
-
-/*** FILE PACKET_REQUEST ***/
-void to_json(json& j, const FilePacketRequest& p)
-{
-    j = json{{"fileName", p.getFileName()}, {"chunkIndex", p.getChunkIndex()}, {"chunkSize", p.getChunkSize()}};
-}
-
-void to_json(json& j, const std::shared_ptr<FilePacketRequest>& p)
-{
-    to_json(j, *p);
-}
-/*** FILE PACKET_REQUEST ***/
 
 /*** FIRMWARE UPDATE COMMAND ***/
 void from_json(const json& j, FirmwareUpdateCommand& p)
@@ -212,21 +197,16 @@ std::unique_ptr<Message> DFUProtocol::makeMessage(const std::string& deviceKey,
     return std::unique_ptr<Message>(new Message(payload, topic));
 }
 
-std::unique_ptr<Message> DFUProtocol::makeMessage(const std::string& deviceKey,
-                                                  const FilePacketRequest& filePacketRequest) const
-{
-    const json jPayload(filePacketRequest);
-    const std::string payload = jPayload.dump();
-    const std::string topic = FILE_HANDLING_STATUS_TOPIC_ROOT + deviceKey;
-
-    return std::unique_ptr<Message>(new Message(payload, topic));
-}
-
 std::unique_ptr<Message> DFUProtocol::makeFromFirmwareVersion(const std::string& deviceKey,
                                                               const std::string& firmwareVerion) const
 {
     const std::string topic = FIRMWARE_VERSION_TOPIC_ROOT + deviceKey;
     return std::unique_ptr<Message>(new Message(firmwareVerion, topic));
+}
+
+bool DFUProtocol::isFirmwareUpdateMessage(const std::string& channel) const
+{
+    return StringUtils::startsWith(channel, FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT);
 }
 
 std::unique_ptr<FirmwareUpdateCommand> DFUProtocol::makeFirmwareUpdateCommand(const Message& message) const

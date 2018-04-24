@@ -13,29 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef DFUPROTOCOL_H
-#define DFUPROTOCOL_H
+#ifndef DOWNLOADPROTOCOL_H
+#define DOWNLOADPROTOCOL_H
 
-#include "protocol/FirmwareUpdateProtocol.h"
+#include "protocol/FileDownloadProtocol.h"
 
 namespace wolkabout
 {
-class DFUProtocol : public FirmwareUpdateProtocol
+class DownloadProtocol : public FileDownloadProtocol
 {
 public:
     const std::string& getName() const override;
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
+    bool isBinary(const std::string& channel) const override;
+
+    std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const override;
+
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                         const FirmwareUpdateResponse& firmwareUpdateResponse) const override;
-
-    std::unique_ptr<Message> makeFromFirmwareVersion(const std::string& deviceKey,
-                                                     const std::string& firmwareVerion) const override;
-
-    bool isFirmwareUpdateMessage(const std::string& channel) const override;
-
-    std::unique_ptr<FirmwareUpdateCommand> makeFirmwareUpdateCommand(const Message& message) const override;
+                                         const FilePacketRequest& filePacketRequest) const override;
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
@@ -45,13 +42,12 @@ private:
     static const std::string CHANNEL_DELIMITER;
     static const std::string CHANNEL_WILDCARD;
 
-    static const std::string FIRMWARE_UPDATE_STATUS_TOPIC_ROOT;
-    static const std::string FIRMWARE_VERSION_TOPIC_ROOT;
+    static const std::string FILE_HANDLING_STATUS_TOPIC_ROOT;
 
-    static const std::string FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT;
+    static const std::string BINARY_TOPIC_ROOT;
 
     static const std::vector<std::string> INBOUND_CHANNELS;
 };
 }
 
-#endif    // DFUPROTOCOL_H
+#endif    // DOWNLOADPROTOCOL_H
