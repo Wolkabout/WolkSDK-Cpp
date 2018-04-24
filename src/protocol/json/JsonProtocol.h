@@ -30,7 +30,8 @@ class JsonProtocol : public DataProtocol
 public:
     const std::string& getName() const override;
 
-    const std::vector<std::string>& getInboundChannels() const override;
+    std::vector<std::string> getInboundChannels() const override;
+    std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
     bool isActuatorSetMessage(const std::string& channel) const override;
     bool isActuatorGetMessage(const std::string& channel) const override;

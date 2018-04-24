@@ -22,6 +22,8 @@
 #include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
 
+#include <algorithm>
+
 using nlohmann::json;
 
 namespace wolkabout
@@ -38,8 +40,7 @@ const std::string DFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "firmware/version/"
 const std::string DFUProtocol::FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT = "service/commands/firmware/";
 const std::string DFUProtocol::BINARY_TOPIC_ROOT = "service/binary/";
 
-const std::vector<std::string> DFUProtocol::INBOUND_CHANNELS = {FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT + CHANNEL_WILDCARD,
-                                                                BINARY_TOPIC_ROOT + CHANNEL_WILDCARD};
+const std::vector<std::string> DFUProtocol::INBOUND_CHANNELS = {FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT, BINARY_TOPIC_ROOT};
 
 /*** FIRMWARE UPDATE RESPONSE ***/
 void to_json(json& j, const FirmwareUpdateResponse& p)
@@ -185,9 +186,20 @@ const std::string& DFUProtocol::getName() const
     return NAME;
 }
 
-const std::vector<std::string>& DFUProtocol::getInboundChannels() const
+std::vector<std::string> DFUProtocol::getInboundChannels() const
 {
-    return INBOUND_CHANNELS;
+    std::vector<std::string> channels;
+    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+                   [](const std::string& source) { return source + CHANNEL_WILDCARD; });
+    return channels;
+}
+
+std::vector<std::string> DFUProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
+{
+    std::vector<std::string> channels;
+    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+                   [&](const std::string& source) -> std::string { return source + deviceKey; });
+    return channels;
 }
 
 std::unique_ptr<Message> DFUProtocol::makeMessage(const std::string& deviceKey,

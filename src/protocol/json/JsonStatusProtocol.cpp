@@ -36,8 +36,7 @@ const std::string JsonStatusProtocol::LAST_WILL_TOPIC = "lastwill";
 const std::string JsonStatusProtocol::DEVICE_STATUS_REQUEST_TOPIC_ROOT = "p2d/status/";
 const std::string JsonStatusProtocol::DEVICE_STATUS_RESPONSE_TOPIC_ROOT = "d2p/status/";
 
-const std::vector<std::string> JsonStatusProtocol::INBOUND_CHANNELS = {DEVICE_STATUS_REQUEST_TOPIC_ROOT +
-                                                                       CHANNEL_WILDCARD};
+const std::vector<std::string> JsonStatusProtocol::INBOUND_CHANNELS = {DEVICE_STATUS_REQUEST_TOPIC_ROOT};
 
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATE_FIELD = "state";
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_CONNECTED = "CONNECTED";
@@ -88,10 +87,20 @@ const std::string& JsonStatusProtocol::getName() const
     return NAME;
 }
 
-const std::vector<std::string>& JsonStatusProtocol::getInboundChannels() const
+std::vector<std::string> JsonStatusProtocol::getInboundChannels() const
 {
-    LOG(TRACE) << METHOD_INFO;
-    return INBOUND_CHANNELS;
+    std::vector<std::string> channels;
+    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+                   [](const std::string& source) { return source + CHANNEL_WILDCARD; });
+    return channels;
+}
+
+std::vector<std::string> JsonStatusProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
+{
+    std::vector<std::string> channels;
+    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+                   [&](const std::string& source) -> std::string { return source + deviceKey; });
+    return channels;
 }
 
 bool JsonStatusProtocol::isStatusRequestMessage(const std::string& topic) const

@@ -43,8 +43,8 @@ const std::string JsonRegistrationProtocol::DEVICE_REREGISTRATION_REQUEST_TOPIC_
 const std::string JsonRegistrationProtocol::DEVICE_REREGISTRATION_RESPONSE_TOPIC_ROOT = "d2p/reregister_device/";
 
 const std::vector<std::string> JsonRegistrationProtocol::INBOUND_CHANNELS = {
-  DEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_WILDCARD,
-  DEVICE_REREGISTRATION_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_WILDCARD};
+  DEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + DEVICE_PATH_PREFIX,
+  DEVICE_REREGISTRATION_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX};
 
 const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_OK = "OK";
 const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_ERROR_KEY_CONFLICT = "ERROR_KEY_CONFLICT";
@@ -464,9 +464,20 @@ const std::string& JsonRegistrationProtocol::getName() const
     return NAME;
 }
 
-const std::vector<std::string>& JsonRegistrationProtocol::getInboundChannels() const
+std::vector<std::string> JsonRegistrationProtocol::getInboundChannels() const
 {
-    return INBOUND_CHANNELS;
+    std::vector<std::string> channels;
+    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+                   [](const std::string& source) { return source + CHANNEL_WILDCARD; });
+    return channels;
+}
+
+std::vector<std::string> JsonRegistrationProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
+{
+    std::vector<std::string> channels;
+    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+                   [&](const std::string& source) -> std::string { return source + deviceKey; });
+    return channels;
 }
 
 std::string JsonRegistrationProtocol::extractDeviceKeyFromChannel(const std::string& topic) const

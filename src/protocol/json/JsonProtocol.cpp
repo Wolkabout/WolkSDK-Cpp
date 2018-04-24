@@ -58,8 +58,8 @@ const std::string JsonProtocol::CONFIGURATION_SET_REQUEST_TOPIC_ROOT = "p2d/conf
 const std::string JsonProtocol::CONFIGURATION_GET_REQUEST_TOPIC_ROOT = "p2d/configuration_get/";
 
 const std::vector<std::string> JsonProtocol::INBOUND_CHANNELS = {
-  ACTUATION_GET_TOPIC_ROOT + CHANNEL_WILDCARD, ACTUATION_SET_TOPIC_ROOT + CHANNEL_WILDCARD,
-  CONFIGURATION_GET_REQUEST_TOPIC_ROOT + CHANNEL_WILDCARD, CONFIGURATION_SET_REQUEST_TOPIC_ROOT + CHANNEL_WILDCARD};
+  ACTUATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX, ACTUATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX,
+  CONFIGURATION_GET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX, CONFIGURATION_SET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX};
 
 void to_json(json& j, const SensorReading& p)
 {
@@ -142,9 +142,20 @@ const std::string& JsonProtocol::getName() const
     return NAME;
 }
 
-const std::vector<std::string>& JsonProtocol::getInboundChannels() const
+std::vector<std::string> JsonProtocol::getInboundChannels() const
 {
-    return INBOUND_CHANNELS;
+    std::vector<std::string> channels;
+    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+                   [](const std::string& source) { return source + CHANNEL_WILDCARD; });
+    return channels;
+}
+
+std::vector<std::string> JsonProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
+{
+    std::vector<std::string> channels;
+    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+                   [&](const std::string& source) -> std::string { return source + deviceKey; });
+    return channels;
 }
 
 std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,

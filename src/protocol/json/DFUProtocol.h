@@ -24,7 +24,8 @@ class DFUProtocol : public FirmwareUpdateProtocol
 {
 public:
     const std::string& getName() const override;
-    const std::vector<std::string>& getInboundChannels() const override;
+    std::vector<std::string> getInboundChannels() const override;
+    std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const FirmwareUpdateResponse& firmwareUpdateResponse) const override;

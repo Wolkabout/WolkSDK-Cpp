@@ -37,7 +37,19 @@ public:
 
     virtual Type getType() const = 0;
     virtual const std::string& getName() const = 0;
-    virtual const std::vector<std::string>& getInboundChannels() const = 0;
+
+    /**
+     * @brief Get generic inbound channels
+     * @return
+     */
+    virtual std::vector<std::string> getInboundChannels() const = 0;
+
+    /**
+     * @brief Get inbound channels for provided device key
+     * @param deviceKey
+     * @return
+     */
+    virtual std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const = 0;
     virtual std::string extractDeviceKeyFromChannel(const std::string& topic) const = 0;
 };
 }    // namespace wolkabout

@@ -25,7 +25,8 @@ class JsonStatusProtocol : public StatusProtocol
 public:
     const std::string& getName() const override;
 
-    const std::vector<std::string>& getInboundChannels() const override;
+    std::vector<std::string> getInboundChannels() const override;
+    std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
