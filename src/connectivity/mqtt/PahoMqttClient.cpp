@@ -17,6 +17,7 @@
 #include "PahoMqttClient.h"
 #include "MqttClient.h"
 #include "async_client.h"
+#include "utilities/Logger.h"
 
 #include <atomic>
 #include <string>
@@ -38,6 +39,7 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
 {
     if (m_isConnected)
     {
+        LOG(DEBUG) << "Connecting aborted: already connected";
         return true;
     }
 
@@ -68,19 +70,23 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
 
     try
     {
+        LOG(DEBUG) << "Connecting to: " << host;
         mqtt::token_ptr token = m_client->connect(connectOptions);
         token->wait_for(std::chrono::milliseconds(MQTT_CONNECTION_COMPLETITION_TIMEOUT_MSEC));
 
         if (!token->is_complete() || !m_isConnected)
         {
+            LOG(DEBUG) << "Connecting failed: token timeout";
             return false;
         }
     }
-    catch (mqtt::exception&)
+    catch (mqtt::exception& e)
     {
+        LOG(DEBUG) << "Connecting failed: exception code " << e.get_reason_code();
         return false;
     }
 
+    LOG(DEBUG) << "Connecting successful";
     return true;
 }
 
@@ -90,11 +96,13 @@ void PahoMqttClient::disconnect()
     {
         try
         {
+            LOG(DEBUG) << "Disconnecting";
             m_isConnected = false;
             m_client->disconnect();
         }
-        catch (mqtt::exception&)
+        catch (mqtt::exception& e)
         {
+            LOG(DEBUG) << "Disonnecting failed: exception code " << e.get_reason_code();
         }
     }
 }
@@ -115,24 +123,30 @@ bool PahoMqttClient::subscribe(const std::string& topic)
 {
     if (!m_isConnected)
     {
+        LOG(DEBUG) << "Subscribing aborted: not connected";
         return false;
     }
 
     try
     {
+        LOG(DEBUG) << "Subscribing to: " << topic;
+
         mqtt::token_ptr token = m_client->subscribe(topic, MQTT_QOS);
         token->wait_for(std::chrono::milliseconds(MQTT_ACTION_COMPLETITION_TIMEOUT_MSEC));
 
         if (!token->is_complete())
         {
+            LOG(DEBUG) << "Subscribing failed: token timeout";
             return false;
         }
     }
-    catch (mqtt::exception&)
+    catch (mqtt::exception& e)
     {
+        LOG(DEBUG) << "Subscribing failed: exception code " << e.get_reason_code();
         return false;
     }
 
+    LOG(TRACE) << "Subscribing successful";
     return true;
 }
 
@@ -140,6 +154,7 @@ bool PahoMqttClient::publish(const std::string& topic, const std::string& messag
 {
     if (!m_isConnected)
     {
+        LOG(DEBUG) << "Publishing aborted: not connected";
         return false;
     }
 
@@ -147,7 +162,7 @@ bool PahoMqttClient::publish(const std::string& topic, const std::string& messag
 
     try
     {
-        std::cout << "sending message: " << message << ", to: " << topic << std::endl;
+        LOG(DEBUG) << "Sending message: " << message << ", to: " << topic;
 
         mqtt::message_ptr pubmsg = mqtt::make_message(topic, message.c_str(), strlen(message.c_str()));
         pubmsg->set_qos(MQTT_QOS);
@@ -158,24 +173,29 @@ bool PahoMqttClient::publish(const std::string& topic, const std::string& messag
 
         if (!token->is_complete() || !m_isConnected)
         {
+            LOG(DEBUG) << "Publishing failed: token timeout";
             return false;
         }
     }
-    catch (mqtt::exception&)
+    catch (mqtt::exception& e)
     {
+        LOG(DEBUG) << "Publishing failed: exception code " << e.get_reason_code();
         return false;
     }
 
+    LOG(TRACE) << "Publishing successful";
     return true;
 }
 
 void PahoMqttClient::connected(const mqtt::string& /* cause */)
 {
+    LOG(DEBUG) << "Connected";
     m_isConnected = true;
 }
 
 void PahoMqttClient::connection_lost(const mqtt::string& /* cause */)
 {
+    LOG(DEBUG) << "Connection lost";
     m_isConnected = false;
     if (m_onConnectionLost)
     {
