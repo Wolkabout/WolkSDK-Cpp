@@ -31,8 +31,8 @@ public:
     const std::string& getReference() const;
 
 private:
-    const std::vector<std::string> m_values;
-    const std::string m_reference;
+    std::vector<std::string> m_values;
+    std::string m_reference;
 };
 }
 
