@@ -35,7 +35,8 @@ namespace wolkabout
 const std::string JsonProtocol::NAME = "JsonProtocol";
 
 const std::string JsonProtocol::CHANNEL_DELIMITER = "/";
-const std::string JsonProtocol::CHANNEL_WILDCARD = "#";
+const std::string JsonProtocol::CHANNEL_MULTI_LEVEL_WILDCARD = "#";
+const std::string JsonProtocol::CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
 
 const std::string JsonProtocol::DEVICE_TYPE = "d";
 const std::string JsonProtocol::REFERENCE_TYPE = "r";
@@ -56,10 +57,6 @@ const std::string JsonProtocol::ACTUATION_SET_TOPIC_ROOT = "p2d/actuator_set/";
 const std::string JsonProtocol::ACTUATION_GET_TOPIC_ROOT = "p2d/actuator_get/";
 const std::string JsonProtocol::CONFIGURATION_SET_REQUEST_TOPIC_ROOT = "p2d/configuration_set/";
 const std::string JsonProtocol::CONFIGURATION_GET_REQUEST_TOPIC_ROOT = "p2d/configuration_get/";
-
-const std::vector<std::string> JsonProtocol::INBOUND_CHANNELS = {
-  ACTUATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX, ACTUATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX,
-  CONFIGURATION_GET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX, CONFIGURATION_SET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX};
 
 void to_json(json& j, const SensorReading& p)
 {
@@ -144,18 +141,22 @@ const std::string& JsonProtocol::getName() const
 
 std::vector<std::string> JsonProtocol::getInboundChannels() const
 {
-    std::vector<std::string> channels;
-    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [](const std::string& source) { return source + CHANNEL_WILDCARD; });
-    return channels;
+    return {ACTUATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
+              REFERENCE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+            ACTUATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
+              REFERENCE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+            CONFIGURATION_GET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+            CONFIGURATION_SET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD};
 }
 
 std::vector<std::string> JsonProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    std::vector<std::string> channels;
-    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [&](const std::string& source) -> std::string { return source + deviceKey; });
-    return channels;
+    return {ACTUATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
+              CHANNEL_MULTI_LEVEL_WILDCARD,
+            ACTUATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
+              CHANNEL_MULTI_LEVEL_WILDCARD,
+            CONFIGURATION_GET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey,
+            CONFIGURATION_SET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey};
 }
 
 std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,

@@ -38,8 +38,8 @@ const std::string JsonStatusProtocol::DEVICE_STATUS_RESPONSE_TOPIC_ROOT = "d2p/s
 const std::string JsonStatusProtocol::PONG_TOPIC_ROOT = "pong/";
 const std::string JsonStatusProtocol::PING_TOPIC_ROOT = "ping/";
 
-const std::vector<std::string> JsonStatusProtocol::INBOUND_CHANNELS = {DEVICE_STATUS_REQUEST_TOPIC_ROOT,
-                                                                       PONG_TOPIC_ROOT};
+const std::vector<std::string> JsonStatusProtocol::INBOUND_CHANNELS = {
+  DEVICE_STATUS_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX, PONG_TOPIC_ROOT};
 
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATE_FIELD = "state";
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_CONNECTED = "CONNECTED";

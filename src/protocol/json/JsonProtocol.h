@@ -70,7 +70,8 @@ private:
     static const std::string NAME;
 
     static const std::string CHANNEL_DELIMITER;
-    static const std::string CHANNEL_WILDCARD;
+    static const std::string CHANNEL_MULTI_LEVEL_WILDCARD;
+    static const std::string CHANNEL_SINGLE_LEVEL_WILDCARD;
 
     static const std::string DEVICE_TYPE;
     static const std::string REFERENCE_TYPE;
@@ -91,8 +92,6 @@ private:
     static const std::string ACTUATION_GET_TOPIC_ROOT;
     static const std::string CONFIGURATION_SET_REQUEST_TOPIC_ROOT;
     static const std::string CONFIGURATION_GET_REQUEST_TOPIC_ROOT;
-
-    static const std::vector<std::string> INBOUND_CHANNELS;
 };
 }    // namespace wolkabout
 
