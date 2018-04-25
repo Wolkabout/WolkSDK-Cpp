@@ -19,7 +19,9 @@
 
 #include "model/DeviceManifest.h"
 
+#include <map>
 #include <string>
+#include <vector>
 
 namespace wolkabout
 {
@@ -40,10 +42,14 @@ public:
 
     std::vector<std::string> getActuatorReferences() const;
 
+    std::map<std::string, std::string> getSensorDelimiters() const;
+
+    std::map<std::string, std::string> getConfigurationDelimiters() const;
+
     bool operator==(Device& rhs) const;
     bool operator!=(Device& rhs) const;
 
-private:
+protected:
     std::string m_name;
     std::string m_key;
     std::string m_password;

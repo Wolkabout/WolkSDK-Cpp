@@ -65,6 +65,38 @@ std::vector<std::string> Device::getActuatorReferences() const
     return actuatorReferences;
 }
 
+std::map<std::string, std::string> Device::getSensorDelimiters() const
+{
+    std::map<std::string, std::string> delimiters;
+
+    const auto sensors = m_deviceManifest.getSensors();
+    for (const auto& sensor : sensors)
+    {
+        if (!sensor.getDelimiter().empty())
+        {
+            delimiters[sensor.getReference()] = sensor.getDelimiter();
+        }
+    }
+
+    return delimiters;
+}
+
+std::map<std::string, std::string> Device::getConfigurationDelimiters() const
+{
+    std::map<std::string, std::string> delimiters;
+
+    const auto configurationItems = m_deviceManifest.getConfigurations();
+    for (const auto& item : configurationItems)
+    {
+        if (!item.getDelimiter().empty())
+        {
+            delimiters[item.getReference()] = item.getDelimiter();
+        }
+    }
+
+    return delimiters;
+}
+
 bool Device::operator==(Device& rhs) const
 {
     if (m_key != rhs.m_key || m_name != rhs.m_name || m_password != rhs.m_password ||
