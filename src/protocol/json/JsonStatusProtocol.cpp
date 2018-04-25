@@ -35,8 +35,11 @@ const std::string JsonStatusProtocol::DEVICE_PATH_PREFIX = "d/";
 const std::string JsonStatusProtocol::LAST_WILL_TOPIC = "lastwill";
 const std::string JsonStatusProtocol::DEVICE_STATUS_REQUEST_TOPIC_ROOT = "p2d/status/";
 const std::string JsonStatusProtocol::DEVICE_STATUS_RESPONSE_TOPIC_ROOT = "d2p/status/";
+const std::string JsonStatusProtocol::PONG_TOPIC_ROOT = "pong/";
+const std::string JsonStatusProtocol::PING_TOPIC_ROOT = "ping/";
 
-const std::vector<std::string> JsonStatusProtocol::INBOUND_CHANNELS = {DEVICE_STATUS_REQUEST_TOPIC_ROOT};
+const std::vector<std::string> JsonStatusProtocol::INBOUND_CHANNELS = {DEVICE_STATUS_REQUEST_TOPIC_ROOT,
+                                                                       PONG_TOPIC_ROOT};
 
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATE_FIELD = "state";
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_CONNECTED = "CONNECTED";
@@ -110,8 +113,13 @@ bool JsonStatusProtocol::isStatusRequestMessage(const std::string& topic) const
     return StringUtils::startsWith(topic, DEVICE_STATUS_REQUEST_TOPIC_ROOT);
 }
 
-std::shared_ptr<Message> JsonStatusProtocol::makeMessage(const std::string& deviceKey,
-                                                         std::shared_ptr<DeviceStatusResponse> response) const
+bool JsonStatusProtocol::isPongMessage(const std::string& topic) const
+{
+    return StringUtils::startsWith(topic, PONG_TOPIC_ROOT);
+}
+
+std::unique_ptr<Message> JsonStatusProtocol::makeMessage(const std::string& deviceKey,
+                                                         const DeviceStatusResponse& response) const
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -120,10 +128,10 @@ std::shared_ptr<Message> JsonStatusProtocol::makeMessage(const std::string& devi
 
     const std::string payload = jPayload.dump();
 
-    return std::make_shared<Message>(payload, topic);
+    return std::unique_ptr<Message>(new Message(payload, topic));
 }
 
-std::shared_ptr<Message> JsonStatusProtocol::makeLastWillMessage(const std::vector<std::string>& deviceKeys) const
+std::unique_ptr<Message> JsonStatusProtocol::makeLastWillMessage(const std::vector<std::string>& deviceKeys) const
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -132,7 +140,7 @@ std::shared_ptr<Message> JsonStatusProtocol::makeLastWillMessage(const std::vect
         const std::string topic = LAST_WILL_TOPIC + CHANNEL_DELIMITER + deviceKeys.front();
         const std::string payload = "";
 
-        return std::make_shared<Message>(payload, topic);
+        return std::unique_ptr<Message>(new Message(payload, topic));
     }
     else
     {
@@ -140,8 +148,14 @@ std::shared_ptr<Message> JsonStatusProtocol::makeLastWillMessage(const std::vect
         const json jPayload(deviceKeys);
         const std::string payload = jPayload.dump();
 
-        return std::make_shared<Message>(payload, topic);
+        return std::unique_ptr<Message>(new Message(payload, topic));
     }
+}
+
+std::unique_ptr<Message> JsonStatusProtocol::makeFromPingRequest(const std::string& deviceKey) const
+{
+    const std::string topic = PING_TOPIC_ROOT + deviceKey;
+    return std::unique_ptr<Message>(new Message("", topic));
 }
 
 std::string JsonStatusProtocol::extractDeviceKeyFromChannel(const std::string& topic) const

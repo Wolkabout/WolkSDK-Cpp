@@ -31,11 +31,14 @@ public:
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
     bool isStatusRequestMessage(const std::string& topic) const override;
+    bool isPongMessage(const std::string& topic) const override;
 
-    std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
-                                         std::shared_ptr<DeviceStatusResponse> response) const override;
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                         const DeviceStatusResponse& response) const override;
 
-    std::shared_ptr<Message> makeLastWillMessage(const std::vector<std::string>& deviceKeys) const override;
+    std::unique_ptr<Message> makeLastWillMessage(const std::vector<std::string>& deviceKeys) const override;
+
+    std::unique_ptr<Message> makeFromPingRequest(const std::string& deviceKey) const override;
 
     static const std::string STATUS_RESPONSE_STATE_FIELD;
     static const std::string STATUS_RESPONSE_STATUS_CONNECTED;
@@ -53,6 +56,8 @@ private:
     static const std::string LAST_WILL_TOPIC;
     static const std::string DEVICE_STATUS_REQUEST_TOPIC_ROOT;
     static const std::string DEVICE_STATUS_RESPONSE_TOPIC_ROOT;
+    static const std::string PONG_TOPIC_ROOT;
+    static const std::string PING_TOPIC_ROOT;
 
     static const std::vector<std::string> INBOUND_CHANNELS;
 };
