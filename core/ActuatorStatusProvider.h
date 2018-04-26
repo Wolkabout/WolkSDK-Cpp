@@ -13,34 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef CONFIGURATIONPROVIDER_H
-#define CONFIGURATIONPROVIDER_H
 
-#include "model/ConfigurationItem.h"
+#ifndef ACTUATORSTATUSPROVIDER_H
+#define ACTUATORSTATUSPROVIDER_H
+
+#include "model/ActuatorStatus.h"
 
 #include <string>
-#include <vector>
 
 namespace wolkabout
 {
-class ConfigurationProvider
+class ActuatorStatusProvider
 {
 public:
-    virtual ~ConfigurationProvider() = default;
-
-    std::vector<ConfigurationItem> operator()(const std::string& deviceKey) { return getConfiguration(deviceKey); }
-
-private:
     /**
-     * @brief Device configuration provider callback
-     *        Reads device configuration and returns it as std::vector<ConfigurationItem>.<br>
-     *
+     * @brief Actuator status provider callback<br>
      *        Must be implemented as non blocking<br>
      *        Must be implemented as thread safe
-     * @return Device configuration as std::vector<ConfigurationItem>
+     * @param reference Actuator reference
+     * @return ActuatorStatus of requested actuator
      */
-    virtual std::vector<ConfigurationItem> getConfiguration(const std::string& deviceKey) = 0;
+    virtual ActuatorStatus getActuatorStatus(const std::string& reference) = 0;
+
+    virtual ~ActuatorStatusProvider() = default;
 };
 }    // namespace wolkabout
 
-#endif    // CONFIGURATIONPROVIDER_H
+#endif
