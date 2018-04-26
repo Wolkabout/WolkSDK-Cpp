@@ -53,6 +53,7 @@ include_directories("mqtt")
 include_directories("core")
 include_directories(SYSTEM "${OPENSSL_INCLUDE_DIR}")
 
+file(GLOB_RECURSE HEADER_FILES "core/*.h" "core/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "core/*.cpp")
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})

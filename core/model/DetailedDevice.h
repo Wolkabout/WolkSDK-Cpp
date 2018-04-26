@@ -28,11 +28,11 @@ namespace wolkabout
 class DetailedDevice
 {
 public:
-	DetailedDevice() = default;
-	DetailedDevice(std::string name, std::string key, DeviceManifest deviceManifest);
-	DetailedDevice(std::string name, std::string key, std::string password, DeviceManifest deviceManifest);
+    DetailedDevice() = default;
+    DetailedDevice(std::string name, std::string key, DeviceManifest deviceManifest);
+    DetailedDevice(std::string name, std::string key, std::string password, DeviceManifest deviceManifest);
 
-	virtual ~DetailedDevice() = default;
+    virtual ~DetailedDevice() = default;
 
     const std::string& getName() const;
     const std::string& getKey() const;
@@ -46,8 +46,8 @@ public:
 
     std::map<std::string, std::string> getConfigurationDelimiters() const;
 
-	bool operator==(DetailedDevice& rhs) const;
-	bool operator!=(DetailedDevice& rhs) const;
+    bool operator==(DetailedDevice& rhs) const;
+    bool operator!=(DetailedDevice& rhs) const;
 
 protected:
     std::string m_name;
