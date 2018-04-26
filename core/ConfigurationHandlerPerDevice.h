@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#ifndef CONFIGURATIONHANDLER_H
-#define CONFIGURATIONHANDLER_H
+#ifndef CONFIGURATIONHANDLERPERDEVICE_H
+#define CONFIGURATIONHANDLERPERDEVICE_H
 
 #include "model/ConfigurationItem.h"
 
 #include <vector>
+#include <string>
 
 namespace wolkabout
 {
@@ -32,12 +32,13 @@ public:
 
      *        Must be implemented as non blocking<br>
      *        Must be implemented as thread safe
+     * @param deviceKey Device key
      * @param configuration as vector of wolkabout::ConfigurationItem
      */
-    virtual void handleConfiguration(const std::vector<ConfigurationItem>& configuration) = 0;
+    virtual void handleConfiguration(const std::string& deviceKey, const std::vector<ConfigurationItem>& configuration) = 0;
 
     virtual ~ConfigurationHandler() = default;
 };
 }    // namespace wolkabout
 
-#endif
+#endif // CONFIGURATIONHANDLERPERDEVICE_H

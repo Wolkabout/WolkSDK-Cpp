@@ -13,31 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#ifndef CONFIGURATIONHANDLER_H
-#define CONFIGURATIONHANDLER_H
+#ifndef CONFIGURATIONPROVIDERPERDEVICE_H
+#define CONFIGURATIONPROVIDERPERDEVICE_H
 
 #include "model/ConfigurationItem.h"
 
 #include <vector>
+#include <string>
 
 namespace wolkabout
 {
-class ConfigurationHandler
+class ConfigurationProvider
 {
 public:
     /**
-     * @brief When new set of device configuration values is given from platform, it will be delivered to this method.
-     *        This method should update device configuration with received configuration values.<br>
-
+     * @brief Device configuration provider callback
+     *        Reads device configuration and returns it as
+     *        vector of wolkabout::ConfigurationItem.<br>
+     *
      *        Must be implemented as non blocking<br>
      *        Must be implemented as thread safe
-     * @param configuration as vector of wolkabout::ConfigurationItem
+     * @param deviceKey Device key
+     * @return Device configuration as std::vector<ConfigurationItem>
      */
-    virtual void handleConfiguration(const std::vector<ConfigurationItem>& configuration) = 0;
+    virtual std::vector<ConfigurationItem> getConfiguration(const std::string& deviceKey) = 0;
 
-    virtual ~ConfigurationHandler() = default;
+    virtual ~ConfigurationProvider() = default;
 };
 }    // namespace wolkabout
 
-#endif
+#endif // CONFIGURATIONPROVIDERPERDEVICE_H
