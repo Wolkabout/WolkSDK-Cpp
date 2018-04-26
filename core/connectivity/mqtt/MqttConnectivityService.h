@@ -19,7 +19,6 @@
 
 #include "connectivity/ConnectivityService.h"
 #include "connectivity/mqtt/MqttClient.h"
-#include "model/Device.h"
 
 #include <atomic>
 #include <memory>

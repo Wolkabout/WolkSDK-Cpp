@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#include "Device.h"
+#include "model/DetailedDevice.h"
 
 #include <string>
 #include <utility>
 
 namespace wolkabout
 {
-Device::Device(std::string name, std::string key, DeviceManifest deviceManifest)
-: Device(std::move(name), std::move(key), "", std::move(deviceManifest))
+DetailedDevice::DetailedDevice(std::string name, std::string key, DeviceManifest deviceManifest)
+: DetailedDevice(std::move(name), std::move(key), "", std::move(deviceManifest))
 {
 }
 
-Device::Device(std::string name, std::string key, std::string password, DeviceManifest deviceManifest)
+DetailedDevice::DetailedDevice(std::string name, std::string key, std::string password, DeviceManifest deviceManifest)
 : m_name(std::move(name))
 , m_key(std::move(key))
 , m_password(std::move(password))
@@ -34,27 +34,27 @@ Device::Device(std::string name, std::string key, std::string password, DeviceMa
 {
 }
 
-const std::string& Device::getName() const
+const std::string& DetailedDevice::getName() const
 {
     return m_name;
 }
 
-const std::string& Device::getKey() const
+const std::string& DetailedDevice::getKey() const
 {
     return m_key;
 }
 
-const std::string& Device::getPassword() const
+const std::string& DetailedDevice::getPassword() const
 {
     return m_password;
 }
 
-const DeviceManifest& Device::getManifest() const
+const DeviceManifest& DetailedDevice::getManifest() const
 {
     return m_deviceManifest;
 }
 
-std::vector<std::string> Device::getActuatorReferences() const
+std::vector<std::string> DetailedDevice::getActuatorReferences() const
 {
     std::vector<std::string> actuatorReferences;
     for (const ActuatorManifest& actuatorManifest : m_deviceManifest.getActuators())
@@ -65,7 +65,7 @@ std::vector<std::string> Device::getActuatorReferences() const
     return actuatorReferences;
 }
 
-std::map<std::string, std::string> Device::getSensorDelimiters() const
+std::map<std::string, std::string> DetailedDevice::getSensorDelimiters() const
 {
     std::map<std::string, std::string> delimiters;
 
@@ -81,7 +81,7 @@ std::map<std::string, std::string> Device::getSensorDelimiters() const
     return delimiters;
 }
 
-std::map<std::string, std::string> Device::getConfigurationDelimiters() const
+std::map<std::string, std::string> DetailedDevice::getConfigurationDelimiters() const
 {
     std::map<std::string, std::string> delimiters;
 
@@ -97,7 +97,7 @@ std::map<std::string, std::string> Device::getConfigurationDelimiters() const
     return delimiters;
 }
 
-bool Device::operator==(Device& rhs) const
+bool DetailedDevice::operator==(DetailedDevice& rhs) const
 {
     if (m_key != rhs.m_key || m_name != rhs.m_name || m_password != rhs.m_password ||
         m_deviceManifest != rhs.m_deviceManifest)
@@ -108,7 +108,7 @@ bool Device::operator==(Device& rhs) const
     return true;
 }
 
-bool Device::operator!=(Device& rhs) const
+bool DetailedDevice::operator!=(DetailedDevice& rhs) const
 {
     return !(*this == rhs);
 }

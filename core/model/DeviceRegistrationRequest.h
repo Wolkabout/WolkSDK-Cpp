@@ -17,7 +17,7 @@
 #ifndef DEVICEREGISTRATIONREQUEST_H
 #define DEVICEREGISTRATIONREQUEST_H
 
-#include "model/Device.h"
+#include "model/DetailedDevice.h"
 #include "model/DeviceManifest.h"
 
 #include <string>
@@ -29,7 +29,7 @@ class DeviceRegistrationRequest
 public:
     DeviceRegistrationRequest() = default;
     DeviceRegistrationRequest(std::string deviceName, std::string deviceKey, DeviceManifest deviceManifest);
-    DeviceRegistrationRequest(Device device);
+    DeviceRegistrationRequest(DetailedDevice device);
 
     virtual ~DeviceRegistrationRequest() = default;
 
@@ -39,7 +39,7 @@ public:
     const DeviceManifest& getManifest() const;
 
 private:
-    Device m_device;
+    DetailedDevice m_device;
 };
 }    // namespace wolkabout
 

@@ -15,7 +15,7 @@
  */
 
 #include "model/DeviceRegistrationRequest.h"
-#include "model/Device.h"
+#include "model/DetailedDevice.h"
 #include "model/DeviceManifest.h"
 
 #include <string>
@@ -29,7 +29,7 @@ DeviceRegistrationRequest::DeviceRegistrationRequest(std::string deviceName, std
 {
 }
 
-DeviceRegistrationRequest::DeviceRegistrationRequest(Device device) : m_device(std::move(device)) {}
+DeviceRegistrationRequest::DeviceRegistrationRequest(DetailedDevice device) : m_device(std::move(device)) {}
 
 const std::string& DeviceRegistrationRequest::getDeviceName() const
 {
