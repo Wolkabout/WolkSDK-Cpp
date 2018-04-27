@@ -58,7 +58,7 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
     sslOptions.set_trust_store(trustStore);
     connectOptions.set_ssl(sslOptions);
 
-    if (!m_lastWillTopic.empty() && !m_lastWillMessage.empty())
+    if (!m_lastWillTopic.empty())
     {
         mqtt::will_options willOptions;
         willOptions.set_payload(m_lastWillMessage);
