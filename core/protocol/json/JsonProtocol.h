@@ -33,11 +33,11 @@ public:
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
-    bool isActuatorSetMessage(const std::string& channel) const override;
-    bool isActuatorGetMessage(const std::string& channel) const override;
+    bool isActuatorSetMessage(const Message& message) const override;
+    bool isActuatorGetMessage(const Message& message) const override;
 
-    bool isConfigurationSetMessage(const std::string& channel) const override;
-    bool isConfigurationGetMessage(const std::string& channel) const override;
+    bool isConfigurationSetMessage(const Message& message) const override;
+    bool isConfigurationGetMessage(const Message& message) const override;
 
     std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const override;
     std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const override;

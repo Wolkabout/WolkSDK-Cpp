@@ -349,24 +349,24 @@ std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetComma
     }
 }
 
-bool JsonProtocol::isActuatorSetMessage(const std::string& channel) const
+bool JsonProtocol::isActuatorSetMessage(const Message& message) const
 {
-    return StringUtils::startsWith(channel, ACTUATION_SET_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), ACTUATION_SET_TOPIC_ROOT);
 }
 
-bool JsonProtocol::isActuatorGetMessage(const std::string& channel) const
+bool JsonProtocol::isActuatorGetMessage(const Message& message) const
 {
-    return StringUtils::startsWith(channel, ACTUATION_GET_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), ACTUATION_GET_TOPIC_ROOT);
 }
 
-bool JsonProtocol::isConfigurationSetMessage(const std::string& channel) const
+bool JsonProtocol::isConfigurationSetMessage(const Message& message) const
 {
-    return StringUtils::startsWith(channel, CONFIGURATION_SET_REQUEST_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), CONFIGURATION_SET_REQUEST_TOPIC_ROOT);
 }
 
-bool JsonProtocol::isConfigurationGetMessage(const std::string& channel) const
+bool JsonProtocol::isConfigurationGetMessage(const Message& message) const
 {
-    return StringUtils::startsWith(channel, CONFIGURATION_GET_REQUEST_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), CONFIGURATION_GET_REQUEST_TOPIC_ROOT);
 }
 
 std::string JsonProtocol::extractReferenceFromChannel(const std::string& topic) const

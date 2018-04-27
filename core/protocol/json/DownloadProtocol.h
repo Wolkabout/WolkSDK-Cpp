@@ -27,7 +27,7 @@ public:
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
-    bool isBinary(const std::string& channel) const override;
+    bool isBinary(const Message& message) const override;
 
     std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const override;
 

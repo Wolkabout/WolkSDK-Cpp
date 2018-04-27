@@ -71,9 +71,9 @@ std::vector<std::string> DownloadProtocol::getInboundChannelsForDevice(const std
     return channels;
 }
 
-bool DownloadProtocol::isBinary(const std::string& channel) const
+bool DownloadProtocol::isBinary(const Message& message) const
 {
-    return StringUtils::startsWith(channel, BINARY_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), BINARY_TOPIC_ROOT);
 }
 
 std::unique_ptr<BinaryData> DownloadProtocol::makeBinaryData(const Message& message) const

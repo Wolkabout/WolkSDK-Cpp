@@ -29,7 +29,7 @@ class Message;
 class FileDownloadProtocol : public Protocol
 {
 public:
-    virtual bool isBinary(const std::string& channel) const = 0;
+    virtual bool isBinary(const Message& message) const = 0;
 
     virtual std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const = 0;
 

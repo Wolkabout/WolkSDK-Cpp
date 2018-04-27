@@ -499,7 +499,7 @@ std::string JsonRegistrationProtocol::extractDeviceKeyFromChannel(const std::str
     return "";
 }
 
-std::shared_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string& deviceKey,
+std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string& deviceKey,
                                                                const DeviceRegistrationRequest& request) const
 {
     LOG(DEBUG) << METHOD_INFO;
@@ -511,7 +511,7 @@ std::shared_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string
 
         channel = DEVICE_REGISTRATION_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
 
-        return std::make_shared<Message>(jsonPayload.dump(), channel);
+        return std::unique_ptr<Message>(new Message(jsonPayload.dump(), channel));
     }
     catch (...)
     {
@@ -519,14 +519,14 @@ std::shared_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string
     }
 }
 
-std::shared_ptr<DeviceRegistrationResponse> JsonRegistrationProtocol::makeRegistrationResponse(
-  std::shared_ptr<Message> message) const
+std::unique_ptr<DeviceRegistrationResponse> JsonRegistrationProtocol::makeRegistrationResponse(
+  const Message& message) const
 {
     LOG(TRACE) << METHOD_INFO;
 
     try
     {
-        const json j = json::parse(message->getContent());
+        const json j = json::parse(message.getContent());
 
         const std::string typeStr = j.at("result").get<std::string>();
 
@@ -564,7 +564,7 @@ std::shared_ptr<DeviceRegistrationResponse> JsonRegistrationProtocol::makeRegist
             throw std::logic_error("");
         }();
 
-        return std::make_shared<DeviceRegistrationResponse>(result);
+        return std::unique_ptr<DeviceRegistrationResponse>(new DeviceRegistrationResponse(result));
     }
     catch (std::exception& e)
     {

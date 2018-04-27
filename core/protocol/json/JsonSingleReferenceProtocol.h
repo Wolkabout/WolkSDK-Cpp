@@ -27,10 +27,10 @@ public:
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
-    bool isActuatorSetMessage(const std::string& channel) const override;
-    bool isActuatorGetMessage(const std::string& channel) const override;
-    bool isConfigurationSetMessage(const std::string& channel) const override;
-    bool isConfigurationGetMessage(const std::string& channel) const override;
+    bool isActuatorSetMessage(const Message& message) const override;
+    bool isActuatorGetMessage(const Message& message) const override;
+    bool isConfigurationSetMessage(const Message& message) const override;
+    bool isConfigurationGetMessage(const Message& message) const override;
 
     std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const override;
     std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const override;
@@ -53,6 +53,9 @@ public:
     std::string extractReferenceFromChannel(const std::string& topic) const override;
 
 private:
+    std::string joinMultiValues(const std::vector<std::string>& values, const std::string& delimiter) const;
+    std::vector<std::string> parseMultiValues(const std::string& values, const std::string& delimiter) const;
+
     static const std::string NAME;
 
     static const std::string CHANNEL_DELIMITER;
@@ -63,10 +66,8 @@ private:
     static const std::string ACTUATION_STATUS_TOPIC_ROOT;
     static const std::string CONFIGURATION_RESPONSE_TOPIC_ROOT;
 
-    static const std::string ACTUATION_SET_TOPIC_ROOT;
-    static const std::string ACTUATION_GET_TOPIC_ROOT;
-    static const std::string CONFIGURATION_SET_REQUEST_TOPIC_ROOT;
-    static const std::string CONFIGURATION_GET_REQUEST_TOPIC_ROOT;
+    static const std::string ACTUATION_COMMAND_TOPIC_ROOT;
+    static const std::string CONFIGURATION_COMMAND_TOPIC_ROOT;
 
     static const std::vector<std::string> INBOUND_CHANNELS;
 };

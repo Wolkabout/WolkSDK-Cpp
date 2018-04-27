@@ -204,9 +204,9 @@ std::unique_ptr<Message> DFUProtocol::makeFromFirmwareVersion(const std::string&
     return std::unique_ptr<Message>(new Message(firmwareVerion, topic));
 }
 
-bool DFUProtocol::isFirmwareUpdateMessage(const std::string& channel) const
+bool DFUProtocol::isFirmwareUpdateMessage(const Message& message) const
 {
-    return StringUtils::startsWith(channel, FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT);
 }
 
 std::unique_ptr<FirmwareUpdateCommand> DFUProtocol::makeFirmwareUpdateCommand(const Message& message) const

@@ -23,11 +23,11 @@ class DataProtocol : public Protocol
 public:
     virtual std::string extractReferenceFromChannel(const std::string& topic) const = 0;
 
-    virtual bool isActuatorSetMessage(const std::string& channel) const = 0;
-    virtual bool isActuatorGetMessage(const std::string& channel) const = 0;
+    virtual bool isActuatorSetMessage(const Message& message) const = 0;
+    virtual bool isActuatorGetMessage(const Message& message) const = 0;
 
-    virtual bool isConfigurationSetMessage(const std::string& channel) const = 0;
-    virtual bool isConfigurationGetMessage(const std::string& channel) const = 0;
+    virtual bool isConfigurationSetMessage(const Message& message) const = 0;
+    virtual bool isConfigurationGetMessage(const Message& message) const = 0;
 
     virtual std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const = 0;
     virtual std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const = 0;

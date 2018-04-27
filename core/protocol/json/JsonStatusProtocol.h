@@ -30,8 +30,8 @@ public:
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
-    bool isStatusRequestMessage(const std::string& topic) const override;
-    bool isPongMessage(const std::string& topic) const override;
+    bool isStatusRequestMessage(const Message& message) const override;
+    bool isPongMessage(const Message& message) const override;
 
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const DeviceStatusResponse& response) const override;

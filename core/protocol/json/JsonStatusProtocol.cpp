@@ -106,16 +106,16 @@ std::vector<std::string> JsonStatusProtocol::getInboundChannelsForDevice(const s
     return channels;
 }
 
-bool JsonStatusProtocol::isStatusRequestMessage(const std::string& topic) const
+bool JsonStatusProtocol::isStatusRequestMessage(const Message& message) const
 {
     LOG(TRACE) << METHOD_INFO;
 
-    return StringUtils::startsWith(topic, DEVICE_STATUS_REQUEST_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), DEVICE_STATUS_REQUEST_TOPIC_ROOT);
 }
 
-bool JsonStatusProtocol::isPongMessage(const std::string& topic) const
+bool JsonStatusProtocol::isPongMessage(const Message& message) const
 {
-    return StringUtils::startsWith(topic, PONG_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), PONG_TOPIC_ROOT);
 }
 
 std::unique_ptr<Message> JsonStatusProtocol::makeMessage(const std::string& deviceKey,

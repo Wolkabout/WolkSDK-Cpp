@@ -35,7 +35,7 @@ public:
     virtual std::unique_ptr<Message> makeFromFirmwareVersion(const std::string& deviceKey,
                                                              const std::string& firmwareVerion) const = 0;
 
-    virtual bool isFirmwareUpdateMessage(const std::string& channel) const = 0;
+    virtual bool isFirmwareUpdateMessage(const Message& message) const = 0;
 
     virtual std::unique_ptr<FirmwareUpdateCommand> makeFirmwareUpdateCommand(const Message& message) const = 0;
 

@@ -30,8 +30,8 @@ class Message;
 class StatusProtocol : public Protocol
 {
 public:
-    virtual bool isStatusRequestMessage(const std::string& topic) const = 0;
-    virtual bool isPongMessage(const std::string& topic) const = 0;
+    virtual bool isStatusRequestMessage(const Message& message) const = 0;
+    virtual bool isPongMessage(const Message& message) const = 0;
 
     virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                                  const DeviceStatusResponse& response) const = 0;

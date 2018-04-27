@@ -31,10 +31,9 @@ public:
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
-    std::shared_ptr<Message> makeMessage(const std::string& deviceKey,
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const DeviceRegistrationRequest& request) const override;
-    std::shared_ptr<DeviceRegistrationResponse> makeRegistrationResponse(
-      std::shared_ptr<Message> message) const override;
+    std::unique_ptr<DeviceRegistrationResponse> makeRegistrationResponse(const Message& message) const override;
 
 private:
     static const std::string NAME;
