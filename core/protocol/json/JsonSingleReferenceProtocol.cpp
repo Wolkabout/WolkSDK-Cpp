@@ -136,7 +136,8 @@ std::vector<std::string> JsonSingleReferenceProtocol::getInboundChannels() const
 
 std::vector<std::string> JsonSingleReferenceProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    return {ACTUATION_COMMAND_TOPIC_ROOT + deviceKey + CHANNEL_WILDCARD, CONFIGURATION_COMMAND_TOPIC_ROOT + deviceKey};
+    return {ACTUATION_COMMAND_TOPIC_ROOT + deviceKey + CHANNEL_DELIMITER + CHANNEL_WILDCARD,
+            CONFIGURATION_COMMAND_TOPIC_ROOT + deviceKey};
 }
 
 std::unique_ptr<Message> JsonSingleReferenceProtocol::makeMessage(
