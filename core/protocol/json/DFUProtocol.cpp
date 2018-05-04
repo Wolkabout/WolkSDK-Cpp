@@ -64,9 +64,9 @@ void to_json(json& j, const FirmwareUpdateResponse& p)
 
     j = json{{"status", status}};
 
-    if (!p.getErrorCode().null())
+    if (p.getErrorCode())
     {
-        auto errorCode = static_cast<FirmwareUpdateResponse::ErrorCode>(p.getErrorCode());
+        auto errorCode = p.getErrorCode().value();
 
         j.emplace("error", static_cast<int>(errorCode));
     }

@@ -39,9 +39,9 @@ public:
         return *this;
     }
 
-    operator T() const { return m_value; }
+    const T& value() const { return m_value; }
 
-    bool null() const { return m_null; }
+    operator bool() const { return !m_null; }
 
 private:
     T m_value;
