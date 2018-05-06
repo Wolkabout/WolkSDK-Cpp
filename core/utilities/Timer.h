@@ -39,7 +39,6 @@ public:
 private:
     std::atomic_bool m_isRunning;
     std::mutex m_lock;
-    mutable std::mutex m_callLock;
     std::condition_variable m_condition;
     std::unique_ptr<std::thread> m_worker;
 };

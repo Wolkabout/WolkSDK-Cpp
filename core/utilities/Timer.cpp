@@ -27,12 +27,7 @@ Timer::~Timer()
 
 void Timer::start(std::chrono::milliseconds interval, std::function<void()> callback)
 {
-    std::lock_guard<decltype(m_callLock)> lg{m_callLock};
-
-    if (m_isRunning)
-    {
-        return;
-    }
+    stop();
 
     m_isRunning = true;
 
@@ -54,12 +49,7 @@ void Timer::start(std::chrono::milliseconds interval, std::function<void()> call
 
 void Timer::run(std::chrono::milliseconds interval, std::function<void()> callback)
 {
-    std::lock_guard<decltype(m_callLock)> lg{m_callLock};
-
-    if (m_isRunning)
-    {
-        return;
-    }
+    stop();
 
     m_isRunning = true;
 
@@ -82,8 +72,6 @@ void Timer::run(std::chrono::milliseconds interval, std::function<void()> callba
 
 void Timer::stop()
 {
-    std::lock_guard<decltype(m_callLock)> lg{m_callLock};
-
     m_isRunning = false;
     m_condition.notify_all();
 
@@ -95,8 +83,6 @@ void Timer::stop()
 
 bool Timer::running() const
 {
-    std::lock_guard<decltype(m_callLock)> lg{m_callLock};
-
     return m_isRunning || (m_worker && m_worker->joinable());
 }
 
