@@ -31,6 +31,8 @@ class MqttConnectivityService : public ConnectivityService
 public:
     MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
                             std::string host);
+    MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
+                            std::string host, std::string clientId);
     virtual ~MqttConnectivityService() = default;
 
     bool connect() override;
@@ -49,6 +51,7 @@ private:
     const std::string m_key;
     const std::string m_password;
     const std::string m_host;
+    const std::string m_clientId;
 
     std::string m_lastWillChannel;
     std::string m_lastWillPayload;

@@ -21,10 +21,17 @@ namespace wolkabout
 {
 MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,
                                                  std::string password, std::string host)
+: MqttConnectivityService(mqttClient, key, password, host, key)
+{
+}
+
+MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,
+                                                 std::string password, std::string host, std::string clientId)
 : m_mqttClient(std::move(mqttClient))
 , m_key(std::move(key))
 , m_password(std::move(password))
 , m_host(std::move(host))
+, m_clientId(std::move(clientId))
 , m_lastWillChannel("")
 , m_lastWillPayload("")
 , m_lastWillRetain(false)
@@ -48,7 +55,7 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
 bool MqttConnectivityService::connect()
 {
     m_mqttClient->setLastWill(m_lastWillChannel, m_lastWillPayload, m_lastWillRetain);
-    bool isConnected = m_mqttClient->connect(m_key, m_password, TRUST_STORE, m_host, m_key);
+    bool isConnected = m_mqttClient->connect(m_key, m_password, TRUST_STORE, m_host, m_clientId);
     if (isConnected)
     {
         if (auto handler = m_listener.lock())
