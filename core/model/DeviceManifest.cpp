@@ -85,6 +85,114 @@ const std::vector<wolkabout::ActuatorManifest>& wolkabout::DeviceManifest::getAc
     return m_actuators;
 }
 
+std::unique_ptr<wolkabout::ConfigurationManifest> wolkabout::DeviceManifest::getConfigurationManifest(
+  std::function<bool(const ConfigurationManifest&)> filter) const
+{
+    for (const ConfigurationManifest& configurationManifest : m_configurations)
+    {
+        if (filter(configurationManifest))
+        {
+            return std::unique_ptr<ConfigurationManifest>(new ConfigurationManifest(configurationManifest));
+        }
+    }
+
+    return nullptr;
+}
+
+std::unique_ptr<wolkabout::SensorManifest> wolkabout::DeviceManifest::getSensorManifest(
+  std::function<bool(const SensorManifest&)> filter) const
+{
+    for (const SensorManifest& sensorManifest : m_sensors)
+    {
+        if (filter(sensorManifest))
+        {
+            return std::unique_ptr<SensorManifest>(new SensorManifest(sensorManifest));
+        }
+    }
+
+    return nullptr;
+}
+
+std::unique_ptr<wolkabout::AlarmManifest> wolkabout::DeviceManifest::getAlarmManifest(
+  std::function<bool(const AlarmManifest&)> filter) const
+{
+    for (const AlarmManifest& alarmManifest : m_alarms)
+    {
+        if (filter(alarmManifest))
+        {
+            return std::unique_ptr<AlarmManifest>(new AlarmManifest(alarmManifest));
+        }
+    }
+
+    return nullptr;
+}
+
+std::unique_ptr<wolkabout::ActuatorManifest> wolkabout::DeviceManifest::getActuatorManifest(
+  std::function<bool(const ActuatorManifest&)> filter) const
+{
+    for (const ActuatorManifest& actuatorManifest : m_actuators)
+    {
+        if (filter(actuatorManifest))
+        {
+            return std::unique_ptr<ActuatorManifest>(new ActuatorManifest(actuatorManifest));
+        }
+    }
+
+    return nullptr;
+}
+
+bool wolkabout::DeviceManifest::hasConfigurationManifestWithReference(const std::string& reference) const
+{
+    for (const ConfigurationManifest& configurationManifest : m_configurations)
+    {
+        if (configurationManifest.getReference() == reference)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool wolkabout::DeviceManifest::hasSensorManifestWithReference(const std::string& reference) const
+{
+    for (const SensorManifest& sensorManifest : m_sensors)
+    {
+        if (sensorManifest.getReference() == reference)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool wolkabout::DeviceManifest::hasAlarmManifestWithReference(const std::string& reference) const
+{
+    for (const AlarmManifest& alarmManifest : m_alarms)
+    {
+        if (alarmManifest.getReference() == reference)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool wolkabout::DeviceManifest::hasActuatorManifestWithReference(const std::string& reference) const
+{
+    for (const ActuatorManifest& actuatorManifest : m_actuators)
+    {
+        if (actuatorManifest.getReference() == reference)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 const std::string& wolkabout::DeviceManifest::getName() const
 {
     return m_name;
