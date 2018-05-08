@@ -34,14 +34,19 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -Weffc++ -pedantic    
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
 
 # ssl
-IF (NOT OPENSSL_INCLUDE_DIR)
+IF (NOT SSL_INCLUDE_DIR)
     message(FATAL_ERROR
-            "OpenSSL include dir must be specified with: -DOPENSSL_INCLUDE_DIR=...")
-ENDIF (NOT OPENSSL_INCLUDE_DIR)
+            "SSL include dir must be specified with: -DSSL_INCLUDE_DIR=...")
+ENDIF (NOT SSL_INCLUDE_DIR)
 
-IF (NOT IS_ABSOLUTE ${OPENSSL_INCLUDE_DIR})
-    set(OPENSSL_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/${OPENSSL_INCLUDE_DIR}")
-ENDIF (NOT IS_ABSOLUTE ${OPENSSL_INCLUDE_DIR})
+IF (NOT IS_ABSOLUTE ${SSL_INCLUDE_DIR})
+    set(SSL_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/${SSL_INCLUDE_DIR}")
+ENDIF (NOT IS_ABSOLUTE ${SSL_INCLUDE_DIR})
+
+IF (NOT SSL_LIBS)
+    message(FATAL_ERROR
+            "SSL link path must be specified with: -DSSL_LIBS=...")
+ENDIF (NOT SSL_LIBS)
 
 add_definitions(-DOPENSSL)
 add_subdirectory(mqtt lib)
@@ -51,13 +56,13 @@ link_directories(${CMAKE_BINARY_DIR}/lib)
 # WolkAbout c++ SDK
 include_directories("mqtt")
 include_directories("core")
-include_directories(SYSTEM "${OPENSSL_INCLUDE_DIR}")
+include_directories(SYSTEM "${SSL_INCLUDE_DIR}")
 
 file(GLOB_RECURSE HEADER_FILES "core/*.h" "core/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "core/*.cpp")
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} ssl paho-mqtt pthread)
+target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqtt pthread)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,./")
 
 add_subdirectory(cmake)
