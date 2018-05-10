@@ -25,8 +25,8 @@
 namespace wolkabout
 {
 ActuatorManifest::ActuatorManifest(std::string name, std::string reference, std::string description, std::string unit,
-                                   std::string readingType, ActuatorManifest::DataType dataType, unsigned int precision,
-                                   double minimum, double maximum)
+                                   std::string readingType, DataType dataType, unsigned int precision, double minimum,
+                                   double maximum)
 : m_name(std::move(name))
 , m_reference(std::move(reference))
 , m_description(std::move(description))
@@ -42,9 +42,8 @@ ActuatorManifest::ActuatorManifest(std::string name, std::string reference, std:
 }
 
 ActuatorManifest::ActuatorManifest(std::string name, std::string reference, std::string description, std::string unit,
-                                   std::string readingType, ActuatorManifest::DataType dataType, unsigned int precision,
-                                   double minimum, double maximum, std::string delimiter,
-                                   std::vector<std::string> labels)
+                                   std::string readingType, DataType dataType, unsigned int precision, double minimum,
+                                   double maximum, std::string delimiter, std::vector<std::string> labels)
 : m_name(std::move(name))
 , m_reference(std::move(reference))
 , m_description(std::move(description))
@@ -114,12 +113,12 @@ ActuatorManifest& ActuatorManifest::setReadingType(const std::string& readingTyp
     return *this;
 }
 
-ActuatorManifest::DataType ActuatorManifest::getDataType() const
+DataType ActuatorManifest::getDataType() const
 {
     return m_dataType;
 }
 
-ActuatorManifest& ActuatorManifest::setDataType(ActuatorManifest::DataType dataType)
+ActuatorManifest& ActuatorManifest::setDataType(DataType dataType)
 {
     m_dataType = dataType;
     return *this;

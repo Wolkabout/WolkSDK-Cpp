@@ -15,6 +15,7 @@
  */
 
 #include "protocol/json/JsonRegistrationProtocol.h"
+#include "model/DataType.h"
 #include "model/DeviceRegistrationRequest.h"
 #include "model/DeviceRegistrationResponse.h"
 #include "model/DeviceReregistrationResponse.h"
@@ -60,30 +61,19 @@ const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_ERROR_NO_GATEW
 void to_json(json& j, const ConfigurationManifest& configurationManifest)
 {
     auto dataType = [&]() -> std::string {
-        switch (configurationManifest.getDataType())
-        {
-        case ConfigurationManifest::DataType::BOOLEAN:
-            return "BOOLEAN";
+        auto dataTypeStr = toString(configurationManifest.getDataType());
 
-        case ConfigurationManifest::DataType::NUMERIC:
-            return "NUMERIC";
-
-        case ConfigurationManifest::DataType::STRING:
-            return "STRING";
-
-        default:
-            throw std::invalid_argument("Invalid data type");
-        }
+        return dataTypeStr.empty() ? throw std::invalid_argument("Invalid data type") : dataTypeStr;
     }();
 
     // clang-format off
     j = {
-        {"defaultValue", configurationManifest.getDefaultValue()},
+//        {"defaultValue", configurationManifest.getDefaultValue()},
         {"dataType", dataType},
         {"description", configurationManifest.getDescription()},
-        {"nullValue", configurationManifest.getNullValue()},
+//        {"nullValue", configurationManifest.getNullValue()},
         {"reference", configurationManifest.getReference()},
-        {"unit", configurationManifest.getUnit()},
+//        {"unit", configurationManifest.getUnit()},
         {"size", configurationManifest.getSize()},
         {"delimiter", configurationManifest.getDelimiter()},
         {"name", configurationManifest.getName()},
@@ -96,19 +86,19 @@ void to_json(json& j, const ConfigurationManifest& configurationManifest)
 
 void from_json(const json& j, ConfigurationManifest& configurationManifest)
 {
-    auto dataType = [&]() -> ConfigurationManifest::DataType {
+    auto dataType = [&]() -> DataType {
         std::string dataTypeStr = j.at("dataType").get<std::string>();
         if (dataTypeStr == "STRING")
         {
-            return ConfigurationManifest::DataType::STRING;
+            return DataType::STRING;
         }
         else if (dataTypeStr == "NUMERIC")
         {
-            return ConfigurationManifest::DataType::NUMERIC;
+            return DataType::NUMERIC;
         }
         else if (dataTypeStr == "BOOLEAN")
         {
-            return ConfigurationManifest::DataType::BOOLEAN;
+            return DataType::BOOLEAN;
         }
         else
         {
@@ -121,16 +111,16 @@ void from_json(const json& j, ConfigurationManifest& configurationManifest)
             ConfigurationManifest(
                 j.at("name").get<std::string>(),
                 j.at("reference").get<std::string>(),
-                j.at("description").get<std::string>(),
-                j.at("unit").get<std::string>(),
                 dataType,
+//                j.at("unit").get<std::string>(),
                 j.at("minimum").get<double>(),
                 j.at("maximum").get<double>(),
-                j.at("defaultValue").get<std::string>(),
-                j.at("size").get<unsigned int>(),
-                j.at("delimiter").get<std::string>(),
-                j.at("labels").get<std::vector<std::string>>(),
-                j.at("nullValue").get<std::string>()
+                j.at("description").get<std::string>(),
+//                j.at("defaultValue").get<std::string>(),
+//                j.at("size").get<unsigned int>(),
+//                j.at("delimiter").get<std::string>(),
+                j.at("labels").get<std::vector<std::string>>()
+//                j.at("nullValue").get<std::string>()
             );
     // clang-format on
 }
@@ -204,20 +194,9 @@ void from_json(const json& j, AlarmManifest& alarmManifest)
 void to_json(json& j, const ActuatorManifest& actuatorManfiest)
 {
     auto dataType = [&]() -> std::string {
-        switch (actuatorManfiest.getDataType())
-        {
-        case ActuatorManifest::DataType::BOOLEAN:
-            return "BOOLEAN";
+        auto dataTypeStr = toString(actuatorManfiest.getDataType());
 
-        case ActuatorManifest::DataType::NUMERIC:
-            return "NUMERIC";
-
-        case ActuatorManifest::DataType::STRING:
-            return "STRING";
-
-        default:
-            throw std::invalid_argument("Invalid data type");
-        }
+        return dataTypeStr.empty() ? throw std::invalid_argument("Invalid data type") : dataTypeStr;
     }();
 
     auto labels = [&]() -> std::string {
@@ -257,19 +236,19 @@ void to_json(json& j, const ActuatorManifest& actuatorManfiest)
 
 void from_json(const json& j, ActuatorManifest& actuatorManifest)
 {
-    auto dataType = [&]() -> ActuatorManifest::DataType {
+    auto dataType = [&]() -> DataType {
         std::string dataTypeStr = j.at("dataType").get<std::string>();
         if (dataTypeStr == "STRING")
         {
-            return ActuatorManifest::DataType::STRING;
+            return DataType::STRING;
         }
         else if (dataTypeStr == "NUMERIC")
         {
-            return ActuatorManifest::DataType::NUMERIC;
+            return DataType::NUMERIC;
         }
         else if (dataTypeStr == "BOOLEAN")
         {
-            return ActuatorManifest::DataType::BOOLEAN;
+            return DataType::BOOLEAN;
         }
         else
         {
@@ -298,20 +277,9 @@ void from_json(const json& j, ActuatorManifest& actuatorManifest)
 void to_json(json& j, const SensorManifest& sensorManifest)
 {
     auto dataType = [&]() -> std::string {
-        switch (sensorManifest.getDataType())
-        {
-        case SensorManifest::DataType::BOOLEAN:
-            return "BOOLEAN";
+        auto dataTypeStr = toString(sensorManifest.getDataType());
 
-        case SensorManifest::DataType::NUMERIC:
-            return "NUMERIC";
-
-        case SensorManifest::DataType::STRING:
-            return "STRING";
-
-        default:
-            throw std::invalid_argument("Invalid data type");
-        }
+        return dataTypeStr.empty() ? throw std::invalid_argument("Invalid data type") : dataTypeStr;
     }();
 
     auto labels = [&]() -> std::string {
@@ -333,16 +301,16 @@ void to_json(json& j, const SensorManifest& sensorManifest)
 
     // clang-format off
     j = {
-        {"dataType", dataType},
-        {"precision", sensorManifest.getPrecision()},
-        {"description", sensorManifest.getDescription()},
-        {"readingType", sensorManifest.getReadingType()},
-        {"labels", labels},
-        {"reference", sensorManifest.getReference()},
-        {"unit", sensorManifest.getUnit()},
-        {"size", sensorManifest.getLabels().size() == 0 ? 1 : sensorManifest.getLabels().size()},
-        {"delimiter", sensorManifest.getDelimiter()},
         {"name", sensorManifest.getName()},
+        {"reference", sensorManifest.getReference()},
+//        {"dataType", dataType},
+//        {"precision", sensorManifest.getPrecision()},
+//        {"description", sensorManifest.getDescription()},
+        {"readingType", {"name", sensorManifest.getReadingTypeName()}},
+//        {"labels", labels},
+        {"unit", {"symbol", sensorManifest.getUnitSymbol()}},
+//        {"size", sensorManifest.getLabels().size() == 0 ? 1 : sensorManifest.getLabels().size()},
+//        {"delimiter", sensorManifest.getDelimiter()},
         {"minimum", sensorManifest.getMinimum()},
         {"maximum", sensorManifest.getMaximum()}
     };
@@ -351,19 +319,19 @@ void to_json(json& j, const SensorManifest& sensorManifest)
 
 void from_json(const json& j, SensorManifest& sensorManifest)
 {
-    auto dataType = [&]() -> SensorManifest::DataType {
+    auto dataType = [&]() -> DataType {
         std::string dataTypeStr = j.at("dataType").get<std::string>();
         if (dataTypeStr == "STRING")
         {
-            return SensorManifest::DataType::STRING;
+            return DataType::STRING;
         }
         else if (dataTypeStr == "NUMERIC")
         {
-            return SensorManifest::DataType::NUMERIC;
+            return DataType::NUMERIC;
         }
         else if (dataTypeStr == "BOOLEAN")
         {
-            return SensorManifest::DataType::BOOLEAN;
+            return DataType::BOOLEAN;
         }
         else
         {
@@ -371,20 +339,23 @@ void from_json(const json& j, SensorManifest& sensorManifest)
         }
     }();
 
-    sensorManifest = SensorManifest(
-      j.at("name").get<std::string>(), j.at("reference").get<std::string>(), j.at("description").get<std::string>(),
-      j.at("unit").get<std::string>(), j.at("readingType").get<std::string>(), dataType,
-      j.at("precision").get<unsigned int>(), j.at("minimum").get<double>(), j.at("maximum").get<double>());
+    sensorManifest = SensorManifest(j.at("name").get<std::string>(), j.at("reference").get<std::string>(),
+                                    //                j.at("description").get<std::string>(),
+                                    j["readingType"].at("name").get<std::string>(),
+                                    j["unit"].at("symbol").get<std::string>(), dataType,
+                                    // j.at("precision").get<unsigned int>(),
+                                    j["readingType"].at("labels").get<std::vector<std::string>>(),
+                                    j.at("minimum").get<double>(), j.at("maximum").get<double>());
 
-    std::string delimiter = j.at("delimiter").get<std::string>();
-    std::string labelsStr = j.at("labels").get<std::string>();
-    std::vector<std::string> labels = StringUtils::tokenize(labelsStr, delimiter);
+    //    std::string delimiter = j.at("delimiter").get<std::string>();
+    //    std::string labelsStr = j.at("labels").get<std::string>();
+    //    std::vector<std::string> labels = StringUtils::tokenize(labelsStr, delimiter);
 
-    if (labels.size() > 0)
-    {
-        sensorManifest.setLabels(labels);
-        sensorManifest.setDelimiter(delimiter);
-    }
+    //    if (labels.size() > 0)
+    //    {
+    //        sensorManifest.setLabels(labels);
+    //        sensorManifest.setDelimiter(delimiter);
+    //    }
 }
 /*** SENSOR MANIFEST ***/
 

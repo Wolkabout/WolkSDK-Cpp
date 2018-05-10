@@ -17,7 +17,9 @@
 #ifndef SENSORMANIFEST_H
 #define SENSORMANIFEST_H
 
-#include <initializer_list>
+#include "model/DataType.h"
+#include "model/ReadingType.h"
+
 #include <string>
 #include <vector>
 
@@ -26,58 +28,36 @@ namespace wolkabout
 class SensorManifest
 {
 public:
-    enum class DataType
-    {
-        STRING,
-        NUMERIC,
-        BOOLEAN
-    };
-
     SensorManifest() = default;
 
-    SensorManifest(std::string name, std::string reference, std::string description, std::string unit,
-                   std::string readingType, SensorManifest::DataType dataType, unsigned int precision, double minimum,
-                   double maximum);
+    SensorManifest(std::string name, std::string reference, ReadingType readingType, double minimum = 0,
+                   double maximum = 0);
 
-    SensorManifest(std::string name, std::string reference, std::string description, std::string unit,
-                   std::string readingType, SensorManifest::DataType dataType, unsigned int precision, double minimum,
-                   double maximum, std::string delimiter, std::vector<std::string> labels);
+    SensorManifest(std::string name, std::string reference, ReadingType::Name readingTypeName,
+                   ReadingType::MeasurmentUnit unit, double minimum = 0, double maximum = 0);
 
-    virtual ~SensorManifest() = default;
+    SensorManifest(std::string name, std::string reference, std::string readingTypeName, std::string unit,
+                   DataType dataType, std::vector<std::string> labels, double minimum = 0, double maximum = 0);
 
     const std::string& getName() const;
-    SensorManifest& setName(const std::string& name);
 
     const std::string& getReference() const;
-    SensorManifest& setReference(const std::string& reference);
 
-    const std::string& getDescription() const;
-    SensorManifest& setDescription(const std::string description);
+    const std::string& getReadingTypeName() const;
 
-    const std::string& getUnit() const;
-    SensorManifest& setUnit(const std::string& unit);
+    const std::string& getUnitSymbol() const;
 
-    const std::string& getReadingType() const;
-    SensorManifest& setReadingType(const std::string& readingType);
-
-    SensorManifest::DataType getDataType() const;
-    SensorManifest& setDataType(SensorManifest::DataType dataType);
-
-    unsigned int getPrecision() const;
-    SensorManifest& setPrecision(unsigned int precision);
+    DataType getDataType() const;
 
     double getMinimum() const;
-    SensorManifest& setMinimum(double minimum);
 
     double getMaximum() const;
-    SensorManifest& setMaximum(double maximum);
 
     const std::string& getDelimiter() const;
-    SensorManifest& setDelimiter(const std::string& delimited);
 
     const std::vector<std::string>& getLabels() const;
-    SensorManifest& setLabels(std::initializer_list<std::string> labels);
-    SensorManifest& setLabels(const std::vector<std::string>& labels);
+
+    size_t getSize() const;
 
     bool operator==(SensorManifest& rhs) const;
     bool operator!=(SensorManifest& rhs) const;
@@ -85,17 +65,9 @@ public:
 private:
     std::string m_name;
     std::string m_reference;
-    std::string m_description;
-    std::string m_unit;
-    std::string m_readingType;
-    DataType m_dataType;
-    unsigned int m_precision;
-
+    ReadingType m_readingType;
     double m_minimum;
     double m_maximum;
-
-    std::string m_delimiter;
-    std::vector<std::string> m_labels;
 };
 }    // namespace wolkabout
 

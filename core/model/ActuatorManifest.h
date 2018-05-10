@@ -17,6 +17,8 @@
 #ifndef ACTUATORMANIFEST_H
 #define ACTUATORMANIFEST_H
 
+#include "model/DataType.h"
+
 #include <initializer_list>
 #include <string>
 #include <vector>
@@ -26,22 +28,15 @@ namespace wolkabout
 class ActuatorManifest
 {
 public:
-    enum class DataType
-    {
-        STRING,
-        NUMERIC,
-        BOOLEAN
-    };
-
     ActuatorManifest() = default;
 
     ActuatorManifest(std::string name, std::string reference, std::string description, std::string unit,
-                     std::string readingType, ActuatorManifest::DataType dataType, unsigned int precision,
-                     double minimum, double maximum);
+                     std::string readingType, DataType dataType, unsigned int precision, double minimum,
+                     double maximum);
 
     ActuatorManifest(std::string name, std::string reference, std::string description, std::string unit,
-                     std::string readingType, ActuatorManifest::DataType dataType, unsigned int precision,
-                     double minimum, double maximum, std::string delimiter, std::vector<std::string> labels);
+                     std::string readingType, DataType dataType, unsigned int precision, double minimum, double maximum,
+                     std::string delimiter, std::vector<std::string> labels);
 
     virtual ~ActuatorManifest() = default;
 
@@ -60,8 +55,8 @@ public:
     const std::string& getReadingType() const;    // TODO: @N. Antic
     ActuatorManifest& setReadingType(const std::string& readingType);
 
-    ActuatorManifest::DataType getDataType() const;
-    ActuatorManifest& setDataType(ActuatorManifest::DataType dataType);
+    DataType getDataType() const;
+    ActuatorManifest& setDataType(DataType dataType);
 
     unsigned int getPrecision() const;    // TODO: @N. Antic
     ActuatorManifest& setPrecision(unsigned int precision);

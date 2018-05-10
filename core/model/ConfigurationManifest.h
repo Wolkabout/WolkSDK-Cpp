@@ -17,6 +17,8 @@
 #ifndef CONFIGMANIFEST_H
 #define CONFIGMANIFEST_H
 
+#include "model/DataType.h"
+
 #include <string>
 #include <vector>
 
@@ -25,60 +27,30 @@ namespace wolkabout
 class ConfigurationManifest
 {
 public:
-    enum class DataType
-    {
-        STRING,
-        NUMERIC,
-        BOOLEAN
-    };
-
     ConfigurationManifest() = default;
-    ConfigurationManifest(std::string name, std::string reference, std::string description, std::string unit,
-                          ConfigurationManifest::DataType dataType, double minimum, double maximum,
-                          std::string defaultValue, std::string nullValue = "");
+    ConfigurationManifest(std::string name, std::string reference, DataType dataType, std::string description = "",
+                          std::vector<std::string> labels = {});
 
-    ConfigurationManifest(std::string name, std::string reference, std::string description, std::string unit,
-                          ConfigurationManifest::DataType dataType, double minimum, double maximum,
-                          std::string defaultValue, unsigned int size, std::string delimiter,
-                          std::vector<std::string> labels, std::string nullValue = "");
-
-    virtual ~ConfigurationManifest() = default;
+    ConfigurationManifest(std::string name, std::string reference, DataType dataType, double minimum, double maximum,
+                          std::string description = "", std::vector<std::string> labels = {});
 
     const std::string& getName() const;
-    ConfigurationManifest& setName(const std::string& name);
 
     const std::string& getReference() const;
-    ConfigurationManifest& setReference(const std::string& reference);
 
-    const std::string& getDescription() const;
-    ConfigurationManifest& setDescription(const std::string& description);
-
-    const std::string& getUnit() const;
-    ConfigurationManifest& setUnit(const std::string& unit);
-
-    ConfigurationManifest::DataType getDataType() const;
-    ConfigurationManifest& setDataType(ConfigurationManifest::DataType dataType);
+    DataType getDataType() const;
 
     double getMinimum() const;
-    ConfigurationManifest& setMinimum(double minimum);
 
     double getMaximum() const;
-    ConfigurationManifest& setMaximum(double maximum);
 
-    unsigned int getSize() const;
-    ConfigurationManifest& setSize(unsigned int size);
-
-    const std::string& getDefaultValue() const;
-    ConfigurationManifest& setDefaultValue(const std::string& defaultValue);
-
-    const std::string& getNullValue() const;
-    ConfigurationManifest& setNullValue(const std::string& nullValue);
-
-    const std::string& getDelimiter() const;
-    ConfigurationManifest& setDelimiter(const std::string& delimited);
+    const std::string& getDescription() const;
 
     const std::vector<std::string>& getLabels() const;
-    ConfigurationManifest& setLabels(const std::vector<std::string>& labels);
+
+    size_t getSize() const;
+
+    const std::string& getDelimiter() const;
 
     bool operator==(ConfigurationManifest& rhs) const;
     bool operator!=(ConfigurationManifest& rhs) const;
@@ -86,21 +58,19 @@ public:
 private:
     std::string m_name;
     std::string m_reference;
-    std::string m_description;
-    std::string m_unit;
-    ConfigurationManifest::DataType m_dataType;
+    DataType m_dataType;
 
     double m_minimum;
     double m_maximum;
 
-    std::string m_defaultValue;
+    std::string m_description;
 
-    unsigned int m_size;
+    std::vector<std::string> m_labels;
+    size_t m_size;
 
     std::string m_delimiter;
-    std::vector<std::string> m_labels;
 
-    std::string m_nullValue;
+    static const std::string DEFAULT_DELIMITER;
 };
 }    // namespace wolkabout
 
