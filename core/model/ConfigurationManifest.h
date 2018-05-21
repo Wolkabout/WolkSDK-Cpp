@@ -28,11 +28,12 @@ class ConfigurationManifest
 {
 public:
     ConfigurationManifest() = default;
-    ConfigurationManifest(std::string name, std::string reference, DataType dataType, std::string description = "",
-                          std::vector<std::string> labels = {});
+    ConfigurationManifest(std::string name, std::string reference, DataType dataType, std::string description,
+                          std::string defaultValue, double minimum = 0, double maximum = 0);
 
-    ConfigurationManifest(std::string name, std::string reference, DataType dataType, double minimum, double maximum,
-                          std::string description = "", std::vector<std::string> labels = {});
+    ConfigurationManifest(std::string name, std::string reference, DataType dataType, std::string description,
+                          std::string defaultValue, std::vector<std::string> labels, double minimum = 0,
+                          double maximum = 0);
 
     const std::string& getName() const;
 
@@ -40,11 +41,13 @@ public:
 
     DataType getDataType() const;
 
+    const std::string& getDescription() const;
+
+    const std::string& getDefaultValue() const;
+
     double getMinimum() const;
 
     double getMaximum() const;
-
-    const std::string& getDescription() const;
 
     const std::vector<std::string>& getLabels() const;
 
@@ -59,11 +62,11 @@ private:
     std::string m_name;
     std::string m_reference;
     DataType m_dataType;
+    std::string m_description;
+    std::string m_defaultValue;
 
     double m_minimum;
     double m_maximum;
-
-    std::string m_description;
 
     std::vector<std::string> m_labels;
     size_t m_size;

@@ -35,9 +35,9 @@ ReadingType::ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit uni
     m_size = m_labels.size() == 0 ? 1 : m_labels.size();
 }
 
-ReadingType::ReadingType(std::string name, std::string unit, DataType dataType, std::vector<std::string> labels)
+ReadingType::ReadingType(std::string name, std::string unitSymbol, DataType dataType, std::vector<std::string> labels)
 : m_name{std::move(name)}
-, m_unit{std::move(unit)}
+, m_unitSymbol{std::move(unitSymbol)}
 , m_dataType{std::move(dataType)}
 , m_labels{std::move(labels)}
 , m_size{m_labels.size() == 0 ? 1 : m_labels.size()}
@@ -82,7 +82,8 @@ const std::string& ReadingType::getDelimiter() const
 
 bool ReadingType::operator==(ReadingType& rhs) const
 {
-    if (m_name != rhs.m_name || m_unit != rhs.m_unit || m_dataType != rhs.m_dataType)
+    if (m_name != rhs.m_name || m_unit != rhs.m_unit || m_unitSymbol != rhs.m_unitSymbol ||
+        m_dataType != rhs.m_dataType)
     {
         return false;
     }

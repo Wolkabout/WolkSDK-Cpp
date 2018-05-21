@@ -26,27 +26,26 @@ namespace wolkabout
 const std::string ConfigurationManifest::DEFAULT_DELIMITER = ",";
 
 ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, DataType dataType,
-                                             std::string description, std::vector<std::string> labels)
-: ConfigurationManifest(name, reference, dataType, 0, 0, description, labels)
+                                             std::string description, std::string defaultValue, double minimum,
+                                             double maximum)
+: ConfigurationManifest(name, reference, dataType, description, defaultValue, {}, minimum, maximum)
 {
 }
 
-ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, DataType dataType, double minimum,
-                                             double maximum, std::string description, std::vector<std::string> labels)
+ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, DataType dataType,
+                                             std::string description, std::string defaultValue,
+                                             std::vector<std::string> labels, double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
 , m_dataType{dataType}
+, m_description{std::move(description)}
+, m_defaultValue{std::move(defaultValue)}
 , m_minimum{minimum}
 , m_maximum{maximum}
-, m_description{std::move(description)}
 , m_labels{std::move(labels)}
 , m_size{m_labels.size() == 0 ? 1 : m_labels.size()}
 , m_delimiter{DEFAULT_DELIMITER}
 {
-    if (labels.size() == 0)
-    {
-        m_size = 1;
-    }
 }
 
 const std::string& ConfigurationManifest::getName() const
@@ -77,6 +76,11 @@ double ConfigurationManifest::getMaximum() const
 const std::string& ConfigurationManifest::getDescription() const
 {
     return m_description;
+}
+
+const std::string& ConfigurationManifest::getDefaultValue() const
+{
+    return m_defaultValue;
 }
 
 size_t ConfigurationManifest::getSize() const

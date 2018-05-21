@@ -30,14 +30,15 @@ class SensorManifest
 public:
     SensorManifest() = default;
 
-    SensorManifest(std::string name, std::string reference, ReadingType readingType, double minimum = 0,
-                   double maximum = 0);
+    SensorManifest(std::string name, std::string reference, ReadingType readingType, std::string description,
+                   double minimum = 0, double maximum = 0);
 
     SensorManifest(std::string name, std::string reference, ReadingType::Name readingTypeName,
-                   ReadingType::MeasurmentUnit unit, double minimum = 0, double maximum = 0);
+                   ReadingType::MeasurmentUnit unit, std::string description, double minimum = 0, double maximum = 0);
 
-    SensorManifest(std::string name, std::string reference, std::string readingTypeName, std::string unit,
-                   DataType dataType, std::vector<std::string> labels, double minimum = 0, double maximum = 0);
+    SensorManifest(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
+                   DataType dataType, std::string description, std::vector<std::string> labels, double minimum = 0,
+                   double maximum = 0);
 
     const std::string& getName() const;
 
@@ -48,6 +49,8 @@ public:
     const std::string& getUnitSymbol() const;
 
     DataType getDataType() const;
+
+    const std::string& getDescription() const;
 
     double getMinimum() const;
 
@@ -66,6 +69,8 @@ private:
     std::string m_name;
     std::string m_reference;
     ReadingType m_readingType;
+    std::string m_description;
+
     double m_minimum;
     double m_maximum;
 };
