@@ -44,7 +44,8 @@ public:
     ActuationReadingType() = default;
     ActuationReadingType(DataType dataType);
     ActuationReadingType(ActuationReadingType::Name name, ActuationReadingType::MeasurmentUnit unit);
-    ActuationReadingType(std::string name, std::string unitSymbol, DataType dataType, std::vector<std::string> labels);
+    ActuationReadingType(std::string name, std::string unitSymbol, DataType dataType, int precision,
+                         std::vector<std::string> labels);
 
     const std::string& getName() const;
 
@@ -53,6 +54,8 @@ public:
     const std::string& getMeasurmentUnitSymbol() const;
 
     DataType getDataType() const;
+
+    int getPrecision() const;
 
     const std::vector<std::string>& getLabels() const;
 
@@ -69,6 +72,7 @@ private:
     std::string m_unitSymbol;
 
     DataType m_dataType;
+    int m_precision;
     std::vector<std::string> m_labels;
     size_t m_size;
 

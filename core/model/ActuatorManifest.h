@@ -45,7 +45,7 @@ public:
 
     DataType getDataType() const;
 
-    unsigned int getPrecision() const;
+    int getPrecision() const;
 
     double getMinimum() const;
 

@@ -46,11 +46,11 @@ SensorManifest::SensorManifest(std::string name, std::string reference, ReadingT
 }
 
 SensorManifest::SensorManifest(std::string name, std::string reference, std::string readingTypeName,
-                               std::string unitSymbol, DataType dataType, std::string description,
+                               std::string unitSymbol, DataType dataType, int precision, std::string description,
                                std::vector<std::string> labels, double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
-, m_readingType{ReadingType(readingTypeName, unitSymbol, dataType, labels)}
+, m_readingType{ReadingType(readingTypeName, unitSymbol, dataType, precision, labels)}
 , m_description{std::move(description)}
 , m_minimum(minimum)
 , m_maximum(maximum)
@@ -72,6 +72,11 @@ const std::string& SensorManifest::getUnitSymbol() const
     return m_readingType.getMeasurmentUnitSymbol();
 }
 
+const std::string& SensorManifest::getDescription() const
+{
+    return m_description;
+}
+
 const std::string& SensorManifest::getReadingTypeName() const
 {
     return m_readingType.getName();
@@ -80,6 +85,11 @@ const std::string& SensorManifest::getReadingTypeName() const
 DataType SensorManifest::getDataType() const
 {
     return m_readingType.getDataType();
+}
+
+int SensorManifest::getPrecision() const
+{
+    return m_readingType.getPrecision();
 }
 
 double SensorManifest::getMinimum() const

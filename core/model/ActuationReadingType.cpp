@@ -22,7 +22,8 @@ namespace wolkabout
 {
 const std::string ActuationReadingType::DEFAULT_DELIMITER = ",";
 
-ActuationReadingType::ActuationReadingType(DataType dataType) : m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
+ActuationReadingType::ActuationReadingType(DataType dataType)
+: m_precision{1}, m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
 {
     switch (dataType)
     {
@@ -61,7 +62,7 @@ ActuationReadingType::ActuationReadingType(DataType dataType) : m_labels{}, m_si
 }
 
 ActuationReadingType::ActuationReadingType(ActuationReadingType::Name name, ActuationReadingType::MeasurmentUnit unit)
-: m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
+: m_precision{1}, m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
 {
     validate(name, unit);
 
@@ -72,11 +73,12 @@ ActuationReadingType::ActuationReadingType(ActuationReadingType::Name name, Actu
     m_unitSymbol = symbolForUnit(unit);
 }
 
-ActuationReadingType::ActuationReadingType(std::string name, std::string unitSymbol, DataType dataType,
+ActuationReadingType::ActuationReadingType(std::string name, std::string unitSymbol, DataType dataType, int precision,
                                            std::vector<std::string> labels)
 : m_name{std::move(name)}
 , m_unitSymbol{std::move(unitSymbol)}
 , m_dataType{std::move(dataType)}
+, m_precision{precision}
 , m_labels{std::move(labels)}
 , m_size{m_labels.size() == 0 ? 1 : m_labels.size()}
 , m_delimiter{DEFAULT_DELIMITER}
@@ -101,6 +103,11 @@ const std::string& ActuationReadingType::getMeasurmentUnitSymbol() const
 DataType ActuationReadingType::getDataType() const
 {
     return m_dataType;
+}
+
+int ActuationReadingType::getPrecision() const
+{
+    return m_precision;
 }
 
 const std::vector<std::string>& ActuationReadingType::getLabels() const

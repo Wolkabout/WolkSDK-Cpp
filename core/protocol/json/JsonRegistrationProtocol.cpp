@@ -427,22 +427,20 @@ void from_json(const json& j, SensorManifest& sensorManifest)
 
     if (j.at("minimum").is_null() || j.at("maximum").is_null())
     {
-        sensorManifest =
-          SensorManifest(j.at("name").get<std::string>(), j.at("reference").get<std::string>(),
-                         j["readingType"].at("name").get<std::string>(), j["unit"].at("symbol").get<std::string>(),
-                         dataType, j.at("description").get<std::string>(),
-                         // j.at("precision").get<unsigned int>(),
-                         j["readingType"].at("labels").get<std::vector<std::string>>());
+        sensorManifest = SensorManifest(
+          j.at("name").get<std::string>(), j.at("reference").get<std::string>(),
+          j["readingType"].at("name").get<std::string>(), j["unit"].at("symbol").get<std::string>(), dataType,
+          j["readingType"].at("precision").get<unsigned int>(), j.at("description").get<std::string>(),
+          j["readingType"].at("labels").get<std::vector<std::string>>());
     }
     else
     {
-        sensorManifest =
-          SensorManifest(j.at("name").get<std::string>(), j.at("reference").get<std::string>(),
-                         j["readingType"].at("name").get<std::string>(), j["unit"].at("symbol").get<std::string>(),
-                         dataType, j.at("description").get<std::string>(),
-                         // j.at("precision").get<unsigned int>(),
-                         j["readingType"].at("labels").get<std::vector<std::string>>(), j.at("minimum").get<double>(),
-                         j.at("maximum").get<double>());
+        sensorManifest = SensorManifest(
+          j.at("name").get<std::string>(), j.at("reference").get<std::string>(),
+          j["readingType"].at("name").get<std::string>(), j["unit"].at("symbol").get<std::string>(), dataType,
+          j["readingType"].at("precision").get<unsigned int>(), j.at("description").get<std::string>(),
+          j["readingType"].at("labels").get<std::vector<std::string>>(), j.at("minimum").get<double>(),
+          j.at("maximum").get<double>());
     }
 }
 /*** SENSOR MANIFEST ***/

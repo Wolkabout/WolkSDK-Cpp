@@ -65,6 +65,11 @@ DataType ActuatorManifest::getDataType() const
     return m_readingType.getDataType();
 }
 
+int ActuatorManifest::getPrecision() const
+{
+    return m_readingType.getPrecision();
+}
+
 double ActuatorManifest::getMinimum() const
 {
     return m_minimum;

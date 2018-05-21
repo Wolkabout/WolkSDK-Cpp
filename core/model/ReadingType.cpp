@@ -21,7 +21,8 @@ namespace wolkabout
 {
 const std::string ReadingType::DEFAULT_DELIMITER = ",";
 
-ReadingType::ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit unit) : m_delimiter{DEFAULT_DELIMITER}
+ReadingType::ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit unit)
+: m_precision{1}, m_delimiter{DEFAULT_DELIMITER}
 {
     validate(name, unit);
 
@@ -35,10 +36,12 @@ ReadingType::ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit uni
     m_size = m_labels.size() == 0 ? 1 : m_labels.size();
 }
 
-ReadingType::ReadingType(std::string name, std::string unitSymbol, DataType dataType, std::vector<std::string> labels)
+ReadingType::ReadingType(std::string name, std::string unitSymbol, DataType dataType, int precision,
+                         std::vector<std::string> labels)
 : m_name{std::move(name)}
 , m_unitSymbol{std::move(unitSymbol)}
 , m_dataType{std::move(dataType)}
+, m_precision{precision}
 , m_labels{std::move(labels)}
 , m_size{m_labels.size() == 0 ? 1 : m_labels.size()}
 , m_delimiter{DEFAULT_DELIMITER}
@@ -63,6 +66,11 @@ const std::string& ReadingType::getMeasurmentUnitSymbol() const
 DataType ReadingType::getDataType() const
 {
     return m_dataType;
+}
+
+int ReadingType::getPrecision() const
+{
+    return m_precision;
 }
 
 const std::vector<std::string>& ReadingType::getLabels() const

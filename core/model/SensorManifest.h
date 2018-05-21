@@ -37,8 +37,8 @@ public:
                    ReadingType::MeasurmentUnit unit, std::string description, double minimum = 0, double maximum = 0);
 
     SensorManifest(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
-                   DataType dataType, std::string description, std::vector<std::string> labels, double minimum = 0,
-                   double maximum = 0);
+                   DataType dataType, int precision, std::string description, std::vector<std::string> labels,
+                   double minimum = 0, double maximum = 0);
 
     const std::string& getName() const;
 
@@ -48,9 +48,11 @@ public:
 
     const std::string& getUnitSymbol() const;
 
+    const std::string& getDescription() const;
+
     DataType getDataType() const;
 
-    const std::string& getDescription() const;
+    int getPrecision() const;
 
     double getMinimum() const;
 
