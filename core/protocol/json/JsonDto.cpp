@@ -130,70 +130,19 @@ void from_json(const json& j, ConfigurationManifest& configurationManifest)
         }
     }();
 
-    if (j.at("labels").is_null())
-    {
-        if (j.at("minimum").is_null() || j.at("maximum").is_null())
-        {
-            // clang-format off
-            configurationManifest =
-                    ConfigurationManifest(
-                        j.at("name").get<std::string>(),
-                        j.at("reference").get<std::string>(),
-                        dataType,
-                        j.at("description").get<std::string>(),
-                        j.at("defaultValue").get<std::string>()
-                    );
-            // clang-format on
-        }
-        else
-        {
-            // clang-format off
-            configurationManifest =
-                    ConfigurationManifest(
-                        j.at("name").get<std::string>(),
-                        j.at("reference").get<std::string>(),
-                        dataType,
-                        j.at("description").get<std::string>(),
-                        j.at("defaultValue").get<std::string>(),
-                        j.at("minimum").get<double>(),
-                        j.at("maximum").get<double>()
-                    );
-            // clang-format on
-        }
-    }
-    else
-    {
-        if (j.at("minimum").is_null() || j.at("maximum").is_null())
-        {
-            // clang-format off
-            configurationManifest =
-                    ConfigurationManifest(
-                        j.at("name").get<std::string>(),
-                        j.at("reference").get<std::string>(),
-                        dataType,
-                        j.at("description").get<std::string>(),
-                        j.at("defaultValue").get<std::string>(),
-                        j.at("labels").get<std::vector<std::string>>()
-                    );
-            // clang-format on
-        }
-        else
-        {
-            // clang-format off
-            configurationManifest =
-                    ConfigurationManifest(
-                        j.at("name").get<std::string>(),
-                        j.at("reference").get<std::string>(),
-                        dataType,
-                        j.at("description").get<std::string>(),
-                        j.at("defaultValue").get<std::string>(),
-                        j.at("labels").get<std::vector<std::string>>(),
-                        j.at("minimum").get<double>(),
-                        j.at("maximum").get<double>()
-                    );
-            // clang-format on
-        }
-    }
+    // clang-format off
+    configurationManifest =
+            ConfigurationManifest(
+                j.at("name").get<std::string>(),
+                j.at("reference").get<std::string>(),
+                dataType,
+                j.at("description").get<std::string>(),
+                j.at("defaultValue").get<std::string>(),
+                j.at("labels").is_null() ? std::vector<std::string>{} : j.at("labels").get<std::vector<std::string>>(),
+                j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
+                j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()
+            );
+    // clang-format on
 }
 /*** CONFIGURATION MANIFEST ***/
 
@@ -278,7 +227,8 @@ void to_json(json& j, const ActuatorManifest& actuatorManfiest)
                  {"size", actuatorManfiest.getSize()},
                  {"labels", actuatorManfiest.getLabels()} }},
             {"unit", {
-                 {"symbol", actuatorManfiest.getUnitSymbol()} }},
+                 {"symbol", actuatorManfiest.getUnitSymbol()},
+                 {"readingType", actuatorManfiest.getReadingTypeName()} }},
             {"minimum", actuatorManfiest.getMinimum()},
             {"maximum", actuatorManfiest.getMaximum()}
         };
@@ -298,7 +248,8 @@ void to_json(json& j, const ActuatorManifest& actuatorManfiest)
                  {"size", actuatorManfiest.getSize()},
                  {"labels", actuatorManfiest.getLabels()} }},
             {"unit", {
-                 {"symbol", actuatorManfiest.getUnitSymbol()} }},
+                 {"symbol", actuatorManfiest.getUnitSymbol()},
+                 {"readingType", actuatorManfiest.getReadingTypeName()} }},
             {"minimum", nullptr},
             {"maximum", nullptr}
         };
@@ -328,38 +279,19 @@ void from_json(const json& j, ActuatorManifest& actuatorManifest)
         }
     }();
 
-    if (j.at("minimum").is_null() || j.at("maximum").is_null())
-    {
-        // clang-format off
-        actuatorManifest = ActuatorManifest{
-                    j.at("name").get<std::string>(),
-                    j.at("reference").get<std::string>(),
-                    j["readingType"].at("name").get<std::string>(),
-                    j["unit"].at("symbol").get<std::string>(),
-                    dataType,
-                    j["readingType"].at("precision").get<int>(),
-                    j.at("description").get<std::string>(),
-                    j["readingType"].at("labels").get<std::vector<std::string>>(),
-                    j.at("minimum").get<double>(),
-                    j.at("maximum").get<double>()};
-        // clang-format on
-    }
-    else
-    {
-        // clang-format off
-        actuatorManifest = ActuatorManifest{
-                    j.at("name").get<std::string>(),
-                    j.at("reference").get<std::string>(),
-                    j["readingType"].at("name").get<std::string>(),
-                    j["unit"].at("symbol").get<std::string>(),
-                    dataType,
-                    j["readingType"].at("precision").get<int>(),
-                    j.at("description").get<std::string>(),
-                    j["readingType"].at("labels").get<std::vector<std::string>>(),
-                    j.at("minimum").get<double>(),
-                    j.at("maximum").get<double>()};
-        // clang-format on
-    }
+    // clang-format off
+    actuatorManifest = ActuatorManifest{
+                j.at("name").get<std::string>(),
+                j.at("reference").get<std::string>(),
+                j["readingType"].at("name").get<std::string>(),
+                j["unit"].at("symbol").get<std::string>(),
+                dataType,
+                j["readingType"].at("precision").get<int>(),
+                j.at("description").get<std::string>(),
+                j["readingType"].at("labels").is_null() ? std::vector<std::string>{} : j["readingType"].at("labels").get<std::vector<std::string>>(),
+                j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
+                j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()};
+    // clang-format on
 }
 /*** ACTUATOR MANIFEST ***/
 
@@ -380,7 +312,8 @@ void to_json(json& j, const SensorManifest& sensorManifest)
                  {"size", sensorManifest.getSize()},
                  {"labels", sensorManifest.getLabels()} }},
             {"unit", {
-                 {"symbol", sensorManifest.getUnitSymbol()} }},
+                 {"symbol", sensorManifest.getUnitSymbol()},
+                 {"readingType", sensorManifest.getReadingTypeName()} }},
             {"minimum", sensorManifest.getMinimum()},
             {"maximum", sensorManifest.getMaximum()}
         };
@@ -400,7 +333,8 @@ void to_json(json& j, const SensorManifest& sensorManifest)
                  {"size", sensorManifest.getSize()},
                  {"labels", sensorManifest.getLabels()} }},
             {"unit", {
-                 {"symbol", sensorManifest.getUnitSymbol()} }},
+                 {"symbol", sensorManifest.getUnitSymbol()},
+                 {"readingType", sensorManifest.getReadingTypeName()} }},
             {"minimum", nullptr},
             {"maximum", nullptr}
         };
@@ -430,30 +364,18 @@ void from_json(const json& j, SensorManifest& sensorManifest)
         }
     }();
 
-    if (j.at("minimum").is_null() || j.at("maximum").is_null())
-    {
-        sensorManifest = SensorManifest{j.at("name").get<std::string>(),
-                                        j.at("reference").get<std::string>(),
-                                        j["readingType"].at("name").get<std::string>(),
-                                        j["unit"].at("symbol").get<std::string>(),
-                                        dataType,
-                                        j["readingType"].at("precision").get<int>(),
-                                        j.at("description").get<std::string>(),
-                                        j["readingType"].at("labels").get<std::vector<std::string>>()};
-    }
-    else
-    {
-        sensorManifest = SensorManifest{j.at("name").get<std::string>(),
-                                        j.at("reference").get<std::string>(),
-                                        j["readingType"].at("name").get<std::string>(),
-                                        j["unit"].at("symbol").get<std::string>(),
-                                        dataType,
-                                        j["readingType"].at("precision").get<int>(),
-                                        j.at("description").get<std::string>(),
-                                        j["readingType"].at("labels").get<std::vector<std::string>>(),
-                                        j.at("minimum").get<double>(),
-                                        j.at("maximum").get<double>()};
-    }
+    sensorManifest = SensorManifest{j.at("name").get<std::string>(),
+                                    j.at("reference").get<std::string>(),
+                                    j["readingType"].at("name").get<std::string>(),
+                                    j["unit"].at("symbol").get<std::string>(),
+                                    dataType,
+                                    j["readingType"].at("precision").get<int>(),
+                                    j.at("description").get<std::string>(),
+                                    j["readingType"].at("labels").is_null() ?
+                                      std::vector<std::string>{} :
+                                      j["readingType"].at("labels").get<std::vector<std::string>>(),
+                                    j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
+                                    j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()};
 }
 /*** SENSOR MANIFEST ***/
 
