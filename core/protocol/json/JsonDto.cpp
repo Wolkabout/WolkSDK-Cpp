@@ -500,8 +500,9 @@ void to_json(json& j, const DeviceRegistrationRequest& dto)
 
 void from_json(const json& j, DeviceRegistrationRequest& dto)
 {
-    dto = DeviceRegistrationRequest(j.at("name").get<std::string>(), j.at("key").get<std::string>(),
-                                    j.at("manifest").get<DeviceManifest>());
+    dto =
+      DeviceRegistrationRequest(j.at("device").at("name").get<std::string>(),
+                                j.at("device").at("key").get<std::string>(), j.at("manifest").get<DeviceManifest>());
 }
 /*** DEVICE REGISTRATION REQUEST DTO ***/
 
