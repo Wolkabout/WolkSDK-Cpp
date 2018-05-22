@@ -35,6 +35,42 @@ ActuatorManifest::ActuatorManifest(std::string name, std::string reference, Data
 {
 }
 
+ActuatorManifest::ActuatorManifest(std::string name, std::string reference, ActuationReadingType readingType,
+                                   std::string description, double minimum, double maximum)
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_readingType{std::move(readingType)}
+, m_description{std::move(description)}
+, m_minimum{minimum}
+, m_maximum{maximum}
+{
+}
+
+ActuatorManifest::ActuatorManifest(std::string name, std::string reference, ActuationReadingType::Name readingTypeName,
+                                   ActuationReadingType::MeasurmentUnit unit, std::string description, double minimum,
+                                   double maximum)
+
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_readingType{ActuationReadingType(readingTypeName, unit)}
+, m_description{std::move(description)}
+, m_minimum{minimum}
+, m_maximum{maximum}
+{
+}
+
+ActuatorManifest::ActuatorManifest(std::string name, std::string reference, std::string readingTypeName,
+                                   std::string unitSymbol, DataType dataType, int precision, std::string description,
+                                   std::vector<std::string> labels, double minimum, double maximum)
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_readingType{ActuationReadingType(readingTypeName, unitSymbol, dataType, precision, labels)}
+, m_description{std::move(description)}
+, m_minimum(minimum)
+, m_maximum(maximum)
+{
+}
+
 const std::string& ActuatorManifest::getName() const
 {
     return m_name;
@@ -80,10 +116,29 @@ double ActuatorManifest::getMaximum() const
     return m_maximum;
 }
 
+const std::string& ActuatorManifest::getDelimiter() const
+{
+    return m_readingType.getDelimiter();
+}
+
+const std::vector<std::string>& ActuatorManifest::getLabels() const
+{
+    return m_readingType.getLabels();
+}
+
+size_t ActuatorManifest::getSize() const
+{
+    return m_readingType.getSize();
+}
+
 bool ActuatorManifest::operator==(ActuatorManifest& rhs) const
 {
-    if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description ||
-        m_readingType != rhs.m_readingType)
+    if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
+    {
+        return false;
+    }
+
+    if (m_readingType != rhs.m_readingType)
     {
         return false;
     }

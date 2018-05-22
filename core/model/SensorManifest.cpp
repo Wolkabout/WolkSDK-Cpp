@@ -119,7 +119,7 @@ size_t SensorManifest::getSize() const
 
 bool SensorManifest::operator==(SensorManifest& rhs) const
 {
-    if (m_name != rhs.m_name || m_reference != rhs.m_reference)
+    if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
     {
         return false;
     }

@@ -33,6 +33,17 @@ public:
     ActuatorManifest(std::string name, std::string reference, DataType dataType, std::string description,
                      double minimum = 0, double maximum = 0);
 
+    ActuatorManifest(std::string name, std::string reference, ActuationReadingType readingType, std::string description,
+                     double minimum = 0, double maximum = 0);
+
+    ActuatorManifest(std::string name, std::string reference, ActuationReadingType::Name readingTypeName,
+                     ActuationReadingType::MeasurmentUnit unit, std::string description, double minimum = 0,
+                     double maximum = 0);
+
+    ActuatorManifest(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
+                     DataType dataType, int precision, std::string description, std::vector<std::string> labels,
+                     double minimum = 0, double maximum = 0);
+
     const std::string& getName() const;
 
     const std::string& getReference() const;
@@ -50,6 +61,12 @@ public:
     double getMinimum() const;
 
     double getMaximum() const;
+
+    const std::string& getDelimiter() const;
+
+    const std::vector<std::string>& getLabels() const;
+
+    size_t getSize() const;
 
     bool operator==(ActuatorManifest& rhs) const;
     bool operator!=(ActuatorManifest& rhs) const;
