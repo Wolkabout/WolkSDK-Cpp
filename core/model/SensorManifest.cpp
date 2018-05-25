@@ -16,43 +16,44 @@
 
 #include "model/SensorManifest.h"
 
-#include <initializer_list>
 #include <string>
 #include <vector>
 
 namespace wolkabout
 {
-SensorManifest::SensorManifest(std::string name, std::string reference, std::string description, std::string unit,
-                               std::string readingType, SensorManifest::DataType dataType, unsigned int precision,
-                               double minimum, double maximum)
-: m_name(std::move(name))
-, m_reference(std::move(reference))
-, m_description(std::move(description))
-, m_unit(std::move(unit))
-, m_readingType(std::move(readingType))
-, m_dataType(dataType)
-, m_precision(precision)
-, m_minimum(minimum)
-, m_maximum(maximum)
-, m_delimiter("")
-, m_labels({})
+SensorManifest::SensorManifest(std::string name, std::string reference, ReadingType readingType,
+                               std::string description, double minimum, double maximum)
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_readingType{std::move(readingType)}
+, m_description{std::move(description)}
+, m_minimum{minimum}
+, m_maximum{maximum}
 {
 }
 
-SensorManifest::SensorManifest(std::string name, std::string reference, std::string description, std::string unit,
-                               std::string readingType, SensorManifest::DataType dataType, unsigned int precision,
-                               double minimum, double maximum, std::string delimiter, std::vector<std::string> labels)
-: m_name(std::move(name))
-, m_reference(std::move(reference))
-, m_description(std::move(description))
-, m_unit(std::move(unit))
-, m_readingType(std::move(readingType))
-, m_dataType(dataType)
-, m_precision(precision)
+SensorManifest::SensorManifest(std::string name, std::string reference, ReadingType::Name readingTypeName,
+                               ReadingType::MeasurmentUnit unit, std::string description, double minimum,
+                               double maximum)
+
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_readingType{ReadingType(readingTypeName, unit)}
+, m_description{std::move(description)}
+, m_minimum{minimum}
+, m_maximum{maximum}
+{
+}
+
+SensorManifest::SensorManifest(std::string name, std::string reference, std::string readingTypeName,
+                               std::string unitSymbol, DataType dataType, int precision, std::string description,
+                               std::vector<std::string> labels, double minimum, double maximum)
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_readingType{ReadingType(readingTypeName, unitSymbol, dataType, precision, labels)}
+, m_description{std::move(description)}
 , m_minimum(minimum)
 , m_maximum(maximum)
-, m_delimiter(std::move(delimiter))
-, m_labels(std::move(labels))
 {
 }
 
@@ -61,21 +62,14 @@ const std::string& SensorManifest::getName() const
     return m_name;
 }
 
-wolkabout::SensorManifest& SensorManifest::setName(const std::string& name)
-{
-    m_name = name;
-    return *this;
-}
-
 const std::string& SensorManifest::getReference() const
 {
     return m_reference;
 }
 
-SensorManifest& SensorManifest::setReference(const std::string& reference)
+const std::string& SensorManifest::getUnitSymbol() const
 {
-    m_reference = reference;
-    return *this;
+    return m_readingType.getMeasurmentUnitSymbol();
 }
 
 const std::string& SensorManifest::getDescription() const
@@ -83,54 +77,19 @@ const std::string& SensorManifest::getDescription() const
     return m_description;
 }
 
-SensorManifest& SensorManifest::setDescription(const std::string description)
+const std::string& SensorManifest::getReadingTypeName() const
 {
-    m_description = description;
-    return *this;
+    return m_readingType.getName();
 }
 
-const std::string& SensorManifest::getUnit() const
+DataType SensorManifest::getDataType() const
 {
-    return m_unit;
+    return m_readingType.getDataType();
 }
 
-SensorManifest& SensorManifest::setUnit(const std::string& unit)
+int SensorManifest::getPrecision() const
 {
-    m_unit = unit;
-    return *this;
-}
-
-const std::string& SensorManifest::getReadingType() const
-{
-    return m_readingType;
-}
-
-SensorManifest& SensorManifest::setReadingType(const std::string& readingType)
-{
-    m_readingType = readingType;
-    return *this;
-}
-
-SensorManifest::DataType SensorManifest::getDataType() const
-{
-    return m_dataType;
-}
-
-SensorManifest& SensorManifest::setDataType(SensorManifest::DataType dataType)
-{
-    m_dataType = dataType;
-    return *this;
-}
-
-unsigned int SensorManifest::getPrecision() const
-{
-    return m_precision;
-}
-
-SensorManifest& SensorManifest::setPrecision(unsigned int precision)
-{
-    m_precision = precision;
-    return *this;
+    return m_readingType.getPrecision();
 }
 
 double SensorManifest::getMinimum() const
@@ -138,56 +97,34 @@ double SensorManifest::getMinimum() const
     return m_minimum;
 }
 
-SensorManifest& SensorManifest::setMinimum(double minimum)
-{
-    m_minimum = minimum;
-    return *this;
-}
-
 double SensorManifest::getMaximum() const
 {
     return m_maximum;
 }
 
-SensorManifest& SensorManifest::setMaximum(double maximum)
-{
-    m_maximum = maximum;
-    return *this;
-}
-
 const std::string& SensorManifest::getDelimiter() const
 {
-    return m_delimiter;
-}
-
-SensorManifest& SensorManifest::setDelimiter(const std::string& delimited)
-{
-    m_delimiter = delimited;
-    return *this;
+    return m_readingType.getDelimiter();
 }
 
 const std::vector<std::string>& SensorManifest::getLabels() const
 {
-    return m_labels;
+    return m_readingType.getLabels();
 }
 
-SensorManifest& SensorManifest::setLabels(std::initializer_list<std::string> labels)
+size_t SensorManifest::getSize() const
 {
-    m_labels = labels;
-    return *this;
-}
-
-SensorManifest& SensorManifest::setLabels(const std::vector<std::string>& labels)
-{
-    m_labels = labels;
-    return *this;
+    return m_readingType.getSize();
 }
 
 bool SensorManifest::operator==(SensorManifest& rhs) const
 {
-    if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description ||
-        m_unit != rhs.m_unit || m_readingType != rhs.m_readingType || m_dataType != rhs.m_dataType ||
-        m_precision != rhs.m_precision)
+    if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
+    {
+        return false;
+    }
+
+    if (m_readingType != rhs.m_readingType)
     {
         return false;
     }
@@ -195,24 +132,6 @@ bool SensorManifest::operator==(SensorManifest& rhs) const
     if (m_minimum != rhs.m_minimum || m_maximum != rhs.m_maximum)
     {
         return false;
-    }
-
-    if (m_delimiter != rhs.m_delimiter)
-    {
-        return false;
-    }
-
-    if (m_labels.size() != rhs.m_labels.size())
-    {
-        return false;
-    }
-
-    for (unsigned long long int i = 0; i < m_labels.size(); ++i)
-    {
-        if (m_labels[i] != rhs.m_labels[i])
-        {
-            return false;
-        }
     }
 
     return true;

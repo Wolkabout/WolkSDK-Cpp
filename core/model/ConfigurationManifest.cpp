@@ -23,59 +23,29 @@
 
 namespace wolkabout
 {
-ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, std::string description,
-                                             std::string unit, ConfigurationManifest::DataType dataType, double minimum,
-                                             double maximum, std::string defaultValue, std::string nullValue)
-: m_name(std::move(name))
-, m_reference(std::move(reference))
-, m_description(std::move(description))
-, m_unit(std::move(unit))
-, m_dataType(dataType)
-, m_minimum(minimum)
-, m_maximum(maximum)
-, m_defaultValue(std::move(defaultValue))
-, m_size(1)
-, m_nullValue(std::move(nullValue))
+const std::string ConfigurationManifest::DEFAULT_DELIMITER = ",";
+
+ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, DataType dataType,
+                                             std::string description, std::string defaultValue, double minimum,
+                                             double maximum)
+: ConfigurationManifest(name, reference, dataType, description, defaultValue, {}, minimum, maximum)
 {
 }
 
-ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, std::string description,
-                                             std::string unit, ConfigurationManifest::DataType dataType, double minimum,
-                                             double maximum, std::string defaultValue, unsigned int size,
-                                             std::string delimiter, std::vector<std::string> labels,
-                                             std::string nullValue)
-: m_name(std::move(name))
-, m_reference(std::move(reference))
-, m_description(std::move(description))
-, m_unit(std::move(unit))
-, m_dataType(dataType)
-, m_minimum(minimum)
-, m_maximum(maximum)
-, m_defaultValue(std::move(defaultValue))
-, m_size(size)
-, m_delimiter(std::move(delimiter))
-, m_labels(std::move(labels))
-, m_nullValue(std::move(nullValue))
+ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, DataType dataType,
+                                             std::string description, std::string defaultValue,
+                                             std::vector<std::string> labels, double minimum, double maximum)
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_dataType{dataType}
+, m_description{std::move(description)}
+, m_defaultValue{std::move(defaultValue)}
+, m_minimum{minimum}
+, m_maximum{maximum}
+, m_labels{std::move(labels)}
+, m_size{m_labels.size() == 0 ? 1 : m_labels.size()}
+, m_delimiter{DEFAULT_DELIMITER}
 {
-    if (labels.size() == 0)
-    {
-        m_size = 1;
-    }
-
-    if (labels.size() == 1)
-    {
-        throw std::logic_error("Labels must not be defined for configuration item of size 1");
-    }
-
-    if (labels.size() > 1 && size != labels.size())
-    {
-        throw std::logic_error("Number of labels for configuration item must match specified size");
-    }
-
-    if (labels.size() > 1 && delimiter.empty())
-    {
-        throw std::logic_error("Delimiter must not be empty for multy value configuration item");
-    }
 }
 
 const std::string& ConfigurationManifest::getName() const
@@ -83,54 +53,14 @@ const std::string& ConfigurationManifest::getName() const
     return m_name;
 }
 
-ConfigurationManifest& ConfigurationManifest::setName(const std::string& name)
-{
-    m_name = name;
-    return *this;
-}
-
 const std::string& ConfigurationManifest::getReference() const
 {
     return m_reference;
 }
 
-ConfigurationManifest& ConfigurationManifest::setReference(const std::string& reference)
-{
-    m_reference = reference;
-    return *this;
-}
-
-const std::string& ConfigurationManifest::getDescription() const
-{
-    return m_description;
-}
-
-ConfigurationManifest& ConfigurationManifest::setDescription(const std::string& description)
-{
-    m_description = description;
-    return *this;
-}
-
-const std::string& ConfigurationManifest::getUnit() const
-{
-    return m_unit;
-}
-
-ConfigurationManifest& ConfigurationManifest::setUnit(const std::string& unit)
-{
-    m_unit = unit;
-    return *this;
-}
-
-ConfigurationManifest::DataType ConfigurationManifest::getDataType() const
+DataType ConfigurationManifest::getDataType() const
 {
     return m_dataType;
-}
-
-ConfigurationManifest& ConfigurationManifest::setDataType(ConfigurationManifest::DataType dataType)
-{
-    m_dataType = dataType;
-    return *this;
 }
 
 double ConfigurationManifest::getMinimum() const
@@ -138,54 +68,14 @@ double ConfigurationManifest::getMinimum() const
     return m_minimum;
 }
 
-ConfigurationManifest& ConfigurationManifest::setMinimum(double minimum)
-{
-    m_minimum = minimum;
-    return *this;
-}
-
 double ConfigurationManifest::getMaximum() const
 {
     return m_maximum;
 }
 
-ConfigurationManifest& ConfigurationManifest::setMaximum(double maximum)
+const std::string& ConfigurationManifest::getDescription() const
 {
-    m_maximum = maximum;
-    return *this;
-}
-
-unsigned int ConfigurationManifest::getSize() const
-{
-    return m_size;
-}
-
-ConfigurationManifest& ConfigurationManifest::setSize(unsigned int size)
-{
-    m_size = size;
-    return *this;
-}
-
-const std::string& ConfigurationManifest::getDelimiter() const
-{
-    return m_delimiter;
-}
-
-ConfigurationManifest& ConfigurationManifest::setDelimiter(const std::string& delimiter)
-{
-    m_delimiter = delimiter;
-    return *this;
-}
-
-const std::vector<std::string>& ConfigurationManifest::getLabels() const
-{
-    return m_labels;
-}
-
-ConfigurationManifest& ConfigurationManifest::setLabels(const std::vector<std::string>& labels)
-{
-    m_labels = labels;
-    return *this;
+    return m_description;
 }
 
 const std::string& ConfigurationManifest::getDefaultValue() const
@@ -193,27 +83,25 @@ const std::string& ConfigurationManifest::getDefaultValue() const
     return m_defaultValue;
 }
 
-ConfigurationManifest& ConfigurationManifest::setDefaultValue(const std::string& defaultValue)
+size_t ConfigurationManifest::getSize() const
 {
-    m_defaultValue = defaultValue;
-    return *this;
+    return m_size;
 }
 
-const std::string& ConfigurationManifest::getNullValue() const
+const std::vector<std::string>& ConfigurationManifest::getLabels() const
 {
-    return m_nullValue;
+    return m_labels;
 }
 
-ConfigurationManifest& ConfigurationManifest::setNullValue(const std::string& nullValue)
+const std::string& ConfigurationManifest::getDelimiter() const
 {
-    m_nullValue = nullValue;
-    return *this;
+    return m_delimiter;
 }
 
 bool ConfigurationManifest::operator==(ConfigurationManifest& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description ||
-        m_unit != rhs.m_unit || m_dataType != rhs.m_dataType)
+        m_dataType != rhs.m_dataType)
     {
         return false;
     }
@@ -224,11 +112,6 @@ bool ConfigurationManifest::operator==(ConfigurationManifest& rhs) const
     }
 
     if (m_size != rhs.m_size || m_delimiter != rhs.m_delimiter)
-    {
-        return false;
-    }
-
-    if (m_defaultValue != rhs.m_defaultValue || m_nullValue != rhs.m_nullValue)
     {
         return false;
     }
