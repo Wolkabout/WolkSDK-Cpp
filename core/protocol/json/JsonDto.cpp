@@ -36,76 +36,36 @@ void to_json(json& j, const ConfigurationManifest& configurationManifest)
         return dataTypeStr.empty() ? throw std::invalid_argument("Invalid data type") : dataTypeStr;
     }();
 
+    json confJ;
+
+    confJ["name"] = configurationManifest.getName();
+    confJ["reference"] = configurationManifest.getReference();
+    confJ["dataType"] = dataType;
+    confJ["description"] = configurationManifest.getDescription();
+    confJ["defaultValue"] = configurationManifest.getDefaultValue();
+    confJ["size"] = configurationManifest.getSize();
+
     if (configurationManifest.getDataType() == DataType::NUMERIC)
     {
-        if (configurationManifest.getSize() > 1)
-        {
-            // clang-format off
-            j = {
-                {"name", configurationManifest.getName()},
-                {"reference", configurationManifest.getReference()},
-                {"dataType", dataType},
-                {"description", configurationManifest.getDescription()},
-                {"defaultValue", configurationManifest.getDefaultValue()},
-                {"minimum", configurationManifest.getMinimum()},
-                {"maximum", configurationManifest.getMaximum()},
-                {"size", configurationManifest.getSize()},
-                {"labels", configurationManifest.getLabels()}
-            };
-            // clang-format on
-        }
-        else
-        {
-            // clang-format off
-            j = {
-                {"name", configurationManifest.getName()},
-                {"reference", configurationManifest.getReference()},
-                {"dataType", dataType},
-                {"description", configurationManifest.getDescription()},
-                {"defaultValue", configurationManifest.getDefaultValue()},
-                {"minimum", configurationManifest.getMinimum()},
-                {"maximum", configurationManifest.getMaximum()},
-                {"size", configurationManifest.getSize()},
-                {"labels", nullptr}
-            };
-            // clang-format on
-        }
+        confJ["minimum"] = configurationManifest.getMinimum();
+        confJ["maximum"] = configurationManifest.getMaximum();
     }
     else
     {
-        if (configurationManifest.getSize() > 1)
-        {
-            // clang-format off
-            j = {
-                {"name", configurationManifest.getName()},
-                {"reference", configurationManifest.getReference()},
-                {"dataType", dataType},
-                {"description", configurationManifest.getDescription()},
-                {"defaultValue", configurationManifest.getDefaultValue()},
-                {"minimum", nullptr},
-                {"maximum", nullptr},
-                {"size", configurationManifest.getSize()},
-                {"labels", configurationManifest.getLabels()}
-            };
-            // clang-format on
-        }
-        else
-        {
-            // clang-format off
-            j = {
-                {"name", configurationManifest.getName()},
-                {"reference", configurationManifest.getReference()},
-                {"dataType", dataType},
-                {"description", configurationManifest.getDescription()},
-                {"defaultValue", configurationManifest.getDefaultValue()},
-                {"minimum", nullptr},
-                {"maximum", nullptr},
-                {"size", configurationManifest.getSize()},
-                {"labels", nullptr}
-            };
-            // clang-format on
-        }
+        confJ["minimum"] = nullptr;
+        confJ["maximum"] = nullptr;
     }
+
+    if (configurationManifest.getSize() > 1)
+    {
+        confJ["labels"] = configurationManifest.getLabels();
+    }
+    else
+    {
+        confJ["labels"] = nullptr;
+    }
+
+    j = confJ;
 }
 
 void from_json(const json& j, ConfigurationManifest& configurationManifest)
@@ -213,48 +173,40 @@ void from_json(const json& j, AlarmManifest& alarmManifest)
 /*** ACTUATOR MANIFEST ***/
 void to_json(json& j, const ActuatorManifest& actuatorManfiest)
 {
-    if (actuatorManfiest.getDataType() == DataType::NUMERIC)
+    json actuatorJ;
+
+    actuatorJ["name"] = actuatorManfiest.getName();
+    actuatorJ["reference"] = actuatorManfiest.getReference();
+    actuatorJ["description"] = actuatorManfiest.getDescription();
+
+    actuatorJ["readingType"]["name"] = actuatorManfiest.getReadingTypeName();
+    actuatorJ["readingType"]["dataType"] = toString(actuatorManfiest.getDataType());
+    actuatorJ["readingType"]["precision"] = actuatorManfiest.getPrecision();
+    actuatorJ["readingType"]["labels"] = actuatorManfiest.getLabels();
+    actuatorJ["readingType"]["size"] = actuatorManfiest.getSize();
+
+    actuatorJ["unit"]["readingType"] = actuatorManfiest.getReadingTypeName();
+    if (!actuatorManfiest.getUnitSymbol().empty())
     {
-        // clang-format off
-        j = {
-            {"name", actuatorManfiest.getName()},
-            {"reference", actuatorManfiest.getReference()},
-            {"description", actuatorManfiest.getDescription()},
-            {"readingType", {
-                 {"name", actuatorManfiest.getReadingTypeName()},
-                 {"dataType", toString(actuatorManfiest.getDataType())},
-                 {"precision", actuatorManfiest.getPrecision()},
-                 {"size", actuatorManfiest.getSize()},
-                 {"labels", actuatorManfiest.getLabels()} }},
-            {"unit", {
-                 {"symbol", actuatorManfiest.getUnitSymbol()},
-                 {"readingType", actuatorManfiest.getReadingTypeName()} }},
-            {"minimum", actuatorManfiest.getMinimum()},
-            {"maximum", actuatorManfiest.getMaximum()}
-        };
-        // clang-format on
+        actuatorJ["unit"]["symbol"] = actuatorManfiest.getUnitSymbol();
     }
     else
     {
-        // clang-format off
-        j = {
-            {"name", actuatorManfiest.getName()},
-            {"reference", actuatorManfiest.getReference()},
-            {"description", actuatorManfiest.getDescription()},
-            {"readingType", {
-                 {"name", actuatorManfiest.getReadingTypeName()},
-                 {"dataType", toString(actuatorManfiest.getDataType())},
-                 {"precision", actuatorManfiest.getPrecision()},
-                 {"size", actuatorManfiest.getSize()},
-                 {"labels", actuatorManfiest.getLabels()} }},
-            {"unit", {
-                 {"symbol", actuatorManfiest.getUnitSymbol()},
-                 {"readingType", actuatorManfiest.getReadingTypeName()} }},
-            {"minimum", nullptr},
-            {"maximum", nullptr}
-        };
-        // clang-format on
+        actuatorJ["unit"]["symbol"] = nullptr;
     }
+
+    if (actuatorManfiest.getDataType() == DataType::NUMERIC)
+    {
+        actuatorJ["minimum"] = actuatorManfiest.getMinimum();
+        actuatorJ["maximum"] = actuatorManfiest.getMaximum();
+    }
+    else
+    {
+        actuatorJ["minimum"] = nullptr;
+        actuatorJ["maximum"] = nullptr;
+    }
+
+    j = actuatorJ;
 }
 
 void from_json(const json& j, ActuatorManifest& actuatorManifest)
@@ -284,7 +236,7 @@ void from_json(const json& j, ActuatorManifest& actuatorManifest)
                 j.at("name").get<std::string>(),
                 j.at("reference").get<std::string>(),
                 j["readingType"].at("name").get<std::string>(),
-                j["unit"].at("symbol").get<std::string>(),
+                j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
                 dataType,
                 j["readingType"].at("precision").get<int>(),
                 j.at("description").get<std::string>(),
@@ -298,48 +250,40 @@ void from_json(const json& j, ActuatorManifest& actuatorManifest)
 /*** SENSOR MANIFEST ***/
 void to_json(json& j, const SensorManifest& sensorManifest)
 {
-    if (sensorManifest.getDataType() == DataType::NUMERIC)
+    json sensorJ;
+
+    sensorJ["name"] = sensorManifest.getName();
+    sensorJ["reference"] = sensorManifest.getReference();
+    sensorJ["description"] = sensorManifest.getDescription();
+
+    sensorJ["readingType"]["name"] = sensorManifest.getReadingTypeName();
+    sensorJ["readingType"]["dataType"] = toString(sensorManifest.getDataType());
+    sensorJ["readingType"]["precision"] = sensorManifest.getPrecision();
+    sensorJ["readingType"]["labels"] = sensorManifest.getLabels();
+    sensorJ["readingType"]["size"] = sensorManifest.getSize();
+
+    sensorJ["unit"]["readingType"] = sensorManifest.getReadingTypeName();
+    if (!sensorManifest.getUnitSymbol().empty())
     {
-        // clang-format off
-        j = {
-            {"name", sensorManifest.getName()},
-            {"reference", sensorManifest.getReference()},
-            {"description", sensorManifest.getDescription()},
-            {"readingType", {
-                 {"name", sensorManifest.getReadingTypeName()},
-                 {"dataType", toString(sensorManifest.getDataType())},
-                 {"precision", sensorManifest.getPrecision()},
-                 {"size", sensorManifest.getSize()},
-                 {"labels", sensorManifest.getLabels()} }},
-            {"unit", {
-                 {"symbol", sensorManifest.getUnitSymbol()},
-                 {"readingType", sensorManifest.getReadingTypeName()} }},
-            {"minimum", sensorManifest.getMinimum()},
-            {"maximum", sensorManifest.getMaximum()}
-        };
-        // clang-format on
+        sensorJ["unit"]["symbol"] = sensorManifest.getUnitSymbol();
     }
     else
     {
-        // clang-format off
-        j = {
-            {"name", sensorManifest.getName()},
-            {"reference", sensorManifest.getReference()},
-            {"description", sensorManifest.getDescription()},
-            {"readingType", {
-                 {"name", sensorManifest.getReadingTypeName()},
-                 {"dataType", toString(sensorManifest.getDataType())},
-                 {"precision", sensorManifest.getPrecision()},
-                 {"size", sensorManifest.getSize()},
-                 {"labels", sensorManifest.getLabels()} }},
-            {"unit", {
-                 {"symbol", sensorManifest.getUnitSymbol()},
-                 {"readingType", sensorManifest.getReadingTypeName()} }},
-            {"minimum", nullptr},
-            {"maximum", nullptr}
-        };
-        // clang-format on
+        sensorJ["unit"]["symbol"] = nullptr;
     }
+
+    if (sensorManifest.getDataType() == DataType::NUMERIC)
+    {
+        sensorJ["minimum"] = sensorManifest.getMinimum();
+        sensorJ["maximum"] = sensorManifest.getMaximum();
+    }
+    else
+    {
+        sensorJ["minimum"] = nullptr;
+        sensorJ["maximum"] = nullptr;
+    }
+
+    j = sensorJ;
 }
 
 void from_json(const json& j, SensorManifest& sensorManifest)
@@ -367,7 +311,7 @@ void from_json(const json& j, SensorManifest& sensorManifest)
     sensorManifest = SensorManifest{j.at("name").get<std::string>(),
                                     j.at("reference").get<std::string>(),
                                     j["readingType"].at("name").get<std::string>(),
-                                    j["unit"].at("symbol").get<std::string>(),
+                                    j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
                                     dataType,
                                     j["readingType"].at("precision").get<int>(),
                                     j.at("description").get<std::string>(),
