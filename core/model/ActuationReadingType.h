@@ -37,6 +37,7 @@ public:
     enum class MeasurmentUnit
     {
         COUNT = 0,
+        STEPS,
         BOOLEAN,
         TEXT
     };

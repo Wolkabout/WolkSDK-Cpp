@@ -57,7 +57,7 @@ public:
         STRING,
         SWITCH,
         TIME,
-        VENTS,
+        MAGNETIC_FLUX_DENSITY,
         RADIATION,
         ELECTRICITY,
         FORCE,
@@ -83,6 +83,7 @@ public:
         PRESSURE_PERCENT,
         MILLIBAR_X10,
         MICROBAR,
+        KILO_PASCAL,
 
         HUMIDITY_PERCENT,
         HUMIDITY_PERCENT_X10,
@@ -101,6 +102,7 @@ public:
         LIGHT_PERCENT,
 
         METRES_PER_SQUARE_SECOND,
+        GRAVITY,
 
         GYROSCOPE,
 
@@ -175,6 +177,7 @@ public:
         MACH,
         SPEED_OF_LIGHT,
         METER_PER_SECOND,
+        // KNOT,
 
         // STEPS,
 
@@ -195,6 +198,7 @@ public:
 
         TESLA,
         GAUSS,
+        MICRO_TESLA,
 
         SIEVERT,
         BECQUEREL,
@@ -216,7 +220,7 @@ public:
 
         NEWTON,
         POUND_FORCE,
-        GRAVITY,
+        // GRAVITY,
         KILOGRAM_FORCE,
         DYNE,
 

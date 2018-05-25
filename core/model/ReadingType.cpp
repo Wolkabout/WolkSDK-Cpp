@@ -164,6 +164,7 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         case MeasurmentUnit::PRESSURE_PERCENT:
         case MeasurmentUnit::MILLIBAR_X10:
         case MeasurmentUnit::MICROBAR:
+        case MeasurmentUnit::KILO_PASCAL:
         {
             break;
         }
@@ -252,6 +253,7 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         switch (unit)
         {
         case MeasurmentUnit::METRES_PER_SQUARE_SECOND:
+        case MeasurmentUnit::GRAVITY:
         {
             break;
         }
@@ -564,6 +566,7 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         case MeasurmentUnit::MACH:
         case MeasurmentUnit::SPEED_OF_LIGHT:
         case MeasurmentUnit::METER_PER_SECOND:
+        case MeasurmentUnit::KNOT:
         {
             break;
         }
@@ -648,12 +651,13 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         }
         break;
     }
-    case ReadingType::Name::VENTS:
+    case ReadingType::Name::MAGNETIC_FLUX_DENSITY:
     {
         switch (unit)
         {
         case MeasurmentUnit::TESLA:
         case MeasurmentUnit::GAUSS:
+        case MeasurmentUnit::MICRO_TESLA:
         {
             break;
         }
@@ -901,7 +905,7 @@ DataType ReadingType::dataTypeForName(Name name)
     {
         return DataType::STRING;
     }
-    case ReadingType::Name::VENTS:
+    case ReadingType::Name::MAGNETIC_FLUX_DENSITY:
     {
         return DataType::NUMERIC;
     }
@@ -1019,6 +1023,10 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "μbar";
     }
+    case ReadingType::MeasurmentUnit::KILO_PASCAL:
+    {
+        return "kPa";
+    }
     case ReadingType::MeasurmentUnit::HUMIDITY_PERCENT:
     {
         return "%";
@@ -1070,6 +1078,10 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::METRES_PER_SQUARE_SECOND:
     {
         return "m/s²";
+    }
+    case ReadingType::MeasurmentUnit::GRAVITY:
+    {
+        return "g";
     }
     case ReadingType::MeasurmentUnit::GYROSCOPE:
     {
@@ -1299,10 +1311,14 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "m/s";
     }
-        //	case ReadingType::MeasurmentUnit::STEPS:
+        //    case ReadingType::MeasurmentUnit::KNOT:
         //    {
-        //		return "";
-        //	}
+        //        return "kn";
+        //    }
+        //    case ReadingType::MeasurmentUnit::STEPS:
+        //    {
+        //        return "";
+        //    }
     case ReadingType::MeasurmentUnit::TEXT:
     {
         return "";
@@ -1358,6 +1374,10 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::GAUSS:
     {
         return "G";
+    }
+    case ReadingType::MeasurmentUnit::MICRO_TESLA:
+    {
+        return "μT";
     }
     case ReadingType::MeasurmentUnit::SIEVERT:
     {
@@ -1431,10 +1451,10 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "lbf";
     }
-    case ReadingType::MeasurmentUnit::GRAVITY:
-    {
-        return "grav";
-    }
+        //    case ReadingType::MeasurmentUnit::GRAVITY:
+        //    {
+        //        return "grav";
+        //    }
     case ReadingType::MeasurmentUnit::KILOGRAM_FORCE:
     {
         return "kgf";
@@ -1515,189 +1535,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
 
     return "";
 }
-
-// ReadingType::Name ReadingType::nameForUnit(ReadingType::MeasurmentUnit unit)
-//{
-//    switch (unit)
-//    {
-//    case ReadingType::MeasurmentUnit::KELVIN:
-//    case ReadingType::MeasurmentUnit::CELSIUS:
-//    case ReadingType::MeasurmentUnit::RANKINE:
-//    case ReadingType::MeasurmentUnit::FAHRENHEIT:
-//    case ReadingType::MeasurmentUnit::CELSIUS_X2:
-//    case ReadingType::MeasurmentUnit::CELSIUS_X10:
-//    {
-//        return ReadingType::Name::TEMPERATURE;
-//    }
-//    case ReadingType::MeasurmentUnit::PASCAL:
-//    case ReadingType::MeasurmentUnit::MILLIMETER_OF_MERCURY:
-//    case ReadingType::MeasurmentUnit::INCH_OF_MERCURY:
-//    case ReadingType::MeasurmentUnit::BAR:
-//    case ReadingType::MeasurmentUnit::ATMOSPHERE:
-//    case ReadingType::MeasurmentUnit::MILLIBAR:
-//    case ReadingType::MeasurmentUnit::PRESSURE_PERCENT:
-//    case ReadingType::MeasurmentUnit::MILLIBAR_X10:
-//    case ReadingType::MeasurmentUnit::MICROBAR:
-//    {
-//        return ReadingType::Name::PRESSURE;
-//    }
-
-//    HUMIDITY_PERCENT,
-//    HUMIDITY_PERCENT_X10,
-
-//    VOLT,
-//    MILLIVOLT,
-//    CENTIVOLT,
-
-//    MOVEMENT,
-
-//    LUMEN,
-//    COULOMB,
-//    LUX,
-//    CANDELA,
-//    LAMBERT,
-//    LIGHT_PERCENT,
-
-//    METRES_PER_SQUARE_SECOND,
-
-//    GYROSCOPE,
-
-//    MAXWELL,
-
-//    LOCATION,
-
-//    BEATS_PER_MINUTE,
-
-//    STEPS,
-//    COUNT,
-
-//    BATTERY,
-//    BATTERY_X1000,
-
-//    BREATHS_PER_MINUTE,
-
-//    CALORIES,
-
-//    AMPERE,
-//    MILLIAMPERE,
-
-//    WATT,
-//    HORSEPOWER,
-//    MILLIWATT,
-
-//    // MILLIVOLT,
-
-//    METER,
-
-//    OUNCE_LIQUID_US,
-//    GALLON_UK,
-//    GALLON_DRY_US,
-//    LITRE,
-//    OUNCE_LIQUID_UK,
-//    MILLILITRE,
-
-//    RADIAN,
-//    STERADIAN,
-//    METRE,
-//    MILE,
-//    LIGHT_YEAR,
-//    POINT,
-//    KNOT,
-//    FOOT,
-//    ANGSTROM,
-//    INCH,
-//    PARSEC,
-//    FOOT_SURVEY_US,
-//    ASTRONOMICAL_UNIT,
-//    YARD,
-//    MILLIMETER,
-//    CENTIMETER,
-//    KILOMETER,
-
-//    KILOGRAM,
-//    GALLON_LIQUID_US,
-//    ATOMIC_MASS,
-//    TON_UK,
-//    METRIC_TON,
-//    TON_US,
-//    ELECTRON_MASS,
-//    POUND,
-//    OUNCE,
-//    MILLIGRAM,
-//    GRAM,
-
-//    DECIBEL,
-
-//    KILOMETERS_PER_HOUR,
-//    MILES_PER_HOUR,
-//    MACH,
-//    SPEED_OF_LIGHT,
-//    METER_PER_SECOND,
-
-//    // STEPS,
-
-//    TEXT,
-
-//    BOOLEAN,
-
-//    SECOND,
-//    MINUTE,
-//    YEAR_SIDEREAL,
-//    HOUR,
-//    MONTH,
-//    YEAR_CALENDAR,
-//    DAY_SIDEREAL,
-//    DAY,
-//    WEEK,
-//    YEAR,
-
-//    TESLA,
-//    GAUSS,
-
-//    SIEVERT,
-//    BECQUEREL,
-//    RUTHERFORD,
-//    ROENTGEN,
-//    RADIATION_DOSE_EFFECTIVE,
-//    CURIE,
-
-//    FARAD,
-//    HENRY,
-//    JOULE,
-//    SIEMENS,
-//    OHM,
-//    FRANKLIN,
-//    ELECTRON_VOLT,
-//    ELECTRIC_CHARGE,
-//    FARADAY,
-//    GILBERT,
-
-//    NEWTON,
-//    POUND_FORCE,
-//    GRAVITY,
-//    KILOGRAM_FORCE,
-//    DYNE,
-
-//    GRAY,
-//    ENERGY,
-
-//    SQUARE_METRE,
-//    CUBIC_METRE,
-//    BYTE,
-//    GRADE,
-//    HECTARE,
-//    CUBIC_INCH,
-//    REVOLUTION,
-//    CENTIRADIAN,
-//    RAD,
-//    COMPUTER_POINT,
-//    DEGREE_ANGLE,
-//    SECOND_ANGLE,
-//    MINUTE_ANGLE,
-//    SPHERE,
-//    ARE
-//    }
-//}
 
 std::string toString(ReadingType::Name name)
 {
@@ -1819,9 +1656,9 @@ std::string toString(ReadingType::Name name)
     {
         return "TIME";
     }
-    case ReadingType::Name::VENTS:
+    case ReadingType::Name::MAGNETIC_FLUX_DENSITY:
     {
-        return "VENTS";
+        return "MAGNETIC_FLUX_DENSITY";
     }
     case ReadingType::Name::RADIATION:
     {
@@ -1912,6 +1749,10 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "MICROBAR";
     }
+    case ReadingType::MeasurmentUnit::KILO_PASCAL:
+    {
+        return "KILO_PASCAL";
+    }
     case ReadingType::MeasurmentUnit::HUMIDITY_PERCENT:
     {
         return "HUMIDITY_PERCENT";
@@ -1964,6 +1805,10 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "METRES_PER_SQUARE_SECOND";
     }
+        //    case ReadingType::MeasurmentUnit::GRAVITY:
+        //    {
+        //        return "GRAVITY";
+        //    }
     case ReadingType::MeasurmentUnit::GYROSCOPE:
     {
         return "GYROSCOPE";
@@ -2188,6 +2033,10 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "METER_PER_SECOND";
     }
+        //    case ReadingType::MeasurmentUnit::KNOT:
+        //    {
+        //        return "KNOT";
+        //    }
     case ReadingType::MeasurmentUnit::TEXT:
     {
         return "TEXT";
@@ -2243,6 +2092,10 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::GAUSS:
     {
         return "GAUSS";
+    }
+    case ReadingType::MeasurmentUnit::MICRO_TESLA:
+    {
+        return "MICRO_TESLA";
     }
     case ReadingType::MeasurmentUnit::SIEVERT:
     {

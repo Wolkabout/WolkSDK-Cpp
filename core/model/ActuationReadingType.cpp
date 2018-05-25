@@ -168,6 +168,7 @@ void ActuationReadingType::validate(ActuationReadingType::Name name, ActuationRe
         switch (unit)
         {
         case MeasurmentUnit::COUNT:
+        case MeasurmentUnit::STEPS:
         {
             break;
         }
@@ -254,6 +255,10 @@ std::string ActuationReadingType::symbolForUnit(ActuationReadingType::Measurment
     {
         return "count";
     }
+    case ActuationReadingType::MeasurmentUnit::STEPS:
+    {
+        return "#";
+    }
     case ActuationReadingType::MeasurmentUnit::BOOLEAN:
     {
         return "";
@@ -301,6 +306,10 @@ std::string toString(ActuationReadingType::MeasurmentUnit unit)
     case ActuationReadingType::MeasurmentUnit::COUNT:
     {
         return "COUNT(ACTUATOR)";
+    }
+    case ActuationReadingType::MeasurmentUnit::STEPS:
+    {
+        return "STEPS";
     }
     case ActuationReadingType::MeasurmentUnit::BOOLEAN:
     {
