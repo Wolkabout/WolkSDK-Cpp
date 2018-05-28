@@ -220,15 +220,32 @@ std::string StringUtils::base64Decode(const std::string& encodedString)
 
 bool StringUtils::mqttTopicMatch(const std::string& wildcardTopic, const std::string& topic)
 {
-    if (endsWith(wildcardTopic, "/#"))
-    {
-        const std::string rootTopic = removeSubstring(wildcardTopic, "/#");
+    const auto wildcardTopicTokens = tokenize(wildcardTopic, "/");
+    const auto topicTokens = tokenize(topic, "/");
 
-        return startsWith(topic, rootTopic);
+    for (size_t i = 0; i < wildcardTopicTokens.size(); ++i)
+    {
+        if (wildcardTopicTokens[i] == "+")
+        {
+            if (topicTokens.size() <= i)
+            {
+                return false;
+            }
+        }
+        else if (wildcardTopicTokens[i] == "#")
+        {
+            return topicTokens.size() >= i;
+        }
+        else
+        {
+            if (wildcardTopicTokens[i] != topicTokens[i])
+            {
+                return false;
+            }
+        }
     }
 
-    // TODO match single level wildcards
-    return wildcardTopic == topic;
+    return true;
 }
 
 std::string StringUtils::toUpperCase(const std::string& string)
