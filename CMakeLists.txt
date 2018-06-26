@@ -28,7 +28,7 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic             
                                             -Werror=pointer-arith                                                      \
                                             -Wno-packed  -Wno-padded -Wredundant-decls                                 \
                                             -Werror=shadow -Werror=stack-protector                                     \
-                                            -Wstrict-aliasing=2 -Wno-switch                                                       \
+                                            -Wstrict-aliasing=2 -Wno-switch                                            \
                                             -Werror=unreachable-code -Wunused                                          \
                                             -Wvariadic-macros                                                          \
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
