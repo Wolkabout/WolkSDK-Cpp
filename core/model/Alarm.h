@@ -27,7 +27,7 @@ class Alarm : public Reading
 {
 public:
     Alarm();
-    Alarm(std::string value, std::string reference, unsigned long long int rtc = 0);
+    Alarm(bool active, std::string reference, unsigned long long int rtc = 0);
 
     virtual ~Alarm() = default;
 
