@@ -54,15 +54,15 @@ add_subdirectory(mqtt lib)
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
 # WolkAbout c++ SDK
-include_directories("mqtt")
-include_directories("core")
 include_directories(SYSTEM "${SSL_INCLUDE_DIR}")
 
-file(GLOB_RECURSE HEADER_FILES "core/*.h" "core/*.hpp")
-file(GLOB_RECURSE SOURCE_FILES "core/*.cpp")
+file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CURRENT_LIST_DIR}/core/*.hpp")
+file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqtt pthread)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,./")
+
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
 
 add_subdirectory(cmake)
