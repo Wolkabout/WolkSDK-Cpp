@@ -30,9 +30,9 @@ class MqttConnectivityService : public ConnectivityService
 {
 public:
     MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
-                            std::string host);
+                            std::string host, std::string trustStore);
     MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
-                            std::string host, std::string clientId);
+                            std::string host, std::string trustStore, std::string clientId);
     virtual ~MqttConnectivityService() = default;
 
     bool connect() override;
@@ -51,6 +51,7 @@ private:
     const std::string m_key;
     const std::string m_password;
     const std::string m_host;
+    const std::string m_trustStore;
     const std::string m_clientId;
 
     std::string m_lastWillChannel;
@@ -58,8 +59,6 @@ private:
     bool m_lastWillRetain;
 
     std::atomic_bool m_connected;
-
-    static const constexpr char* TRUST_STORE = "ca.crt";
 };
 }    // namespace wolkabout
 

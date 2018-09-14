@@ -20,17 +20,18 @@
 namespace wolkabout
 {
 MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,
-                                                 std::string password, std::string host)
-: MqttConnectivityService(mqttClient, key, password, host, key)
+                                                 std::string password, std::string trustStore, std::string host)
+: MqttConnectivityService(mqttClient, key, password, host, trustStore, key)
 {
 }
 
 MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,
-                                                 std::string password, std::string host, std::string clientId)
+                                                 std::string password, std::string host, std::string trustStore, std::string clientId)
 : m_mqttClient(std::move(mqttClient))
 , m_key(std::move(key))
 , m_password(std::move(password))
 , m_host(std::move(host))
+, m_trustStore(std::move(trustStore))
 , m_clientId(std::move(clientId))
 , m_lastWillChannel("")
 , m_lastWillPayload("")
@@ -55,7 +56,7 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
 bool MqttConnectivityService::connect()
 {
     m_mqttClient->setLastWill(m_lastWillChannel, m_lastWillPayload, m_lastWillRetain);
-    bool isConnected = m_mqttClient->connect(m_key, m_password, TRUST_STORE, m_host, m_clientId);
+    bool isConnected = m_mqttClient->connect(m_key, m_password, m_trustStore, m_host, m_clientId);
     if (isConnected)
     {
         if (auto handler = m_listener.lock())
