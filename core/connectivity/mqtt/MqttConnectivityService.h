@@ -30,7 +30,7 @@ class MqttConnectivityService : public ConnectivityService
 {
 public:
     MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
-                            std::string host, std::string trustStore);
+                            std::string host, std::string trustStore = "");
     MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
                             std::string host, std::string trustStore, std::string clientId);
     virtual ~MqttConnectivityService() = default;

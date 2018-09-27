@@ -30,8 +30,8 @@ public:
 
     virtual ~MqttClient() = default;
 
-    virtual bool connect(const std::string& username, const std::string& password, const std::string& trustStore,
-                         const std::string& address, const std::string& clientId) = 0;
+    virtual bool connect(const std::string& username, const std::string& password, const std::string& address,
+                         const std::string& clientId) = 0;
     virtual void disconnect() = 0;
 
     virtual bool isConnected() = 0;
@@ -45,9 +45,12 @@ public:
 
     void onConnectionLost(OnConnectionLostCallback callback);
 
+    void setTrustStore(const std::string& trustStore);
+
 protected:
     OnMessageReceivedCallback m_onMessageReceived;
     OnConnectionLostCallback m_onConnectionLost;
+    std::string m_trustStore;
 };
 }    // namespace wolkabout
 

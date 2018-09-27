@@ -32,8 +32,8 @@ public:
     PahoMqttClient();
     virtual ~PahoMqttClient() = default;
 
-    bool connect(const std::string& username, const std::string& password, const std::string& trustStore,
-                 const std::string& host, const std::string& clientId) override;
+    bool connect(const std::string& username, const std::string& password, const std::string& host,
+                 const std::string& clientId) override;
     void disconnect() override;
 
     bool isConnected() override;

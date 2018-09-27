@@ -51,12 +51,17 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
             handler->connectionLost();
         }
     });
+
+    if (!m_trustStore.empty())
+    {
+        m_mqttClient->setTrustStore(m_trustStore);
+    }
 }
 
 bool MqttConnectivityService::connect()
 {
     m_mqttClient->setLastWill(m_lastWillChannel, m_lastWillPayload, m_lastWillRetain);
-    bool isConnected = m_mqttClient->connect(m_key, m_password, m_trustStore, m_host, m_clientId);
+    bool isConnected = m_mqttClient->connect(m_key, m_password, m_host, m_clientId);
     if (isConnected)
     {
         if (auto handler = m_listener.lock())

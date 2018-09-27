@@ -34,8 +34,8 @@ PahoMqttClient::PahoMqttClient()
 {
 }
 
-bool PahoMqttClient::connect(const std::string& username, const std::string& password, const std::string& trustStore,
-                             const std::string& host, const std::string& clientId)
+bool PahoMqttClient::connect(const std::string& username, const std::string& password, const std::string& host,
+                             const std::string& clientId)
 {
     if (m_isConnected)
     {
@@ -55,7 +55,7 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
 
     mqtt::ssl_options sslOptions;
     sslOptions.set_enable_server_cert_auth(false);
-    sslOptions.set_trust_store(trustStore);
+    sslOptions.set_trust_store(m_trustStore);
     connectOptions.set_ssl(sslOptions);
 
     if (!m_lastWillTopic.empty())
