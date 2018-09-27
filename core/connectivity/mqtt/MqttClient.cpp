@@ -29,4 +29,9 @@ void MqttClient::onConnectionLost(MqttClient::OnConnectionLostCallback callback)
 {
     m_onConnectionLost = std::move(callback);
 }
+
+void MqttClient::setTrustStore(const std::string& trustStore)
+{
+    m_trustStore = trustStore;
+}
 }    // namespace wolkabout
