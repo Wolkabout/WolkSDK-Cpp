@@ -127,8 +127,7 @@ const std::string& ActuationReadingType::getDelimiter() const
 
 bool ActuationReadingType::operator==(ActuationReadingType& rhs) const
 {
-    if (m_name != rhs.m_name || m_unit != rhs.m_unit || m_unitSymbol != rhs.m_unitSymbol ||
-        m_dataType != rhs.m_dataType)
+    if (m_name != rhs.m_name || m_unitSymbol != rhs.m_unitSymbol || m_dataType != rhs.m_dataType)
     {
         return false;
     }
