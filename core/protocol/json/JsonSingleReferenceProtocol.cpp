@@ -281,7 +281,7 @@ std::unique_ptr<ActuatorSetCommand> JsonSingleReferenceProtocol::makeActuatorSet
         }();
 
         const auto reference = extractReferenceFromChannel(message.getChannel());
-        if (reference.empty())
+        if (!reference.empty())
         {
             return std::unique_ptr<ActuatorSetCommand>(new ActuatorSetCommand(reference, value));
         }
@@ -453,7 +453,8 @@ std::string JsonSingleReferenceProtocol::extractDeviceKeyFromChannel(const std::
 
             if (startPosition != std::string::npos)
             {
-                return channel.substr(startPosition + CHANNEL_DELIMITER.size(), endPosition - 1);
+                return channel.substr(startPosition + CHANNEL_DELIMITER.size(),
+                                      endPosition - (startPosition + CHANNEL_DELIMITER.size()));
             }
         }
     }
