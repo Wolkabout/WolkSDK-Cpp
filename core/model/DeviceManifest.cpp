@@ -24,7 +24,7 @@
 #include <vector>
 
 wolkabout::DeviceManifest::DeviceManifest(std::string name, std::string description, std::string protocol,
-                                          std::string firmwareUpdateProtocol,
+                                          std::string firmwareUpdateType,
                                           std::vector<wolkabout::ConfigurationManifest> configurations,
                                           std::vector<wolkabout::SensorManifest> sensors,
                                           std::vector<wolkabout::AlarmManifest> alarms,
@@ -32,7 +32,7 @@ wolkabout::DeviceManifest::DeviceManifest(std::string name, std::string descript
 : m_name(std::move(name))
 , m_description(std::move(description))
 , m_protocol(std::move(protocol))
-, m_firmwareUpdateProtocol(std::move(firmwareUpdateProtocol))
+, m_firmwareUpdateType(std::move(firmwareUpdateType))
 , m_configurations(std::move(configurations))
 , m_sensors(std::move(sensors))
 , m_alarms(std::move(alarms))
@@ -203,15 +203,15 @@ const std::string& wolkabout::DeviceManifest::getDescription() const
     return m_description;
 }
 
-const std::string& wolkabout::DeviceManifest::getFirmwareUpdateProtocol() const
+const std::string& wolkabout::DeviceManifest::getFirmwareUpdateType() const
 {
-    return m_firmwareUpdateProtocol;
+    return m_firmwareUpdateType;
 }
 
 bool wolkabout::DeviceManifest::operator==(DeviceManifest& rhs) const
 {
     if (m_name != rhs.m_name || m_description != rhs.m_description || m_protocol != rhs.m_protocol ||
-        m_firmwareUpdateProtocol != rhs.m_firmwareUpdateProtocol)
+        m_firmwareUpdateType != rhs.m_firmwareUpdateType)
     {
         return false;
     }

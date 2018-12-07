@@ -33,7 +33,7 @@ class DeviceManifest
 {
 public:
     DeviceManifest() = default;
-    DeviceManifest(std::string name, std::string description, std::string protocol, std::string firmwareUpdateProtocol,
+    DeviceManifest(std::string name, std::string description, std::string protocol, std::string firmwareUpdateType,
                    std::vector<ConfigurationManifest> configurations = {}, std::vector<SensorManifest> sensors = {},
                    std::vector<AlarmManifest> alarms = {}, std::vector<ActuatorManifest> actuators = {});
 
@@ -63,7 +63,7 @@ public:
     const std::string& getName() const;
     const std::string& getDescription() const;
     const std::string& getProtocol() const;
-    const std::string& getFirmwareUpdateProtocol() const;
+    const std::string& getFirmwareUpdateType() const;
 
     bool operator==(DeviceManifest& rhs) const;
     bool operator!=(DeviceManifest& rhs) const;
@@ -72,7 +72,7 @@ private:
     std::string m_name;
     std::string m_description;
     std::string m_protocol;
-    std::string m_firmwareUpdateProtocol;
+    std::string m_firmwareUpdateType;
 
     std::vector<ConfigurationManifest> m_configurations;
     std::vector<SensorManifest> m_sensors;
