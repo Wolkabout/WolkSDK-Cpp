@@ -21,6 +21,17 @@
 
 namespace wolkabout
 {
+SensorManifest::SensorManifest(std::string name, std::string reference, DataType dataType,
+                               std::string description, double minimum, double maximum)
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_readingType{std::move(dataType)}
+, m_description{std::move(description)}
+, m_minimum{minimum}
+, m_maximum{maximum}
+{
+}
+
 SensorManifest::SensorManifest(std::string name, std::string reference, ReadingType readingType,
                                std::string description, double minimum, double maximum)
 : m_name{std::move(name)}

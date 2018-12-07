@@ -247,6 +247,7 @@ public:
     };
 
     ReadingType() = default;
+    ReadingType(DataType dataType);
     ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit unit);
     ReadingType(std::string name, std::string unitSymbol, DataType dataType, int precision,
                 std::vector<std::string> labels);

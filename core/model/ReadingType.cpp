@@ -21,6 +21,45 @@ namespace wolkabout
 {
 const std::string ReadingType::DEFAULT_DELIMITER = ",";
 
+ReadingType::ReadingType(DataType dataType)
+: m_precision{1}, m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
+{
+    switch (dataType)
+    {
+    case DataType::NUMERIC:
+    {
+        m_name = toString(ReadingType::Name::GENERIC);
+        m_unit = toString(ReadingType::MeasurmentUnit::NUMERIC);
+        m_dataType = DataType::NUMERIC;
+        m_unitSymbol = symbolForUnit(ReadingType::MeasurmentUnit::NUMERIC);
+
+        break;
+    }
+    case DataType::BOOLEAN:
+    {
+        m_name = toString(ReadingType::Name::GENERIC_BOOLEAN);
+        m_unit = toString(ReadingType::MeasurmentUnit::BOOLEAN);
+        m_dataType = DataType::BOOLEAN;
+        m_unitSymbol = symbolForUnit(ReadingType::MeasurmentUnit::BOOLEAN);
+
+        break;
+    }
+    case DataType::STRING:
+    {
+        m_name = toString(ReadingType::Name::GENERIC_TEXT);
+        m_unit = toString(ReadingType::MeasurmentUnit::TEXT);
+        m_dataType = DataType::STRING;
+        m_unitSymbol = symbolForUnit(ReadingType::MeasurmentUnit::TEXT);
+
+        break;
+    }
+    default:
+    {
+        throw std::logic_error(std::string("Undefined Data type: ") + std::to_string(static_cast<int>(dataType)));
+    }
+    }
+}
+
 ReadingType::ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit unit)
 : m_precision{1}, m_delimiter{DEFAULT_DELIMITER}
 {

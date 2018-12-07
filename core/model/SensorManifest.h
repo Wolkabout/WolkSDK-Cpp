@@ -30,6 +30,9 @@ class SensorManifest
 public:
     SensorManifest() = default;
 
+    SensorManifest(std::string name, std::string reference, DataType dataType, std::string description,
+                   double minimum = 0, double maximum = 0);
+
     SensorManifest(std::string name, std::string reference, ReadingType readingType, std::string description,
                    double minimum = 0, double maximum = 0);
 
