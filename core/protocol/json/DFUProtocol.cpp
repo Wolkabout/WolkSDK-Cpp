@@ -40,7 +40,7 @@ const std::string DFUProtocol::FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT = "service/com
 const std::vector<std::string> DFUProtocol::INBOUND_CHANNELS = {FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT};
 
 /*** FIRMWARE UPDATE RESPONSE ***/
-void to_json(json& j, const FirmwareUpdateResponse& p)
+static void to_json(json& j, const FirmwareUpdateResponse& p)
 {
     const std::string status = [&]() -> std::string {
         switch (p.getStatus())
@@ -72,14 +72,14 @@ void to_json(json& j, const FirmwareUpdateResponse& p)
     }
 }
 
-void to_json(json& j, const std::shared_ptr<FirmwareUpdateResponse>& p)
+static void to_json(json& j, const std::shared_ptr<FirmwareUpdateResponse>& p)
 {
     to_json(j, *p);
 }
 /*** FIRMWARE UPDATE RESPONSE ***/
 
 /*** FIRMWARE UPDATE COMMAND ***/
-void from_json(const json& j, FirmwareUpdateCommand& p)
+static void from_json(const json& j, FirmwareUpdateCommand& p)
 {
     const std::string typeStr = j.at("command").get<std::string>();
 
@@ -165,6 +165,7 @@ void from_json(const json& j, FirmwareUpdateCommand& p)
         p = FirmwareUpdateCommand(type);
     }
 }
+/*** FIRMWARE UPDATE COMMAND ***/
 
 const std::string& DFUProtocol::getName() const
 {
