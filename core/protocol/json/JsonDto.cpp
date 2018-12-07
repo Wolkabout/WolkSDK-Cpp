@@ -331,7 +331,7 @@ void to_json(json& j, const DeviceManifest& deviceManifest)
         {"name", deviceManifest.getName()},
         {"description", deviceManifest.getDescription()},
         {"protocol", deviceManifest.getProtocol()},
-        {"firmwareUpdateProtocol", deviceManifest.getFirmwareUpdateProtocol()},
+        {"firmwareUpdateType", deviceManifest.getFirmwareUpdateType()},
         {"configs", deviceManifest.getConfigurations()},
         {"alarms", deviceManifest.getAlarms()},
         {"actuators", deviceManifest.getActuators()},
@@ -344,7 +344,7 @@ void from_json(const json& j, DeviceManifest& deviceManifest)
 {
     deviceManifest = DeviceManifest(
       j.at("name").get<std::string>(), j.at("description").get<std::string>(), j.at("protocol").get<std::string>(),
-      j.at("firmwareUpdateProtocol").get<std::string>(), j.at("configs").get<std::vector<ConfigurationManifest>>(),
+      j.at("firmwareUpdateType").get<std::string>(), j.at("configs").get<std::vector<ConfigurationManifest>>(),
       j.at("feeds").get<std::vector<SensorManifest>>(), j.at("alarms").get<std::vector<AlarmManifest>>(),
       j.at("actuators").get<std::vector<ActuatorManifest>>());
 }
