@@ -29,6 +29,8 @@ public:
     enum class Name
     {
         GENERIC = 0,
+        GENERIC_TEXT,
+        GENERIC_BOOLEAN,
         TEMPERATURE,
         PRESSURE,
         HUMIDITY,
@@ -182,7 +184,7 @@ public:
         // STEPS,
 
         TEXT,
-
+        NUMERIC,
         BOOLEAN,
 
         SECOND,

@@ -127,7 +127,51 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
     {
     case ReadingType::Name::GENERIC:
     {
-        break;
+        switch (unit)
+        {
+        case MeasurmentUnit::NUMERIC:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;    
+    }
+    case ReadingType::Name::GENERIC_TEXT:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::TEXT:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;    
+    }
+    case ReadingType::Name::GENERIC_BOOLEAN:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::BOOLEAN:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;    
     }
     case ReadingType::Name::TEMPERATURE:
     {
@@ -792,6 +836,14 @@ DataType ReadingType::dataTypeForName(Name name)
     {
         return DataType::NUMERIC;
     }
+    case ReadingType::Name::GENERIC_TEXT:
+    {
+        return DataType::STRING;
+    }
+    case ReadingType::Name::GENERIC_BOOLEAN:
+    {
+        return DataType::BOOLEAN;
+    }
     case ReadingType::Name::TEMPERATURE:
     {
         return DataType::NUMERIC;
@@ -1326,6 +1378,10 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "";
     }
+    case ReadingType::MeasurmentUnit::NUMERIC:
+    {
+        return "";
+    }
     case ReadingType::MeasurmentUnit::SECOND:
     {
         return "s";
@@ -1542,6 +1598,14 @@ std::string toString(ReadingType::Name name)
     case ReadingType::Name::GENERIC:
     {
         return "GENERIC";
+    }
+    case ReadingType::Name::GENERIC_TEXT:
+    {
+        return "GENERIC_TEXT";
+    }
+    case ReadingType::Name::GENERIC_BOOLEAN:
+    {
+        return "GENERIC_BOOLEAN";
     }
     case ReadingType::Name::TEMPERATURE:
     {
@@ -2043,6 +2107,10 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::BOOLEAN:
     {
         return "BOOLEAN";
+    }
+    case ReadingType::MeasurmentUnit::NUMERIC:
+    {
+        return "NUMERIC";
     }
     case ReadingType::MeasurmentUnit::SECOND:
     {
