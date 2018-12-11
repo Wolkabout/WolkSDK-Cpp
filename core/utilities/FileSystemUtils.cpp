@@ -166,6 +166,11 @@ std::vector<std::string> FileSystemUtils::listFiles(const std::string& directory
 
 std::string FileSystemUtils::composePath(const std::string& fileName, const std::string& directory)
 {
+    if (directory.empty())
+    {
+        return fileName;
+    }
+
     return directory + PATH_DELIMITER + fileName;
 }
 }    // namespace wolkabout
