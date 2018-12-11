@@ -173,4 +173,12 @@ std::string FileSystemUtils::composePath(const std::string& fileName, const std:
 
     return directory + PATH_DELIMITER + fileName;
 }
+
+std::string FileSystemUtils::absolutePath(const std::string& path)
+{
+    char fullPath[256];
+    realpath(path.c_str(), fullPath);
+
+    return std::string(fullPath);
+}
 }    // namespace wolkabout

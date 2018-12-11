@@ -49,6 +49,8 @@ public:
 
     static std::string composePath(const std::string& fileName, const std::string& directory);
 
+    static std::string absolutePath(const std::string& path);
+
 private:
     static const char PATH_DELIMITER;
 };
