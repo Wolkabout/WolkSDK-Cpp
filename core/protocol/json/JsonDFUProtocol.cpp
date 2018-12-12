@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-#include "protocol/json/DFUProtocol.h"
+#include "protocol/json/JsonDFUProtocol.h"
 #include "model/FirmwareUpdateCommand.h"
 #include "model/FirmwareUpdateResponse.h"
 #include "model/Message.h"
-#include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
+#include "utilities/Logger.h"
+#include "utilities/StringUtils.h"
 
 #include <algorithm>
 
@@ -27,17 +28,21 @@ using nlohmann::json;
 
 namespace wolkabout
 {
-const std::string DFUProtocol::NAME = "DFUProtocol";
+const std::string JsonDFUProtocol::NAME = "DFU";
 
-const std::string DFUProtocol::CHANNEL_DELIMITER = "/";
-const std::string DFUProtocol::CHANNEL_WILDCARD = "#";
+const std::string JsonDFUProtocol::CHANNEL_DELIMITER = "/";
+const std::string JsonDFUProtocol::CHANNEL_MULTI_LEVEL_WILDCARD = "#";
+const std::string JsonDFUProtocol::CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
+const std::string JsonDFUProtocol::DEVICE_PATH_PREFIX = "d/";
+const std::string JsonDFUProtocol::DEVICE_TO_PLATFORM_DIRECTION = "d2p/";
+const std::string JsonDFUProtocol::PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
 
-const std::string DFUProtocol::FIRMWARE_UPDATE_STATUS_TOPIC_ROOT = "service/status/firmware/";
-const std::string DFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "firmware/version/";
+const std::string JsonDFUProtocol::FIRMWARE_UPDATE_STATUS_TOPIC_ROOT = "d2p/firmware/";
+const std::string JsonDFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "d2p/firmware_version/";
 
-const std::string DFUProtocol::FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT = "service/commands/firmware/";
+const std::string JsonDFUProtocol::FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT = "p2d/firmware/";
 
-const std::vector<std::string> DFUProtocol::INBOUND_CHANNELS = {FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT};
+const std::vector<std::string> JsonDFUProtocol::INBOUND_CHANNELS = {FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT};
 
 /*** FIRMWARE UPDATE RESPONSE ***/
 static void to_json(json& j, const FirmwareUpdateResponse& p)
@@ -70,11 +75,6 @@ static void to_json(json& j, const FirmwareUpdateResponse& p)
 
         j.emplace("error", static_cast<int>(errorCode));
     }
-}
-
-static void to_json(json& j, const std::shared_ptr<FirmwareUpdateResponse>& p)
-{
-    to_json(j, *p);
 }
 /*** FIRMWARE UPDATE RESPONSE ***/
 
@@ -167,50 +167,50 @@ static void from_json(const json& j, FirmwareUpdateCommand& p)
 }
 /*** FIRMWARE UPDATE COMMAND ***/
 
-const std::string& DFUProtocol::getName() const
+const std::string& JsonDFUProtocol::getName() const
 {
     return NAME;
 }
 
-std::vector<std::string> DFUProtocol::getInboundChannels() const
+std::vector<std::string> JsonDFUProtocol::getInboundChannels() const
 {
     std::vector<std::string> channels;
     std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [](const std::string& source) { return source + CHANNEL_WILDCARD; });
+                   [](const std::string& source) { return source + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD; });
     return channels;
 }
 
-std::vector<std::string> DFUProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
+std::vector<std::string> JsonDFUProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
     std::vector<std::string> channels;
     std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [&](const std::string& source) -> std::string { return source + deviceKey; });
+                   [&](const std::string& source) -> std::string { return source + DEVICE_PATH_PREFIX + deviceKey; });
     return channels;
 }
 
-std::unique_ptr<Message> DFUProtocol::makeMessage(const std::string& deviceKey,
+std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceKey,
                                                   const FirmwareUpdateResponse& firmwareUpdateResponse) const
 {
     const json jPayload(firmwareUpdateResponse);
     const std::string payload = jPayload.dump();
-    const std::string topic = FIRMWARE_UPDATE_STATUS_TOPIC_ROOT + deviceKey;
+    const std::string topic = FIRMWARE_UPDATE_STATUS_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
 
     return std::unique_ptr<Message>(new Message(payload, topic));
 }
 
-std::unique_ptr<Message> DFUProtocol::makeFromFirmwareVersion(const std::string& deviceKey,
+std::unique_ptr<Message> JsonDFUProtocol::makeFromFirmwareVersion(const std::string& deviceKey,
                                                               const std::string& firmwareVerion) const
 {
-    const std::string topic = FIRMWARE_VERSION_TOPIC_ROOT + deviceKey;
+    const std::string topic = FIRMWARE_VERSION_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
     return std::unique_ptr<Message>(new Message(firmwareVerion, topic));
 }
 
-bool DFUProtocol::isFirmwareUpdateMessage(const Message& message) const
+bool JsonDFUProtocol::isFirmwareUpdateMessage(const Message& message) const
 {
     return StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT);
 }
 
-std::unique_ptr<FirmwareUpdateCommand> DFUProtocol::makeFirmwareUpdateCommand(const Message& message) const
+std::unique_ptr<FirmwareUpdateCommand> JsonDFUProtocol::makeFirmwareUpdateCommand(const Message& message) const
 {
     try
     {
@@ -255,17 +255,20 @@ std::unique_ptr<FirmwareUpdateCommand> DFUProtocol::makeFirmwareUpdateCommand(co
     }
 }
 
-std::string DFUProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+std::string JsonDFUProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
 {
-    // remove / from end of channel
-    const std::string channel =
-      StringUtils::endsWith(topic, CHANNEL_DELIMITER) ? StringUtils::removeSufix(topic, CHANNEL_DELIMITER) : topic;
+    LOG(TRACE) << METHOD_INFO;
 
-    const auto position = channel.find_last_of(CHANNEL_DELIMITER);
+    const std::string devicePathPrefix = CHANNEL_DELIMITER + DEVICE_PATH_PREFIX;
 
-    if (position != std::string::npos)
+    const auto deviceKeyStartPosition = topic.find(devicePathPrefix);
+    if (deviceKeyStartPosition != std::string::npos)
     {
-        return channel.substr(position + CHANNEL_DELIMITER.size(), std::string::npos);
+        const auto keyEndPosition = topic.find(CHANNEL_DELIMITER, deviceKeyStartPosition + devicePathPrefix.size());
+
+        const auto pos = deviceKeyStartPosition + devicePathPrefix.size();
+
+        return topic.substr(pos, keyEndPosition - pos);
     }
 
     return "";

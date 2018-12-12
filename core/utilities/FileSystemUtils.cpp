@@ -22,6 +22,8 @@
 
 namespace wolkabout
 {
+const char FileSystemUtils::PATH_DELIMITER = '/';
+
 bool FileSystemUtils::isFilePresent(const std::string& filePath)
 {
     FILE* configFile = ::fopen(filePath.c_str(), "r");
@@ -138,7 +140,7 @@ bool FileSystemUtils::readBinaryFileContent(const std::string& filePath, ByteArr
     return true;
 }
 
-std::vector<std::string> FileSystemUtils::listFiles(std::string directoryPath)
+std::vector<std::string> FileSystemUtils::listFiles(const std::string& directoryPath)
 {
     std::vector<std::string> result;
 
@@ -160,5 +162,23 @@ std::vector<std::string> FileSystemUtils::listFiles(std::string directoryPath)
     closedir(dp);
 
     return result;
+}
+
+std::string FileSystemUtils::composePath(const std::string& fileName, const std::string& directory)
+{
+    if (directory.empty())
+    {
+        return fileName;
+    }
+
+    return directory + PATH_DELIMITER + fileName;
+}
+
+std::string FileSystemUtils::absolutePath(const std::string& path)
+{
+    char fullPath[256];
+    realpath(path.c_str(), fullPath);
+
+    return std::string(fullPath);
 }
 }    // namespace wolkabout

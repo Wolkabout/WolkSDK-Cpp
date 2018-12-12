@@ -27,7 +27,7 @@ using nlohmann::json;
 
 namespace wolkabout
 {
-const std::string DownloadProtocol::NAME = "FileDowmloadProtocol";
+const std::string DownloadProtocol::NAME = "FileDownloadProtocol";
 
 const std::string DownloadProtocol::CHANNEL_DELIMITER = "/";
 const std::string DownloadProtocol::CHANNEL_WILDCARD = "#";
@@ -39,12 +39,12 @@ const std::string DownloadProtocol::BINARY_TOPIC_ROOT = "service/binary/";
 const std::vector<std::string> DownloadProtocol::INBOUND_CHANNELS = {BINARY_TOPIC_ROOT};
 
 /*** FILE PACKET_REQUEST ***/
-void to_json(json& j, const FilePacketRequest& p)
+static void to_json(json& j, const FilePacketRequest& p)
 {
     j = json{{"fileName", p.getFileName()}, {"chunkIndex", p.getChunkIndex()}, {"chunkSize", p.getChunkSize()}};
 }
 
-void to_json(json& j, const std::shared_ptr<FilePacketRequest>& p)
+static void to_json(json& j, const std::shared_ptr<FilePacketRequest>& p)
 {
     to_json(j, *p);
 }
