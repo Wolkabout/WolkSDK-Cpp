@@ -30,6 +30,8 @@ class DeviceRegistrationResponse;
 class RegistrationProtocol : public Protocol
 {
 public:
+    virtual bool isRegistrationResponseMessage(const Message& message) const = 0;
+
     virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                                  const DeviceRegistrationRequest& request) const = 0;
 
