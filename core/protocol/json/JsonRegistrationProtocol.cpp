@@ -98,6 +98,13 @@ std::string JsonRegistrationProtocol::extractDeviceKeyFromChannel(const std::str
     return "";
 }
 
+bool JsonRegistrationProtocol::isRegistrationResponseMessage(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    return StringUtils::startsWith(message.getChannel(), DEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT);
+}
+
 std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string& deviceKey,
                                                                const DeviceRegistrationRequest& request) const
 {

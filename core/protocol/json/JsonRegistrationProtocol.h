@@ -31,6 +31,7 @@ public:
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
+    bool isRegistrationResponseMessage(const Message& message) const override;
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const DeviceRegistrationRequest& request) const override;
     std::unique_ptr<DeviceRegistrationResponse> makeRegistrationResponse(const Message& message) const override;
