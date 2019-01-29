@@ -18,9 +18,9 @@
 #include "model/FirmwareUpdateCommand.h"
 #include "model/FirmwareUpdateResponse.h"
 #include "model/Message.h"
-#include "utilities/json.hpp"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
+#include "utilities/json.hpp"
 
 #include <algorithm>
 
@@ -175,8 +175,9 @@ const std::string& JsonDFUProtocol::getName() const
 std::vector<std::string> JsonDFUProtocol::getInboundChannels() const
 {
     std::vector<std::string> channels;
-    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [](const std::string& source) { return source + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD; });
+    std::transform(
+      INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+      [](const std::string& source) { return source + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD; });
     return channels;
 }
 
@@ -189,7 +190,7 @@ std::vector<std::string> JsonDFUProtocol::getInboundChannelsForDevice(const std:
 }
 
 std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceKey,
-                                                  const FirmwareUpdateResponse& firmwareUpdateResponse) const
+                                                      const FirmwareUpdateResponse& firmwareUpdateResponse) const
 {
     const json jPayload(firmwareUpdateResponse);
     const std::string payload = jPayload.dump();
@@ -199,7 +200,7 @@ std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceK
 }
 
 std::unique_ptr<Message> JsonDFUProtocol::makeFromFirmwareVersion(const std::string& deviceKey,
-                                                              const std::string& firmwareVerion) const
+                                                                  const std::string& firmwareVerion) const
 {
     const std::string topic = FIRMWARE_VERSION_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
     return std::unique_ptr<Message>(new Message(firmwareVerion, topic));
@@ -273,4 +274,4 @@ std::string JsonDFUProtocol::extractDeviceKeyFromChannel(const std::string& topi
 
     return "";
 }
-}
+}    // namespace wolkabout
