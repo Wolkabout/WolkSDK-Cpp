@@ -27,6 +27,21 @@ using nlohmann::json;
 
 namespace wolkabout
 {
+static std::string createMultivalue(const std::string& value, int size)
+{
+    std::string multivalue = "";
+    for (int i = 0; i < size; ++i)
+    {
+        multivalue += value;
+        if (i < size - 1)
+        {
+            multivalue += ",";
+        }
+    }
+
+    return multivalue;
+}
+
 /*** CONFIGURATION MANIFEST ***/
 void to_json(json& j, const ConfigurationManifest& configurationManifest)
 {
@@ -42,7 +57,7 @@ void to_json(json& j, const ConfigurationManifest& configurationManifest)
     confJ["reference"] = configurationManifest.getReference();
     confJ["dataType"] = dataType;
     confJ["description"] = configurationManifest.getDescription();
-    confJ["defaultValue"] = configurationManifest.getDefaultValue();
+    confJ["defaultValue"] = createMultivalue(configurationManifest.getDefaultValue(), configurationManifest.getSize());
     confJ["size"] = configurationManifest.getSize();
 
     if (configurationManifest.getDataType() == DataType::NUMERIC)
