@@ -18,9 +18,9 @@
 #include "model/BinaryData.h"
 #include "model/FilePacketRequest.h"
 #include "model/Message.h"
-#include "utilities/json.hpp"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
+#include "utilities/json.hpp"
 
 #include <algorithm>
 
@@ -65,8 +65,9 @@ const std::string& JsonDownloadProtocol::getName() const
 std::vector<std::string> JsonDownloadProtocol::getInboundChannels() const
 {
     std::vector<std::string> channels;
-    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [](const std::string& source) { return source + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD; });
+    std::transform(
+      INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
+      [](const std::string& source) { return source + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD; });
     return channels;
 }
 
@@ -96,7 +97,7 @@ std::unique_ptr<BinaryData> JsonDownloadProtocol::makeBinaryData(const Message& 
 }
 
 std::unique_ptr<Message> JsonDownloadProtocol::makeMessage(const std::string& deviceKey,
-                                                       const FilePacketRequest& filePacketRequest) const
+                                                           const FilePacketRequest& filePacketRequest) const
 {
     const json jPayload(filePacketRequest);
     const std::string payload = jPayload.dump();
@@ -123,4 +124,4 @@ std::string JsonDownloadProtocol::extractDeviceKeyFromChannel(const std::string&
 
     return "";
 }
-}
+}    // namespace wolkabout

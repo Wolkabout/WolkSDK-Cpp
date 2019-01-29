@@ -21,8 +21,7 @@ namespace wolkabout
 {
 const std::string ReadingType::DEFAULT_DELIMITER = ",";
 
-ReadingType::ReadingType(DataType dataType)
-: m_precision{1}, m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
+ReadingType::ReadingType(DataType dataType) : m_precision{1}, m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
 {
     switch (dataType)
     {
@@ -178,7 +177,7 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
                                    toString(unit));
         }
         }
-        break;    
+        break;
     }
     case ReadingType::Name::GENERIC_TEXT:
     {
@@ -194,7 +193,7 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
                                    toString(unit));
         }
         }
-        break;    
+        break;
     }
     case ReadingType::Name::GENERIC_BOOLEAN:
     {
@@ -210,7 +209,7 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
                                    toString(unit));
         }
         }
-        break;    
+        break;
     }
     case ReadingType::Name::TEMPERATURE:
     {
