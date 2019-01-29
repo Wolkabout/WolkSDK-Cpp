@@ -38,4 +38,4 @@ std::string toString(DataType type)
 
     return "";
 }
-}
+}    // namespace wolkabout

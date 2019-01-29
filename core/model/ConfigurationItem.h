@@ -34,6 +34,6 @@ private:
     std::vector<std::string> m_values;
     std::string m_reference;
 };
-}
+}    // namespace wolkabout
 
 #endif    // CONFIGURATIONITEM_H

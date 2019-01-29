@@ -38,6 +38,6 @@ public:
 
     inline Type getType() const override final { return Protocol::Type::FILE_DOWNLOAD; }
 };
-}
+}    // namespace wolkabout
 
 #endif    // FILEDOWNLOADPROTOCOL_H

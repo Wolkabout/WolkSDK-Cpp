@@ -52,6 +52,6 @@ private:
 
     static const std::vector<std::string> INBOUND_CHANNELS;
 };
-}
+}    // namespace wolkabout
 
 #endif    // DFUPROTOCOL_H

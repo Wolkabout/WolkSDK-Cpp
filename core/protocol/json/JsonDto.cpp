@@ -442,4 +442,4 @@ void to_json(json& j, const DeviceReregistrationResponse& dto)
     // clang-format on
 }
 /*** DEVICE REREGISTRATION RESPONSE DTO ***/
-}
+}    // namespace wolkabout

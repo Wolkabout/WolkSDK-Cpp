@@ -291,6 +291,6 @@ private:
 
 std::string toString(ReadingType::Name name);
 std::string toString(ReadingType::MeasurmentUnit unit);
-}
+}    // namespace wolkabout
 
 #endif    // READINGTYPE_H

@@ -88,6 +88,6 @@ private:
 
 std::string toString(ActuationReadingType::Name name);
 std::string toString(ActuationReadingType::MeasurmentUnit unit);
-}
+}    // namespace wolkabout
 
 #endif    // ACTUATIONREADINGTYPE_H
