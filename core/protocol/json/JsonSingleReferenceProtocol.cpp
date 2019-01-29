@@ -122,7 +122,7 @@ namespace serializer_jsr
 
         to_json(j, *p);
     }
-}
+}    // namespace serializer_jsr
 
 const std::string& JsonSingleReferenceProtocol::getName() const
 {
@@ -504,4 +504,4 @@ std::vector<std::string> JsonSingleReferenceProtocol::parseMultiValues(const std
 {
     return StringUtils::tokenize(values, delimiter);
 }
-}
+}    // namespace wolkabout

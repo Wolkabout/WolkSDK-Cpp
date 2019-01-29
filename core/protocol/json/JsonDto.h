@@ -51,6 +51,6 @@ void from_json(const nlohmann::json& j, DeviceRegistrationRequest& dto);
 void to_json(nlohmann::json& j, const DeviceRegistrationResponse& dto);
 
 void to_json(nlohmann::json& j, const DeviceReregistrationResponse& dto);
-}
+}    // namespace wolkabout
 
 #endif    // JSONDTO_H

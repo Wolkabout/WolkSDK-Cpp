@@ -2359,4 +2359,4 @@ std::string toString(ReadingType::MeasurmentUnit unit)
 
     return "";
 }
-}
+}    // namespace wolkabout

@@ -325,4 +325,4 @@ std::string toString(ActuationReadingType::MeasurmentUnit unit)
     }
     }
 }
-}
+}    // namespace wolkabout

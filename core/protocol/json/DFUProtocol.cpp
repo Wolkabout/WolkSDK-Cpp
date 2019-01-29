@@ -270,4 +270,4 @@ std::string DFUProtocol::extractDeviceKeyFromChannel(const std::string& topic) c
 
     return "";
 }
-}
+}    // namespace wolkabout

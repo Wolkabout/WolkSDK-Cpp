@@ -28,6 +28,6 @@ enum class DataType
 };
 
 std::string toString(DataType type);
-}
+}    // namespace wolkabout
 
 #endif    // DATATYPE_H

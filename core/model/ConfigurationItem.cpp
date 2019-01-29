@@ -32,4 +32,4 @@ const std::string& ConfigurationItem::getReference() const
 {
     return m_reference;
 }
-}
+}    // namespace wolkabout

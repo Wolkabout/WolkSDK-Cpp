@@ -41,6 +41,6 @@ public:
 
     inline Type getType() const override final { return Protocol::Type::FIRMWARE_UPDATE; }
 };
-}
+}    // namespace wolkabout
 
 #endif    // FIRMWAREUPDATEPROTOCOL_H

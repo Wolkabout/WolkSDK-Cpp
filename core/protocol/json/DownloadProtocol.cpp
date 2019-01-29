@@ -113,4 +113,4 @@ std::string DownloadProtocol::extractDeviceKeyFromChannel(const std::string& top
 
     return "";
 }
-}
+}    // namespace wolkabout
