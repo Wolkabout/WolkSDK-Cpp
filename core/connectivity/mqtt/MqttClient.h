@@ -18,6 +18,7 @@
 #define MQTTCLIENT_H
 
 #include <functional>
+#include <mutex>
 #include <string>
 
 namespace wolkabout
@@ -28,6 +29,7 @@ public:
     using OnMessageReceivedCallback = std::function<void(std::string topic, std::string message)>;
     using OnConnectionLostCallback = std::function<void()>;
 
+    MqttClient();
     virtual ~MqttClient() = default;
 
     virtual bool connect(const std::string& username, const std::string& password, const std::string& address,
@@ -36,21 +38,32 @@ public:
 
     virtual bool isConnected() = 0;
 
-    virtual void setLastWill(const std::string& topic, const std::string& message, bool retained = false) = 0;
-
     virtual bool subscribe(const std::string& topic) = 0;
-    virtual bool publish(const std::string& topic, const std::string& message, bool retained = false) = 0;
 
+    virtual bool publish(const std::string& topic, const std::string& message, bool retained = false) = 0;
     void onMessageReceived(OnMessageReceivedCallback callback);
 
     void onConnectionLost(OnConnectionLostCallback callback);
 
+    void setLastWill(const std::string& topic, const std::string& message, bool retained = false);
+    std::string getLastWillTopic() const;
+    std::string getLastWillMessage() const;
+    bool getLastWillRetain() const;
+
     void setTrustStore(const std::string& trustStore);
+    std::string getTrustStore() const;
 
 protected:
     OnMessageReceivedCallback m_onMessageReceived;
     OnConnectionLostCallback m_onConnectionLost;
+    mutable std::mutex m_variableLock;
+
+private:
     std::string m_trustStore;
+
+    std::string m_lastWillTopic;
+    std::string m_lastWillMessage;
+    bool m_lastWillRetain;
 };
 }    // namespace wolkabout
 

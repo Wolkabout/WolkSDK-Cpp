@@ -20,6 +20,8 @@
 
 namespace wolkabout
 {
+MqttClient::MqttClient() : m_trustStore(""), m_lastWillTopic(""), m_lastWillMessage(""), m_lastWillRetain(false) {}
+
 void MqttClient::onMessageReceived(MqttClient::OnMessageReceivedCallback callback)
 {
     m_onMessageReceived = std::move(callback);
@@ -30,8 +32,42 @@ void MqttClient::onConnectionLost(MqttClient::OnConnectionLostCallback callback)
     m_onConnectionLost = std::move(callback);
 }
 
+void MqttClient::setLastWill(const std::string& topic, const std::string& message, bool retained)
+{
+    std::lock_guard<decltype(m_variableLock)> lg{m_variableLock};
+    m_lastWillTopic = topic;
+    m_lastWillMessage = message;
+    m_lastWillRetain = retained;
+}
+
+std::string MqttClient::getLastWillTopic() const
+{
+    std::lock_guard<decltype(m_variableLock)> lg{m_variableLock};
+    return m_lastWillTopic;
+}
+
+std::string MqttClient::getLastWillMessage() const
+{
+    std::lock_guard<decltype(m_variableLock)> lg{m_variableLock};
+    return m_lastWillMessage;
+}
+
+bool MqttClient::getLastWillRetain() const
+{
+    std::lock_guard<decltype(m_variableLock)> lg{m_variableLock};
+    return m_lastWillRetain;
+}
+
 void MqttClient::setTrustStore(const std::string& trustStore)
 {
+    std::lock_guard<decltype(m_variableLock)> lg{m_variableLock};
     m_trustStore = trustStore;
 }
+
+std::string MqttClient::getTrustStore() const
+{
+    std::lock_guard<decltype(m_variableLock)> lg{m_variableLock};
+    return m_trustStore;
+}
+
 }    // namespace wolkabout

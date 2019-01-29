@@ -29,10 +29,7 @@ const unsigned short PahoMqttClient::MQTT_ACTION_COMPLETITION_TIMEOUT_MSEC = 200
 const unsigned short PahoMqttClient::MQTT_KEEP_ALIVE_SEC = 60;
 const unsigned short PahoMqttClient::MQTT_QOS = 2;
 
-PahoMqttClient::PahoMqttClient()
-: m_isConnected(false), m_lastWillTopic(""), m_lastWillMessage(""), m_lastWillRetain(false)
-{
-}
+PahoMqttClient::PahoMqttClient() : m_isConnected(false) {}
 
 bool PahoMqttClient::connect(const std::string& username, const std::string& password, const std::string& host,
                              const std::string& clientId)
@@ -55,16 +52,20 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
 
     mqtt::ssl_options sslOptions;
     sslOptions.set_enable_server_cert_auth(false);
-    sslOptions.set_trust_store(m_trustStore);
+    sslOptions.set_trust_store(getTrustStore());
     connectOptions.set_ssl(sslOptions);
 
-    if (!m_lastWillTopic.empty())
+    const auto lastWillTopic = getLastWillTopic();
+    const auto lastWillMessage = getLastWillMessage();
+    const auto lastWillRetain = getLastWillRetain();
+
+    if (!lastWillTopic.empty())
     {
         mqtt::will_options willOptions;
-        willOptions.set_payload(m_lastWillMessage);
+        willOptions.set_payload(lastWillMessage);
         willOptions.set_qos(MQTT_QOS);
-        willOptions.set_retained(m_lastWillRetain);
-        willOptions.set_topic(m_lastWillTopic);
+        willOptions.set_retained(lastWillRetain);
+        willOptions.set_topic(lastWillTopic);
         connectOptions.set_will(willOptions);
     }
 
@@ -110,13 +111,6 @@ void PahoMqttClient::disconnect()
 bool PahoMqttClient::isConnected()
 {
     return m_isConnected;
-}
-
-void PahoMqttClient::setLastWill(const std::string& topic, const std::string& message, bool retained)
-{
-    m_lastWillTopic = topic;
-    m_lastWillMessage = message;
-    m_lastWillRetain = retained;
 }
 
 bool PahoMqttClient::subscribe(const std::string& topic)
