@@ -30,23 +30,14 @@ public:
     enum class Name
     {
         COUNT = 0,
-        SWITCH,
-        STRING
-    };
-
-    enum class MeasurmentUnit
-    {
-        COUNT = 0,
-        STEPS,
-        BOOLEAN,
-        TEXT
+        STRING,
+        SWITCH
     };
 
     ActuationReadingType() = default;
-    ActuationReadingType(DataType dataType);
+    ActuationReadingType(DataType);
     ActuationReadingType(ActuationReadingType::Name name, ActuationReadingType::MeasurmentUnit unit);
-    ActuationReadingType(std::string name, std::string unitSymbol, DataType dataType, int precision,
-                         std::vector<std::string> labels);
+    ActuationReadingType(std::string name, std::string unitSymbol);
 
     const std::string& getName() const;
 
@@ -56,14 +47,6 @@ public:
 
     DataType getDataType() const;
 
-    int getPrecision() const;
-
-    const std::vector<std::string>& getLabels() const;
-
-    size_t getSize() const;
-
-    const std::string& getDelimiter() const;
-
     bool operator==(ActuationReadingType& rhs) const;
     bool operator!=(ActuationReadingType& rhs) const;
 
@@ -71,19 +54,11 @@ private:
     std::string m_name;
     std::string m_unit;
     std::string m_unitSymbol;
-
     DataType m_dataType;
-    int m_precision;
-    std::vector<std::string> m_labels;
-    size_t m_size;
-
-    std::string m_delimiter;
 
     void validate(ActuationReadingType::Name name, ActuationReadingType::MeasurmentUnit unit) const;
     DataType dataTypeForName(ActuationReadingType::Name name) const;
     std::string symbolForUnit(ActuationReadingType::MeasurmentUnit unit) const;
-
-    static const std::string DEFAULT_DELIMITER;
 };
 
 std::string toString(ActuationReadingType::Name name);

@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-#include "model/AlarmManifest.h"
+#include "model/AlarmTemplate.h"
 
-#include <string>
 #include <utility>
 
 namespace wolkabout
 {
-AlarmManifest::AlarmManifest(std::string name, AlarmManifest::AlarmSeverity severity, std::string reference,
+AlarmTemplate::AlarmTemplate(std::string name, AlarmTemplate::AlarmSeverity severity, std::string reference,
                              std::string message, std::string description)
 : m_name(std::move(name))
 , m_severity(severity)
@@ -31,62 +30,62 @@ AlarmManifest::AlarmManifest(std::string name, AlarmManifest::AlarmSeverity seve
 {
 }
 
-const std::string& AlarmManifest::getName() const
+const std::string& AlarmTemplate::getName() const
 {
     return m_name;
 }
 
-AlarmManifest& AlarmManifest::setName(const std::string& name)
+AlarmTemplate& AlarmTemplate::setName(const std::string& name)
 {
     m_name = name;
     return *this;
 }
 
-AlarmManifest::AlarmSeverity AlarmManifest::getSeverity() const
+AlarmTemplate::AlarmSeverity AlarmTemplate::getSeverity() const
 {
     return m_severity;
 }
 
-AlarmManifest& AlarmManifest::setSeverity(AlarmManifest::AlarmSeverity severity)
+AlarmTemplate& AlarmTemplate::setSeverity(AlarmTemplate::AlarmSeverity severity)
 {
     m_severity = severity;
     return *this;
 }
 
-const std::string& AlarmManifest::getReference() const
+const std::string& AlarmTemplate::getReference() const
 {
     return m_reference;
 }
 
-AlarmManifest& AlarmManifest::setReference(const std::string& reference)
+AlarmTemplate& AlarmTemplate::setReference(const std::string& reference)
 {
     m_reference = reference;
     return *this;
 }
 
-const std::string& AlarmManifest::getMessage() const
+const std::string& AlarmTemplate::getMessage() const
 {
     return m_message;
 }
 
-AlarmManifest& AlarmManifest::setMessage(const std::string& message)
+AlarmTemplate& AlarmTemplate::setMessage(const std::string& message)
 {
     m_message = message;
     return *this;
 }
 
-const std::string& AlarmManifest::getDescription() const
+const std::string& AlarmTemplate::getDescription() const
 {
     return m_description;
 }
 
-AlarmManifest& AlarmManifest::setDescription(const std::string& description)
+AlarmTemplate& AlarmTemplate::setDescription(const std::string& description)
 {
     m_description = description;
     return *this;
 }
 
-bool AlarmManifest::operator==(AlarmManifest& rhs) const
+bool AlarmTemplate::operator==(AlarmTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_severity != rhs.m_severity || m_reference != rhs.m_reference ||
         m_message != rhs.m_message || m_description != rhs.m_description)
@@ -97,7 +96,7 @@ bool AlarmManifest::operator==(AlarmManifest& rhs) const
     return true;
 }
 
-bool AlarmManifest::operator!=(AlarmManifest& rhs) const
+bool AlarmTemplate::operator!=(AlarmTemplate& rhs) const
 {
     return !(*this == rhs);
 }

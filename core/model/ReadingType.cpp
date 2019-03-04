@@ -19,9 +19,8 @@
 
 namespace wolkabout
 {
-const std::string ReadingType::DEFAULT_DELIMITER = ",";
 
-ReadingType::ReadingType(DataType dataType) : m_precision{1}, m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
+ReadingType::ReadingType(DataType dataType)
 {
     switch (dataType)
     {
@@ -60,7 +59,6 @@ ReadingType::ReadingType(DataType dataType) : m_precision{1}, m_labels{}, m_size
 }
 
 ReadingType::ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit unit)
-: m_precision{1}, m_delimiter{DEFAULT_DELIMITER}
 {
     validate(name, unit);
 
@@ -69,20 +67,11 @@ ReadingType::ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit uni
 
     m_dataType = dataTypeForName(name);
     m_unitSymbol = symbolForUnit(unit);
-
-    m_labels = labelsForName(name);
-    m_size = m_labels.size() == 0 ? 1 : m_labels.size();
 }
 
-ReadingType::ReadingType(std::string name, std::string unitSymbol, DataType dataType, int precision,
-                         std::vector<std::string> labels)
+ReadingType::ReadingType(std::string name, std::string unitSymbol)
 : m_name{std::move(name)}
 , m_unitSymbol{std::move(unitSymbol)}
-, m_dataType{std::move(dataType)}
-, m_precision{precision}
-, m_labels{std::move(labels)}
-, m_size{m_labels.size() == 0 ? 1 : m_labels.size()}
-, m_delimiter{DEFAULT_DELIMITER}
 {
 }
 
@@ -106,49 +95,12 @@ DataType ReadingType::getDataType() const
     return m_dataType;
 }
 
-int ReadingType::getPrecision() const
-{
-    return m_precision;
-}
-
-const std::vector<std::string>& ReadingType::getLabels() const
-{
-    return m_labels;
-}
-
-size_t ReadingType::getSize() const
-{
-    return m_size;
-}
-
-const std::string& ReadingType::getDelimiter() const
-{
-    return m_delimiter;
-}
 
 bool ReadingType::operator==(ReadingType& rhs) const
 {
     if (m_name != rhs.m_name || m_unitSymbol != rhs.m_unitSymbol || m_dataType != rhs.m_dataType)
     {
         return false;
-    }
-
-    if (m_delimiter != rhs.m_delimiter)
-    {
-        return false;
-    }
-
-    if (m_labels.size() != rhs.m_labels.size())
-    {
-        return false;
-    }
-
-    for (unsigned long long int i = 0; i < m_labels.size(); ++i)
-    {
-        if (m_labels[i] != rhs.m_labels[i])
-        {
-            return false;
-        }
     }
 
     return true;
@@ -167,39 +119,13 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
     {
         switch (unit)
         {
+        case MeasurmentUnit::BIT:
+        case MeasurmentUnit::PERCENT:
+        case MeasurmentUnit::CO2_MOL:
+        case MeasurmentUnit::X10C:
+        case MeasurmentUnit::X100V:
+        case MeasurmentUnit::X10PA:
         case MeasurmentUnit::NUMERIC:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
-    case ReadingType::Name::GENERIC_TEXT:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::TEXT:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
-    case ReadingType::Name::GENERIC_BOOLEAN:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::BOOLEAN:
         {
             break;
         }
@@ -217,7 +143,6 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         {
         case MeasurmentUnit::KELVIN:
         case MeasurmentUnit::CELSIUS:
-        case MeasurmentUnit::RANKINE:
         case MeasurmentUnit::FAHRENHEIT:
         case MeasurmentUnit::CELSIUS_X2:
         case MeasurmentUnit::CELSIUS_X10:
@@ -274,7 +199,7 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         }
         break;
     }
-    case ReadingType::Name::BATTERY:
+    case ReadingType::Name::BATTERY_VOLTAGE:
     {
         switch (unit)
         {
@@ -312,11 +237,6 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
     {
         switch (unit)
         {
-        case MeasurmentUnit::LUMEN:
-        case MeasurmentUnit::COULOMB:
-        case MeasurmentUnit::LUX:
-        case MeasurmentUnit::CANDELA:
-        case MeasurmentUnit::LAMBERT:
         case MeasurmentUnit::LIGHT_PERCENT:
         {
             break;
@@ -362,22 +282,6 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         }
         break;
     }
-    case ReadingType::Name::MAGNETOMETER:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::MAXWELL:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
     case ReadingType::Name::LOCATION:
     {
         switch (unit)
@@ -399,23 +303,6 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         switch (unit)
         {
         case MeasurmentUnit::BEATS_PER_MINUTE:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
-    case ReadingType::Name::COUNT:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::STEPS:
-        case MeasurmentUnit::COUNT:
         {
             break;
         }
@@ -493,29 +380,13 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         }
         break;
     }
-    case ReadingType::Name::ELECTRIC_POWER:
+    case ReadingType::Name::POWER:
     {
         switch (unit)
         {
         case MeasurmentUnit::WATT:
         case MeasurmentUnit::HORSEPOWER:
         case MeasurmentUnit::MILLIWATT:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
-    case ReadingType::Name::ELECTRIC_VOLTAGE:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::MILLIVOLT:
         {
             break;
         }
@@ -568,19 +439,12 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
     {
         switch (unit)
         {
-        case MeasurmentUnit::RADIAN:
-        case MeasurmentUnit::STERADIAN:
         case MeasurmentUnit::METRE:
         case MeasurmentUnit::MILE:
-        case MeasurmentUnit::LIGHT_YEAR:
         case MeasurmentUnit::POINT:
-        case MeasurmentUnit::KNOT:
         case MeasurmentUnit::FOOT:
-        case MeasurmentUnit::ANGSTROM:
         case MeasurmentUnit::INCH:
         case MeasurmentUnit::PARSEC:
-        case MeasurmentUnit::FOOT_SURVEY_US:
-        case MeasurmentUnit::ASTRONOMICAL_UNIT:
         case MeasurmentUnit::YARD:
         case MeasurmentUnit::MILLIMETER:
         case MeasurmentUnit::CENTIMETER:
@@ -596,7 +460,7 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         }
         break;
     }
-    case ReadingType::Name::LOAD_WEIGHT:
+    case ReadingType::Name::MASS:
     {
         switch (unit)
         {
@@ -642,60 +506,12 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
     {
         switch (unit)
         {
+        case MeasurmentUnit::KNOT:
         case MeasurmentUnit::KILOMETERS_PER_HOUR:
         case MeasurmentUnit::MILES_PER_HOUR:
         case MeasurmentUnit::MACH:
         case MeasurmentUnit::SPEED_OF_LIGHT:
         case MeasurmentUnit::METER_PER_SECOND:
-        case MeasurmentUnit::KNOT:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
-    case ReadingType::Name::STEPS:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::STEPS:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
-    case ReadingType::Name::STRING:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::TEXT:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
-    case ReadingType::Name::SWITCH:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::BOOLEAN:
         {
             break;
         }
@@ -713,11 +529,8 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         {
         case MeasurmentUnit::SECOND:
         case MeasurmentUnit::MINUTE:
-        case MeasurmentUnit::YEAR_SIDEREAL:
         case MeasurmentUnit::HOUR:
         case MeasurmentUnit::MONTH:
-        case MeasurmentUnit::YEAR_CALENDAR:
-        case MeasurmentUnit::DAY_SIDEREAL:
         case MeasurmentUnit::DAY:
         case MeasurmentUnit::WEEK:
         case MeasurmentUnit::YEAR:
@@ -771,31 +584,6 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         }
         break;
     }
-    case ReadingType::Name::ELECTRICITY:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::FARAD:
-        case MeasurmentUnit::HENRY:
-        case MeasurmentUnit::JOULE:
-        case MeasurmentUnit::SIEMENS:
-        case MeasurmentUnit::OHM:
-        case MeasurmentUnit::FRANKLIN:
-        case MeasurmentUnit::ELECTRON_VOLT:
-        case MeasurmentUnit::ELECTRIC_CHARGE:
-        case MeasurmentUnit::FARADAY:
-        case MeasurmentUnit::GILBERT:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
     case ReadingType::Name::FORCE:
     {
         switch (unit)
@@ -805,23 +593,6 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         case MeasurmentUnit::GRAVITY:
         case MeasurmentUnit::KILOGRAM_FORCE:
         case MeasurmentUnit::DYNE:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
-                                   toString(unit));
-        }
-        }
-        break;
-    }
-    case ReadingType::Name::ENERGY:
-    {
-        switch (unit)
-        {
-        case MeasurmentUnit::GRAY:
-        case MeasurmentUnit::ENERGY:
         {
             break;
         }
@@ -863,6 +634,251 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         }
         break;
     }
+    case ReadingType::Name::ANGLE:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::RADIAN:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::FREQUENCY:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::HERTZ:
+        case MeasurmentUnit::MEGA_HERTZ:
+        case MeasurmentUnit::GIGA_HERTZ:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::MAGNETIC_FLUX:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::WEBER:
+        case MeasurmentUnit::MAXWELL:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::ELECTRIC_CAPACITY:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::FARAD:
+        case MeasurmentUnit::FARADAY:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::ELECTRIC_RESISTANCE:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::OHM:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::ELECTRIC_CHARGE:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::FRANKLIN:
+        case MeasurmentUnit::ELECTRIC_CHARGE:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::ELECTRIC_MAGNETISM:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::GILBERT:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::ELECTRIC_ENERGY:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::JOULE:
+        case MeasurmentUnit::ELECTRON_VOLT:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::ELECTRIC_INDUCTANCE:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::HENRY:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::ELECTRIC_CONDUCTANCE:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::SIEMENS:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::LUMINOUS_FLUX:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::LUMEN:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::LUMINOUS_INTENSITY:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::CANDELA:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::ILLUMINANCE:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::LUX:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::GENERIC_TEXT:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::TEXT:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
+    }
+    case ReadingType::Name::GENERIC_BOOLEAN:
+    {
+        switch (unit)
+        {
+        case MeasurmentUnit::BOOLEAN:
+        {
+            break;
+        }
+        default:
+        {
+            throw std::logic_error(std::string("Invalid Measurment unit specified for ") + toString(name) + ": " +
+                                   toString(unit));
+        }
+        }
+        break;
     }
 }
 
@@ -946,7 +962,7 @@ DataType ReadingType::dataTypeForName(Name name)
     {
         return DataType::NUMERIC;
     }
-    case ReadingType::Name::ELECTRIC_POWER:
+    case ReadingType::Name::POWER:
     {
         return DataType::NUMERIC;
     }
@@ -966,7 +982,7 @@ DataType ReadingType::dataTypeForName(Name name)
     {
         return DataType::NUMERIC;
     }
-    case ReadingType::Name::LOAD_WEIGHT:
+    case ReadingType::Name::MASS:
     {
         return DataType::NUMERIC;
     }
@@ -981,14 +997,6 @@ DataType ReadingType::dataTypeForName(Name name)
     case ReadingType::Name::STEPS:
     {
         return DataType::NUMERIC;
-    }
-    case ReadingType::Name::STRING:
-    {
-        return DataType::STRING;
-    }
-    case ReadingType::Name::SWITCH:
-    {
-        return DataType::BOOLEAN;
     }
     case ReadingType::Name::TIME:
     {
@@ -1023,35 +1031,35 @@ DataType ReadingType::dataTypeForName(Name name)
     return DataType::STRING;
 }
 
-std::vector<std::string> ReadingType::labelsForName(Name name)
-{
-    switch (name)
-    {
-    case ReadingType::Name::ACCELEROMETER:
-    {
-        return {"x", "y", "z"};
-    }
-    case ReadingType::Name::GYROSCOPE:
-    {
-        return {"x", "y", "z"};
-    }
-    case ReadingType::Name::MAGNETOMETER:
-    {
-        return {"x", "y", "z"};
-    }
-    case ReadingType::Name::LOCATION:
-    {
-        return {"lat", "long"};
-    }
-    }
-
-    return {};
-}
 
 std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
 {
     switch (unit)
     {
+    case ReadingType::MeasurmentUnit::BIT:
+    {
+        return "bit";
+    }
+    case ReadingType::MeasurmentUnit::PERCENT:
+    {
+        return "%";
+    }
+    case ReadingType::MeasurmentUnit::CO2_MOL:
+    {
+        return "mol";
+    }
+    case ReadingType::MeasurmentUnit::X10C:
+    {
+        return "X10℃";
+    }
+    case ReadingType::MeasurmentUnit::X100V:
+    {
+        return "X100V";
+    }
+    case ReadingType::MeasurmentUnit::NUMERIC:
+    {
+        return "";
+    }
     case ReadingType::MeasurmentUnit::KELVIN:
     {
         return "K";
@@ -1059,10 +1067,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::CELSIUS:
     {
         return "℃";
-    }
-    case ReadingType::MeasurmentUnit::RANKINE:
-    {
-        return "°R";
     }
     case ReadingType::MeasurmentUnit::FAHRENHEIT:
     {
@@ -1074,7 +1078,7 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     }
     case ReadingType::MeasurmentUnit::CELSIUS_X10:
     {
-        return "X10C";
+        return "X10℃";
     }
     case ReadingType::MeasurmentUnit::PASCAL:
     {
@@ -1140,26 +1144,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "";
     }
-    case ReadingType::MeasurmentUnit::LUMEN:
-    {
-        return "lm";
-    }
-    case ReadingType::MeasurmentUnit::COULOMB:
-    {
-        return "Sv";
-    }
-    case ReadingType::MeasurmentUnit::LUX:
-    {
-        return "lx";
-    }
-    case ReadingType::MeasurmentUnit::CANDELA:
-    {
-        return "cd";
-    }
-    case ReadingType::MeasurmentUnit::LAMBERT:
-    {
-        return "La";
-    }
     case ReadingType::MeasurmentUnit::LIGHT_PERCENT:
     {
         return "%";
@@ -1176,10 +1160,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "deg/s";
     }
-    case ReadingType::MeasurmentUnit::MAXWELL:
-    {
-        return "Mx";
-    }
     case ReadingType::MeasurmentUnit::LOCATION:
     {
         return "";
@@ -1187,14 +1167,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::BEATS_PER_MINUTE:
     {
         return "bpm";
-    }
-    case ReadingType::MeasurmentUnit::STEPS:
-    {
-        return "#";
-    }
-    case ReadingType::MeasurmentUnit::COUNT:
-    {
-        return "count";
     }
     case ReadingType::MeasurmentUnit::BATTERY:
     {
@@ -1232,10 +1204,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "mW";
     }
-        //	case ReadingType::MeasurmentUnit::MILLIVOLT:
-        //    {
-        //		return "";
-        //	}
     case ReadingType::MeasurmentUnit::METER:
     {
         return "";
@@ -1264,14 +1232,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "mL";
     }
-    case ReadingType::MeasurmentUnit::RADIAN:
-    {
-        return "rad";
-    }
-    case ReadingType::MeasurmentUnit::STERADIAN:
-    {
-        return "sr";
-    }
     case ReadingType::MeasurmentUnit::METRE:
     {
         return "m";
@@ -1280,25 +1240,13 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "mi";
     }
-    case ReadingType::MeasurmentUnit::LIGHT_YEAR:
-    {
-        return "ly";
-    }
     case ReadingType::MeasurmentUnit::POINT:
     {
         return "pt";
     }
-    case ReadingType::MeasurmentUnit::KNOT:
-    {
-        return "kn";
-    }
     case ReadingType::MeasurmentUnit::FOOT:
     {
         return "ft";
-    }
-    case ReadingType::MeasurmentUnit::ANGSTROM:
-    {
-        return "Å";
     }
     case ReadingType::MeasurmentUnit::INCH:
     {
@@ -1307,14 +1255,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::PARSEC:
     {
         return "pc";
-    }
-    case ReadingType::MeasurmentUnit::FOOT_SURVEY_US:
-    {
-        return "foot_sur";
-    }
-    case ReadingType::MeasurmentUnit::ASTRONOMICAL_UNIT:
-    {
-        return "ua";
     }
     case ReadingType::MeasurmentUnit::YARD:
     {
@@ -1380,6 +1320,10 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "dB";
     }
+    case ReadingType::MeasurmentUnit::KNOT:
+    {
+        return "kn";
+    }
     case ReadingType::MeasurmentUnit::KILOMETERS_PER_HOUR:
     {
         return "km/h";
@@ -1400,26 +1344,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "m/s";
     }
-        //    case ReadingType::MeasurmentUnit::KNOT:
-        //    {
-        //        return "kn";
-        //    }
-        //    case ReadingType::MeasurmentUnit::STEPS:
-        //    {
-        //        return "";
-        //    }
-    case ReadingType::MeasurmentUnit::TEXT:
-    {
-        return "";
-    }
-    case ReadingType::MeasurmentUnit::BOOLEAN:
-    {
-        return "";
-    }
-    case ReadingType::MeasurmentUnit::NUMERIC:
-    {
-        return "";
-    }
     case ReadingType::MeasurmentUnit::SECOND:
     {
         return "s";
@@ -1428,10 +1352,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "min";
     }
-    case ReadingType::MeasurmentUnit::YEAR_SIDEREAL:
-    {
-        return "year_sid";
-    }
     case ReadingType::MeasurmentUnit::HOUR:
     {
         return "h";
@@ -1439,14 +1359,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::MONTH:
     {
         return "month";
-    }
-    case ReadingType::MeasurmentUnit::YEAR_CALENDAR:
-    {
-        return "year_cal";
-    }
-    case ReadingType::MeasurmentUnit::DAY_SIDEREAL:
-    {
-        return "day_side";
     }
     case ReadingType::MeasurmentUnit::DAY:
     {
@@ -1496,46 +1408,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "Ci";
     }
-    case ReadingType::MeasurmentUnit::FARAD:
-    {
-        return "F";
-    }
-    case ReadingType::MeasurmentUnit::HENRY:
-    {
-        return "H";
-    }
-    case ReadingType::MeasurmentUnit::JOULE:
-    {
-        return "J";
-    }
-    case ReadingType::MeasurmentUnit::SIEMENS:
-    {
-        return "S";
-    }
-    case ReadingType::MeasurmentUnit::OHM:
-    {
-        return "Ω";
-    }
-    case ReadingType::MeasurmentUnit::FRANKLIN:
-    {
-        return "Fr";
-    }
-    case ReadingType::MeasurmentUnit::ELECTRON_VOLT:
-    {
-        return "eV";
-    }
-    case ReadingType::MeasurmentUnit::ELECTRIC_CHARGE:
-    {
-        return "e";
-    }
-    case ReadingType::MeasurmentUnit::FARADAY:
-    {
-        return "Fd";
-    }
-    case ReadingType::MeasurmentUnit::GILBERT:
-    {
-        return "Gi";
-    }
     case ReadingType::MeasurmentUnit::NEWTON:
     {
         return "N";
@@ -1544,10 +1416,10 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "lbf";
     }
-        //    case ReadingType::MeasurmentUnit::GRAVITY:
-        //    {
-        //        return "grav";
-        //    }
+    case ReadingType::MeasurmentUnit::GRAVITY:
+    {
+        return "grav";
+    }
     case ReadingType::MeasurmentUnit::KILOGRAM_FORCE:
     {
         return "kgf";
@@ -1555,14 +1427,6 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::DYNE:
     {
         return "dyn";
-    }
-    case ReadingType::MeasurmentUnit::GRAY:
-    {
-        return "Gy";
-    }
-    case ReadingType::MeasurmentUnit::ENERGY:
-    {
-        return "erg";
     }
     case ReadingType::MeasurmentUnit::SQUARE_METRE:
     {
@@ -1624,6 +1488,90 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "a";
     }
+    case ReadingType::MeasurmentUnit::RADIAN:
+    {
+        return "rad";
+    }
+    case ReadingType::MeasurmentUnit::HERTZ:
+    {
+        return "Hz";
+    }
+    case ReadingType::MeasurmentUnit::MEGA_HERTZ:
+    {
+        return "MHz";
+    }
+    case ReadingType::MeasurmentUnit::GIGA_HERTZ:
+    {
+        return "GHz";
+    }
+    case ReadingType::MeasurmentUnit::WEBER:
+    {
+        return "Wb";
+    }
+    case ReadingType::MeasurmentUnit::MAXWELL:
+    {
+        return "Mx";
+    }
+    case ReadingType::MeasurmentUnit::FARAD:
+    {
+        return "F";
+    }
+    case ReadingType::MeasurmentUnit::FARADAY:
+    {
+        return "Fd";
+    }
+    case ReadingType::MeasurmentUnit::OHM:
+    {
+        return "Ω";
+    }
+    case ReadingType::MeasurmentUnit::FRANKLIN:
+    {
+        return "Fr";
+    }
+    case ReadingType::MeasurmentUnit::ELECTRIC_CHARGE:
+    {
+        return "e";
+    }
+    case ReadingType::MeasurmentUnit::GILBERT:
+    {
+        return "Gi";
+    }
+    case ReadingType::MeasurmentUnit::JOULE:
+    {
+        return "J";
+    }
+    case ReadingType::MeasurmentUnit::ELECTRON_VOLT:
+    {
+        return "eV";
+    }
+    case ReadingType::MeasurmentUnit::HENRY:
+    {
+        return "H";
+    }
+    case ReadingType::MeasurmentUnit::SIEMENS:
+    {
+        return "S";
+    }
+    case ReadingType::MeasurmentUnit::LUMEN:
+    {
+        return "lm";
+    }
+    case ReadingType::MeasurmentUnit::CANDELA:
+    {
+        return "cd";
+    }
+    case ReadingType::MeasurmentUnit::LUX:
+    {
+        return "lx";
+    }
+    case ReadingType::MeasurmentUnit::TEXT:
+    {
+        return "";
+    }
+    case ReadingType::MeasurmentUnit::BOOLEAN:
+    {
+        return "";
+    }
     }
 
     return "";
@@ -1637,14 +1585,6 @@ std::string toString(ReadingType::Name name)
     {
         return "GENERIC";
     }
-    case ReadingType::Name::GENERIC_TEXT:
-    {
-        return "GENERIC_TEXT";
-    }
-    case ReadingType::Name::GENERIC_BOOLEAN:
-    {
-        return "GENERIC_BOOLEAN";
-    }
     case ReadingType::Name::TEMPERATURE:
     {
         return "TEMPERATURE";
@@ -1657,9 +1597,9 @@ std::string toString(ReadingType::Name name)
     {
         return "HUMIDITY";
     }
-    case ReadingType::Name::BATTERY:
+    case ReadingType::Name::BATTERY_VOLTAGE:
     {
-        return "BATTERY";
+        return "BATTERY_VOLTAGE";
     }
     case ReadingType::Name::MOVEMENT:
     {
@@ -1677,10 +1617,6 @@ std::string toString(ReadingType::Name name)
     {
         return "GYROSCOPE";
     }
-    case ReadingType::Name::MAGNETOMETER:
-    {
-        return "MAGNETOMETER";
-    }
     case ReadingType::Name::LOCATION:
     {
         return "LOCATION";
@@ -1688,10 +1624,6 @@ std::string toString(ReadingType::Name name)
     case ReadingType::Name::HEART_RATE:
     {
         return "HEART_RATE";
-    }
-    case ReadingType::Name::COUNT:
-    {
-        return "COUNT";
     }
     case ReadingType::Name::BATTERY_POWER:
     {
@@ -1709,13 +1641,9 @@ std::string toString(ReadingType::Name name)
     {
         return "ELECTRIC_CURRENT";
     }
-    case ReadingType::Name::ELECTRIC_POWER:
+    case ReadingType::Name::POWER:
     {
-        return "ELECTRIC_POWER";
-    }
-    case ReadingType::Name::ELECTRIC_VOLTAGE:
-    {
-        return "ELECTRIC_VOLTAGE";
+        return "POWER";
     }
     case ReadingType::Name::FLOOR_POSITION:
     {
@@ -1729,9 +1657,9 @@ std::string toString(ReadingType::Name name)
     {
         return "LENGHT";
     }
-    case ReadingType::Name::LOAD_WEIGHT:
+    case ReadingType::Name::MASS:
     {
-        return "LOAD_WEIGHT";
+        return "MASS";
     }
     case ReadingType::Name::SOUND_LEVEL:
     {
@@ -1740,18 +1668,6 @@ std::string toString(ReadingType::Name name)
     case ReadingType::Name::SPEED:
     {
         return "SPEED";
-    }
-    case ReadingType::Name::STEPS:
-    {
-        return "STEPS";
-    }
-    case ReadingType::Name::STRING:
-    {
-        return "STRING";
-    }
-    case ReadingType::Name::SWITCH:
-    {
-        return "SWITCH";
     }
     case ReadingType::Name::TIME:
     {
@@ -1765,21 +1681,77 @@ std::string toString(ReadingType::Name name)
     {
         return "RADIATION";
     }
-    case ReadingType::Name::ELECTRICITY:
+    case ReadingType::Name::ELECTRIC_VOLTAGE:
     {
-        return "ELECTRICITY";
+        return "ELECTRIC_VOLTAGE";
     }
     case ReadingType::Name::FORCE:
     {
         return "FORCE";
     }
-    case ReadingType::Name::ENERGY:
-    {
-        return "ENERGY";
-    }
     case ReadingType::Name::MEASURE:
     {
         return "MEASURE";
+    }
+    case ReadingType::Name::ANGLE:
+    {
+        return "ANGLE";
+    }
+    case ReadingType::Name::FREQUENCY:
+    {
+        return "FREQUENCY";
+    }
+    case ReadingType::Name::MAGNETIC_FLUX:
+    {
+        return "MAGNETIC_FLUX";
+    }
+    case ReadingType::Name::ELECTRIC_CAPACITY:
+    {
+        return "ELECTRIC_CAPACITY";
+    }
+    case ReadingType::Name::ELECTRIC_RESISTANCE:
+    {
+        return "ELECTRIC_RESISTANCE";
+    }
+    case ReadingType::Name::ELECTRIC_CHARGE:
+    {
+        return "ELECTRIC_CHARGE";
+    }
+    case ReadingType::Name::ELECTRIC_MAGNETISM:
+    {
+        return "ELECTRIC_MAGNETISM";
+    }
+    case ReadingType::Name::ELECTRIC_ENERGY:
+    {
+        return "ELECTRIC_ENERGY";
+    }
+    case ReadingType::Name::ELECTRIC_INDUCTANCE:
+    {
+        return "ELECTRIC_INDUCTANCE";
+    }
+    case ReadingType::Name::ELECTRIC_CONDUCTANCE:
+    {
+        return "ELECTRIC_CONDUCTANCE";
+    }
+    case ReadingType::Name::LUMINOUS_FLUX:
+    {
+        return "LUMINOUS_FLUX";
+    }
+    case ReadingType::Name::LUMINOUS_INTENSITY:
+    {
+        return "LUMINOUS_INTENSITY";
+    }
+    case ReadingType::Name::ILLUMINANCE:
+    {
+        return "ILLUMINANCE";
+    }
+    case ReadingType::Name::GENERIC_TEXT:
+    {
+        return "GENERIC_TEXT";
+    }
+    case ReadingType::Name::GENERIC_BOOLEAN:
+    {
+        return "GENERIC_BOOLEAN";
     }
     }
 
@@ -1790,6 +1762,34 @@ std::string toString(ReadingType::MeasurmentUnit unit)
 {
     switch (unit)
     {
+    case ReadingType::MeasurmentUnit::BIT:
+    {
+        return "BIT";
+    }
+    case ReadingType::MeasurmentUnit::PERCENT:
+    {
+        return "PERCENT";
+    }
+    case ReadingType::MeasurmentUnit::CO2_MOL:
+    {
+        return "CO2_MOL";
+    }
+    case ReadingType::MeasurmentUnit::X10C:
+    {
+        return "X10℃";
+    }
+    case ReadingType::MeasurmentUnit::X100V:
+    {
+        return "X100V";
+    }
+    case ReadingType::MeasurmentUnit::X10PA:
+    {
+        return "X10Pa";
+    }
+    case ReadingType::MeasurmentUnit::NUMERIC:
+    {
+        return "NUMERIC";
+    }
     case ReadingType::MeasurmentUnit::KELVIN:
     {
         return "KELVIN";
@@ -1797,10 +1797,6 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::CELSIUS:
     {
         return "CELSIUS";
-    }
-    case ReadingType::MeasurmentUnit::RANKINE:
-    {
-        return "RANKINE";
     }
     case ReadingType::MeasurmentUnit::FAHRENHEIT:
     {
@@ -1878,26 +1874,6 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "MOVEMENT";
     }
-    case ReadingType::MeasurmentUnit::LUMEN:
-    {
-        return "LUMEN";
-    }
-    case ReadingType::MeasurmentUnit::COULOMB:
-    {
-        return "COULOMB";
-    }
-    case ReadingType::MeasurmentUnit::LUX:
-    {
-        return "LUX";
-    }
-    case ReadingType::MeasurmentUnit::CANDELA:
-    {
-        return "CANDELA";
-    }
-    case ReadingType::MeasurmentUnit::LAMBERT:
-    {
-        return "LAMBERT";
-    }
     case ReadingType::MeasurmentUnit::LIGHT_PERCENT:
     {
         return "LIGHT_PERCENT";
@@ -1906,17 +1882,13 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "METRES_PER_SQUARE_SECOND";
     }
-        //    case ReadingType::MeasurmentUnit::GRAVITY:
-        //    {
-        //        return "GRAVITY";
-        //    }
+    case ReadingType::MeasurmentUnit::GRAVITY:
+    {
+        return "GRAVITY";
+    }
     case ReadingType::MeasurmentUnit::GYROSCOPE:
     {
         return "GYROSCOPE";
-    }
-    case ReadingType::MeasurmentUnit::MAXWELL:
-    {
-        return "MAXWELL";
     }
     case ReadingType::MeasurmentUnit::LOCATION:
     {
@@ -1925,14 +1897,6 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::BEATS_PER_MINUTE:
     {
         return "BEATS_PER_MINUTE";
-    }
-    case ReadingType::MeasurmentUnit::STEPS:
-    {
-        return "STEPS";
-    }
-    case ReadingType::MeasurmentUnit::COUNT:
-    {
-        return "COUNT";
     }
     case ReadingType::MeasurmentUnit::BATTERY:
     {
@@ -1998,14 +1962,6 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "MILLILITRE";
     }
-    case ReadingType::MeasurmentUnit::RADIAN:
-    {
-        return "RADIAN";
-    }
-    case ReadingType::MeasurmentUnit::STERADIAN:
-    {
-        return "STERADIAN";
-    }
     case ReadingType::MeasurmentUnit::METRE:
     {
         return "METRE";
@@ -2014,41 +1970,17 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "MILE";
     }
-    case ReadingType::MeasurmentUnit::LIGHT_YEAR:
-    {
-        return "LIGHT_YEAR";
-    }
     case ReadingType::MeasurmentUnit::POINT:
     {
         return "POINT";
-    }
-    case ReadingType::MeasurmentUnit::KNOT:
-    {
-        return "KNOT";
-    }
-    case ReadingType::MeasurmentUnit::FOOT:
-    {
-        return "FOOT";
-    }
-    case ReadingType::MeasurmentUnit::ANGSTROM:
-    {
-        return "ANGSTROM";
     }
     case ReadingType::MeasurmentUnit::INCH:
     {
         return "INCH";
     }
-    case ReadingType::MeasurmentUnit::PARSEC:
+    case ReadingType::MeasurmentUnit::FOOT:
     {
-        return "PARSEC";
-    }
-    case ReadingType::MeasurmentUnit::FOOT_SURVEY_US:
-    {
-        return "FOOT_SURVEY_US";
-    }
-    case ReadingType::MeasurmentUnit::ASTRONOMICAL_UNIT:
-    {
-        return "ASTRONOMICAL_UNIT";
+        return "FOOT";
     }
     case ReadingType::MeasurmentUnit::YARD:
     {
@@ -2065,6 +1997,10 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::KILOMETER:
     {
         return "KILOMETER";
+    }
+    case ReadingType::MeasurmentUnit::PARSEC:
+    {
+        return "PARSEC";
     }
     case ReadingType::MeasurmentUnit::KILOGRAM:
     {
@@ -2114,6 +2050,10 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "DECIBEL";
     }
+    case ReadingType::MeasurmentUnit::KNOT:
+    {
+        return "KNOT";
+    }
     case ReadingType::MeasurmentUnit::KILOMETERS_PER_HOUR:
     {
         return "KILOMETERS_PER_HOUR";
@@ -2134,22 +2074,6 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "METER_PER_SECOND";
     }
-        //    case ReadingType::MeasurmentUnit::KNOT:
-        //    {
-        //        return "KNOT";
-        //    }
-    case ReadingType::MeasurmentUnit::TEXT:
-    {
-        return "TEXT";
-    }
-    case ReadingType::MeasurmentUnit::BOOLEAN:
-    {
-        return "BOOLEAN";
-    }
-    case ReadingType::MeasurmentUnit::NUMERIC:
-    {
-        return "NUMERIC";
-    }
     case ReadingType::MeasurmentUnit::SECOND:
     {
         return "SECOND";
@@ -2158,10 +2082,6 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "MINUTE";
     }
-    case ReadingType::MeasurmentUnit::YEAR_SIDEREAL:
-    {
-        return "YEAR_SIDEREAL";
-    }
     case ReadingType::MeasurmentUnit::HOUR:
     {
         return "HOUR";
@@ -2169,14 +2089,6 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::MONTH:
     {
         return "MONTH";
-    }
-    case ReadingType::MeasurmentUnit::YEAR_CALENDAR:
-    {
-        return "YEAR_CALENDAR";
-    }
-    case ReadingType::MeasurmentUnit::DAY_SIDEREAL:
-    {
-        return "DAY_SIDEREAL";
     }
     case ReadingType::MeasurmentUnit::DAY:
     {
@@ -2226,46 +2138,6 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "CURIE";
     }
-    case ReadingType::MeasurmentUnit::FARAD:
-    {
-        return "FARAD";
-    }
-    case ReadingType::MeasurmentUnit::HENRY:
-    {
-        return "HENRY";
-    }
-    case ReadingType::MeasurmentUnit::JOULE:
-    {
-        return "JOULE";
-    }
-    case ReadingType::MeasurmentUnit::SIEMENS:
-    {
-        return "SIEMENS";
-    }
-    case ReadingType::MeasurmentUnit::OHM:
-    {
-        return "OHM";
-    }
-    case ReadingType::MeasurmentUnit::FRANKLIN:
-    {
-        return "FRANKLIN";
-    }
-    case ReadingType::MeasurmentUnit::ELECTRON_VOLT:
-    {
-        return "ELECTRON_VOLT";
-    }
-    case ReadingType::MeasurmentUnit::ELECTRIC_CHARGE:
-    {
-        return "ELECTRIC_CHARGE";
-    }
-    case ReadingType::MeasurmentUnit::FARADAY:
-    {
-        return "FARADAY";
-    }
-    case ReadingType::MeasurmentUnit::GILBERT:
-    {
-        return "GILBERT";
-    }
     case ReadingType::MeasurmentUnit::NEWTON:
     {
         return "NEWTON";
@@ -2285,14 +2157,6 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::DYNE:
     {
         return "DYNE";
-    }
-    case ReadingType::MeasurmentUnit::GRAY:
-    {
-        return "GRAY";
-    }
-    case ReadingType::MeasurmentUnit::ENERGY:
-    {
-        return "ENERGY";
     }
     case ReadingType::MeasurmentUnit::SQUARE_METRE:
     {
@@ -2353,6 +2217,90 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     case ReadingType::MeasurmentUnit::ARE:
     {
         return "ARE";
+    }
+    case ReadingType::MeasurmentUnit::RADIAN:
+    {
+        return "RADIAN";
+    }
+    case ReadingType::MeasurmentUnit::HERTZ:
+    {
+        return "HERTZ";
+    }
+    case ReadingType::MeasurmentUnit::MEGA_HERTZ:
+    {
+        return "MEGA_HERTZ";
+    }
+    case ReadingType::MeasurmentUnit::GIGA_HERTZ:
+    {
+        return "GIGA_HERTZ";
+    }
+    case ReadingType::MeasurmentUnit::WEBER:
+    {
+        return "WEBER";
+    }
+    case ReadingType::MeasurmentUnit::MAXWELL:
+    {
+        return "MAXWELL";
+    }
+    case ReadingType::MeasurmentUnit::FARAD:
+    {
+        return "FARAD";
+    }
+    case ReadingType::MeasurmentUnit::FARADAY:
+    {
+        return "FARADAY";
+    }
+    case ReadingType::MeasurmentUnit::OHM:
+    {
+        return "OHM";
+    }
+    case ReadingType::MeasurmentUnit::FRANKLIN:
+    {
+        return "FRANKLIN";
+    }
+    case ReadingType::MeasurmentUnit::ELECTRIC_CHARGE:
+    {
+        return "ELECTRIC_CHARGE";
+    }
+    case ReadingType::MeasurmentUnit::GILBERT:
+    {
+        return "GILBERT";
+    }
+    case ReadingType::MeasurmentUnit::JOULE:
+    {
+        return "JOULE";
+    }
+    case ReadingType::MeasurmentUnit::ELECTRON_VOLT:
+    {
+        return "ELECTRON_VOLT";
+    }
+    case ReadingType::MeasurmentUnit::HENRY:
+    {
+        return "HENRY";
+    }
+    case ReadingType::MeasurmentUnit::SIEMENS:
+    {
+        return "SIEMENS";
+    }
+    case ReadingType::MeasurmentUnit::LUMEN:
+    {
+        return "LUMEN";
+    }
+    case ReadingType::MeasurmentUnit::CANDELA:
+    {
+        return "CANDELA";
+    }
+    case ReadingType::MeasurmentUnit::LUX:
+    {
+        return "LUX";
+    }
+    case ReadingType::MeasurmentUnit::TEXT:
+    {
+        return "TEXT";
+    }
+    case ReadingType::MeasurmentUnit::BOOLEAN:
+    {
+        return "BOOLEAN";
     }
     }
 

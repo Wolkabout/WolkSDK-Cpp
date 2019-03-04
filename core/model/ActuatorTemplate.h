@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef ACTUATORMANIFEST_H
-#define ACTUATORMANIFEST_H
+#ifndef ACTUATORTEMPLATE_H
+#define ACTUATORTEMPLATE_H
 
 #include "model/ActuationReadingType.h"
 #include "model/DataType.h"
 
-#include <string>
-#include <vector>
 
 namespace wolkabout
 {
@@ -41,8 +39,7 @@ public:
                      double maximum = 0);
 
     ActuatorManifest(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
-                     DataType dataType, int precision, std::string description, std::vector<std::string> labels,
-                     double minimum = 0, double maximum = 0);
+                     std::string description, double minimum = 0, double maximum = 0);
 
     const std::string& getName() const;
 
@@ -56,17 +53,9 @@ public:
 
     DataType getDataType() const;
 
-    int getPrecision() const;
-
     double getMinimum() const;
 
     double getMaximum() const;
-
-    const std::string& getDelimiter() const;
-
-    const std::vector<std::string>& getLabels() const;
-
-    size_t getSize() const;
 
     bool operator==(ActuatorManifest& rhs) const;
     bool operator!=(ActuatorManifest& rhs) const;
@@ -82,4 +71,4 @@ private:
 };
 }    // namespace wolkabout
 
-#endif    // ACTUATORMANIFEST_H
+#endif    // ACTUATORTEMPLATE_H

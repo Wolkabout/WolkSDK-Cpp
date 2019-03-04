@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef DEVICEREGISTRATIONREQUEST_H
-#define DEVICEREGISTRATIONREQUEST_H
+#ifndef SUBDEVICEREGISTRATIONREQUEST_H
+#define SUBDEVICEREGISTRATIONREQUEST_H
 
 #include "model/DetailedDevice.h"
 #include "model/DeviceManifest.h"
@@ -24,23 +24,23 @@
 
 namespace wolkabout
 {
-class DeviceRegistrationRequest
+class SubdeviceRegistrationRequest
 {
 public:
-    DeviceRegistrationRequest() = default;
-    DeviceRegistrationRequest(std::string deviceName, std::string deviceKey, DeviceManifest deviceManifest);
-    DeviceRegistrationRequest(DetailedDevice device);
+    SubdeviceRegistrationRequest() = default;
+    SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceManifest subdeviceManifest);
+    SubdeviceRegistrationRequest(DetailedDevice subdevice);
 
-    virtual ~DeviceRegistrationRequest() = default;
+    virtual ~SubdeviceRegistrationRequest() = default;
 
-    const std::string& getDeviceName() const;
-    const std::string& getDeviceKey() const;
+    const std::string& getSubdeviceName() const;
+    const std::string& getSubdeviceKey() const;
 
     const DeviceManifest& getManifest() const;
 
 private:
-    DetailedDevice m_device;
+    DetailedDevice m_subdevice;
 };
 }    // namespace wolkabout
 
-#endif    // DEVICEREGISTRATION_H
+#endif    // SUBDEVICEREGISTRATION_H

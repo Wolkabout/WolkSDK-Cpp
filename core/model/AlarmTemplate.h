@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef ALARMMANIFEST_H
-#define ALARMMANIFEST_H
+#ifndef ALARMTEMPLATE_H
+#define ALARMTEMPLATE_H
 
 #include <string>
 
 namespace wolkabout
 {
-class AlarmManifest
+class AlarmTemplate
 {
 public:
     enum class AlarmSeverity
@@ -31,27 +31,27 @@ public:
         CRITICAL
     };
 
-    AlarmManifest() = default;
-    AlarmManifest(std::string name, AlarmManifest::AlarmSeverity severity, std::string reference, std::string message,
+    AlarmTemplate() = default;
+    AlarmTemplate(std::string name, AlarmTemplate::AlarmSeverity severity, std::string reference, std::string message,
                   std::string description);
 
     const std::string& getName() const;
-    AlarmManifest& setName(const std::string& name);
+    AlarmTemplate& setName(const std::string& name);
 
-    AlarmManifest::AlarmSeverity getSeverity() const;
-    AlarmManifest& setSeverity(AlarmManifest::AlarmSeverity severity);
+    AlarmTemplate::AlarmSeverity getSeverity() const;
+    AlarmTemplate& setSeverity(AlarmTemplate::AlarmSeverity severity);
 
     const std::string& getReference() const;
-    AlarmManifest& setReference(const std::string& reference);
+    AlarmTemplate& setReference(const std::string& reference);
 
     const std::string& getMessage() const;
-    AlarmManifest& setMessage(const std::string& message);
+    AlarmTemplate& setMessage(const std::string& message);
 
     const std::string& getDescription() const;
-    AlarmManifest& setDescription(const std::string& description);
+    AlarmTemplate& setDescription(const std::string& description);
 
-    bool operator==(AlarmManifest& rhs) const;
-    bool operator!=(AlarmManifest& rhs) const;
+    bool operator==(AlarmTemplate& rhs) const;
+    bool operator!=(AlarmTemplate& rhs) const;
 
 private:
     std::string m_name;
@@ -62,4 +62,4 @@ private:
 };
 }    // namespace wolkabout
 
-#endif    // ALARMMANIFEST_H
+#endif    // ALARMTEMPLATE_H

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-#include "ActuatorManifest.h"
+#include "ActuatorTemplate.h"
 
 #include <initializer_list>
 #include <stdexcept>
-#include <string>
 #include <utility>
-#include <vector>
 
 namespace wolkabout
 {
-ActuatorManifest::ActuatorManifest(std::string name, std::string reference, DataType dataType, std::string description,
+ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
                                    double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
@@ -35,7 +33,7 @@ ActuatorManifest::ActuatorManifest(std::string name, std::string reference, Data
 {
 }
 
-ActuatorManifest::ActuatorManifest(std::string name, std::string reference, ActuationReadingType readingType,
+ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, ActuationReadingType readingType,
                                    std::string description, double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
@@ -46,7 +44,7 @@ ActuatorManifest::ActuatorManifest(std::string name, std::string reference, Actu
 {
 }
 
-ActuatorManifest::ActuatorManifest(std::string name, std::string reference, ActuationReadingType::Name readingTypeName,
+ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, ActuationReadingType::Name readingTypeName,
                                    ActuationReadingType::MeasurmentUnit unit, std::string description, double minimum,
                                    double maximum)
 
@@ -59,79 +57,58 @@ ActuatorManifest::ActuatorManifest(std::string name, std::string reference, Actu
 {
 }
 
-ActuatorManifest::ActuatorManifest(std::string name, std::string reference, std::string readingTypeName,
-                                   std::string unitSymbol, DataType dataType, int precision, std::string description,
-                                   std::vector<std::string> labels, double minimum, double maximum)
+ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, std::string readingTypeName,
+                                   std::string unitSymbol std::string description, double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
-, m_readingType{ActuationReadingType(readingTypeName, unitSymbol, dataType, precision, labels)}
+, m_readingType{ActuationReadingType(std::move(readingTypeName), std::move(unitSymbol))}
 , m_description{std::move(description)}
 , m_minimum(minimum)
 , m_maximum(maximum)
 {
 }
 
-const std::string& ActuatorManifest::getName() const
+const std::string& ActuatorTemplate::getName() const
 {
     return m_name;
 }
 
-const std::string& ActuatorManifest::getReference() const
+const std::string& ActuatorTemplate::getReference() const
 {
     return m_reference;
 }
 
-const std::string& ActuatorManifest::getDescription() const
+const std::string& ActuatorTemplate::getDescription() const
 {
     return m_description;
 }
 
-const std::string& ActuatorManifest::getUnitSymbol() const
+const std::string& ActuatorTemplate::getUnitSymbol() const
 {
     return m_readingType.getMeasurmentUnitSymbol();
 }
 
-const std::string& ActuatorManifest::getReadingTypeName() const
+const std::string& ActuatorTemplate::getReadingTypeName() const
 {
     return m_readingType.getName();
 }
 
-DataType ActuatorManifest::getDataType() const
+DataType ActuatorTemplate::getDataType() const
 {
     return m_readingType.getDataType();
 }
 
-int ActuatorManifest::getPrecision() const
-{
-    return m_readingType.getPrecision();
-}
-
-double ActuatorManifest::getMinimum() const
+double ActuatorTemplate::getMinimum() const
 {
     return m_minimum;
 }
 
-double ActuatorManifest::getMaximum() const
+double ActuatorTemplate::getMaximum() const
 {
     return m_maximum;
 }
 
-const std::string& ActuatorManifest::getDelimiter() const
-{
-    return m_readingType.getDelimiter();
-}
-
-const std::vector<std::string>& ActuatorManifest::getLabels() const
-{
-    return m_readingType.getLabels();
-}
-
-size_t ActuatorManifest::getSize() const
-{
-    return m_readingType.getSize();
-}
-
-bool ActuatorManifest::operator==(ActuatorManifest& rhs) const
+bool ActuatorTemplate::operator==(ActuatorTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
     {
@@ -151,7 +128,7 @@ bool ActuatorManifest::operator==(ActuatorManifest& rhs) const
     return true;
 }
 
-bool ActuatorManifest::operator!=(ActuatorManifest& rhs) const
+bool ActuatorTemplate::operator!=(ActuatorTemplate& rhs) const
 {
     return !(*this == rhs);
 }
