@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-#include "ConfigurationManifest.h"
+#include "ConfigurationTemplate.h"
 
 #include <cmath>
 #include <stdexcept>
-#include <string>
 #include <utility>
 
 namespace wolkabout
 {
-const std::string ConfigurationManifest::DEFAULT_DELIMITER = ",";
-
-ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, DataType dataType,
+ConfigurationTemplate::ConfigurationTemplate(std::string name, std::string reference, DataType dataType,
                                              std::string description, std::string defaultValue, double minimum,
                                              double maximum)
-: ConfigurationManifest(name, reference, dataType, description, defaultValue, {}, minimum, maximum)
+: ConfigurationTemplate(name, reference, dataType, description, defaultValue, {}, minimum, maximum)
 {
 }
 
-ConfigurationManifest::ConfigurationManifest(std::string name, std::string reference, DataType dataType,
+ConfigurationTemplate::ConfigurationTemplate(std::string name, std::string reference, DataType dataType,
                                              std::string description, std::string defaultValue,
                                              std::vector<std::string> labels, double minimum, double maximum)
 : m_name{std::move(name)}
@@ -44,61 +41,60 @@ ConfigurationManifest::ConfigurationManifest(std::string name, std::string refer
 , m_maximum{maximum}
 , m_labels{std::move(labels)}
 , m_size{m_labels.size() == 0 ? 1 : m_labels.size()}
-, m_delimiter{DEFAULT_DELIMITER}
 {
 }
 
-const std::string& ConfigurationManifest::getName() const
+const std::string& ConfigurationTemplate::getName() const
 {
     return m_name;
 }
 
-const std::string& ConfigurationManifest::getReference() const
+const std::string& ConfigurationTemplate::getReference() const
 {
     return m_reference;
 }
 
-DataType ConfigurationManifest::getDataType() const
+DataType ConfigurationTemplate::getDataType() const
 {
     return m_dataType;
 }
 
-double ConfigurationManifest::getMinimum() const
+double ConfigurationTemplate::getMinimum() const
 {
     return m_minimum;
 }
 
-double ConfigurationManifest::getMaximum() const
+double ConfigurationTemplate::getMaximum() const
 {
     return m_maximum;
 }
 
-const std::string& ConfigurationManifest::getDescription() const
+const std::string& ConfigurationTemplate::getDescription() const
 {
     return m_description;
 }
 
-const std::string& ConfigurationManifest::getDefaultValue() const
+const std::string& ConfigurationTemplate::getDefaultValue() const
 {
     return m_defaultValue;
 }
 
-size_t ConfigurationManifest::getSize() const
+size_t ConfigurationTemplate::getSize() const
 {
     return m_size;
 }
 
-const std::vector<std::string>& ConfigurationManifest::getLabels() const
+const std::vector<std::string>& ConfigurationTemplate::getLabels() const
 {
     return m_labels;
 }
 
-const std::string& ConfigurationManifest::getDelimiter() const
+const std::string& ConfigurationTemplate::getDelimiter() const
 {
     return m_delimiter;
 }
 
-bool ConfigurationManifest::operator==(ConfigurationManifest& rhs) const
+bool ConfigurationTemplate::operator==(ConfigurationTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description ||
         m_dataType != rhs.m_dataType)
@@ -132,7 +128,7 @@ bool ConfigurationManifest::operator==(ConfigurationManifest& rhs) const
     return true;
 }
 
-bool ConfigurationManifest::operator!=(ConfigurationManifest& rhs) const
+bool ConfigurationTemplate::operator!=(ConfigurationTemplate& rhs) const
 {
     return !(*this == rhs);
 }

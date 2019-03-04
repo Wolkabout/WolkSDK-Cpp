@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-#include "model/SensorManifest.h"
-
-#include <string>
-#include <vector>
+#include "model/SensorTemplate.h"
 
 namespace wolkabout
 {
-SensorManifest::SensorManifest(std::string name, std::string reference, DataType dataType, std::string description,
+SensorTemplate::SensorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
                                double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
@@ -32,7 +29,7 @@ SensorManifest::SensorManifest(std::string name, std::string reference, DataType
 {
 }
 
-SensorManifest::SensorManifest(std::string name, std::string reference, ReadingType readingType,
+SensorTemplate::SensorTemplate(std::string name, std::string reference, ReadingType readingType,
                                std::string description, double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
@@ -43,7 +40,7 @@ SensorManifest::SensorManifest(std::string name, std::string reference, ReadingT
 {
 }
 
-SensorManifest::SensorManifest(std::string name, std::string reference, ReadingType::Name readingTypeName,
+SensorTemplate::SensorTemplate(std::string name, std::string reference, ReadingType::Name readingTypeName,
                                ReadingType::MeasurmentUnit unit, std::string description, double minimum,
                                double maximum)
 
@@ -56,79 +53,58 @@ SensorManifest::SensorManifest(std::string name, std::string reference, ReadingT
 {
 }
 
-SensorManifest::SensorManifest(std::string name, std::string reference, std::string readingTypeName,
-                               std::string unitSymbol, DataType dataType, int precision, std::string description,
-                               std::vector<std::string> labels, double minimum, double maximum)
+SensorTemplate::SensorTemplate(std::string name, std::string reference, std::string readingTypeName,
+                               std::string unitSymbol, std::string description, double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
-, m_readingType{ReadingType(readingTypeName, unitSymbol, dataType, precision, labels)}
+, m_readingType{ReadingType(readingTypeName, unitSymbol)}
 , m_description{std::move(description)}
 , m_minimum(minimum)
 , m_maximum(maximum)
 {
 }
 
-const std::string& SensorManifest::getName() const
+const std::string& SensorTemplate::getName() const
 {
     return m_name;
 }
 
-const std::string& SensorManifest::getReference() const
+const std::string& SensorTemplate::getReference() const
 {
     return m_reference;
 }
 
-const std::string& SensorManifest::getUnitSymbol() const
+const std::string& SensorTemplate::getUnitSymbol() const
 {
     return m_readingType.getMeasurmentUnitSymbol();
 }
 
-const std::string& SensorManifest::getDescription() const
+const std::string& SensorTemplate::getDescription() const
 {
     return m_description;
 }
 
-const std::string& SensorManifest::getReadingTypeName() const
+const std::string& SensorTemplate::getReadingTypeName() const
 {
     return m_readingType.getName();
 }
 
-DataType SensorManifest::getDataType() const
+DataType SensorTemplate::getDataType() const
 {
     return m_readingType.getDataType();
 }
 
-int SensorManifest::getPrecision() const
-{
-    return m_readingType.getPrecision();
-}
-
-double SensorManifest::getMinimum() const
+double SensorTemplate::getMinimum() const
 {
     return m_minimum;
 }
 
-double SensorManifest::getMaximum() const
+double SensorTemplate::getMaximum() const
 {
     return m_maximum;
 }
 
-const std::string& SensorManifest::getDelimiter() const
-{
-    return m_readingType.getDelimiter();
-}
-
-const std::vector<std::string>& SensorManifest::getLabels() const
-{
-    return m_readingType.getLabels();
-}
-
-size_t SensorManifest::getSize() const
-{
-    return m_readingType.getSize();
-}
-
-bool SensorManifest::operator==(SensorManifest& rhs) const
+bool SensorTemplate::operator==(SensorTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
     {
@@ -148,7 +124,7 @@ bool SensorManifest::operator==(SensorManifest& rhs) const
     return true;
 }
 
-bool SensorManifest::operator!=(SensorManifest& rhs) const
+bool SensorTemplate::operator!=(SensorTemplate& rhs) const
 {
     return !(*this == rhs);
 }

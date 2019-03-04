@@ -20,10 +20,8 @@
 
 namespace wolkabout
 {
-const std::string ActuationReadingType::DEFAULT_DELIMITER = ",";
 
 ActuationReadingType::ActuationReadingType(DataType dataType)
-: m_precision{1}, m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
 {
     switch (dataType)
     {
@@ -62,7 +60,6 @@ ActuationReadingType::ActuationReadingType(DataType dataType)
 }
 
 ActuationReadingType::ActuationReadingType(ActuationReadingType::Name name, ActuationReadingType::MeasurmentUnit unit)
-: m_precision{1}, m_labels{}, m_size{1}, m_delimiter{DEFAULT_DELIMITER}
 {
     validate(name, unit);
 
@@ -73,15 +70,9 @@ ActuationReadingType::ActuationReadingType(ActuationReadingType::Name name, Actu
     m_unitSymbol = symbolForUnit(unit);
 }
 
-ActuationReadingType::ActuationReadingType(std::string name, std::string unitSymbol, DataType dataType, int precision,
-                                           std::vector<std::string> labels)
+ActuationReadingType::ActuationReadingType(std::string name, std::string unitSymbol)
 : m_name{std::move(name)}
 , m_unitSymbol{std::move(unitSymbol)}
-, m_dataType{std::move(dataType)}
-, m_precision{precision}
-, m_labels{std::move(labels)}
-, m_size{m_labels.size() == 0 ? 1 : m_labels.size()}
-, m_delimiter{DEFAULT_DELIMITER}
 {
 }
 
@@ -105,49 +96,12 @@ DataType ActuationReadingType::getDataType() const
     return m_dataType;
 }
 
-int ActuationReadingType::getPrecision() const
-{
-    return m_precision;
-}
-
-const std::vector<std::string>& ActuationReadingType::getLabels() const
-{
-    return m_labels;
-}
-
-size_t ActuationReadingType::getSize() const
-{
-    return m_size;
-}
-
-const std::string& ActuationReadingType::getDelimiter() const
-{
-    return m_delimiter;
-}
 
 bool ActuationReadingType::operator==(ActuationReadingType& rhs) const
 {
     if (m_name != rhs.m_name || m_unitSymbol != rhs.m_unitSymbol || m_dataType != rhs.m_dataType)
     {
         return false;
-    }
-
-    if (m_delimiter != rhs.m_delimiter)
-    {
-        return false;
-    }
-
-    if (m_labels.size() != rhs.m_labels.size())
-    {
-        return false;
-    }
-
-    for (unsigned long long int i = 0; i < m_labels.size(); ++i)
-    {
-        if (m_labels[i] != rhs.m_labels[i])
-        {
-            return false;
-        }
     }
 
     return true;

@@ -30,7 +30,10 @@ class DetailedDevice
 public:
     DetailedDevice() = default;
     DetailedDevice(std::string name, std::string key, DeviceManifest deviceManifest);
+
     DetailedDevice(std::string name, std::string key, std::string password, DeviceManifest deviceManifest);
+    DetailedDevice(std::string name, std::string key, std::string password, DeviceManifest deviceManifest, bool manageSubdevices);
+
 
     virtual ~DetailedDevice() = default;
 

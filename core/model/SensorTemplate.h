@@ -14,34 +14,30 @@
  * limitations under the License.
  */
 
-#ifndef SENSORMANIFEST_H
-#define SENSORMANIFEST_H
+#ifndef SENSORTEMPLATE_H
+#define SENSORTEMPLATE_H
 
 #include "model/DataType.h"
 #include "model/ReadingType.h"
 
-#include <string>
-#include <vector>
-
 namespace wolkabout
 {
-class SensorManifest
+class SensorTemplate
 {
 public:
-    SensorManifest() = default;
+    SensorTemplate() = default;
 
-    SensorManifest(std::string name, std::string reference, DataType dataType, std::string description,
+    SensorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
                    double minimum = 0, double maximum = 0);
 
-    SensorManifest(std::string name, std::string reference, ReadingType readingType, std::string description,
+    SensorTemplate(std::string name, std::string reference, ReadingType readingType, std::string description,
                    double minimum = 0, double maximum = 0);
 
-    SensorManifest(std::string name, std::string reference, ReadingType::Name readingTypeName,
+    SensorTemplate(std::string name, std::string reference, ReadingType::Name readingTypeName,
                    ReadingType::MeasurmentUnit unit, std::string description, double minimum = 0, double maximum = 0);
 
-    SensorManifest(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
-                   DataType dataType, int precision, std::string description, std::vector<std::string> labels,
-                   double minimum = 0, double maximum = 0);
+    SensorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
+                   std::string description, double minimum = 0, double maximum = 0);
 
     const std::string& getName() const;
 
@@ -55,20 +51,12 @@ public:
 
     DataType getDataType() const;
 
-    int getPrecision() const;
-
     double getMinimum() const;
 
     double getMaximum() const;
 
-    const std::string& getDelimiter() const;
-
-    const std::vector<std::string>& getLabels() const;
-
-    size_t getSize() const;
-
-    bool operator==(SensorManifest& rhs) const;
-    bool operator!=(SensorManifest& rhs) const;
+    bool operator==(SensorTemplate& rhs) const;
+    bool operator!=(SensorTemplate& rhs) const;
 
 private:
     std::string m_name;
@@ -81,4 +69,4 @@ private:
 };
 }    // namespace wolkabout
 
-#endif    // SENSORMANIFEST_H
+#endif    // SENSORTEMPLATE_H

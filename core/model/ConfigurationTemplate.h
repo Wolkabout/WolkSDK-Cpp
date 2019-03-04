@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-#ifndef CONFIGMANIFEST_H
-#define CONFIGMANIFEST_H
+#ifndef CONFIGTEMPLATE_H
+#define CONFIGTEMPLATE_H
 
 #include "model/DataType.h"
 
-#include <string>
 #include <vector>
 
 namespace wolkabout
 {
-class ConfigurationManifest
+class ConfigurationTemplate
 {
 public:
-    ConfigurationManifest() = default;
-    ConfigurationManifest(std::string name, std::string reference, DataType dataType, std::string description,
+    ConfigurationTemplate() = default;
+    ConfigurationTemplate(std::string name, std::string reference, DataType dataType, std::string description,
                           std::string defaultValue, double minimum = 0, double maximum = 0);
 
-    ConfigurationManifest(std::string name, std::string reference, DataType dataType, std::string description,
+    ConfigurationTemplate(std::string name, std::string reference, DataType dataType, std::string description,
                           std::string defaultValue, std::vector<std::string> labels, double minimum = 0,
                           double maximum = 0);
 
@@ -53,10 +52,8 @@ public:
 
     size_t getSize() const;
 
-    const std::string& getDelimiter() const;
-
-    bool operator==(ConfigurationManifest& rhs) const;
-    bool operator!=(ConfigurationManifest& rhs) const;
+    bool operator==(ConfigurationTemplate& rhs) const;
+    bool operator!=(ConfigurationTemplate& rhs) const;
 
 private:
     std::string m_name;
@@ -70,11 +67,7 @@ private:
 
     std::vector<std::string> m_labels;
     size_t m_size;
-
-    std::string m_delimiter;
-
-    static const std::string DEFAULT_DELIMITER;
 };
 }    // namespace wolkabout
 
-#endif    // CONFIGMANIFEST_H
+#endif    // CONFIGTEMPLATE_H

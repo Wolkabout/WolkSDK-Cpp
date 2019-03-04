@@ -22,16 +22,23 @@
 namespace wolkabout
 {
 DetailedDevice::DetailedDevice(std::string name, std::string key, DeviceManifest deviceManifest)
-: DetailedDevice(std::move(name), std::move(key), "", std::move(deviceManifest))
+: DetailedDevice(std::move(name), std::move(key), "", std::move(deviceManifest));
 {
 }
 
 DetailedDevice::DetailedDevice(std::string name, std::string key, std::string password, DeviceManifest deviceManifest)
+: DetailedDevice(std::move(name), std::move(key), std:move(password), std::move(deviceManifest), /* TODO: flags*/)
+{
+}
+
+DetailedDevice::DetailedDevice(std::string name, std::string key, std::string password, DeviceManifest deviceManifest, bool manageSubdevices)
 : m_name(std::move(name))
 , m_key(std::move(key))
 , m_password(std::move(password))
 , m_deviceManifest(std::move(deviceManifest))
 {
+    //TODO: handle manageSubdevices
+    //TODO: Firmware update and file transfer flags
 }
 
 const std::string& DetailedDevice::getName() const
