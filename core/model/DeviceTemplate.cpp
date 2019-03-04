@@ -94,6 +94,26 @@ std::unique_ptr<wolkabout::ConfigurationTemplate> wolkabout::DeviceTemplate::get
     return nullptr;
 }
 
+const std::string& getFirmwareUpdateType() const
+{
+    return m_firmwareUpdateType;
+}
+
+const std::map<std::string, std::string>& getTypeParameters() const
+{
+    return m_typeParameters;
+}
+
+const std::map<std::string, std::string>& getConnectivityParameters() const
+{
+    return m_connectivityParameters;
+}
+
+const std::map<std::string, bool>& getFirmwareupdateParameters() const
+{
+    return m_firmwareUpdateParameters;
+}
+
 std::unique_ptr<wolkabout::SensorTemplate> wolkabout::DeviceTemplate::getSensorTemplate(
   std::function<bool(const SensorTemplate&)> filter) const
 {

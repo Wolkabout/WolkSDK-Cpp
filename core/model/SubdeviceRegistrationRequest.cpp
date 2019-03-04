@@ -15,33 +15,31 @@
  */
 
 #include "model/SubdeviceRegistrationRequest.h"
-#include "model/DetailedDevice.h"
-#include "model/DeviceManifest.h"
 
 #include <utility>
 
 namespace wolkabout
 {
 SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey,
-                                                     DeviceManifest subdeviceManifest)
-: m_subdevice(std::move(subdeviceName), std::move(subdeviceKey), std::move(subdeviceManifest))
+                                                     DeviceTemplate subdeviceTemplate)
+: m_subdevice(std::move(subdeviceName), std::move(subdeviceKey), std::move(subdeviceTemplate))
 {
 }
 
 SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(DetailedDevice subdevice) : m_subdevice(std::move(subdevice)) {}
 
-const std::string& SubdeviceRegistrationRequest::getDeviceName() const
+const std::string& SubdeviceRegistrationRequest::getSubdeviceName() const
 {
     return m_subdevice.getName();
 }
 
-const std::string& SubdeviceRegistrationRequest::getDeviceKey() const
+const std::string& SubdeviceRegistrationRequest::getSubdeviceKey() const
 {
     return m_subdevice.getKey();
 }
 
-const DeviceManifest& SubdeviceRegistrationRequest::getManifest() const
+const DeviceTemplate& SubdeviceRegistrationRequest::getTemplate() const
 {
-    return m_subdevice.getManifest();
+    return m_subdevice.getTemplate();
 }
 }    // namespace wolkabout

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef DEVICEREGISTRATIONRESPONSE_H
-#define DEVICEREGISTRATIONRESPONSE_H
+#ifndef GATEWAYUPDATERESPONSE_H
+#define GATEWAYUPDATERESPONSE_H
+
+#include <string>
 
 namespace wolkabout
 {
-class DeviceRegistrationResponse
+class GatewayUpdateResponse
 {
 public:
     enum class Result
@@ -27,22 +29,28 @@ public:
         OK,
         ERROR_KEY_CONFLICT,
         ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED,
-        ERROR_MANIFEST_CONFLICT,
-        ERROR_READING_PAYLOAD,
+        ERROR_NOT_A_GATEWAY,
+        ERROR_VALIDATION_ERROR,
+        ERROR_INVALID_DTO,
+        ERROR_KEY_MISSING,
+        ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN,
         ERROR_GATEWAY_NOT_FOUND,
-        ERROR_NO_GATEWAY_MANIFEST
+        ERROR_UNKNOWN
     };
 
-    DeviceRegistrationResponse() = default;
-    DeviceRegistrationResponse(DeviceRegistrationResponse::Result result);
+    GatewayUpdateResponse() = default;
+    GatewayUpdateResponse(GatewayUpdateResponse::Result result, std::string description = "");
 
-    virtual ~DeviceRegistrationResponse() = default;
+    virtual ~GatewayUpdateResponse() = default;
 
-    DeviceRegistrationResponse::Result getResult() const;
+    GatewayUpdateResponse::Result getResult() const;
+
+    const std::string& getDescription() const;
 
 private:
-    DeviceRegistrationResponse::Result m_result;
+    GatewayUpdateResponse::Result m_result;
+    std::string m_description;
 };
 }    // namespace wolkabout
 
-#endif    // DEVICEREGISTRATIONRESPONSE_H
+#endif    // GATEWAYUPDATERESPONSE_H

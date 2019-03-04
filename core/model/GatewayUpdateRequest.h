@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef SUBDEVICEREGISTRATIONREQUEST_H
-#define SUBDEVICEREGISTRATIONREQUEST_H
+#ifndef GATEWAYUPDATEREQUEST_H
+#define GATEWAYUPDATEREQUEST_H
 
 #include "model/DetailedDevice.h"
 #include "model/DeviceTemplate.h"
@@ -24,14 +24,14 @@
 
 namespace wolkabout
 {
-class SubdeviceRegistrationRequest
+class GatewayUpdateRequest
 {
 public:
-    SubdeviceRegistrationRequest() = default;
-    SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceManifest);
-    SubdeviceRegistrationRequest(DetailedDevice subdevice);
+    GatewayUpdateRequest() = default;
+    GatewayUpdateRequest(std::string gatewayName, std::string gatewayKey, DeviceTemplate gatewayManifest);
+    GatewayUpdateRequest(DetailedDevice gateway);
 
-    virtual ~SubdeviceRegistrationRequest() = default;
+    virtual ~GatewayUpdateRequest() = default;
 
     const std::string& getSubdeviceName() const;
     const std::string& getSubdeviceKey() const;
@@ -39,8 +39,8 @@ public:
     const DeviceTemplate& getTemplate() const;
 
 private:
-    DetailedDevice m_subdevice;
+    DetailedDevice m_gateway;
 };
 }    // namespace wolkabout
 
-#endif    // SUBDEVICEREGISTRATIONREQUEST_H
+#endif    // GATEWAYUPDATEREQUEST_H
