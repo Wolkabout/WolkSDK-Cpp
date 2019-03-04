@@ -51,6 +51,10 @@ public:
 
     const std::string& getFirmwareUpdateType() const;
 
+    const std::map<std::string, std::string>& getTypeParameters() const;
+    const std::map<std::string, std::string>& getConnectivityParameters() const;
+    const std::map<std::string, bool>& getFirmwareUpdateParameters() const;
+
     std::unique_ptr<ConfigurationTemplate> getConfigurationTemplate(
       std::function<bool(const ConfigurationTemplate&)> filter) const;
     std::unique_ptr<SensorTemplate> getSensorTemplate(std::function<bool(const SensorTemplate&)> filter) const;
