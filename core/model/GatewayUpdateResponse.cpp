@@ -22,11 +22,11 @@ namespace wolkabout
 {
 GatewayUpdateResponse::GatewayUpdateResponse(GatewayUpdateResponse::Result result, std::string description = "")
 : m_result(std::move(result)
-, m_description(srd::move(description)))
+, m_description(std::move(description)))
 {
 }
 
-GatewayUpdateResponse::Result GatewayUpdateResponse::getResult() const
+const GatewayUpdateResponse::Result& GatewayUpdateResponse::getResult() const
 {
     return m_result;
 }

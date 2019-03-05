@@ -17,7 +17,7 @@
 #ifndef DETAILEDDEVICE_H
 #define DETAILEDDEVICE_H
 
-#include "model/DeviceManifest.h"
+#include "model/DeviceTemplate.h"
 
 #include <map>
 #include <string>
@@ -29,11 +29,9 @@ class DetailedDevice
 {
 public:
     DetailedDevice() = default;
-    DetailedDevice(std::string name, std::string key, DeviceManifest deviceManifest);
+    DetailedDevice(std::string name, std::string key, DeviceTemplate deviceTemplate);
 
-    DetailedDevice(std::string name, std::string key, std::string password, DeviceManifest deviceManifest);
-    DetailedDevice(std::string name, std::string key, std::string password, DeviceManifest deviceManifest, bool manageSubdevices);
-
+    DetailedDevice(std::string name, std::string key, std::string password, DeviceTemplate deviceTemplate);
 
     virtual ~DetailedDevice() = default;
 
@@ -41,13 +39,9 @@ public:
     const std::string& getKey() const;
     const std::string& getPassword() const;
 
-    const DeviceManifest& getManifest() const;
+    const DeviceTemplate& getTemplate() const;
 
     std::vector<std::string> getActuatorReferences() const;
-
-    std::map<std::string, std::string> getSensorDelimiters() const;
-
-    std::map<std::string, std::string> getConfigurationDelimiters() const;
 
     bool operator==(DetailedDevice& rhs) const;
     bool operator!=(DetailedDevice& rhs) const;
@@ -57,7 +51,7 @@ protected:
     std::string m_key;
     std::string m_password;
 
-    DeviceManifest m_deviceManifest;
+    DeviceTemplate m_deviceTemplate;
 };
 }    // namespace wolkabout
 
