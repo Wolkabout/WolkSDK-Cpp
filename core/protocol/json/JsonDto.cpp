@@ -15,13 +15,14 @@
  */
 
 #include "protocol/json/JsonDto.h"
-#include "model/ActuatorManifest.h"
-#include "model/AlarmManifest.h"
-#include "model/ConfigurationManifest.h"
-#include "model/DeviceRegistrationRequest.h"
-#include "model/DeviceRegistrationResponse.h"
-#include "model/DeviceReregistrationResponse.h"
-#include "model/SensorManifest.h"
+#include "model/ActuatorTemplate.h"
+#include "model/AlarmTemplate.h"
+#include "model/ConfigurationTemplate.h"
+#include "model/SensorTemplate.h"
+#include "model/SubdeviceRegistrationRequest.h"
+#include "model/SubdeviceRegistrationResponse.h"
+#include "model/GatewayUpdateRequest.h"
+#include "model/GatewayUpdateResponse.h"
 
 using nlohmann::json;
 
@@ -42,28 +43,28 @@ static std::string createMultivalue(const std::string& value, int size)
     return multivalue;
 }
 
-/*** CONFIGURATION MANIFEST ***/
-void to_json(json& j, const ConfigurationManifest& configurationManifest)
+/*** CONFIGURATION TEMPLATE ***/
+void to_json(json& j, const ConfigurationTemplate& configurationTemplate)
 {
     auto dataType = [&]() -> std::string {
-        auto dataTypeStr = toString(configurationManifest.getDataType());
+        auto dataTypeStr = toString(configurationTemplate.getDataType());
 
         return dataTypeStr.empty() ? throw std::invalid_argument("Invalid data type") : dataTypeStr;
     }();
 
     json confJ;
 
-    confJ["name"] = configurationManifest.getName();
-    confJ["reference"] = configurationManifest.getReference();
-    confJ["dataType"] = dataType;
-    confJ["description"] = configurationManifest.getDescription();
-    confJ["defaultValue"] = createMultivalue(configurationManifest.getDefaultValue(), configurationManifest.getSize());
-    confJ["size"] = configurationManifest.getSize();
+    confJ["name"] = configurationTemplate.getName();
+    confJ["dataType"] = configurationTemplate.getDataType();
+    confJ["reference"] = configurationTemplate.getReference();
+    confJ["defaultValue"] = createMultivalue(configurationTemplate.getDefaultValue(), configurationTemplate.getSize());
+    confJ["size"] = configurationTemplate.getSize();
+    confJ["description"] = configurationTemplate.getDescription();
 
-    if (configurationManifest.getDataType() == DataType::NUMERIC)
+    if (configurationTemplate.getDataType() == DataType::NUMERIC)
     {
-        confJ["minimum"] = configurationManifest.getMinimum();
-        confJ["maximum"] = configurationManifest.getMaximum();
+        confJ["minimum"] = configurationTemplate.getMinimum();
+        confJ["maximum"] = configurationTemplate.getMaximum();
     }
     else
     {
@@ -71,9 +72,9 @@ void to_json(json& j, const ConfigurationManifest& configurationManifest)
         confJ["maximum"] = nullptr;
     }
 
-    if (configurationManifest.getSize() > 1)
+    if (configurationTemplate.getSize() > 1)
     {
-        confJ["labels"] = configurationManifest.getLabels();
+        confJ["labels"] = configurationTemplate.getLabels();
     }
     else
     {
@@ -83,7 +84,7 @@ void to_json(json& j, const ConfigurationManifest& configurationManifest)
     j = confJ;
 }
 
-void from_json(const json& j, ConfigurationManifest& configurationManifest)
+void from_json(const json& j, ConfigurationTemplate& configurationTemplate)
 {
     auto dataType = [&]() -> DataType {
         std::string dataTypeStr = j.at("dataType").get<std::string>();
@@ -106,34 +107,34 @@ void from_json(const json& j, ConfigurationManifest& configurationManifest)
     }();
 
     // clang-format off
-    configurationManifest =
-            ConfigurationManifest(
+    configurationTemplate =
+            ConfigurationTemplate(
                 j.at("name").get<std::string>(),
                 j.at("reference").get<std::string>(),
                 dataType,
                 j.at("description").get<std::string>(),
-                j.at("defaultValue").get<std::string>(),
+                j.at("defaultValue").is_null() ? 0 : j.at("defaultValue").get<std::string>(),
                 j.at("labels").is_null() ? std::vector<std::string>{} : j.at("labels").get<std::vector<std::string>>(),
                 j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
                 j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()
             );
     // clang-format on
 }
-/*** CONFIGURATION MANIFEST ***/
+/*** CONFIGURATION TEMPLATE ***/
 
-/*** ALARM MANIFEST ***/
-void to_json(json& j, const AlarmManifest& alarmManfiest)
+/*** ALARM TEMPLATE ***/
+void to_json(json& j, const AlarmTemplate& alarmTemplate)
 {
     auto alarmSeverity = [&]() -> std::string {
-        switch (alarmManfiest.getSeverity())
+        switch (alarmTemplate.getSeverity())
         {
-        case AlarmManifest::AlarmSeverity::ALERT:
+        case AlarmTemplate::AlarmSeverity::ALERT:
             return "ALERT";
 
-        case AlarmManifest::AlarmSeverity::CRITICAL:
+        case AlarmTemplate::AlarmSeverity::CRITICAL:
             return "CRITICAL";
 
-        case AlarmManifest::AlarmSeverity::ERROR:
+        case AlarmTemplate::AlarmSeverity::ERROR:
             return "ERROR";
 
         default:
@@ -143,30 +144,30 @@ void to_json(json& j, const AlarmManifest& alarmManfiest)
 
     // clang-format off
     j = {
-        {"reference", alarmManfiest.getReference()},
+        {"name", alarmTemplate.getName()},
+        {"reference", alarmTemplate.getReference()},
+        {"message", alarmTemplate.getMessage()}
         {"severity", alarmSeverity},
-        {"name", alarmManfiest.getName()},
-        {"description", alarmManfiest.getDescription()},
-        {"message", alarmManfiest.getMessage()}
+        {"description", alarmTemplate.getDescription()},
     };
     // clang-format on
 }
 
-void from_json(const json& j, AlarmManifest& alarmManifest)
+void from_json(const json& j, AlarmTemplate& alarmTemplate)
 {
-    auto alarmSeverity = [&]() -> AlarmManifest::AlarmSeverity {
+    auto alarmSeverity = [&]() -> AlarmTemplate::AlarmSeverity {
         std::string severity = j.at("severity").get<std::string>();
         if (severity == "ALERT")
         {
-            return AlarmManifest::AlarmSeverity::ALERT;
+            return AlarmTemplate::AlarmSeverity::ALERT;
         }
         else if (severity == "ERROR")
         {
-            return AlarmManifest::AlarmSeverity::ERROR;
+            return AlarmTemplate::AlarmSeverity::ERROR;
         }
         else if (severity == "CRITICAL")
         {
-            return AlarmManifest::AlarmSeverity::CRITICAL;
+            return AlarmTemplate::AlarmSeverity::CRITICAL;
         }
         else
         {
@@ -175,45 +176,39 @@ void from_json(const json& j, AlarmManifest& alarmManifest)
     }();
 
     // clang-format off
-    alarmManifest =
-            AlarmManifest(j.at("name").get<std::string>(),
+    alarmTemplate =
+            AlarmTemplate(j.at("name").get<std::string>(),
                           alarmSeverity,
                           j.at("reference").get<std::string>(),
                           j.at("message").get<std::string>(),
                           j.at("description").get<std::string>());
     // clang-format on
 }
-/*** ALARM MANIFEST ***/
+/*** ALARM TEMPLATE ***/
 
-/*** ACTUATOR MANIFEST ***/
-void to_json(json& j, const ActuatorManifest& actuatorManfiest)
+/*** ACTUATOR TEMPLATE ***/
+void to_json(json& j, const ActuatorTemplate& actuatorTemplate)
 {
     json actuatorJ;
 
-    actuatorJ["name"] = actuatorManfiest.getName();
-    actuatorJ["reference"] = actuatorManfiest.getReference();
-    actuatorJ["description"] = actuatorManfiest.getDescription();
+    actuatorJ["name"] = actuatorTemplate.getName();
+    actuatorJ["reference"] = actuatorTemplate.getReference();
+    actuatorJ["description"] = actuatorTemplate.getDescription();
+    actuatorJ["unit"]["readingTypeName"] = actuatorTemplate.getReadingTypeName();
 
-    actuatorJ["readingType"]["name"] = actuatorManfiest.getReadingTypeName();
-    actuatorJ["readingType"]["dataType"] = toString(actuatorManfiest.getDataType());
-    actuatorJ["readingType"]["precision"] = actuatorManfiest.getPrecision();
-    actuatorJ["readingType"]["labels"] = actuatorManfiest.getLabels();
-    actuatorJ["readingType"]["size"] = actuatorManfiest.getSize();
-
-    actuatorJ["unit"]["readingType"] = actuatorManfiest.getReadingTypeName();
-    if (!actuatorManfiest.getUnitSymbol().empty())
+    if (!actuatorTemplate.getUnitSymbol().empty())
     {
-        actuatorJ["unit"]["symbol"] = actuatorManfiest.getUnitSymbol();
+        actuatorJ["unit"]["symbol"] = actuatorTemplate.getUnitSymbol();
     }
     else
     {
         actuatorJ["unit"]["symbol"] = nullptr;
     }
 
-    if (actuatorManfiest.getDataType() == DataType::NUMERIC)
+    if (actuatorTemplate.getDataType() == DataType::NUMERIC)
     {
-        actuatorJ["minimum"] = actuatorManfiest.getMinimum();
-        actuatorJ["maximum"] = actuatorManfiest.getMaximum();
+        actuatorJ["minimum"] = actuatorTemplate.getMinimum();
+        actuatorJ["maximum"] = actuatorTemplate.getMaximum();
     }
     else
     {
@@ -224,73 +219,45 @@ void to_json(json& j, const ActuatorManifest& actuatorManfiest)
     j = actuatorJ;
 }
 
-void from_json(const json& j, ActuatorManifest& actuatorManifest)
+void from_json(const json& j, ActuatorTemplate& actuatorTemplate)
 {
-    auto dataType = [&]() -> DataType {
-        std::string dataTypeStr = j.at("readingType").at("dataType").get<std::string>();
-        if (dataTypeStr == "STRING")
-        {
-            return DataType::STRING;
-        }
-        else if (dataTypeStr == "NUMERIC")
-        {
-            return DataType::NUMERIC;
-        }
-        else if (dataTypeStr == "BOOLEAN")
-        {
-            return DataType::BOOLEAN;
-        }
-        else
-        {
-            throw std::invalid_argument("Invalid data type");
-        }
-    }();
-
     // clang-format off
-    actuatorManifest = ActuatorManifest{
+    actuatorTemplate = ActuatorTemplate{
                 j.at("name").get<std::string>(),
                 j.at("reference").get<std::string>(),
-                j["readingType"].at("name").get<std::string>(),
+                j["unit"].at("readingTypeName").get<std::string>(),
                 j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
-                dataType,
-                j["readingType"].at("precision").get<int>(),
                 j.at("description").get<std::string>(),
-                j["readingType"].at("labels").is_null() ? std::vector<std::string>{} : j["readingType"].at("labels").get<std::vector<std::string>>(),
                 j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
                 j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()};
     // clang-format on
 }
-/*** ACTUATOR MANIFEST ***/
+/*** ACTUATOR TEMPLATE ***/
 
-/*** SENSOR MANIFEST ***/
-void to_json(json& j, const SensorManifest& sensorManifest)
+/*** SENSOR TEMPLATE ***/
+void to_json(json& j, const SensorTemplate& sensorTemplate)
 {
     json sensorJ;
 
-    sensorJ["name"] = sensorManifest.getName();
-    sensorJ["reference"] = sensorManifest.getReference();
-    sensorJ["description"] = sensorManifest.getDescription();
+    sensorJ["name"] = sensorTemplate.getName();
+    sensorJ["reference"] = sensorTemplate.getReference();
+    sensorJ["description"] = sensorTemplate.getDescription();
 
-    sensorJ["readingType"]["name"] = sensorManifest.getReadingTypeName();
-    sensorJ["readingType"]["dataType"] = toString(sensorManifest.getDataType());
-    sensorJ["readingType"]["precision"] = sensorManifest.getPrecision();
-    sensorJ["readingType"]["labels"] = sensorManifest.getLabels();
-    sensorJ["readingType"]["size"] = sensorManifest.getSize();
-
-    sensorJ["unit"]["readingType"] = sensorManifest.getReadingTypeName();
-    if (!sensorManifest.getUnitSymbol().empty())
+    sensorJ["unit"]["readingTypeName"] = sensorTemplate.getReadingTypeName();
+    sensorJ["unit"]["readingType"] = sensorTemplate.getReadingTypeName();
+    if (!sensorTemplate.getUnitSymbol().empty())
     {
-        sensorJ["unit"]["symbol"] = sensorManifest.getUnitSymbol();
+        sensorJ["unit"]["symbol"] = sensorTemplate.getUnitSymbol();
     }
     else
     {
         sensorJ["unit"]["symbol"] = nullptr;
     }
 
-    if (sensorManifest.getDataType() == DataType::NUMERIC)
+    if (sensorTemplate.getDataType() == DataType::NUMERIC)
     {
-        sensorJ["minimum"] = sensorManifest.getMinimum();
-        sensorJ["maximum"] = sensorManifest.getMaximum();
+        sensorJ["minimum"] = sensorTemplate.getMinimum();
+        sensorJ["maximum"] = sensorTemplate.getMaximum();
     }
     else
     {
@@ -301,7 +268,7 @@ void to_json(json& j, const SensorManifest& sensorManifest)
     j = sensorJ;
 }
 
-void from_json(const json& j, SensorManifest& sensorManifest)
+void from_json(const json& j, SensorTemplate& sensorTemplate)
 {
     auto dataType = [&]() -> DataType {
         std::string dataTypeStr = j["readingType"].at("dataType").get<std::string>();
@@ -323,71 +290,77 @@ void from_json(const json& j, SensorManifest& sensorManifest)
         }
     }();
 
-    sensorManifest = SensorManifest{j.at("name").get<std::string>(),
+    sensorTemplate = SensorTemplate{j.at("name").get<std::string>(),
                                     j.at("reference").get<std::string>(),
-                                    j["readingType"].at("name").get<std::string>(),
+                                    j["unit"].at("readingTypeName").get<std::string>(),
                                     j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
                                     dataType,
-                                    j["readingType"].at("precision").get<int>(),
                                     j.at("description").get<std::string>(),
-                                    j["readingType"].at("labels").is_null() ?
-                                      std::vector<std::string>{} :
-                                      j["readingType"].at("labels").get<std::vector<std::string>>(),
                                     j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
                                     j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()};
 }
-/*** SENSOR MANIFEST ***/
+/*** SENSOR TEMPLATE ***/
 
-/*** DEVICE MANIFEST ***/
-void to_json(json& j, const DeviceManifest& deviceManifest)
+/*** DEVICE TEMPLATE ***/
+void to_json(json& j, const DeviceTemplate& deviceTemplate)
 {
     // clang-format off
     j = {
-        {"name", deviceManifest.getName()},
-        {"description", deviceManifest.getDescription()},
-        {"protocol", deviceManifest.getProtocol()},
-        {"firmwareUpdateType", deviceManifest.getFirmwareUpdateType()},
-        {"configs", deviceManifest.getConfigurations()},
-        {"alarms", deviceManifest.getAlarms()},
-        {"actuators", deviceManifest.getActuators()},
-        {"feeds", deviceManifest.getSensors()}
+        {"configurations", deviceTemplate.getConfigurations()},
+        {"sensors", deviceTemplate.getSensors()},
+        {"alarms", deviceTemplate.getAlarms()},
+        {"actuators", deviceTemplate.getActuators()},
+        {"firmwareUpdateType", deviceTemplate.getFirmwareUpdateType()},
+        {"typeParemeters", deviceTemplate.getTypeParameters()},
+        {"connectivityParemeters", deviceTemplate.getConectivityParameters()},
+        {"firmwareUpdateParemeters", deviceTemplate.getFirmwareUpdateParameters()}
     };
     // clang-format on
 }
 
-void from_json(const json& j, DeviceManifest& deviceManifest)
+void from_json(const json& j, DeviceTemplate& deviceTemplate)
 {
-    deviceManifest = DeviceManifest(
-      j.at("name").get<std::string>(), j.at("description").get<std::string>(), j.at("protocol").get<std::string>(),
-      j.at("firmwareUpdateType").get<std::string>(), j.at("configs").get<std::vector<ConfigurationManifest>>(),
-      j.at("feeds").get<std::vector<SensorManifest>>(), j.at("alarms").get<std::vector<AlarmManifest>>(),
-      j.at("actuators").get<std::vector<ActuatorManifest>>());
+    deviceTemplate = DeviceTemplate(
+      j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
+      j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
+      j.at("actuators").get<std::vector<ActuatorTemplate>>(), j.at("firmwareUpdateType").get<std::string>(),
+      j.at("typeParemeters").get<std::map<std::string, std::string>>(),
+      j.at("connectivityParemeters").get<std::map<std::string, std::string>>(),
+      j.at("firmwareUpdateParemeters").get<std::map<std::string, bool>>());
 }
-/*** DEVICE MANIFEST ***/
+/*** DEVICE TEMPLATE ***/
 
-/*** DEVICE REGISTRATION REQUEST DTO ***/
-void to_json(json& j, const DeviceRegistrationRequest& dto)
+/*** SUBDEVICE REGISTRATION REQUEST DTO ***/
+void to_json(json& j, const SubdeviceRegistrationRequest& dto)
 {
     // clang-format off
     j = {
-        {"device",
-            {{"name", dto.getDeviceName()},
-            {"key", dto.getDeviceKey()}}
-        },
-        {"manifest", dto.getManifest()}
+        {"name", dto.getSubdeviceName()},
+        {"key", dto.getSubdeviceKey()},
+        {"defaultBinding", dto.getDefaultBinding()},
+        {"configurations", dto.getTemplate().getConfigurations()},
+        {"sensors", dto.getTemplate().getSensors()},
+        {"alarms", dto.getTemplate().getAlarms()},
+        {"actuators", dto.getTemplate().getActuators()},
+        {"firmwareUpdateType", dto.getTemplate().getFirmwareUpdateType()},
+        {"typeParemeters", dto.getTemplate().getTypeParameters()},
+        {"connectivityParemeters", dto.getTemplate().getConectivityParameters()},
+        {"firmwareUpdateParemeters", dto.getTemplate().getFirmwareUpdateParameters()}
     };
     // clang-format on
 }
 
-void from_json(const json& j, DeviceRegistrationRequest& dto)
+void from_json(const json& j, SubdeviceRegistrationRequest& dto)
 {
     dto =
-      DeviceRegistrationRequest(j.at("device").at("name").get<std::string>(),
-                                j.at("device").at("key").get<std::string>(), j.at("manifest").get<DeviceManifest>());
+      SubdeviceRegistrationRequest(j.at("name").get<std::string>(),
+                                j.at("key").get<std::string>(),
+                                j.at("defaultBinding").get<bool>(),
+                                DeviceTemplate{j.at("configurations").get<std::vector<ConfigurationTemplate>>(), j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(), j.at("actuators").get<std::vector<ActuatorTemplate>>(), j.at("firmwareUpdateType").get<std::string>(),});
 }
-/*** DEVICE REGISTRATION REQUEST DTO ***/
+/*** SUBDEVICE REGISTRATION REQUEST DTO ***/
 
-/*** DEVICE REGISTRATION RESPONSE DTO ***/
+/*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
 void to_json(json& j, const DeviceRegistrationResponse& dto)
 {
     auto resultStr = [&]() -> std::string {
@@ -405,16 +378,16 @@ void to_json(json& j, const DeviceRegistrationResponse& dto)
             return "ERROR_KEY_CONFLICT";
             break;
 
-        case DeviceRegistrationResponse::Result::ERROR_MANIFEST_CONFLICT:
-            return "ERROR_MANIFEST_CONFLICT";
+        case DeviceRegistrationResponse::Result::ERROR_TEMPLATE_CONFLICT:
+            return "ERROR_TEMPLATE_CONFLICT";
             break;
 
         case DeviceRegistrationResponse::Result::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED:
             return "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED";
             break;
 
-        case DeviceRegistrationResponse::Result::ERROR_NO_GATEWAY_MANIFEST:
-            return "ERROR_NO_GATEWAY_MANIFEST";
+        case DeviceRegistrationResponse::Result::ERROR_NO_GATEWAY_TEMPLATE:
+            return "ERROR_NO_GATEWAY_TEMPLATE";
             break;
 
         case DeviceRegistrationResponse::Result::ERROR_READING_PAYLOAD:
@@ -433,7 +406,7 @@ void to_json(json& j, const DeviceRegistrationResponse& dto)
     };
     // clang-format on
 }
-/*** DEVICE REGISTRATION RESPONSE DTO ***/
+/*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
 
 /*** DEVICE REREGISTRATION RESPONSE DTO ***/
 void to_json(json& j, const DeviceReregistrationResponse& dto)

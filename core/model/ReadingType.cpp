@@ -19,7 +19,6 @@
 
 namespace wolkabout
 {
-
 ReadingType::ReadingType(DataType dataType)
 {
     switch (dataType)
@@ -70,8 +69,7 @@ ReadingType::ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit uni
 }
 
 ReadingType::ReadingType(std::string name, std::string unitSymbol)
-: m_name{std::move(name)}
-, m_unitSymbol{std::move(unitSymbol)}
+: m_name{std::move(name)}, m_unitSymbol{std::move(unitSymbol)}
 {
 }
 
@@ -94,7 +92,6 @@ DataType ReadingType::getDataType() const
 {
     return m_dataType;
 }
-
 
 bool ReadingType::operator==(ReadingType& rhs) const
 {
@@ -590,7 +587,7 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         {
         case MeasurmentUnit::NEWTON:
         case MeasurmentUnit::POUND_FORCE:
-        case MeasurmentUnit::GRAVITY:
+        case MeasurmentUnit::GRAVITY_FORCE:
         case MeasurmentUnit::KILOGRAM_FORCE:
         case MeasurmentUnit::DYNE:
         {
@@ -880,9 +877,10 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         }
         break;
     }
+    }
 }
 
-DataType ReadingType::dataTypeForName(Name name)
+wolkabout::DataType wolkabout::ReadingType::dataTypeForName(ReadingType::Name name)
 {
     switch (name)
     {
@@ -910,7 +908,7 @@ DataType ReadingType::dataTypeForName(Name name)
     {
         return DataType::NUMERIC;
     }
-    case ReadingType::Name::BATTERY:
+    case ReadingType::Name::BATTERY_VOLTAGE:
     {
         return DataType::NUMERIC;
     }
@@ -930,19 +928,11 @@ DataType ReadingType::dataTypeForName(Name name)
     {
         return DataType::NUMERIC;
     }
-    case ReadingType::Name::MAGNETOMETER:
-    {
-        return DataType::NUMERIC;
-    }
     case ReadingType::Name::LOCATION:
     {
         return DataType::STRING;
     }
     case ReadingType::Name::HEART_RATE:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::COUNT:
     {
         return DataType::NUMERIC;
     }
@@ -963,10 +953,6 @@ DataType ReadingType::dataTypeForName(Name name)
         return DataType::NUMERIC;
     }
     case ReadingType::Name::POWER:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::ELECTRIC_VOLTAGE:
     {
         return DataType::NUMERIC;
     }
@@ -994,10 +980,6 @@ DataType ReadingType::dataTypeForName(Name name)
     {
         return DataType::NUMERIC;
     }
-    case ReadingType::Name::STEPS:
-    {
-        return DataType::NUMERIC;
-    }
     case ReadingType::Name::TIME:
     {
         return DataType::STRING;
@@ -1010,15 +992,7 @@ DataType ReadingType::dataTypeForName(Name name)
     {
         return DataType::NUMERIC;
     }
-    case ReadingType::Name::ELECTRICITY:
-    {
-        return DataType::NUMERIC;
-    }
     case ReadingType::Name::FORCE:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::ENERGY:
     {
         return DataType::NUMERIC;
     }
@@ -1030,7 +1004,6 @@ DataType ReadingType::dataTypeForName(Name name)
 
     return DataType::STRING;
 }
-
 
 std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
 {
@@ -1416,7 +1389,7 @@ std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)
     {
         return "lbf";
     }
-    case ReadingType::MeasurmentUnit::GRAVITY:
+    case ReadingType::MeasurmentUnit::GRAVITY_FORCE:
     {
         return "grav";
     }
@@ -1680,10 +1653,6 @@ std::string toString(ReadingType::Name name)
     case ReadingType::Name::RADIATION:
     {
         return "RADIATION";
-    }
-    case ReadingType::Name::ELECTRIC_VOLTAGE:
-    {
-        return "ELECTRIC_VOLTAGE";
     }
     case ReadingType::Name::FORCE:
     {
@@ -2146,7 +2115,7 @@ std::string toString(ReadingType::MeasurmentUnit unit)
     {
         return "POUND_FORCE";
     }
-    case ReadingType::MeasurmentUnit::GRAVITY:
+    case ReadingType::MeasurmentUnit::GRAVITY_FORCE:
     {
         return "GRAVITY";
     }

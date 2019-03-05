@@ -21,34 +21,41 @@
 
 namespace wolkabout
 {
-class ActuatorManifest;
-class AlarmManifest;
-class ConfigurationManifest;
-class DeviceManifest;
-class DeviceRegistrationRequest;
-class DeviceRegistrationResponse;
+class ActuatorTemplate;
+class AlarmTemplate;
+class ConfigurationTemplate;
+class SensorTemplate;
+class DeviceTemplate;
+class GatewayUpdateRequest;
+class GatewayUpdateResponse;
+class SubdeviceRegistrationRequest;
+class SubdeviceRegistrationResponse;
 class DeviceReregistrationResponse;
-class SensorManifest;
 
-void to_json(nlohmann::json& j, const ConfigurationManifest& configurationManifest);
-void from_json(const nlohmann::json& j, ConfigurationManifest& configurationManifest);
+void to_json(nlohmann::json& j, const ConfigurationTemplate& configurationTemplate);
+void from_json(const nlohmann::json& j, ConfigurationTemplate& configurationTemplate);
 
-void to_json(nlohmann::json& j, const AlarmManifest& alarmManfiest);
-void from_json(const nlohmann::json& j, AlarmManifest& alarmManifest);
+void to_json(nlohmann::json& j, const AlarmTemplate& alarmTemplate);
+void from_json(const nlohmann::json& j, AlarmTemplate& alarmTemplate);
 
-void to_json(nlohmann::json& j, const ActuatorManifest& actuatorManfiest);
-void from_json(const nlohmann::json& j, ActuatorManifest& actuatorManifest);
+void to_json(nlohmann::json& j, const ActuatorTemplate& actuatorTemplate);
+void from_json(const nlohmann::json& j, ActuatorTemplate& actuatorTemplate);
 
-void to_json(nlohmann::json& j, const SensorManifest& sensorManifest);
-void from_json(const nlohmann::json& j, SensorManifest& sensorManifest);
+void to_json(nlohmann::json& j, const SensorTemplate& sensorTemplate);
+void from_json(const nlohmann::json& j, SensorTemplate& sensorTemplate);
 
-void to_json(nlohmann::json& j, const DeviceManifest& deviceManifest);
-void from_json(const nlohmann::json& j, DeviceManifest& deviceManifest);
+void to_json(nlohmann::json& j, const DeviceTemplate& deviceTemplate);
+void from_json(const nlohmann::json& j, DeviceTemplate& deviceTemplate);
 
-void to_json(nlohmann::json& j, const DeviceRegistrationRequest& dto);
-void from_json(const nlohmann::json& j, DeviceRegistrationRequest& dto);
+void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto);
+void from_json(const nlohmann::json& j, GatewayUpdateRequest& dto);
 
-void to_json(nlohmann::json& j, const DeviceRegistrationResponse& dto);
+void to_json(nlohmann::json& j, const SubdeviceRegistrationRequest& dto);
+void from_json(const nlohmann::json& j, SubdeviceRegistrationRequest& dto);
+
+void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto);
+
+void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
 
 void to_json(nlohmann::json& j, const DeviceReregistrationResponse& dto);
 }    // namespace wolkabout

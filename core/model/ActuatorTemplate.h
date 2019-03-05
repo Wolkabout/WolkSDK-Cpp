@@ -20,25 +20,24 @@
 #include "model/ActuationReadingType.h"
 #include "model/DataType.h"
 
-
 namespace wolkabout
 {
-class ActuatorManifest
+class ActuatorTemplate
 {
 public:
-    ActuatorManifest() = default;
+    ActuatorTemplate() = default;
 
-    ActuatorManifest(std::string name, std::string reference, DataType dataType, std::string description,
+    ActuatorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
                      double minimum = 0, double maximum = 0);
 
-    ActuatorManifest(std::string name, std::string reference, ActuationReadingType readingType, std::string description,
+    ActuatorTemplate(std::string name, std::string reference, ActuationReadingType readingType, std::string description,
                      double minimum = 0, double maximum = 0);
 
-    ActuatorManifest(std::string name, std::string reference, ActuationReadingType::Name readingTypeName,
+    ActuatorTemplate(std::string name, std::string reference, ActuationReadingType::Name readingTypeName,
                      ActuationReadingType::MeasurmentUnit unit, std::string description, double minimum = 0,
                      double maximum = 0);
 
-    ActuatorManifest(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
+    ActuatorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
                      std::string description, double minimum = 0, double maximum = 0);
 
     const std::string& getName() const;
@@ -57,8 +56,8 @@ public:
 
     double getMaximum() const;
 
-    bool operator==(ActuatorManifest& rhs) const;
-    bool operator!=(ActuatorManifest& rhs) const;
+    bool operator==(ActuatorTemplate& rhs) const;
+    bool operator!=(ActuatorTemplate& rhs) const;
 
 private:
     std::string m_name;

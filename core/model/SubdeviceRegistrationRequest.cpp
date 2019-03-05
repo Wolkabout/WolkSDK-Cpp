@@ -16,15 +16,16 @@
 
 #include "model/SubdeviceRegistrationRequest.h"
 
+#include <string>
 #include <utility>
 
 namespace wolkabout
 {
 SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey,
-                                                     DeviceTemplate subdeviceTemplate)
-: m_subdeviceName(std::move(subdeviceName)
-, m_subdeviceKey(std::move(subdeviceKey))
-, m_subdeviceTemplate(std::move(subdeviceTemplate)))
+                                                           DeviceTemplate subdeviceTemplate,
+														   bool defaultBinding)
+: m_subdeviceName(std::move(subdeviceName)), m_subdeviceKey(std::move(subdeviceKey)),
+m_defaultBinding(std::move(defaultBinding)), m_subdeviceTemplate(std::move(subdeviceTemplate))
 {
 }
 
@@ -36,6 +37,11 @@ const std::string& SubdeviceRegistrationRequest::getSubdeviceName() const
 const std::string& SubdeviceRegistrationRequest::getSubdeviceKey() const
 {
     return m_subdeviceKey;
+}
+
+const bool& SubdeviceRegistrationRequest::getDefaultBinding() const
+{
+    return m_defaultBinding;
 }
 
 const DeviceTemplate& SubdeviceRegistrationRequest::getTemplate() const

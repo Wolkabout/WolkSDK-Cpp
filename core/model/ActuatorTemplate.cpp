@@ -58,7 +58,7 @@ ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, Actu
 }
 
 ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, std::string readingTypeName,
-                                   std::string unitSymbol std::string description, double minimum, double maximum)
+                                   std::string unitSymbol, std::string description, double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
 , m_readingType{ActuationReadingType(std::move(readingTypeName), std::move(unitSymbol))}

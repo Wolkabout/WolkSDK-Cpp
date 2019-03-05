@@ -16,13 +16,13 @@
 
 #include "model/GatewayUpdateResponse.h"
 
+#include <string>
 #include <utility>
 
 namespace wolkabout
 {
-GatewayUpdateResponse::GatewayUpdateResponse(GatewayUpdateResponse::Result result, std::string description = "")
-: m_result(std::move(result)
-, m_description(std::move(description)))
+GatewayUpdateResponse::GatewayUpdateResponse(GatewayUpdateResponse::Result result, std::string description)
+: m_result(std::move(result)), m_description(std::move(description))
 {
 }
 
@@ -31,8 +31,8 @@ const GatewayUpdateResponse::Result& GatewayUpdateResponse::getResult() const
     return m_result;
 }
 
-const std::string& getDescription() const
+const std::string& GatewayUpdateResponse::getDescription() const
 {
-	return m_description;
+    return m_description;
 }
 }    // namespace wolkabout

@@ -21,7 +21,7 @@
 namespace wolkabout
 {
 GatewayUpdateRequest::GatewayUpdateRequest(std::string gatewayName, std::string gatewayKey,
-                                                     DeviceTemplate gatewayTemplate)
+                                           DeviceTemplate gatewayTemplate)
 : m_gateway(std::move(gatewayName), std::move(gatewayKey), std::move(gatewayTemplate))
 {
 }
