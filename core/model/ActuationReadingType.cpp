@@ -20,7 +20,6 @@
 
 namespace wolkabout
 {
-
 ActuationReadingType::ActuationReadingType(DataType dataType)
 {
     switch (dataType)
@@ -71,8 +70,7 @@ ActuationReadingType::ActuationReadingType(ActuationReadingType::Name name, Actu
 }
 
 ActuationReadingType::ActuationReadingType(std::string name, std::string unitSymbol)
-: m_name{std::move(name)}
-, m_unitSymbol{std::move(unitSymbol)}
+: m_name{std::move(name)}, m_unitSymbol{std::move(unitSymbol)}
 {
 }
 
@@ -95,7 +93,6 @@ DataType ActuationReadingType::getDataType() const
 {
     return m_dataType;
 }
-
 
 bool ActuationReadingType::operator==(ActuationReadingType& rhs) const
 {

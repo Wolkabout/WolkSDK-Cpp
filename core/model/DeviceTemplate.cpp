@@ -16,14 +16,13 @@
 
 #include "model/DeviceTemplate.h"
 
-wolkabout::DeviceTemplate::DeviceTemplate(std::vector<wolkabout::ConfigurationTemplate> configurations,
-                                          std::vector<wolkabout::SensorTemplate> sensors,
-                                          std::vector<wolkabout::AlarmTemplate> alarms,
-                                          std::vector<wolkabout::ActuatorTemplate> actuators,
-                                          std::string firmwareUpdateType,
-                                          std::map<std::string, std::string> typeParameters,
-                                          std::map<std::string, std::string> connectivityParameters,
-                                          std::map<std::string, bool> firmwareTypeParameters)
+#include <utility>
+
+wolkabout::DeviceTemplate::DeviceTemplate(
+  std::vector<wolkabout::ConfigurationTemplate> configurations, std::vector<wolkabout::SensorTemplate> sensors,
+  std::vector<wolkabout::AlarmTemplate> alarms, std::vector<wolkabout::ActuatorTemplate> actuators,
+  std::string firmwareUpdateType, std::map<std::string, std::string> typeParameters,
+  std::map<std::string, std::string> connectivityParameters, std::map<std::string, bool> firmwareUpdateParameters)
 : m_configurations(std::move(configurations))
 , m_sensors(std::move(sensors))
 , m_alarms(std::move(alarms))
@@ -94,22 +93,22 @@ std::unique_ptr<wolkabout::ConfigurationTemplate> wolkabout::DeviceTemplate::get
     return nullptr;
 }
 
-const std::string& getFirmwareUpdateType() const
+const std::string& wolkabout::DeviceTemplate::getFirmwareUpdateType() const
 {
     return m_firmwareUpdateType;
 }
 
-const std::map<std::string, std::string>& getTypeParameters() const
+const std::map<std::string, std::string>& wolkabout::DeviceTemplate::getTypeParameters() const
 {
     return m_typeParameters;
 }
 
-const std::map<std::string, std::string>& getConnectivityParameters() const
+const std::map<std::string, std::string>& wolkabout::DeviceTemplate::getConnectivityParameters() const
 {
     return m_connectivityParameters;
 }
 
-const std::map<std::string, bool>& getFirmwareupdateParameters() const
+const std::map<std::string, bool>& wolkabout::DeviceTemplate::getFirmwareUpdateParameters() const
 {
     return m_firmwareUpdateParameters;
 }
@@ -207,7 +206,6 @@ bool wolkabout::DeviceTemplate::hasActuatorTemplateWithReference(const std::stri
 
     return false;
 }
-
 
 bool wolkabout::DeviceTemplate::operator==(DeviceTemplate& rhs) const
 {

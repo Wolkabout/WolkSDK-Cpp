@@ -14,42 +14,41 @@
  * limitations under the License.
  */
 
-#ifndef SUBDEVICEREREGISTRATIONRESPONSE_H
-#define SUBDEVICEREREGISTRATIONRESPONSE_H
+#ifndef SUBDEVICEREGISTRATIONRESPONSE_H
+#define SUBDEVICEREGISTRATIONRESPONSE_H
 
 #include <string>
 
 namespace wolkabout
 {
-class SubdeviceReregistrationResponse
+class SubdeviceRegistrationResponse
 {
 public:
     enum class Result
     {
-        OK = 0,
+        OK,
         ERROR_GATEWAY_NOT_FOUND,
         ERROR_NOT_A_GATEWAY,
+        ERROR_KEY_CONFLICT,
         ERROR_VALIDATION_ERROR,
         ERROR_INVALID_DTO,
         ERROR_KEY_MISSING,
-        ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN,
         ERROR_UNKNOWN
-
     };
 
-    SubdeviceReregistrationResponse() = default;
-    SubdeviceReregistrationResponse(SubdeviceReregistrationResponse::Result result, std::string description = "");
+    SubdeviceRegistrationResponse() = default;
+    SubdeviceRegistrationResponse(SubdeviceRegistrationResponse::Result result, std::string description = "");
 
-    virtual ~SubdeviceReregistrationResponse() = default;
+    virtual ~SubdeviceRegistrationResponse() = default;
 
-    SubdeviceReregistrationResponse::Result getResult() const;
+    const SubdeviceRegistrationResponse::Result& getResult() const;
 
     const std::string& getDescription() const;
 
 private:
-    SubdeviceReregistrationResponse::Result m_result;
+    SubdeviceRegistrationResponse::Result m_result;
     std::string m_description;
 };
 }    // namespace wolkabout
 
-#endif    // SUBDEVICEREREGISTRATIONRESPONSE_H
+#endif    // SUBDEVICEREGISTRATIONRESPONSE_H

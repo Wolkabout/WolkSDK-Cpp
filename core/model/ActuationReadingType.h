@@ -34,6 +34,14 @@ public:
         SWITCH
     };
 
+    enum class MeasurmentUnit
+    {
+        BOOLEAN,
+        STEPS,
+        COUNT,
+        TEXT
+    };
+
     ActuationReadingType() = default;
     ActuationReadingType(DataType);
     ActuationReadingType(ActuationReadingType::Name name, ActuationReadingType::MeasurmentUnit unit);

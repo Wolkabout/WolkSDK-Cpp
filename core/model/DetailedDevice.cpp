@@ -21,7 +21,7 @@
 namespace wolkabout
 {
 DetailedDevice::DetailedDevice(std::string name, std::string key, DeviceTemplate deviceTemplate)
-: DetailedDevice(std::move(name), std::move(key), "", std::move(deviceTemplate));
+: DetailedDevice(std::move(name), std::move(key), "", std::move(deviceTemplate))
 {
 }
 

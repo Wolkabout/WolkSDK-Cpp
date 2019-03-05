@@ -89,11 +89,6 @@ const std::vector<std::string>& ConfigurationTemplate::getLabels() const
     return m_labels;
 }
 
-const std::string& ConfigurationTemplate::getDelimiter() const
-{
-    return m_delimiter;
-}
-
 bool ConfigurationTemplate::operator==(ConfigurationTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description ||
@@ -107,7 +102,7 @@ bool ConfigurationTemplate::operator==(ConfigurationTemplate& rhs) const
         return false;
     }
 
-    if (m_size != rhs.m_size || m_delimiter != rhs.m_delimiter)
+    if (m_size != rhs.m_size)
     {
         return false;
     }

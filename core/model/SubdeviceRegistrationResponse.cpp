@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-#include "model/SubdeviceReregistrationResponse.h"
+#include "model/SubdeviceRegistrationResponse.h"
 
+#include <string>
 #include <utility>
 
 namespace wolkabout
 {
-DeviceReregistrationResponse::DeviceReregistrationResponse(DeviceReregistrationResponse::Result result, std::string description = "")
-: m_result(std::move(result))
-, m_description{std::move(description)}
+SubdeviceRegistrationResponse::SubdeviceRegistrationResponse(SubdeviceRegistrationResponse::Result result, std::string description)
+: m_result(std::move(result)), m_description(std::move(description))
 {
 }
 
-DeviceReregistrationResponse::Result DeviceReregistrationResponse::getResult() const
+const SubdeviceRegistrationResponse::Result& SubdeviceRegistrationResponse::getResult() const
 {
     return m_result;
 }
 
-const std::string& getDescription() const
+const std::string& SubdeviceRegistrationResponse::getDescription() const
 {
-	return m_description;
+    return m_description;
 }
 }    // namespace wolkabout

@@ -81,7 +81,7 @@ public:
         CO2_MOL,
         X10C,
         X100V,
-        X10Pa,
+        X10PA,
         NUMERIC,
 
         KELVIN,
@@ -198,6 +198,7 @@ public:
 
         NEWTON,
         POUND_FORCE,
+        GRAVITY_FORCE,
         KILOGRAM_FORCE,
         DYNE,
 
@@ -230,17 +231,17 @@ public:
         FARADAY,
 
         OHM,
-        
+
         FRANKLIN,
         ELECTRIC_CHARGE,
-        
+
         GILBERT,
-        
+
         JOULE,
         ELECTRON_VOLT,
-        
+
         HENRY,
-        
+
         SIEMENS,
 
         LUMEN,
@@ -276,7 +277,6 @@ private:
     std::string m_unit;
     DataType m_dataType;
     std::string m_unitSymbol;
-
 
     void validate(ReadingType::Name name, ReadingType::MeasurmentUnit unit);
     DataType dataTypeForName(ReadingType::Name name);

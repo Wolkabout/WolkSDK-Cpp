@@ -17,7 +17,6 @@
 #ifndef SUBDEVICEREGISTRATIONREQUEST_H
 #define SUBDEVICEREGISTRATIONREQUEST_H
 
-#include "model/DetailedDevice.h"
 #include "model/DeviceTemplate.h"
 
 #include <string>
@@ -28,19 +27,20 @@ class SubdeviceRegistrationRequest
 {
 public:
     SubdeviceRegistrationRequest() = default;
-    SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceTemplate);
+    SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceTemplate, bool defaultBinding = false);
 
     virtual ~SubdeviceRegistrationRequest() = default;
 
     const std::string& getSubdeviceName() const;
     const std::string& getSubdeviceKey() const;
+    const bool& getDefaultBinding() const;
 
     const DeviceTemplate& getTemplate() const;
 
 private:
     std::string m_subdeviceName;
     std::string m_subdeviceKey;
-    DetailedDevice m_subdevice;
+    DeviceTemplate m_subdeviceTemplate;
 };
 }    // namespace wolkabout
 

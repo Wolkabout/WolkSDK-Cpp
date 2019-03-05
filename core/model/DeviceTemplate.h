@@ -33,8 +33,9 @@ class DeviceTemplate
 public:
     DeviceTemplate() = default;
     DeviceTemplate(std::vector<ConfigurationTemplate> configurations = {}, std::vector<SensorTemplate> sensors = {},
-                   std::vector<AlarmTemplate> alarms = {}, std::vector<ActuatorTemplate> actuators = {},std::string firmwareUpdateType, 
-                   std::map<std::string, std::string> typeParameters = {}, std::map<std::string, std::string> connectivityParameters = {},
+                   std::vector<AlarmTemplate> alarms = {}, std::vector<ActuatorTemplate> actuators = {},
+                   std::string firmwareUpdateType = "", std::map<std::string, std::string> typeParameters = {},
+                   std::map<std::string, std::string> connectivityParameters = {},
                    std::map<std::string, bool> firmwareUpdateParameters = {});
 
     virtual ~DeviceTemplate() = default;
@@ -61,7 +62,6 @@ public:
     std::unique_ptr<AlarmTemplate> getAlarmTemplate(std::function<bool(const AlarmTemplate&)> filter) const;
     std::unique_ptr<ActuatorTemplate> getActuatorTemplate(std::function<bool(const ActuatorTemplate&)> filter) const;
 
-
     bool hasConfigurationTemplateWithReference(const std::string& reference) const;
     bool hasSensorTemplateWithReference(const std::string& reference) const;
     bool hasAlarmTemplateWithReference(const std::string& reference) const;
@@ -80,7 +80,6 @@ private:
     std::map<std::string, std::string> m_typeParameters;
     std::map<std::string, std::string> m_connectivityParameters;
     std::map<std::string, bool> m_firmwareUpdateParameters;
-
 };
 }    // namespace wolkabout
 
