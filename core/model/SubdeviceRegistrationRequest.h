@@ -28,8 +28,7 @@ class SubdeviceRegistrationRequest
 {
 public:
     SubdeviceRegistrationRequest() = default;
-    SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceManifest);
-    SubdeviceRegistrationRequest(DetailedDevice subdevice);
+    SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceTemplate);
 
     virtual ~SubdeviceRegistrationRequest() = default;
 
@@ -39,6 +38,8 @@ public:
     const DeviceTemplate& getTemplate() const;
 
 private:
+    std::string m_subdeviceName;
+    std::string m_subdeviceKey;
     DetailedDevice m_subdevice;
 };
 }    // namespace wolkabout

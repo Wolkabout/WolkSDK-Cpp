@@ -27,14 +27,12 @@ public:
     enum class Result
     {
         OK,
-        ERROR_KEY_CONFLICT,
-        ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED,
+        ERROR_GATEWAY_NOT_FOUND,
         ERROR_NOT_A_GATEWAY,
+        ERROR_KEY_CONFLICT,
         ERROR_VALIDATION_ERROR,
         ERROR_INVALID_DTO,
         ERROR_KEY_MISSING,
-        ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN,
-        ERROR_GATEWAY_NOT_FOUND,
         ERROR_UNKNOWN
     };
 
@@ -43,7 +41,7 @@ public:
 
     virtual ~GatewayUpdateResponse() = default;
 
-    GatewayUpdateResponse::Result getResult() const;
+    const GatewayUpdateResponse::Result& getResult() const;
 
     const std::string& getDescription() const;
 

@@ -22,24 +22,24 @@ namespace wolkabout
 {
 SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey,
                                                      DeviceTemplate subdeviceTemplate)
-: m_subdevice(std::move(subdeviceName), std::move(subdeviceKey), std::move(subdeviceTemplate))
+: m_subdeviceName(std::move(subdeviceName)
+, m_subdeviceKey(std::move(subdeviceKey))
+, m_subdeviceTemplate(std::move(subdeviceTemplate)))
 {
 }
 
-SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(DetailedDevice subdevice) : m_subdevice(std::move(subdevice)) {}
-
 const std::string& SubdeviceRegistrationRequest::getSubdeviceName() const
 {
-    return m_subdevice.getName();
+    return m_subdeviceName;
 }
 
 const std::string& SubdeviceRegistrationRequest::getSubdeviceKey() const
 {
-    return m_subdevice.getKey();
+    return m_subdeviceKey;
 }
 
 const DeviceTemplate& SubdeviceRegistrationRequest::getTemplate() const
 {
-    return m_subdevice.getTemplate();
+    return m_subdeviceTemplate;
 }
 }    // namespace wolkabout
