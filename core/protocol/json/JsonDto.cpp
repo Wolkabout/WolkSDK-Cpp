@@ -18,11 +18,11 @@
 #include "model/ActuatorTemplate.h"
 #include "model/AlarmTemplate.h"
 #include "model/ConfigurationTemplate.h"
+#include "model/GatewayUpdateRequest.h"
+#include "model/GatewayUpdateResponse.h"
 #include "model/SensorTemplate.h"
 #include "model/SubdeviceRegistrationRequest.h"
 #include "model/SubdeviceRegistrationResponse.h"
-#include "model/GatewayUpdateRequest.h"
-#include "model/GatewayUpdateResponse.h"
 
 using nlohmann::json;
 
@@ -146,7 +146,7 @@ void to_json(json& j, const AlarmTemplate& alarmTemplate)
     j = {
         {"name", alarmTemplate.getName()},
         {"reference", alarmTemplate.getReference()},
-        {"message", alarmTemplate.getMessage()}
+        {"message", alarmTemplate.getMessage()},
         {"severity", alarmSeverity},
         {"description", alarmTemplate.getDescription()},
     };
@@ -294,7 +294,6 @@ void from_json(const json& j, SensorTemplate& sensorTemplate)
                                     j.at("reference").get<std::string>(),
                                     j["unit"].at("readingTypeName").get<std::string>(),
                                     j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
-                                    dataType,
                                     j.at("description").get<std::string>(),
                                     j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
                                     j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()};
@@ -312,7 +311,7 @@ void to_json(json& j, const DeviceTemplate& deviceTemplate)
         {"actuators", deviceTemplate.getActuators()},
         {"firmwareUpdateType", deviceTemplate.getFirmwareUpdateType()},
         {"typeParemeters", deviceTemplate.getTypeParameters()},
-        {"connectivityParemeters", deviceTemplate.getConectivityParameters()},
+        {"connectivityParemeters", deviceTemplate.getConnectivityParameters()},
         {"firmwareUpdateParemeters", deviceTemplate.getFirmwareUpdateParameters()}
     };
     // clang-format on
@@ -344,7 +343,7 @@ void to_json(json& j, const SubdeviceRegistrationRequest& dto)
         {"actuators", dto.getTemplate().getActuators()},
         {"firmwareUpdateType", dto.getTemplate().getFirmwareUpdateType()},
         {"typeParemeters", dto.getTemplate().getTypeParameters()},
-        {"connectivityParemeters", dto.getTemplate().getConectivityParameters()},
+        {"connectivityParemeters", dto.getTemplate().getConnectivityParameters()},
         {"firmwareUpdateParemeters", dto.getTemplate().getFirmwareUpdateParameters()}
     };
     // clang-format on
@@ -352,46 +351,58 @@ void to_json(json& j, const SubdeviceRegistrationRequest& dto)
 
 void from_json(const json& j, SubdeviceRegistrationRequest& dto)
 {
-    dto =
-      SubdeviceRegistrationRequest(j.at("name").get<std::string>(),
-                                j.at("key").get<std::string>(),
-                                j.at("defaultBinding").get<bool>(),
-                                DeviceTemplate{j.at("configurations").get<std::vector<ConfigurationTemplate>>(), j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(), j.at("actuators").get<std::vector<ActuatorTemplate>>(), j.at("firmwareUpdateType").get<std::string>(),});
+    DeviceTemplate subdeviceTemplate = DeviceTemplate(
+      j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
+      j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
+      j.at("actuators").get<std::vector<ActuatorTemplate>>(), j.at("firmwareUpdateType").get<std::string>(),
+      j.at("typeParemeters").get<std::map<std::string, std::string>>(),
+      j.at("connectivityParemeters").get<std::map<std::string, std::string>>(),
+      j.at("firmwareUpdateParemeters").get<std::map<std::string, bool>>());
+    dto = SubdeviceRegistrationRequest(j.at("name").get<std::string>(), j.at("key").get<std::string>(),
+                                       subdeviceTemplate, j.at("defaultBinding").get<bool>());
 }
 /*** SUBDEVICE REGISTRATION REQUEST DTO ***/
 
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
-void to_json(json& j, const DeviceRegistrationResponse& dto)
+void to_json(json& j, const SubdeviceRegistrationResponse& dto)
 {
     auto resultStr = [&]() -> std::string {
         switch (dto.getResult())
         {
-        case DeviceRegistrationResponse::Result::OK:
+        case SubdeviceRegistrationResponse::Result::OK:
             return "OK";
             break;
 
-        case DeviceRegistrationResponse::Result::ERROR_GATEWAY_NOT_FOUND:
+        case SubdeviceRegistrationResponse::Result::ERROR_GATEWAY_NOT_FOUND:
             return "ERROR_GATEWAY_NOT_FOUND";
             break;
 
-        case DeviceRegistrationResponse::Result::ERROR_KEY_CONFLICT:
+        case SubdeviceRegistrationResponse::Result::ERROR_KEY_CONFLICT:
             return "ERROR_KEY_CONFLICT";
             break;
 
-        case DeviceRegistrationResponse::Result::ERROR_TEMPLATE_CONFLICT:
-            return "ERROR_TEMPLATE_CONFLICT";
+        case SubdeviceRegistrationResponse::Result::ERROR_NOT_A_GATEWAY:
+            return "ERROR_NOT_A_GATEWAY";
             break;
 
-        case DeviceRegistrationResponse::Result::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED:
+        case SubdeviceRegistrationResponse::Result::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED:
             return "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED";
             break;
 
-        case DeviceRegistrationResponse::Result::ERROR_NO_GATEWAY_TEMPLATE:
-            return "ERROR_NO_GATEWAY_TEMPLATE";
+        case SubdeviceRegistrationResponse::Result::ERROR_VALIDATION_ERROR:
+            return "ERROR_VALIDATION_ERROR";
             break;
 
-        case DeviceRegistrationResponse::Result::ERROR_READING_PAYLOAD:
-            return "ERROR_READING_PAYLOAD";
+        case SubdeviceRegistrationResponse::Result::ERROR_INVALID_DTO:
+            return "ERROR_INVALID_DTO";
+            break;
+
+        case SubdeviceRegistrationResponse::Result::ERROR_KEY_MISSING:
+            return "ERROR_KEY_MISSING";
+            break;
+
+        case SubdeviceRegistrationResponse::Result::ERROR_UNKNOWN:
+            return "ERROR_UNKNOWN";
             break;
 
         default:
@@ -402,32 +413,33 @@ void to_json(json& j, const DeviceRegistrationResponse& dto)
 
     // clang-format off
     j = {
-        {"result", resultStr}
+        {"result", resultStr},
+        {"description", dto.getDescription()}
     };
     // clang-format on
 }
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
 
 /*** DEVICE REREGISTRATION RESPONSE DTO ***/
-void to_json(json& j, const DeviceReregistrationResponse& dto)
-{
-    auto resultStr = [&]() -> std::string {
-        switch (dto.getResult())
-        {
-        case DeviceReregistrationResponse::Result::OK:
-            return "OK";
-            break;
+// void to_json(json& j, const DeviceReregistrationResponse& dto)
+// {
+//     auto resultStr = [&]() -> std::string {
+//         switch (dto.getResult())
+//         {
+//         case DeviceReregistrationResponse::Result::OK:
+//             return "OK";
+//             break;
 
-        default:
-            throw std::invalid_argument("Unhandled result");
-        }
-    }();
+//         default:
+//             throw std::invalid_argument("Unhandled result");
+//         }
+//     }();
 
-    // clang-format off
-    j = {
-        {"result", resultStr}
-    };
-    // clang-format on
-}
+//     // clang-format off
+//     j = {
+//         {"result", resultStr}
+//     };
+//     // clang-format on
+// }
 /*** DEVICE REREGISTRATION RESPONSE DTO ***/
 }    // namespace wolkabout

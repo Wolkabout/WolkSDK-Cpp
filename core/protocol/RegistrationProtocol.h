@@ -24,18 +24,25 @@
 namespace wolkabout
 {
 class Message;
-class DeviceRegistrationRequest;
-class DeviceRegistrationResponse;
+class GatewayUpdateRequest;
+class GatewayUpdateResponse;
+class SubdeviceRegistrationRequest;
+class SubdeviceRegistrationResponse;
 
 class RegistrationProtocol : public Protocol
 {
 public:
-    virtual bool isRegistrationResponseMessage(const Message& message) const = 0;
+    virtual bool isSubdeviceRegistrationResponseMessage(const Message& message) const = 0;
+    virtual bool isGatewayUpdateResponseMessage(const Message& message) const = 0;
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const DeviceRegistrationRequest& request) const = 0;
+    virtual std::unique_ptr<Message> makeMessage(const SubdeviceRegistrationRequest& request) const = 0;
 
-    virtual std::unique_ptr<DeviceRegistrationResponse> makeRegistrationResponse(const Message& message) const = 0;
+    virtual std::unique_ptr<Message> makeMessage(const GatewayUpdateRequest& request) const = 0;
+
+    virtual std::unique_ptr<SubdeviceRegistrationResponse> makeSubdeviceRegistrationResponse(
+      const Message& message) const = 0;
+
+    virtual std::unique_ptr<GatewayUpdateResponse> makeGatewayUpdateResponse(const Message& message) const = 0;
 
     inline Type getType() const override { return Protocol::Type::REGISTRATION; }
 };

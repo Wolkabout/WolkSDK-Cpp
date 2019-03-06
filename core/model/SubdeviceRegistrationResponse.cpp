@@ -21,7 +21,8 @@
 
 namespace wolkabout
 {
-SubdeviceRegistrationResponse::SubdeviceRegistrationResponse(SubdeviceRegistrationResponse::Result result, std::string description)
+SubdeviceRegistrationResponse::SubdeviceRegistrationResponse(SubdeviceRegistrationResponse::Result result,
+                                                             std::string description)
 : m_result(std::move(result)), m_description(std::move(description))
 {
 }

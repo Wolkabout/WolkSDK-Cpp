@@ -27,7 +27,8 @@ class SubdeviceRegistrationRequest
 {
 public:
     SubdeviceRegistrationRequest() = default;
-    SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceTemplate, bool defaultBinding = false);
+    SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceTemplate,
+                                 bool defaultBinding = false);
 
     virtual ~SubdeviceRegistrationRequest() = default;
 
@@ -40,6 +41,7 @@ public:
 private:
     std::string m_subdeviceName;
     std::string m_subdeviceKey;
+    bool m_defaultBinding;
     DeviceTemplate m_subdeviceTemplate;
 };
 }    // namespace wolkabout
