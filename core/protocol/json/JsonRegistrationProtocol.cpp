@@ -16,9 +16,11 @@
 
 #include "protocol/json/JsonRegistrationProtocol.h"
 #include "model/DataType.h"
-#include "model/DeviceRegistrationRequest.h"
-#include "model/DeviceRegistrationResponse.h"
-#include "model/DeviceReregistrationResponse.h"
+#include "model/GatewayUpdateRequest.h"
+#include "model/GatewayUpdateResponse.h"
+#include "model/SubdeviceRegistrationRequest.h"
+#include "model/SubdeviceRegistrationResponse.h"
+// #include "model/DeviceReregistrationResponse.h"
 #include "model/Message.h"
 #include "protocol/json/JsonDto.h"
 #include "utilities/Logger.h"
@@ -39,24 +41,41 @@ const std::string JsonRegistrationProtocol::DEVICE_PATH_PREFIX = "d/";
 const std::string JsonRegistrationProtocol::DEVICE_TO_PLATFORM_DIRECTION = "d2p/";
 const std::string JsonRegistrationProtocol::PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
 
-const std::string JsonRegistrationProtocol::DEVICE_REGISTRATION_REQUEST_TOPIC_ROOT = "d2p/register_device/";
-const std::string JsonRegistrationProtocol::DEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT = "p2d/register_device/";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_REQUEST_TOPIC_ROOT =
+  "d2p/register_subdevice_request/";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT =
+  "p2d/register_subdevice_response/";
+const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_REQUEST_TOPIC_ROOT = "d2p/update_gateway_request/";
+const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT = "p2d/update_gateway_response/";
 const std::string JsonRegistrationProtocol::DEVICE_REREGISTRATION_REQUEST_TOPIC_ROOT = "p2d/reregister_device/";
 const std::string JsonRegistrationProtocol::DEVICE_REREGISTRATION_RESPONSE_TOPIC_ROOT = "d2p/reregister_device/";
 
 const std::vector<std::string> JsonRegistrationProtocol::INBOUND_CHANNELS = {
-  DEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + DEVICE_PATH_PREFIX,
+  SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + DEVICE_PATH_PREFIX, GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT,
   DEVICE_REREGISTRATION_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX};
 
-const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_OK = "OK";
-const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_ERROR_KEY_CONFLICT = "ERROR_KEY_CONFLICT";
-const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_ERROR_MANIFEST_CONFLICT = "ERROR_MANIFEST_CONFLICT";
-const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_ERROR_MAX_NUMBER_OF_DEVICES_EXCEEDED =
+const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_OK = "OK";
+const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_ERROR_GATEWAY_NOT_FOUND = "ERROR_GATEWAY_NOT_FOUND";
+const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_ERROR_NOT_A_GATEWAY = "ERROR_NOT_A_GATEWAY";
+const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_ERROR_VALIDATION_ERROR = "ERROR_VALIDATION_ERROR";
+const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_ERROR_INVALID_DTO = "ERROR_INVALID_DTO";
+const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_ERROR_KEY_MISSING = "ERROR_KEY_MISSING";
+const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_ERROR_UNKNOWN = "ERROR_UNKNOWN";
+
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_OK = "OK";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_ERROR_GATEWAY_NOT_FOUND =
+  "ERROR_GATEWAY_NOT_FOUND";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_ERROR_NOT_A_GATEWAY = "ERROR_NOT_A_GATEWAY";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_ERROR_VALIDATION_ERROR =
+  "ERROR_VALIDATION_ERROR";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_ERROR_INVALID_DTO = "ERROR_INVALID_DTO";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_ERROR_KEY_MISSING = "ERROR_KEY_MISSING";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_ERROR_KEY_CONFLICT = "ERROR_KEY_CONFLICT";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN =
+  "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_ERROR_MAX_NUMBER_OF_DEVICES_EXCEEDED =
   "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED";
-const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_ERROR_READING_PAYLOAD = "ERROR_READING_PAYLOAD";
-const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_ERROR_GATEWAY_NOT_FOUND = "ERROR_GATEWAY_NOT_FOUND";
-const std::string JsonRegistrationProtocol::REGISTRATION_RESPONSE_ERROR_NO_GATEWAY_MANIFEST =
-  "ERROR_NO_GATEWAY_MANIFEST";
+const std::string JsonRegistrationProtocol::SUBDEVICE_REGISTRATION_RESPONSE_ERROR_UNKNOWN = "ERROR_UNKNOWN";
 
 const std::string& JsonRegistrationProtocol::getName() const
 {
@@ -98,15 +117,21 @@ std::string JsonRegistrationProtocol::extractDeviceKeyFromChannel(const std::str
     return "";
 }
 
-bool JsonRegistrationProtocol::isRegistrationResponseMessage(const Message& message) const
+bool JsonRegistrationProtocol::isSubdeviceRegistrationResponseMessage(const Message& message) const
 {
     LOG(TRACE) << METHOD_INFO;
 
-    return StringUtils::startsWith(message.getChannel(), DEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT);
 }
 
-std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string& deviceKey,
-                                                               const DeviceRegistrationRequest& request) const
+bool JsonRegistrationProtocol::isGatewayUpdateResponseMessage(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    return StringUtils::startsWith(message.getChannel(), GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT);
+}
+
+std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const SubdeviceRegistrationRequest& request) const
 {
     LOG(DEBUG) << METHOD_INFO;
 
@@ -115,7 +140,7 @@ std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string
         const json jsonPayload(request);
         std::string channel;
 
-        channel = DEVICE_REGISTRATION_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
+        channel = SUBDEVICE_REGISTRATION_REQUEST_TOPIC_ROOT;
 
         return std::unique_ptr<Message>(new Message(jsonPayload.dump(), channel));
     }
@@ -125,7 +150,7 @@ std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string
     }
 }
 
-std::unique_ptr<DeviceRegistrationResponse> JsonRegistrationProtocol::makeRegistrationResponse(
+std::unique_ptr<SubdeviceRegistrationResponse> JsonRegistrationProtocol::makeSubdeviceRegistrationResponse(
   const Message& message) const
 {
     LOG(TRACE) << METHOD_INFO;
@@ -136,47 +161,127 @@ std::unique_ptr<DeviceRegistrationResponse> JsonRegistrationProtocol::makeRegist
 
         const std::string typeStr = j.at("result").get<std::string>();
 
-        const DeviceRegistrationResponse::Result result = [&] {
-            if (typeStr == REGISTRATION_RESPONSE_OK)
+        const SubdeviceRegistrationResponse::Result result = [&] {
+            if (typeStr == SUBDEVICE_REGISTRATION_RESPONSE_OK)
             {
-                return DeviceRegistrationResponse::Result::OK;
+                return SubdeviceRegistrationResponse::Result::OK;
             }
-            else if (typeStr == REGISTRATION_RESPONSE_ERROR_KEY_CONFLICT)
+            else if (typeStr == SUBDEVICE_REGISTRATION_RESPONSE_ERROR_GATEWAY_NOT_FOUND)
             {
-                return DeviceRegistrationResponse::Result::ERROR_KEY_CONFLICT;
+                return SubdeviceRegistrationResponse::Result::ERROR_GATEWAY_NOT_FOUND;
             }
-            else if (typeStr == REGISTRATION_RESPONSE_ERROR_MANIFEST_CONFLICT)
+            else if (typeStr == SUBDEVICE_REGISTRATION_RESPONSE_ERROR_KEY_CONFLICT)
             {
-                return DeviceRegistrationResponse::Result::ERROR_MANIFEST_CONFLICT;
+                return SubdeviceRegistrationResponse::Result::ERROR_KEY_CONFLICT;
             }
-            else if (typeStr == REGISTRATION_RESPONSE_ERROR_MAX_NUMBER_OF_DEVICES_EXCEEDED)
+            else if (typeStr == SUBDEVICE_REGISTRATION_RESPONSE_ERROR_MAX_NUMBER_OF_DEVICES_EXCEEDED)
             {
-                return DeviceRegistrationResponse::Result::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED;
+                return SubdeviceRegistrationResponse::Result::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED;
             }
-            else if (typeStr == REGISTRATION_RESPONSE_ERROR_READING_PAYLOAD)
+            else if (typeStr == SUBDEVICE_REGISTRATION_RESPONSE_ERROR_VALIDATION_ERROR)
             {
-                return DeviceRegistrationResponse::Result::ERROR_READING_PAYLOAD;
+                return SubdeviceRegistrationResponse::Result::ERROR_VALIDATION_ERROR;
             }
-            else if (typeStr == REGISTRATION_RESPONSE_ERROR_GATEWAY_NOT_FOUND)
+            else if (typeStr == SUBDEVICE_REGISTRATION_RESPONSE_ERROR_INVALID_DTO)
             {
-                return DeviceRegistrationResponse::Result::ERROR_GATEWAY_NOT_FOUND;
+                return SubdeviceRegistrationResponse::Result::ERROR_INVALID_DTO;
             }
-            else if (typeStr == REGISTRATION_RESPONSE_ERROR_NO_GATEWAY_MANIFEST)
+            else if (typeStr == SUBDEVICE_REGISTRATION_RESPONSE_ERROR_KEY_MISSING)
             {
-                return DeviceRegistrationResponse::Result::ERROR_NO_GATEWAY_MANIFEST;
+                return SubdeviceRegistrationResponse::Result::ERROR_KEY_MISSING;
+            }
+            else if (typeStr == SUBDEVICE_REGISTRATION_RESPONSE_ERROR_UNKNOWN)
+            {
+                return SubdeviceRegistrationResponse::Result::ERROR_UNKNOWN;
             }
 
             assert(false);
             throw std::logic_error("");
         }();
 
-        return std::unique_ptr<DeviceRegistrationResponse>(new DeviceRegistrationResponse(result));
+        return std::unique_ptr<SubdeviceRegistrationResponse>(
+          new SubdeviceRegistrationResponse(result, j.at("description").get<std::string>()));
     }
     catch (std::exception& e)
     {
         LOG(ERROR) << "Device registration protocol: Unable to deserialize device "
                       "registration response: "
                    << e.what();
+        return nullptr;
+    }
+}
+
+std::unique_ptr<GatewayUpdateResponse> JsonRegistrationProtocol::makeGatewayUpdateResponse(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    try
+    {
+        const json j = json::parse(message.getContent());
+
+        const std::string typeStr = j.at("result").get<std::string>();
+
+        const GatewayUpdateResponse::Result result = [&] {
+            if (typeStr == GATEWAY_UPDATE_RESPONSE_OK)
+            {
+                return GatewayUpdateResponse::Result::OK;
+            }
+            else if (typeStr == GATEWAY_UPDATE_RESPONSE_ERROR_GATEWAY_NOT_FOUND)
+            {
+                return GatewayUpdateResponse::Result::ERROR_GATEWAY_NOT_FOUND;
+            }
+            else if (typeStr == GATEWAY_UPDATE_RESPONSE_ERROR_NOT_A_GATEWAY)
+            {
+                return GatewayUpdateResponse::Result::ERROR_NOT_A_GATEWAY;
+            }
+            else if (typeStr == GATEWAY_UPDATE_RESPONSE_ERROR_VALIDATION_ERROR)
+            {
+                return GatewayUpdateResponse::Result::ERROR_VALIDATION_ERROR;
+            }
+            else if (typeStr == GATEWAY_UPDATE_RESPONSE_ERROR_INVALID_DTO)
+            {
+                return GatewayUpdateResponse::Result::ERROR_INVALID_DTO;
+            }
+            else if (typeStr == GATEWAY_UPDATE_RESPONSE_ERROR_KEY_MISSING)
+            {
+                return GatewayUpdateResponse::Result::ERROR_KEY_MISSING;
+            }
+            else if (typeStr == GATEWAY_UPDATE_RESPONSE_ERROR_UNKNOWN)
+            {
+                return GatewayUpdateResponse::Result::ERROR_UNKNOWN;
+            }
+
+            assert(false);
+            throw std::logic_error("");
+        }();
+
+        return std::unique_ptr<GatewayUpdateResponse>(
+          new GatewayUpdateResponse(result, j.at("description").get<std::string>()));
+    }
+    catch (std::exception& e)
+    {
+        LOG(ERROR) << "Device registration protocol: Unable to deserialize device "
+                      "registration response: "
+                   << e.what();
+        return nullptr;
+    }
+}
+
+std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const GatewayUpdateRequest& request) const
+{
+    LOG(DEBUG) << METHOD_INFO;
+
+    try
+    {
+        const json jsonPayload(request);
+        std::string channel;
+
+        channel = GATEWAY_UPDATE_REQUEST_TOPIC_ROOT;
+
+        return std::unique_ptr<Message>(new Message(jsonPayload.dump(), channel));
+    }
+    catch (...)
+    {
         return nullptr;
     }
 }

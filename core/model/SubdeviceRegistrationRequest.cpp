@@ -22,10 +22,11 @@
 namespace wolkabout
 {
 SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey,
-                                                           DeviceTemplate subdeviceTemplate,
-														   bool defaultBinding)
-: m_subdeviceName(std::move(subdeviceName)), m_subdeviceKey(std::move(subdeviceKey)),
-m_defaultBinding(std::move(defaultBinding)), m_subdeviceTemplate(std::move(subdeviceTemplate))
+                                                           DeviceTemplate subdeviceTemplate, bool defaultBinding)
+: m_subdeviceName(std::move(subdeviceName))
+, m_subdeviceKey(std::move(subdeviceKey))
+, m_defaultBinding(std::move(defaultBinding))
+, m_subdeviceTemplate(std::move(subdeviceTemplate))
 {
 }
 
