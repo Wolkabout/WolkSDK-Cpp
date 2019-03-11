@@ -15,8 +15,11 @@
  */
 
 #include "protocol/json/JsonStatusProtocol.h"
+#include "Json.h"
 #include "model/DeviceStatus.h"
 #include "model/DeviceStatusResponse.h"
+#include "model/DeviceStatusUpdate.h"
+#include "model/DeviceStatusConfirm.h"
 #include "model/Message.h"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
@@ -28,13 +31,11 @@ namespace wolkabout
 {
 const std::string JsonStatusProtocol::NAME = "JsonStatusProtocol";
 
-const std::string JsonStatusProtocol::CHANNEL_DELIMITER = "/";
-const std::string JsonStatusProtocol::CHANNEL_WILDCARD = "#";
-const std::string JsonStatusProtocol::DEVICE_PATH_PREFIX = "d/";
-
 const std::string JsonStatusProtocol::LAST_WILL_TOPIC = "lastwill";
-const std::string JsonStatusProtocol::DEVICE_STATUS_REQUEST_TOPIC_ROOT = "p2d/status/";
-const std::string JsonStatusProtocol::DEVICE_STATUS_RESPONSE_TOPIC_ROOT = "d2p/status/";
+const std::string JsonStatusProtocol::DEVICE_STATUS_REQUEST_TOPIC_ROOT = "p2d/subdevice_status_request/";
+const std::string JsonStatusProtocol::DEVICE_STATUS_RESPONSE_TOPIC_ROOT = "d2p/subdevice_status_response/";
+const std::string JsonStatusProtocol::DEVICE_STATUS_UPDATE_TOPIC_ROOT = "d2p/subdevice_status_update/";
+const std::string JsonStatusProtocol::DEVICE_STATUS_CONFIRM_TOPIC_ROOT = "p2d/subdevice_status_confirm/";
 const std::string JsonStatusProtocol::PONG_TOPIC_ROOT = "pong/";
 const std::string JsonStatusProtocol::PING_TOPIC_ROOT = "ping/";
 
@@ -75,15 +76,56 @@ void to_json(json& j, const DeviceStatusResponse& p)
     j = json{{JsonStatusProtocol::STATUS_RESPONSE_STATE_FIELD, status}};
 }
 
-void to_json(json& j, const std::shared_ptr<DeviceStatusResponse>& p)
+void to_json(json& j, const DeviceStatusUpdate& p)
 {
-    if (!p)
-    {
-        return;
-    }
+    const std::string status = [&]() -> std::string {
+        switch (p.getStatus())
+        {
+        case DeviceStatus::CONNECTED:
+        {
+            return JsonStatusProtocol::STATUS_RESPONSE_STATUS_CONNECTED;
+        }
+        case DeviceStatus::SLEEP:
+        {
+            return JsonStatusProtocol::STATUS_RESPONSE_STATUS_SLEEP;
+        }
+        case DeviceStatus::SERVICE:
+        {
+            return JsonStatusProtocol::STATUS_RESPONSE_STATUS_SERVICE;
+        }
+        case DeviceStatus::OFFLINE:
+        default:
+        {
+            return JsonStatusProtocol::STATUS_RESPONSE_STATUS_OFFLINE;
+        }
+        }
+    }();
 
-    to_json(j, *p);
+    j = json{{JsonStatusProtocol::STATUS_RESPONSE_STATE_FIELD, status}};
 }
+
+/*** DEVICE STATUS CONFIRM DTO ***/
+void to_json(json& j, const DeviceStatusConfirm& dto)
+{
+    auto resultStr = [&]() -> std::string {
+        switch (dto.getResult())
+        {
+            case PlatformResult::OK:
+                return "OK";
+                break;
+
+            default:
+                throw std::invalid_argument("Unhandled result");
+        }
+    }();
+
+    // clang-format off
+    j = {
+            {"result", resultStr}
+    };
+    // clang-format on
+}
+/*** DEVICE STATUS CONFIRM DTO ***/
 
 const std::string& JsonStatusProtocol::getName() const
 {
@@ -94,7 +136,7 @@ std::vector<std::string> JsonStatusProtocol::getInboundChannels() const
 {
     std::vector<std::string> channels;
     std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [](const std::string& source) { return source + CHANNEL_WILDCARD; });
+                   [](const std::string& source) { return source + CHANNEL_MULTI_LEVEL_WILDCARD; });
     return channels;
 }
 
@@ -111,6 +153,13 @@ bool JsonStatusProtocol::isStatusRequestMessage(const Message& message) const
     LOG(TRACE) << METHOD_INFO;
 
     return StringUtils::startsWith(message.getChannel(), DEVICE_STATUS_REQUEST_TOPIC_ROOT);
+}
+
+bool JsonStatusProtocol::isStatusConfirmMessage(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    return StringUtils::startsWith(message.getChannel(), DEVICE_STATUS_CONFIRM_TOPIC_ROOT);
 }
 
 bool JsonStatusProtocol::isPongMessage(const Message& message) const
@@ -131,16 +180,36 @@ std::unique_ptr<Message> JsonStatusProtocol::makeMessage(const std::string& devi
     return std::unique_ptr<Message>(new Message(payload, topic));
 }
 
+std::unique_ptr<Message> JsonStatusProtocol::makeMessage(const std::string& deviceKey,
+                                                         const DeviceStatusUpdate& response) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    const json jPayload(response);
+    const std::string topic = DEVICE_STATUS_UPDATE_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
+
+    const std::string payload = jPayload.dump();
+
+    return std::unique_ptr<Message>(new Message(payload, topic));
+}
+
+std::unique_ptr<Message> JsonStatusProtocol::makeLastWillMessage(const std::string& deviceKey) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    const std::string topic = LAST_WILL_TOPIC + CHANNEL_DELIMITER + deviceKey;
+    const std::string payload = "";
+
+    return std::unique_ptr<Message>(new Message(payload, topic));
+}
+
 std::unique_ptr<Message> JsonStatusProtocol::makeLastWillMessage(const std::vector<std::string>& deviceKeys) const
 {
     LOG(TRACE) << METHOD_INFO;
 
     if (deviceKeys.size() == 1)
     {
-        const std::string topic = LAST_WILL_TOPIC + CHANNEL_DELIMITER + deviceKeys.front();
-        const std::string payload = "";
-
-        return std::unique_ptr<Message>(new Message(payload, topic));
+        return makeLastWillMessage(deviceKeys.front());
     }
     else
     {

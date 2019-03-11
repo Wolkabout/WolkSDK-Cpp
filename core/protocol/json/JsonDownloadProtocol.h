@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ namespace wolkabout
 class JsonDownloadProtocol : public FileDownloadProtocol
 {
 public:
+    explicit JsonDownloadProtocol(bool isGateway = false);
+
     const std::string& getName() const override;
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
@@ -36,7 +38,20 @@ public:
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
+    bool isUploadInitiate(const Message& message) const override;
+
+    bool isUploadAbort(const Message& message) const override;
+
+    std::unique_ptr<FileUploadInitiate> makeFileUploadInitiate(const Message& message) const override;
+
+    std::unique_ptr<FileUploadAbort> makeFileUploadAbort(const Message& message) const override;
+
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                         const FileUploadStatus& fileUploadStatus) const override;
+
 private:
+    std::string m_devicePrefix;
+
     static const std::string NAME;
 
     static const std::string CHANNEL_DELIMITER;
@@ -48,9 +63,12 @@ private:
     static const std::string DEVICE_TO_PLATFORM_DIRECTION;
     static const std::string PLATFORM_TO_DEVICE_DIRECTION;
 
-    static const std::string FILE_HANDLING_STATUS_TOPIC_ROOT;
+    static const std::string FILE_UPLOAD_INITIATE_TOPIC_ROOT;
+    static const std::string FILE_UPLOAD_ABORT_TOPIC_ROOT;
+    static const std::string FILE_UPLOAD_STATUS_TOPIC_ROOT;
 
-    static const std::string BINARY_TOPIC_ROOT;
+    static const std::string BINARY_REQUEST_TOPIC_ROOT;
+    static const std::string BINARY_RESPONSE_TOPIC_ROOT;
 
     static const std::vector<std::string> INBOUND_CHANNELS;
 };

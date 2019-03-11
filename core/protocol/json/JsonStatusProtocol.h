@@ -31,10 +31,16 @@ public:
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
     bool isStatusRequestMessage(const Message& message) const override;
+    bool isStatusConfirmMessage(const Message& message) const override;
     bool isPongMessage(const Message& message) const override;
 
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const DeviceStatusResponse& response) const override;
+
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                         const DeviceStatusUpdate& response) const override;
+
+    std::unique_ptr<Message> makeLastWillMessage(const std::string& deviceKey) const override;
 
     std::unique_ptr<Message> makeLastWillMessage(const std::vector<std::string>& deviceKeys) const override;
 
@@ -49,13 +55,11 @@ public:
 private:
     static const std::string NAME;
 
-    static const std::string CHANNEL_DELIMITER;
-    static const std::string CHANNEL_WILDCARD;
-    static const std::string DEVICE_PATH_PREFIX;
-
     static const std::string LAST_WILL_TOPIC;
     static const std::string DEVICE_STATUS_REQUEST_TOPIC_ROOT;
     static const std::string DEVICE_STATUS_RESPONSE_TOPIC_ROOT;
+    static const std::string DEVICE_STATUS_UPDATE_TOPIC_ROOT;
+    static const std::string DEVICE_STATUS_CONFIRM_TOPIC_ROOT;
     static const std::string PONG_TOPIC_ROOT;
     static const std::string PING_TOPIC_ROOT;
 

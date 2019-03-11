@@ -25,16 +25,23 @@ namespace wolkabout
 {
 class DeviceStatusRequest;
 class DeviceStatusResponse;
+class DeviceStatusUpdate;
 class Message;
 
 class StatusProtocol : public Protocol
 {
 public:
     virtual bool isStatusRequestMessage(const Message& message) const = 0;
+    virtual bool isStatusConfirmMessage(const Message& message) const = 0;
     virtual bool isPongMessage(const Message& message) const = 0;
 
     virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                                  const DeviceStatusResponse& response) const = 0;
+
+    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                                 const DeviceStatusUpdate& response) const = 0;
+
+    virtual std::unique_ptr<Message> makeLastWillMessage(const std::string& deviceKey) const = 0;
 
     virtual std::unique_ptr<Message> makeLastWillMessage(const std::vector<std::string>& deviceKeys) const = 0;
 
