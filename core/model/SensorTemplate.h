@@ -39,6 +39,9 @@ public:
     SensorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
                    std::string description, double minimum = 0, double maximum = 0);
 
+    SensorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
+                   DataType dataType, std::string description, double minimum = 0, double maximum = 0);
+
     const std::string& getName() const;
 
     const std::string& getReference() const;

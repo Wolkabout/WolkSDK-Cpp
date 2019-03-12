@@ -125,29 +125,10 @@ void from_json(const json& j, ConfigurationTemplate& configurationTemplate)
 /*** ALARM TEMPLATE ***/
 void to_json(json& j, const AlarmTemplate& alarmTemplate)
 {
-    auto alarmSeverity = [&]() -> std::string {
-        switch (alarmTemplate.getSeverity())
-        {
-        case AlarmTemplate::AlarmSeverity::ALERT:
-            return "ALERT";
-
-        case AlarmTemplate::AlarmSeverity::CRITICAL:
-            return "CRITICAL";
-
-        case AlarmTemplate::AlarmSeverity::ERROR:
-            return "ERROR";
-
-        default:
-            throw std::invalid_argument("Invalid alarm severity");
-        }
-    }();
-
     // clang-format off
     j = {
         {"name", alarmTemplate.getName()},
         {"reference", alarmTemplate.getReference()},
-        {"message", alarmTemplate.getMessage()},
-        {"severity", alarmSeverity},
         {"description", alarmTemplate.getDescription()},
     };
     // clang-format on
@@ -155,32 +136,10 @@ void to_json(json& j, const AlarmTemplate& alarmTemplate)
 
 void from_json(const json& j, AlarmTemplate& alarmTemplate)
 {
-    auto alarmSeverity = [&]() -> AlarmTemplate::AlarmSeverity {
-        std::string severity = j.at("severity").get<std::string>();
-        if (severity == "ALERT")
-        {
-            return AlarmTemplate::AlarmSeverity::ALERT;
-        }
-        else if (severity == "ERROR")
-        {
-            return AlarmTemplate::AlarmSeverity::ERROR;
-        }
-        else if (severity == "CRITICAL")
-        {
-            return AlarmTemplate::AlarmSeverity::CRITICAL;
-        }
-        else
-        {
-            throw std::invalid_argument("Invalid alarm severity");
-        }
-    }();
-
     // clang-format off
     alarmTemplate =
             AlarmTemplate(j.at("name").get<std::string>(),
-                          alarmSeverity,
                           j.at("reference").get<std::string>(),
-                          j.at("message").get<std::string>(),
                           j.at("description").get<std::string>());
     // clang-format on
 }

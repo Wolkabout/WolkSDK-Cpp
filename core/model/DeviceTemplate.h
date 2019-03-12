@@ -32,6 +32,7 @@ class DeviceTemplate
 {
 public:
     DeviceTemplate() = default;
+    DeviceTemplate(std::string firmwareUpdateType = "");
     DeviceTemplate(std::vector<ConfigurationTemplate> configurations = {}, std::vector<SensorTemplate> sensors = {},
                    std::vector<AlarmTemplate> alarms = {}, std::vector<ActuatorTemplate> actuators = {},
                    std::string firmwareUpdateType = "", std::map<std::string, std::string> typeParameters = {},
@@ -44,6 +45,9 @@ public:
     DeviceTemplate& addSensor(const SensorTemplate& sensorTemplate);
     DeviceTemplate& addAlarm(const AlarmTemplate& alarmTemplate);
     DeviceTemplate& addActuator(const ActuatorTemplate& actuatorTemplate);
+    DeviceTemplate& addTypeParameter(const std::pair<std::string, std::string>& typeParameter);
+    DeviceTemplate& addConnectivityParameter(const std::pair<std::string, std::string>& connectivityParameter);
+    DeviceTemplate& addFirmwareUpdateParameter(const std::pair<std::string, bool>& firmwareUpdateParameter);
 
     const std::vector<ConfigurationTemplate>& getConfigurations() const;
     const std::vector<SensorTemplate>& getSensors() const;

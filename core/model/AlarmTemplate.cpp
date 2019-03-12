@@ -20,13 +20,8 @@
 
 namespace wolkabout
 {
-AlarmTemplate::AlarmTemplate(std::string name, AlarmTemplate::AlarmSeverity severity, std::string reference,
-                             std::string message, std::string description)
-: m_name(std::move(name))
-, m_severity(severity)
-, m_reference(std::move(reference))
-, m_message(std::move(message))
-, m_description(std::move(description))
+AlarmTemplate::AlarmTemplate(std::string name, std::string reference, std::string description)
+: m_name(std::move(name)), m_reference(std::move(reference)), m_description(std::move(description))
 {
 }
 
@@ -41,17 +36,6 @@ AlarmTemplate& AlarmTemplate::setName(const std::string& name)
     return *this;
 }
 
-AlarmTemplate::AlarmSeverity AlarmTemplate::getSeverity() const
-{
-    return m_severity;
-}
-
-AlarmTemplate& AlarmTemplate::setSeverity(AlarmTemplate::AlarmSeverity severity)
-{
-    m_severity = severity;
-    return *this;
-}
-
 const std::string& AlarmTemplate::getReference() const
 {
     return m_reference;
@@ -60,17 +44,6 @@ const std::string& AlarmTemplate::getReference() const
 AlarmTemplate& AlarmTemplate::setReference(const std::string& reference)
 {
     m_reference = reference;
-    return *this;
-}
-
-const std::string& AlarmTemplate::getMessage() const
-{
-    return m_message;
-}
-
-AlarmTemplate& AlarmTemplate::setMessage(const std::string& message)
-{
-    m_message = message;
     return *this;
 }
 
@@ -87,8 +60,7 @@ AlarmTemplate& AlarmTemplate::setDescription(const std::string& description)
 
 bool AlarmTemplate::operator==(AlarmTemplate& rhs) const
 {
-    if (m_name != rhs.m_name || m_severity != rhs.m_severity || m_reference != rhs.m_reference ||
-        m_message != rhs.m_message || m_description != rhs.m_description)
+    if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
     {
         return false;
     }

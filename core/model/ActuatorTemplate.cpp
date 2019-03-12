@@ -68,6 +68,18 @@ ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, std:
 {
 }
 
+ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, std::string readingTypeName,
+                                   std::string unitSymbol, DataType dataType, std::string description, double minimum,
+                                   double maximum)
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_readingType{ActuationReadingType(std::move(readingTypeName), std::move(unitSymbol), std::move(dataType))}
+, m_description{std::move(description)}
+, m_minimum(minimum)
+, m_maximum(maximum)
+{
+}
+
 const std::string& ActuatorTemplate::getName() const
 {
     return m_name;
