@@ -16,14 +16,14 @@
 
 #include "model/SubdeviceRegistrationResponse.h"
 
-#include <string>
 #include <utility>
 
 namespace wolkabout
 {
-SubdeviceRegistrationResponse::SubdeviceRegistrationResponse(SubdeviceRegistrationResponse::Result result,
+SubdeviceRegistrationResponse::SubdeviceRegistrationResponse(std::string subdeviceKey,
+                                                             SubdeviceRegistrationResponse::Result result,
                                                              std::string description)
-: m_result(std::move(result)), m_description(std::move(description))
+: m_subdeviceKey(std::move(subdeviceKey)), m_result(std::move(result)), m_description(std::move(description))
 {
 }
 
@@ -35,5 +35,10 @@ const SubdeviceRegistrationResponse::Result& SubdeviceRegistrationResponse::getR
 const std::string& SubdeviceRegistrationResponse::getDescription() const
 {
     return m_description;
+}
+
+const std::string& SubdeviceRegistrationResponse::getSubdeviceKey() const
+{
+    return m_subdeviceKey;
 }
 }    // namespace wolkabout
