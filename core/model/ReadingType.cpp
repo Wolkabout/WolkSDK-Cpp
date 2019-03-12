@@ -73,6 +73,11 @@ ReadingType::ReadingType(std::string name, std::string unitSymbol)
 {
 }
 
+ReadingType::ReadingType(std::string name, std::string unitSymbol, DataType dataType)
+: m_name{std::move(name)}, m_unitSymbol{std::move(unitSymbol)}, m_dataType{std::move(dataType)}
+{
+}
+
 const std::string& ReadingType::getName() const
 {
     return m_name;

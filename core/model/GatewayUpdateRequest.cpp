@@ -28,12 +28,12 @@ GatewayUpdateRequest::GatewayUpdateRequest(std::string gatewayName, std::string 
 
 GatewayUpdateRequest::GatewayUpdateRequest(DetailedDevice gateway) : m_gateway(std::move(gateway)) {}
 
-const std::string& GatewayUpdateRequest::getSubdeviceName() const
+const std::string& GatewayUpdateRequest::getGatewayName() const
 {
     return m_gateway.getName();
 }
 
-const std::string& GatewayUpdateRequest::getSubdeviceKey() const
+const std::string& GatewayUpdateRequest::getGatewayKey() const
 {
     return m_gateway.getKey();
 }

@@ -33,8 +33,8 @@ public:
 
     virtual ~GatewayUpdateRequest() = default;
 
-    const std::string& getSubdeviceName() const;
-    const std::string& getSubdeviceKey() const;
+    const std::string& getGatewayName() const;
+    const std::string& getGatewayKey() const;
 
     const DeviceTemplate& getTemplate() const;
 
