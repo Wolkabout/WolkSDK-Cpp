@@ -308,7 +308,7 @@ void to_json(json& j, const SubdeviceRegistrationRequest& dto)
     // clang-format on
 }
 
-void from_json(const json& j, SubdeviceRegistrationRequest& dto)
+SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json& j)
 {
     DeviceTemplate subdeviceTemplate = DeviceTemplate(
       j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
@@ -317,8 +317,8 @@ void from_json(const json& j, SubdeviceRegistrationRequest& dto)
       j.at("typeParemeters").get<std::map<std::string, std::string>>(),
       j.at("connectivityParemeters").get<std::map<std::string, std::string>>(),
       j.at("firmwareUpdateParemeters").get<std::map<std::string, bool>>());
-    dto = SubdeviceRegistrationRequest(j.at("name").get<std::string>(), j.at("key").get<std::string>(),
-                                       subdeviceTemplate, j.at("defaultBinding").get<bool>());
+    return SubdeviceRegistrationRequest(j.at("name").get<std::string>(), j.at("key").get<std::string>(),
+                                        subdeviceTemplate, j.at("defaultBinding").get<bool>());
 }
 /*** SUBDEVICE REGISTRATION REQUEST DTO ***/
 
@@ -360,6 +360,10 @@ void to_json(json& j, const SubdeviceRegistrationResponse& dto)
             return "ERROR_KEY_MISSING";
             break;
 
+        case SubdeviceRegistrationResponse::Result::ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN:
+            return "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN";
+            break;
+
         case SubdeviceRegistrationResponse::Result::ERROR_UNKNOWN:
             return "ERROR_UNKNOWN";
             break;
@@ -379,26 +383,77 @@ void to_json(json& j, const SubdeviceRegistrationResponse& dto)
 }
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
 
-/*** DEVICE REREGISTRATION RESPONSE DTO ***/
-// void to_json(json& j, const DeviceReregistrationResponse& dto)
-// {
-//     auto resultStr = [&]() -> std::string {
-//         switch (dto.getResult())
-//         {
-//         case DeviceReregistrationResponse::Result::OK:
-//             return "OK";
-//             break;
+/*** GATEWAY UPDATE REQUEST DTO ***/
 
-//         default:
-//             throw std::invalid_argument("Unhandled result");
-//         }
-//     }();
+void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto)
+{
+    // clang-format off
+    j = {
+        {"firmwareUpdateType", dto.getTemplate().getFirmwareUpdateType()},
+        {"sensors", dto.getTemplate().getSensors()},
+        {"actuators", dto.getTemplate().getActuators()},
+        {"alarms", dto.getTemplate().getAlarms()},
+        {"configurations", dto.getTemplate().getConfigurations()},
+        {"typeParemeters", dto.getTemplate().getTypeParameters()},
+        {"connectivityParemeters", dto.getTemplate().getConnectivityParameters()},
+        {"firmwareUpdateParemeters", dto.getTemplate().getFirmwareUpdateParameters()}
+    };
+    // clang-format on
+}
 
-//     // clang-format off
-//     j = {
-//         {"result", resultStr}
-//     };
-//     // clang-format on
-// }
-/*** DEVICE REREGISTRATION RESPONSE DTO ***/
+/*** GATEWAY UPDATE REQUEST DTO ***/
+
+/*** GATEWAY UPDATE RESPONSE DTO ***/
+
+void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto)
+{
+    auto resultStr = [&]() -> std::string {
+        switch (dto.getResult())
+        {
+        case GatewayUpdateResponse::Result::OK:
+            return "OK";
+            break;
+
+        case GatewayUpdateResponse::Result::ERROR_GATEWAY_NOT_FOUND:
+            return "ERROR_GATEWAY_NOT_FOUND";
+            break;
+
+        case GatewayUpdateResponse::Result::ERROR_KEY_CONFLICT:
+            return "ERROR_KEY_CONFLICT";
+            break;
+
+        case GatewayUpdateResponse::Result::ERROR_NOT_A_GATEWAY:
+            return "ERROR_NOT_A_GATEWAY";
+            break;
+
+        case GatewayUpdateResponse::Result::ERROR_VALIDATION_ERROR:
+            return "ERROR_VALIDATION_ERROR";
+            break;
+
+        case GatewayUpdateResponse::Result::ERROR_INVALID_DTO:
+            return "ERROR_INVALID_DTO";
+            break;
+
+        case GatewayUpdateResponse::Result::ERROR_KEY_MISSING:
+            return "ERROR_KEY_MISSING";
+            break;
+
+        case GatewayUpdateResponse::Result::ERROR_UNKNOWN:
+            return "ERROR_UNKNOWN";
+            break;
+
+        default:
+            assert(false);
+            throw std::invalid_argument("Unhandled result");
+        }
+    }();
+
+    // clang-format off
+    j = {
+        {"result", resultStr},
+        {"description", dto.getDescription()}
+    };
+}
+
+/*** GATEWAY UPDATE RESPONSE DTO ***/
 }    // namespace wolkabout

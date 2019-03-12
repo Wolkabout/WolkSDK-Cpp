@@ -26,11 +26,8 @@ namespace wolkabout
 class SubdeviceRegistrationRequest
 {
 public:
-    SubdeviceRegistrationRequest() = default;
     SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceTemplate,
                                  bool defaultBinding = true);
-
-    virtual ~SubdeviceRegistrationRequest() = default;
 
     const std::string& getSubdeviceName() const;
     const std::string& getSubdeviceKey() const;

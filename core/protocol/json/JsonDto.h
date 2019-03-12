@@ -30,7 +30,6 @@ class GatewayUpdateRequest;
 class GatewayUpdateResponse;
 class SubdeviceRegistrationRequest;
 class SubdeviceRegistrationResponse;
-class DeviceReregistrationResponse;
 
 void to_json(nlohmann::json& j, const ConfigurationTemplate& configurationTemplate);
 void from_json(const nlohmann::json& j, ConfigurationTemplate& configurationTemplate);
@@ -51,13 +50,11 @@ void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto);
 void from_json(const nlohmann::json& j, GatewayUpdateRequest& dto);
 
 void to_json(nlohmann::json& j, const SubdeviceRegistrationRequest& dto);
-void from_json(const nlohmann::json& j, SubdeviceRegistrationRequest& dto);
+SubdeviceRegistrationRequest subdevice_registration_request_from_json(const nlohmann::json& j);
 
 void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto);
 
 void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
-
-void to_json(nlohmann::json& j, const DeviceReregistrationResponse& dto);
 }    // namespace wolkabout
 
 #endif    // JSONDTO_H
