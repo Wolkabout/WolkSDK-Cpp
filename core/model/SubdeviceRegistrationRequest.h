@@ -28,7 +28,7 @@ class SubdeviceRegistrationRequest
 public:
     SubdeviceRegistrationRequest() = default;
     SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceTemplate,
-                                 bool defaultBinding = false);
+                                 bool defaultBinding = true);
 
     virtual ~SubdeviceRegistrationRequest() = default;
 

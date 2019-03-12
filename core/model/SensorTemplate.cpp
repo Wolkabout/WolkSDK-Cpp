@@ -46,7 +46,7 @@ SensorTemplate::SensorTemplate(std::string name, std::string reference, ReadingT
 
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
-, m_readingType{ReadingType(readingTypeName, unit)}
+, m_readingType{ReadingType(std::move(readingTypeName), std::move(unit))}
 , m_description{std::move(description)}
 , m_minimum{minimum}
 , m_maximum{maximum}
@@ -57,7 +57,19 @@ SensorTemplate::SensorTemplate(std::string name, std::string reference, std::str
                                std::string unitSymbol, std::string description, double minimum, double maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
-, m_readingType{ReadingType(readingTypeName, unitSymbol)}
+, m_readingType{ReadingType(std::move(readingTypeName), std::move(unitSymbol))}
+, m_description{std::move(description)}
+, m_minimum(minimum)
+, m_maximum(maximum)
+{
+}
+
+SensorTemplate::SensorTemplate(std::string name, std::string reference, std::string readingTypeName,
+                               std::string unitSymbol, DataType dataType, std::string description, double minimum,
+                               double maximum)
+: m_name{std::move(name)}
+, m_reference{std::move(reference)}
+, m_readingType{ReadingType(std::move(readingTypeName), std::move(unitSymbol), std::move(dataType))}
 , m_description{std::move(description)}
 , m_minimum(minimum)
 , m_maximum(maximum)

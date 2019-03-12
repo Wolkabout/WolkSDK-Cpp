@@ -260,6 +260,7 @@ public:
     ReadingType(DataType dataType);
     ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit unit);
     ReadingType(std::string name, std::string unitSymbol);
+    ReadingType(std::string name, std::string unitSymbol, DataType dataType);
 
     const std::string& getName() const;
 

@@ -74,6 +74,11 @@ ActuationReadingType::ActuationReadingType(std::string name, std::string unitSym
 {
 }
 
+ActuationReadingType::ActuationReadingType(std::string name, std::string unitSymbol, DataType dataType)
+: m_name{std::move(name)}, m_unitSymbol{std::move(unitSymbol)}, m_dataType{std::move(dataType)}
+{
+}
+
 const std::string& ActuationReadingType::getName() const
 {
     return m_name;

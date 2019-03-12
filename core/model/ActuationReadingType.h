@@ -46,6 +46,7 @@ public:
     ActuationReadingType(DataType);
     ActuationReadingType(ActuationReadingType::Name name, ActuationReadingType::MeasurmentUnit unit);
     ActuationReadingType(std::string name, std::string unitSymbol);
+    ActuationReadingType(std::string name, std::string unitSymbol, DataType dataType);
 
     const std::string& getName() const;
 

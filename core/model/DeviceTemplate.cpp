@@ -18,6 +18,11 @@
 
 #include <utility>
 
+wolkabout::DeviceTemplate::DeviceTemplate(std::string firmwareUpdateType)
+: m_firmwareUpdateType(std::move(firmwareUpdateType))
+{
+}
+
 wolkabout::DeviceTemplate::DeviceTemplate(
   std::vector<wolkabout::ConfigurationTemplate> configurations, std::vector<wolkabout::SensorTemplate> sensors,
   std::vector<wolkabout::AlarmTemplate> alarms, std::vector<wolkabout::ActuatorTemplate> actuators,
@@ -56,6 +61,27 @@ wolkabout::DeviceTemplate& wolkabout::DeviceTemplate::addAlarm(const wolkabout::
 wolkabout::DeviceTemplate& wolkabout::DeviceTemplate::addActuator(const wolkabout::ActuatorTemplate& actuatorTemplate)
 {
     m_actuators.push_back(actuatorTemplate);
+    return *this;
+}
+
+wolkabout::DeviceTemplate& wolkabout::DeviceTemplate::addTypeParameter(
+  const std::pair<std::string, std::string>& typeParameter)
+{
+    m_typeParameters.insert(typeParameter);
+    return *this;
+}
+
+wolkabout::DeviceTemplate& wolkabout::DeviceTemplate::addConnectivityParameter(
+  const std::pair<std::string, std::string>& connectivityParameter)
+{
+    m_connectivityParameters.insert(connectivityParameter);
+    return *this;
+}
+
+wolkabout::DeviceTemplate& wolkabout::DeviceTemplate::addFirmwareUpdateParameter(
+  const std::pair<std::string, bool>& firmwareUpdateParameter)
+{
+    m_firmwareUpdateParameters.insert(firmwareUpdateParameter);
     return *this;
 }
 
