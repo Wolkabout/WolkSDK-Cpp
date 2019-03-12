@@ -376,11 +376,63 @@ void to_json(json& j, const SubdeviceRegistrationResponse& dto)
 
     // clang-format off
     j = {
+        {"payload", {"deviceKey", dto.getSubdeviceKey()}},
         {"result", resultStr},
         {"description", dto.getDescription()}
     };
     // clang-format on
 }
+
+SubdeviceRegistrationResponse subdevice_registration_response_from_json(nlohmann::json& j)
+{
+    auto result = [&]() -> SubdeviceRegistrationResponse::Result {
+        std::string resultStr = j.at("result").get<std::string>();
+        if (resultStr == "OK")
+        {
+            return SubdeviceRegistrationResponse::Result::OK;
+        }
+        else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
+        {
+            return SubdeviceRegistrationResponse::Result::ERROR_GATEWAY_NOT_FOUND;
+        }
+        else if (resultStr == "ERROR_NOT_A_GATEWAY")
+        {
+            return SubdeviceRegistrationResponse::Result::ERROR_NOT_A_GATEWAY;
+        }
+        else if (resultStr == "ERROR_KEY_CONFLICT")
+        {
+            return SubdeviceRegistrationResponse::Result::ERROR_KEY_CONFLICT;
+        }
+        else if (resultStr == "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED")
+        {
+            return SubdeviceRegistrationResponse::Result::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED;
+        }
+        else if (resultStr == "ERROR_VALIDATION_ERROR")
+        {
+            return SubdeviceRegistrationResponse::Result::ERROR_VALIDATION_ERROR;
+        }
+        else if (resultStr == "ERROR_INVALID_DTO")
+        {
+            return SubdeviceRegistrationResponse::Result::ERROR_INVALID_DTO;
+        }
+        else if (resultStr == "ERROR_KEY_MISSING")
+        {
+            return SubdeviceRegistrationResponse::Result::ERROR_KEY_MISSING;
+        }
+        else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
+        {
+            return SubdeviceRegistrationResponse::Result::ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN;
+        }
+        else
+        {
+            return SubdeviceRegistrationResponse::Result::ERROR_UNKNOWN;
+        }
+    }();
+
+    return SubdeviceRegistrationResponse(j["payload"].at("deviceKey").get<std::string>(), result,
+                                         j.at("description").get<std::string>());
+}
+
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
 
 /*** GATEWAY UPDATE REQUEST DTO ***/
@@ -453,6 +505,47 @@ void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto)
         {"result", resultStr},
         {"description", dto.getDescription()}
     };
+}
+
+GatewayUpdateResponse gateway_update_response_from_json(const json& j)
+{
+    auto result = [&]() -> GatewayUpdateResponse::Result {
+            std::string resultStr = j.at("result").get<std::string>();
+            if (resultStr == "OK")
+            {
+                return GatewayUpdateResponse::Result::OK;
+            }
+            else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
+            {
+                return GatewayUpdateResponse::Result::ERROR_GATEWAY_NOT_FOUND;
+            }
+            else if (resultStr == "ERROR_NOT_A_GATEWAY")
+            {
+                return GatewayUpdateResponse::Result::ERROR_NOT_A_GATEWAY;
+            }
+            else if (resultStr == "ERROR_KEY_CONFLICT")
+            {
+                return GatewayUpdateResponse::Result::ERROR_KEY_CONFLICT;
+            }
+            else if (resultStr == "ERROR_VALIDATION_ERROR")
+            {
+                return GatewayUpdateResponse::Result::ERROR_VALIDATION_ERROR;
+            }
+            else if (resultStr == "ERROR_INVALID_DTO")
+            {
+                return GatewayUpdateResponse::Result::ERROR_INVALID_DTO;
+            }
+            else if (resultStr == "ERROR_KEY_MISSING")
+            {
+                return GatewayUpdateResponse::Result::ERROR_KEY_MISSING;
+            }
+            else
+            {
+                return GatewayUpdateResponse::Result::ERROR_UNKNOWN;
+            }
+        }();
+
+    return GatewayUpdateResponse(result, j.at("description").get<std::string>());
 }
 
 /*** GATEWAY UPDATE RESPONSE DTO ***/

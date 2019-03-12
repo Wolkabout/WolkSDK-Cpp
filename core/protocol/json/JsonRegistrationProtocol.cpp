@@ -199,8 +199,8 @@ std::unique_ptr<SubdeviceRegistrationResponse> JsonRegistrationProtocol::makeSub
             throw std::logic_error("");
         }();
 
-        return std::unique_ptr<SubdeviceRegistrationResponse>(
-          new SubdeviceRegistrationResponse(result, j.at("description").get<std::string>()));
+        return std::unique_ptr<SubdeviceRegistrationResponse>(new SubdeviceRegistrationResponse(
+          j["payload"].at("deviceKey").get<std::string>(), result, j.at("description").get<std::string>()));
     }
     catch (std::exception& e)
     {

@@ -47,14 +47,15 @@ void to_json(nlohmann::json& j, const DeviceTemplate& deviceTemplate);
 void from_json(const nlohmann::json& j, DeviceTemplate& deviceTemplate);
 
 void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto);
-void from_json(const nlohmann::json& j, GatewayUpdateRequest& dto);
 
 void to_json(nlohmann::json& j, const SubdeviceRegistrationRequest& dto);
 SubdeviceRegistrationRequest subdevice_registration_request_from_json(const nlohmann::json& j);
 
 void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto);
+GatewayUpdateResponse gateway_update_response_from_json(const nlohmann::json& j);
 
 void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
+SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j);
 }    // namespace wolkabout
 
 #endif    // JSONDTO_H

@@ -39,15 +39,19 @@ public:
     };
 
     SubdeviceRegistrationResponse() = default;
-    SubdeviceRegistrationResponse(SubdeviceRegistrationResponse::Result result, std::string description = "");
+    SubdeviceRegistrationResponse(std::string subdeviceKey, SubdeviceRegistrationResponse::Result result,
+                                  std::string description = "");
 
     virtual ~SubdeviceRegistrationResponse() = default;
 
     const SubdeviceRegistrationResponse::Result& getResult() const;
 
+    const std::string& getSubdeviceKey() const;
+
     const std::string& getDescription() const;
 
 private:
+    std::string m_subdeviceKey;
     SubdeviceRegistrationResponse::Result m_result;
     std::string m_description;
 };
