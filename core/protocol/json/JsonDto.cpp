@@ -269,9 +269,9 @@ void to_json(json& j, const DeviceTemplate& deviceTemplate)
         {"alarms", deviceTemplate.getAlarms()},
         {"actuators", deviceTemplate.getActuators()},
         {"firmwareUpdateType", deviceTemplate.getFirmwareUpdateType()},
-        {"typeParemeters", deviceTemplate.getTypeParameters()},
-        {"connectivityParemeters", deviceTemplate.getConnectivityParameters()},
-        {"firmwareUpdateParemeters", deviceTemplate.getFirmwareUpdateParameters()}
+        {"typeParameters", deviceTemplate.getTypeParameters()},
+        {"connectivityParameters", deviceTemplate.getConnectivityParameters()},
+        {"firmwareUpdateParameters", deviceTemplate.getFirmwareUpdateParameters()}
     };
     // clang-format on
 }
@@ -282,9 +282,9 @@ void from_json(const json& j, DeviceTemplate& deviceTemplate)
       j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
       j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
       j.at("actuators").get<std::vector<ActuatorTemplate>>(), j.at("firmwareUpdateType").get<std::string>(),
-      j.at("typeParemeters").get<std::map<std::string, std::string>>(),
-      j.at("connectivityParemeters").get<std::map<std::string, std::string>>(),
-      j.at("firmwareUpdateParemeters").get<std::map<std::string, bool>>());
+      j.at("typeParameters").get<std::map<std::string, std::string>>(),
+      j.at("connectivityParameters").get<std::map<std::string, std::string>>(),
+      j.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
 }
 /*** DEVICE TEMPLATE ***/
 
@@ -301,9 +301,9 @@ void to_json(json& j, const SubdeviceRegistrationRequest& dto)
         {"alarms", dto.getTemplate().getAlarms()},
         {"actuators", dto.getTemplate().getActuators()},
         {"firmwareUpdateType", dto.getTemplate().getFirmwareUpdateType()},
-        {"typeParemeters", dto.getTemplate().getTypeParameters()},
-        {"connectivityParemeters", dto.getTemplate().getConnectivityParameters()},
-        {"firmwareUpdateParemeters", dto.getTemplate().getFirmwareUpdateParameters()}
+        {"typeParameters", dto.getTemplate().getTypeParameters()},
+        {"connectivityParameters", dto.getTemplate().getConnectivityParameters()},
+        {"firmwareUpdateParameters", dto.getTemplate().getFirmwareUpdateParameters()}
     };
     // clang-format on
 }
@@ -314,9 +314,9 @@ SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json
       j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
       j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
       j.at("actuators").get<std::vector<ActuatorTemplate>>(), j.at("firmwareUpdateType").get<std::string>(),
-      j.at("typeParemeters").get<std::map<std::string, std::string>>(),
-      j.at("connectivityParemeters").get<std::map<std::string, std::string>>(),
-      j.at("firmwareUpdateParemeters").get<std::map<std::string, bool>>());
+      j.at("typeParameters").get<std::map<std::string, std::string>>(),
+      j.at("connectivityParameters").get<std::map<std::string, std::string>>(),
+      j.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
     return SubdeviceRegistrationRequest(j.at("name").get<std::string>(), j.at("key").get<std::string>(),
                                         subdeviceTemplate, j.at("defaultBinding").get<bool>());
 }
@@ -446,9 +446,9 @@ void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto)
         {"actuators", dto.getTemplate().getActuators()},
         {"alarms", dto.getTemplate().getAlarms()},
         {"configurations", dto.getTemplate().getConfigurations()},
-        {"typeParemeters", dto.getTemplate().getTypeParameters()},
-        {"connectivityParemeters", dto.getTemplate().getConnectivityParameters()},
-        {"firmwareUpdateParemeters", dto.getTemplate().getFirmwareUpdateParameters()}
+        {"typeParameters", dto.getTemplate().getTypeParameters()},
+        {"connectivityParameters", dto.getTemplate().getConnectivityParameters()},
+        {"firmwareUpdateParameters", dto.getTemplate().getFirmwareUpdateParameters()}
     };
     // clang-format on
 }
