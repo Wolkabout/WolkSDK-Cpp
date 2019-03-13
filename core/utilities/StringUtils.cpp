@@ -238,7 +238,11 @@ bool StringUtils::mqttTopicMatch(const std::string& wildcardTopic, const std::st
         }
         else
         {
-            if (wildcardTopicTokens[i] != topicTokens[i])
+            if (topicTokens.size() <= i)
+            {
+                return false;
+            }
+            else if (wildcardTopicTokens[i] != topicTokens[i])
             {
                 return false;
             }
