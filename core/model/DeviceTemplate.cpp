@@ -18,11 +18,6 @@
 
 #include <utility>
 
-wolkabout::DeviceTemplate::DeviceTemplate(std::string firmwareUpdateType)
-: m_firmwareUpdateType(std::move(firmwareUpdateType))
-{
-}
-
 wolkabout::DeviceTemplate::DeviceTemplate(
   std::vector<wolkabout::ConfigurationTemplate> configurations, std::vector<wolkabout::SensorTemplate> sensors,
   std::vector<wolkabout::AlarmTemplate> alarms, std::vector<wolkabout::ActuatorTemplate> actuators,
