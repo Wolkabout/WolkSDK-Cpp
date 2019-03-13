@@ -31,15 +31,11 @@ namespace wolkabout
 class DeviceTemplate
 {
 public:
-    DeviceTemplate() = default;
-    DeviceTemplate(std::string firmwareUpdateType = "");
     DeviceTemplate(std::vector<ConfigurationTemplate> configurations = {}, std::vector<SensorTemplate> sensors = {},
                    std::vector<AlarmTemplate> alarms = {}, std::vector<ActuatorTemplate> actuators = {},
                    std::string firmwareUpdateType = "", std::map<std::string, std::string> typeParameters = {},
                    std::map<std::string, std::string> connectivityParameters = {},
                    std::map<std::string, bool> firmwareUpdateParameters = {});
-
-    virtual ~DeviceTemplate() = default;
 
     DeviceTemplate& addConfiguration(const ConfigurationTemplate& configurationTemplate);
     DeviceTemplate& addSensor(const SensorTemplate& sensorTemplate);
