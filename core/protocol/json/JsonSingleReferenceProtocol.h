@@ -34,20 +34,17 @@ public:
 
     std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const override;
     std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const override;
-    std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(
-      const Message& message, const std::map<std::string, std::string>& delimiters) const override;
+    std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(const Message& message) const override;
 
-    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                         const std::vector<std::shared_ptr<SensorReading>>& sensorReadings,
-                                         const std::string& delimiter) const override;
+    std::unique_ptr<Message> makeMessage(
+      const std::string& deviceKey, const std::vector<std::shared_ptr<SensorReading>>& sensorReadings) const override;
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const std::vector<std::shared_ptr<Alarm>>& alarms) const override;
     std::unique_ptr<Message> makeMessage(
       const std::string& deviceKey,
       const std::vector<std::shared_ptr<ActuatorStatus>>& actuatorStatuses) const override;
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                         const std::vector<ConfigurationItem>& configuration,
-                                         const std::map<std::string, std::string>& delimiters) const override;
+                                         const std::vector<ConfigurationItem>& configuration) const override;
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
     std::string extractReferenceFromChannel(const std::string& topic) const override;
@@ -70,6 +67,8 @@ private:
     static const std::string CONFIGURATION_COMMAND_TOPIC_ROOT;
 
     static const std::vector<std::string> INBOUND_CHANNELS;
+
+    static const std::string MULTIVALUE_READING_DELIMITER;
 };
 }    // namespace wolkabout
 
