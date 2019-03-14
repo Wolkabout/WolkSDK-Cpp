@@ -294,7 +294,7 @@ void to_json(json& j, const SubdeviceRegistrationRequest& dto)
     // clang-format off
     j = {
         {"name", dto.getSubdeviceName()},
-        {"key", dto.getSubdeviceKey()},
+        {"deviceKey", dto.getSubdeviceKey()},
         {"defaultBinding", dto.getDefaultBinding()},
         {"configurations", dto.getTemplate().getConfigurations()},
         {"sensors", dto.getTemplate().getSensors()},
@@ -317,8 +317,12 @@ SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json
       j.at("typeParameters").get<std::map<std::string, std::string>>(),
       j.at("connectivityParameters").get<std::map<std::string, std::string>>(),
       j.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
-    return SubdeviceRegistrationRequest(j.at("name").get<std::string>(), j.at("key").get<std::string>(),
-                                        subdeviceTemplate, j.at("defaultBinding").get<bool>());
+
+    auto it_defaultBinding = j.find("defaultBinding");
+
+    bool defaultBinding = (it_defaultBinding != j.end()) ? j.at("defaultBinding").get<bool>() : false;
+    return SubdeviceRegistrationRequest(j.at("name").get<std::string>(), j.at("deviceKey").get<std::string>(),
+                                        subdeviceTemplate, defaultBinding);
 }
 /*** SUBDEVICE REGISTRATION REQUEST DTO ***/
 
@@ -383,7 +387,7 @@ void to_json(json& j, const SubdeviceRegistrationResponse& dto)
     // clang-format on
 }
 
-SubdeviceRegistrationResponse subdevice_registration_response_from_json(nlohmann::json& j)
+SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j)
 {
     auto result = [&]() -> SubdeviceRegistrationResponse::Result {
         std::string resultStr = j.at("result").get<std::string>();
@@ -429,8 +433,9 @@ SubdeviceRegistrationResponse subdevice_registration_response_from_json(nlohmann
         }
     }();
 
-    return SubdeviceRegistrationResponse(j["payload"].at("deviceKey").get<std::string>(), result,
-                                         j.at("description").get<std::string>());
+    std::string description = (j.at("description").is_null()) ? "" : j.at("description").get<std::string>();
+
+    return SubdeviceRegistrationResponse(j["payload"].at("deviceKey").get<std::string>(), result, description);
 }
 
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
@@ -545,7 +550,9 @@ GatewayUpdateResponse gateway_update_response_from_json(const json& j)
             }
         }();
 
-    return GatewayUpdateResponse(result, j.at("description").get<std::string>());
+    std::string description = (j.at("description").is_null() ? "" : j.at("description").get<std::string>());
+
+    return GatewayUpdateResponse(result, description);
 }
 
 /*** GATEWAY UPDATE RESPONSE DTO ***/
