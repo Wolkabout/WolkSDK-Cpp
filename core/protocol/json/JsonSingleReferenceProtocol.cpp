@@ -44,6 +44,8 @@ const std::string JsonSingleReferenceProtocol::CONFIGURATION_RESPONSE_TOPIC_ROOT
 const std::string JsonSingleReferenceProtocol::ACTUATION_COMMAND_TOPIC_ROOT = "actuators/commands/";
 const std::string JsonSingleReferenceProtocol::CONFIGURATION_COMMAND_TOPIC_ROOT = "configurations/commands/";
 
+const std::string JsonSingleReferenceProtocol::MULTIVALUE_READING_DELIMITER = ",";
+
 // avoid collision with other protocol to_json functions
 namespace serializer_jsr
 {
@@ -141,8 +143,7 @@ std::vector<std::string> JsonSingleReferenceProtocol::getInboundChannelsForDevic
 }
 
 std::unique_ptr<Message> JsonSingleReferenceProtocol::makeMessage(
-  const std::string& deviceKey, const std::vector<std::shared_ptr<SensorReading>>& sensorReadings,
-  const std::string& delimiter) const
+  const std::string& deviceKey, const std::vector<std::shared_ptr<SensorReading>>& sensorReadings) const
 {
     if (sensorReadings.size() == 0)
     {
@@ -154,34 +155,29 @@ std::unique_ptr<Message> JsonSingleReferenceProtocol::makeMessage(
 
     std::vector<json> payload(sensorReadings.size());
 
-    if (delimiter.empty())
-    {
-        std::transform(sensorReadings.begin(), sensorReadings.end(), payload.begin(),
-                       [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
-                           json j;
-                           serializer_jsr::to_json(j, sensorReading);
+    std::transform(sensorReadings.begin(), sensorReadings.end(), payload.begin(),
+                   [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
+                       const std::vector<std::string> readingValues = sensorReading->getValues();
+                       std::string data;
 
-                           return j;
-                       });
-    }
-    else
-    {
-        std::transform(sensorReadings.begin(), sensorReadings.end(), payload.begin(),
-                       [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
-                           const std::vector<std::string> readingValues = sensorReading->getValues();
+                       if (readingValues.size() > 1)
+                       {
+                           data = joinMultiValues(readingValues, MULTIVALUE_READING_DELIMITER);
+                       }
+                       else
+                       {
+                           data = readingValues.front();
+                       }
 
-                           const std::string data = joinMultiValues(readingValues, delimiter);
-
-                           if (sensorReading->getRtc() == 0)
-                           {
-                               return json{{"data", data}};
-                           }
-                           else
-                           {
-                               return json{{"utc", sensorReading->getRtc()}, {"data", data}};
-                           }
-                       });
-    }
+                       if (sensorReading->getRtc() == 0)
+                       {
+                           return json{{"data", data}};
+                       }
+                       else
+                       {
+                           return json{{"utc", sensorReading->getRtc()}, {"data", data}};
+                       }
+                   });
 
     const json jPayload(payload);
     const std::string content = jPayload.dump();
@@ -233,8 +229,7 @@ std::unique_ptr<Message> JsonSingleReferenceProtocol::makeMessage(
 }
 
 std::unique_ptr<Message> JsonSingleReferenceProtocol::makeMessage(
-  const std::string& deviceKey, const std::vector<ConfigurationItem>& configuration,
-  const std::map<std::string, std::string>& delimiters) const
+  const std::string& deviceKey, const std::vector<ConfigurationItem>& configuration) const
 {
     json data{};
 
@@ -244,12 +239,7 @@ std::unique_ptr<Message> JsonSingleReferenceProtocol::makeMessage(
             if (item.getValues().size() == 1)
                 return item.getValues().at(0);
 
-            auto delimiterIt = delimiters.find(item.getReference());
-
-            if (delimiterIt != delimiters.end() && item.getValues().size() > 1)
-                return joinMultiValues(item.getValues(), delimiterIt->second);
-
-            return std::string{""};
+            return joinMultiValues(item.getValues(), MULTIVALUE_READING_DELIMITER);
         }());
     }
 
@@ -311,7 +301,7 @@ std::unique_ptr<ActuatorGetCommand> JsonSingleReferenceProtocol::makeActuatorGet
 }
 
 std::unique_ptr<ConfigurationSetCommand> JsonSingleReferenceProtocol::makeConfigurationSetCommand(
-  const Message& message, const std::map<std::string, std::string>& delimiters) const
+  const Message& message) const
 {
     if (!isConfigurationSetMessage(message))
     {
@@ -328,18 +318,11 @@ std::unique_ptr<ConfigurationSetCommand> JsonSingleReferenceProtocol::makeConfig
             for (const auto& configurationEntry : j["values"].get<json::object_t>())
             {
                 const std::string reference = configurationEntry.first;
-                const auto it = delimiters.find(reference);
 
-                if (it != delimiters.end())
-                {
-                    const auto values = parseMultiValues(configurationEntry.second.get<std::string>(), it->second);
+                const auto values =
+                  parseMultiValues(configurationEntry.second.get<std::string>(), MULTIVALUE_READING_DELIMITER);
 
-                    items.push_back(ConfigurationItem{values, reference});
-                }
-                else
-                {
-                    items.push_back(ConfigurationItem{{configurationEntry.second.get<std::string>()}, reference});
-                }
+                items.push_back(ConfigurationItem{values, reference});
             }
 
             return std::unique_ptr<ConfigurationSetCommand>(new ConfigurationSetCommand(items));

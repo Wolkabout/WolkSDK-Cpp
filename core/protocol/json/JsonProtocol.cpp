@@ -58,7 +58,9 @@ const std::string JsonProtocol::ACTUATION_GET_TOPIC_ROOT = "p2d/actuator_get/";
 const std::string JsonProtocol::CONFIGURATION_SET_REQUEST_TOPIC_ROOT = "p2d/configuration_set/";
 const std::string JsonProtocol::CONFIGURATION_GET_REQUEST_TOPIC_ROOT = "p2d/configuration_get/";
 
-void to_json(json& j, const SensorReading& p)
+const std::string JsonProtocol::MULTIVALUE_READING_DELIMITER = ",";
+
+static void to_json(json& j, const SensorReading& p)
 {
     if (p.getRtc() == 0)
     {
@@ -70,7 +72,7 @@ void to_json(json& j, const SensorReading& p)
     }
 }
 
-void to_json(json& j, const std::shared_ptr<SensorReading>& p)
+static void to_json(json& j, const std::shared_ptr<SensorReading>& p)
 {
     if (!p)
     {
@@ -80,7 +82,7 @@ void to_json(json& j, const std::shared_ptr<SensorReading>& p)
     to_json(j, *p);
 }
 
-void to_json(json& j, const Alarm& p)
+static void to_json(json& j, const Alarm& p)
 {
     if (p.getRtc() == 0)
     {
@@ -92,7 +94,7 @@ void to_json(json& j, const Alarm& p)
     }
 }
 
-void to_json(json& j, const std::shared_ptr<Alarm>& p)
+static void to_json(json& j, const std::shared_ptr<Alarm>& p)
 {
     if (!p)
     {
@@ -102,7 +104,7 @@ void to_json(json& j, const std::shared_ptr<Alarm>& p)
     to_json(j, *p);
 }
 
-void to_json(json& j, const ActuatorStatus& p)
+static void to_json(json& j, const ActuatorStatus& p)
 {
     const std::string status = [&]() -> std::string {
         if (p.getState() == ActuatorStatus::State::READY)
@@ -124,7 +126,7 @@ void to_json(json& j, const ActuatorStatus& p)
     j = json{{"status", status}, {"value", p.getValue()}};
 }
 
-void to_json(json& j, const std::shared_ptr<ActuatorStatus>& p)
+static void to_json(json& j, const std::shared_ptr<ActuatorStatus>& p)
 {
     if (!p)
     {
@@ -159,9 +161,8 @@ std::vector<std::string> JsonProtocol::getInboundChannelsForDevice(const std::st
             CONFIGURATION_SET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey};
 }
 
-std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
-                                                   const std::vector<std::shared_ptr<SensorReading>>& sensorReadings,
-                                                   const std::string& delimiter) const
+std::unique_ptr<Message> JsonProtocol::makeMessage(
+  const std::string& deviceKey, const std::vector<std::shared_ptr<SensorReading>>& sensorReadings) const
 {
     if (sensorReadings.size() == 0)
     {
@@ -171,20 +172,21 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
     const std::string topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
                               REFERENCE_PATH_PREFIX + sensorReadings.front()->getReference();
 
-    if (delimiter.empty())
-    {
-        const json jPayload(sensorReadings);
-        const std::string payload = jPayload.dump();
-
-        return std::unique_ptr<Message>(new Message(payload, topic));
-    }
-
     std::vector<json> payload(sensorReadings.size());
     std::transform(sensorReadings.begin(), sensorReadings.end(), payload.begin(),
                    [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
                        const std::vector<std::string> readingValues = sensorReading->getValues();
 
-                       const std::string data = joinMultiValues(readingValues, delimiter);
+                       std::string data;
+
+                       if (readingValues.size() > 1)
+                       {
+                           data = joinMultiValues(readingValues, MULTIVALUE_READING_DELIMITER);
+                       }
+                       else
+                       {
+                           data = readingValues.front();
+                       }
 
                        if (sensorReading->getRtc() == 0)
                        {
@@ -236,8 +238,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(
 }
 
 std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
-                                                   const std::vector<ConfigurationItem>& configuration,
-                                                   const std::map<std::string, std::string>& delimiters) const
+                                                   const std::vector<ConfigurationItem>& configuration) const
 {
     json data{};
 
@@ -247,12 +248,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
             if (item.getValues().size() == 1)
                 return item.getValues().at(0);
 
-            auto delimiterIt = delimiters.find(item.getReference());
-
-            if (delimiterIt != delimiters.end() && item.getValues().size() > 1)
-                return joinMultiValues(item.getValues(), delimiterIt->second);
-
-            return std::string{""};
+            return joinMultiValues(item.getValues(), MULTIVALUE_READING_DELIMITER);
         }());
     }
 
@@ -312,8 +308,7 @@ std::unique_ptr<ActuatorGetCommand> JsonProtocol::makeActuatorGetCommand(const M
     }
 }
 
-std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetCommand(
-  const Message& message, const std::map<std::string, std::string>& delimiters) const
+std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetCommand(const Message& message) const
 {
     try
     {
@@ -325,18 +320,11 @@ std::unique_ptr<ConfigurationSetCommand> JsonProtocol::makeConfigurationSetComma
             for (const auto& configurationEntry : j.get<json::object_t>())
             {
                 const std::string reference = configurationEntry.first;
-                const auto it = delimiters.find(reference);
 
-                if (it != delimiters.end())
-                {
-                    const auto values = parseMultiValues(configurationEntry.second.get<std::string>(), it->second);
+                const auto values =
+                  parseMultiValues(configurationEntry.second.get<std::string>(), MULTIVALUE_READING_DELIMITER);
 
-                    items.push_back(ConfigurationItem{values, reference});
-                }
-                else
-                {
-                    items.push_back(ConfigurationItem{{configurationEntry.second.get<std::string>()}, reference});
-                }
+                items.push_back(ConfigurationItem{values, reference});
             }
         }
 
