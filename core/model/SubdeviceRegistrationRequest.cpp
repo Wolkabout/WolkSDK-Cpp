@@ -25,8 +25,16 @@ SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(std::string subdevice
                                                            DeviceTemplate subdeviceTemplate, bool defaultBinding)
 : m_subdeviceName(std::move(subdeviceName))
 , m_subdeviceKey(std::move(subdeviceKey))
-, m_defaultBinding(std::move(defaultBinding))
 , m_subdeviceTemplate(std::move(subdeviceTemplate))
+, m_defaultBinding(std::move(defaultBinding))
+{
+}
+
+SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(DetailedDevice device, bool defaultBinding)
+: m_subdeviceName(device.getName())
+, m_subdeviceKey(device.getKey())
+, m_subdeviceTemplate(device.getTemplate())
+, m_defaultBinding(std::move(defaultBinding))
 {
 }
 

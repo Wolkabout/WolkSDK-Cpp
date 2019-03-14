@@ -140,7 +140,7 @@ std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const SubdeviceRe
         const json jsonPayload(request);
         std::string channel;
 
-        channel = SUBDEVICE_REGISTRATION_REQUEST_TOPIC_ROOT;
+        channel = SUBDEVICE_REGISTRATION_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + request.getSubdeviceKey();
 
         return std::unique_ptr<Message>(new Message(jsonPayload.dump(), channel));
     }
