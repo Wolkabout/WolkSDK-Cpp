@@ -136,11 +136,14 @@ void to_json(json& j, const AlarmTemplate& alarmTemplate)
 
 void from_json(const json& j, AlarmTemplate& alarmTemplate)
 {
+    auto it_description = j.find("description");
+    std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
+
     // clang-format off
     alarmTemplate =
             AlarmTemplate(j.at("name").get<std::string>(),
                           j.at("reference").get<std::string>(),
-                          j.at("description").get<std::string>());
+                          description);
     // clang-format on
 }
 /*** ALARM TEMPLATE ***/
@@ -180,15 +183,24 @@ void to_json(json& j, const ActuatorTemplate& actuatorTemplate)
 
 void from_json(const json& j, ActuatorTemplate& actuatorTemplate)
 {
+    auto it_minimum = j.find("minimum");
+    double minimum = (it_minimum != j.end()) ? ((j["minimum"].is_null()) ? NULL : j["minimum"].get<double>()) : NULL;
+
+    auto it_maximum = j.find("maximum");
+    double maximum = (it_maximum != j.end()) ? ((j["maximum"].is_null()) ? NULL : j["maximum"].get<double>()) : NULL;
+
+    auto it_description = j.find("description");
+    std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
+
     // clang-format off
     actuatorTemplate = ActuatorTemplate{
                 j.at("name").get<std::string>(),
                 j.at("reference").get<std::string>(),
                 j["unit"].at("readingTypeName").get<std::string>(),
                 j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
-                j.at("description").get<std::string>(),
-                j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
-                j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()};
+                description,
+                minimum,
+                maximum};
     // clang-format on
 }
 /*** ACTUATOR TEMPLATE ***/
@@ -203,7 +215,6 @@ void to_json(json& j, const SensorTemplate& sensorTemplate)
     sensorJ["description"] = sensorTemplate.getDescription();
 
     sensorJ["unit"]["readingTypeName"] = sensorTemplate.getReadingTypeName();
-    sensorJ["unit"]["readingType"] = sensorTemplate.getReadingTypeName();
     if (!sensorTemplate.getUnitSymbol().empty())
     {
         sensorJ["unit"]["symbol"] = sensorTemplate.getUnitSymbol();
@@ -229,33 +240,23 @@ void to_json(json& j, const SensorTemplate& sensorTemplate)
 
 void from_json(const json& j, SensorTemplate& sensorTemplate)
 {
-    auto dataType = [&]() -> DataType {
-        std::string dataTypeStr = j["readingType"].at("dataType").get<std::string>();
-        if (dataTypeStr == "STRING")
-        {
-            return DataType::STRING;
-        }
-        else if (dataTypeStr == "NUMERIC")
-        {
-            return DataType::NUMERIC;
-        }
-        else if (dataTypeStr == "BOOLEAN")
-        {
-            return DataType::BOOLEAN;
-        }
-        else
-        {
-            throw std::invalid_argument("Invalid data type");
-        }
-    }();
+
+    auto it_minimum = j.find("minimum");
+    double minimum = (it_minimum != j.end()) ? ((j["minimum"].is_null()) ? NULL : j["minimum"].get<double>()) : NULL;
+
+    auto it_maximum = j.find("maximum");
+    double maximum = (it_maximum != j.end()) ? ((j["maximum"].is_null()) ? NULL : j["maximum"].get<double>()) : NULL;
+
+    auto it_description = j.find("description");
+    std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
 
     sensorTemplate = SensorTemplate{j.at("name").get<std::string>(),
                                     j.at("reference").get<std::string>(),
                                     j["unit"].at("readingTypeName").get<std::string>(),
                                     j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
-                                    j.at("description").get<std::string>(),
-                                    j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
-                                    j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()};
+                                    description,
+                                    minimum,
+                                    maximum};
 }
 /*** SENSOR TEMPLATE ***/
 
