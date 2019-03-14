@@ -27,7 +27,6 @@ ReadingType::ReadingType(DataType dataType)
     {
         m_name = toString(ReadingType::Name::GENERIC);
         m_unit = toString(ReadingType::MeasurmentUnit::NUMERIC);
-        m_dataType = DataType::NUMERIC;
         m_unitSymbol = symbolForUnit(ReadingType::MeasurmentUnit::NUMERIC);
 
         break;
@@ -36,7 +35,6 @@ ReadingType::ReadingType(DataType dataType)
     {
         m_name = toString(ReadingType::Name::GENERIC_BOOLEAN);
         m_unit = toString(ReadingType::MeasurmentUnit::BOOLEAN);
-        m_dataType = DataType::BOOLEAN;
         m_unitSymbol = symbolForUnit(ReadingType::MeasurmentUnit::BOOLEAN);
 
         break;
@@ -45,7 +43,6 @@ ReadingType::ReadingType(DataType dataType)
     {
         m_name = toString(ReadingType::Name::GENERIC_TEXT);
         m_unit = toString(ReadingType::MeasurmentUnit::TEXT);
-        m_dataType = DataType::STRING;
         m_unitSymbol = symbolForUnit(ReadingType::MeasurmentUnit::TEXT);
 
         break;
@@ -64,17 +61,11 @@ ReadingType::ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit uni
     m_name = toString(name);
     m_unit = toString(unit);
 
-    m_dataType = dataTypeForName(name);
     m_unitSymbol = symbolForUnit(unit);
 }
 
 ReadingType::ReadingType(std::string name, std::string unitSymbol)
 : m_name{std::move(name)}, m_unitSymbol{std::move(unitSymbol)}
-{
-}
-
-ReadingType::ReadingType(std::string name, std::string unitSymbol, DataType dataType)
-: m_name{std::move(name)}, m_unitSymbol{std::move(unitSymbol)}, m_dataType{std::move(dataType)}
 {
 }
 
@@ -93,14 +84,9 @@ const std::string& ReadingType::getMeasurmentUnitSymbol() const
     return m_unitSymbol;
 }
 
-DataType ReadingType::getDataType() const
-{
-    return m_dataType;
-}
-
 bool ReadingType::operator==(ReadingType& rhs) const
 {
-    if (m_name != rhs.m_name || m_unitSymbol != rhs.m_unitSymbol || m_dataType != rhs.m_dataType)
+    if (m_name != rhs.m_name || m_unitSymbol != rhs.m_unitSymbol)
     {
         return false;
     }
@@ -883,131 +869,6 @@ void ReadingType::validate(ReadingType::Name name, ReadingType::MeasurmentUnit u
         break;
     }
     }
-}
-
-wolkabout::DataType wolkabout::ReadingType::dataTypeForName(ReadingType::Name name)
-{
-    switch (name)
-    {
-    case ReadingType::Name::GENERIC:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::GENERIC_TEXT:
-    {
-        return DataType::STRING;
-    }
-    case ReadingType::Name::GENERIC_BOOLEAN:
-    {
-        return DataType::BOOLEAN;
-    }
-    case ReadingType::Name::TEMPERATURE:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::PRESSURE:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::HUMIDITY:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::BATTERY_VOLTAGE:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::MOVEMENT:
-    {
-        return DataType::STRING;
-    }
-    case ReadingType::Name::LIGHT:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::ACCELEROMETER:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::GYROSCOPE:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::LOCATION:
-    {
-        return DataType::STRING;
-    }
-    case ReadingType::Name::HEART_RATE:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::BATTERY_POWER:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::BREATHING_RATE:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::CALORIES:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::ELECTRIC_CURRENT:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::POWER:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::FLOOR_POSITION:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::FLUID_VOLUME:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::LENGHT:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::MASS:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::SOUND_LEVEL:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::SPEED:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::TIME:
-    {
-        return DataType::STRING;
-    }
-    case ReadingType::Name::MAGNETIC_FLUX_DENSITY:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::RADIATION:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::FORCE:
-    {
-        return DataType::NUMERIC;
-    }
-    case ReadingType::Name::MEASURE:
-    {
-        return DataType::NUMERIC;
-    }
-    }
-
-    return DataType::STRING;
 }
 
 std::string ReadingType::symbolForUnit(ReadingType::MeasurmentUnit unit)

@@ -22,19 +22,18 @@
 
 namespace wolkabout
 {
-ConfigurationTemplate::ConfigurationTemplate(std::string name, std::string reference, DataType dataType,
-                                             std::string description, std::string defaultValue, double minimum,
-                                             double maximum)
-: ConfigurationTemplate(name, reference, dataType, description, defaultValue, {}, minimum, maximum)
+ConfigurationTemplate::ConfigurationTemplate(std::string name, std::string reference, std::string description,
+                                             std::string defaultValue, WolkOptional<double> minimum,
+                                             WolkOptional<double> maximum)
+: ConfigurationTemplate(name, reference, description, defaultValue, {}, minimum, maximum)
 {
 }
 
-ConfigurationTemplate::ConfigurationTemplate(std::string name, std::string reference, DataType dataType,
-                                             std::string description, std::string defaultValue,
-                                             std::vector<std::string> labels, double minimum, double maximum)
+ConfigurationTemplate::ConfigurationTemplate(std::string name, std::string reference, std::string description,
+                                             std::string defaultValue, std::vector<std::string> labels,
+                                             WolkOptional<double> minimum, WolkOptional<double> maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
-, m_dataType{dataType}
 , m_description{std::move(description)}
 , m_defaultValue{std::move(defaultValue)}
 , m_minimum{minimum}
@@ -54,17 +53,12 @@ const std::string& ConfigurationTemplate::getReference() const
     return m_reference;
 }
 
-DataType ConfigurationTemplate::getDataType() const
-{
-    return m_dataType;
-}
-
-double ConfigurationTemplate::getMinimum() const
+WolkOptional<double> ConfigurationTemplate::getMinimum() const
 {
     return m_minimum;
 }
 
-double ConfigurationTemplate::getMaximum() const
+WolkOptional<double> ConfigurationTemplate::getMaximum() const
 {
     return m_maximum;
 }
@@ -91,8 +85,7 @@ const std::vector<std::string>& ConfigurationTemplate::getLabels() const
 
 bool ConfigurationTemplate::operator==(ConfigurationTemplate& rhs) const
 {
-    if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description ||
-        m_dataType != rhs.m_dataType)
+    if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
     {
         return false;
     }

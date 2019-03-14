@@ -19,7 +19,7 @@
 namespace wolkabout
 {
 SensorTemplate::SensorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
-                               double minimum, double maximum)
+                               WolkOptional<double> minimum, WolkOptional<double> maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
 , m_readingType{std::move(dataType)}
@@ -30,7 +30,7 @@ SensorTemplate::SensorTemplate(std::string name, std::string reference, DataType
 }
 
 SensorTemplate::SensorTemplate(std::string name, std::string reference, ReadingType readingType,
-                               std::string description, double minimum, double maximum)
+                               std::string description, WolkOptional<double> minimum, WolkOptional<double> maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
 , m_readingType{std::move(readingType)}
@@ -41,8 +41,8 @@ SensorTemplate::SensorTemplate(std::string name, std::string reference, ReadingT
 }
 
 SensorTemplate::SensorTemplate(std::string name, std::string reference, ReadingType::Name readingTypeName,
-                               ReadingType::MeasurmentUnit unit, std::string description, double minimum,
-                               double maximum)
+                               ReadingType::MeasurmentUnit unit, std::string description, WolkOptional<double> minimum,
+                               WolkOptional<double> maximum)
 
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
@@ -54,22 +54,11 @@ SensorTemplate::SensorTemplate(std::string name, std::string reference, ReadingT
 }
 
 SensorTemplate::SensorTemplate(std::string name, std::string reference, std::string readingTypeName,
-                               std::string unitSymbol, std::string description, double minimum, double maximum)
+                               std::string unitSymbol, std::string description, WolkOptional<double> minimum,
+                               WolkOptional<double> maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
 , m_readingType{ReadingType(std::move(readingTypeName), std::move(unitSymbol))}
-, m_description{std::move(description)}
-, m_minimum(minimum)
-, m_maximum(maximum)
-{
-}
-
-SensorTemplate::SensorTemplate(std::string name, std::string reference, std::string readingTypeName,
-                               std::string unitSymbol, DataType dataType, std::string description, double minimum,
-                               double maximum)
-: m_name{std::move(name)}
-, m_reference{std::move(reference)}
-, m_readingType{ReadingType(std::move(readingTypeName), std::move(unitSymbol), std::move(dataType))}
 , m_description{std::move(description)}
 , m_minimum(minimum)
 , m_maximum(maximum)
@@ -101,17 +90,12 @@ const std::string& SensorTemplate::getReadingTypeName() const
     return m_readingType.getName();
 }
 
-DataType SensorTemplate::getDataType() const
-{
-    return m_readingType.getDataType();
-}
-
-double SensorTemplate::getMinimum() const
+WolkOptional<double> SensorTemplate::getMinimum() const
 {
     return m_minimum;
 }
 
-double SensorTemplate::getMaximum() const
+WolkOptional<double> SensorTemplate::getMaximum() const
 {
     return m_maximum;
 }

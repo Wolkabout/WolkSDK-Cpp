@@ -19,6 +19,7 @@
 
 #include "model/ActuationReadingType.h"
 #include "model/DataType.h"
+#include "model/WolkOptional.h"
 
 namespace wolkabout
 {
@@ -28,20 +29,17 @@ public:
     ActuatorTemplate() = default;
 
     ActuatorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
-                     double minimum = 0, double maximum = 0);
+                     WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
 
     ActuatorTemplate(std::string name, std::string reference, ActuationReadingType readingType, std::string description,
-                     double minimum = 0, double maximum = 0);
+                     WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
 
     ActuatorTemplate(std::string name, std::string reference, ActuationReadingType::Name readingTypeName,
-                     ActuationReadingType::MeasurmentUnit unit, std::string description, double minimum = 0,
-                     double maximum = 0);
+                     ActuationReadingType::MeasurmentUnit unit, std::string description,
+                     WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
 
     ActuatorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
-                     std::string description, double minimum = 0, double maximum = 0);
-
-    ActuatorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
-                     DataType dataType, std::string description, double minimum = 0, double maximum = 0);
+                     std::string description, WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
 
     const std::string& getName() const;
 
@@ -53,11 +51,9 @@ public:
 
     const std::string& getReadingTypeName() const;
 
-    DataType getDataType() const;
+    WolkOptional<double> getMinimum() const;
 
-    double getMinimum() const;
-
-    double getMaximum() const;
+    WolkOptional<double> getMaximum() const;
 
     bool operator==(ActuatorTemplate& rhs) const;
     bool operator!=(ActuatorTemplate& rhs) const;
@@ -68,8 +64,8 @@ private:
     ActuationReadingType m_readingType;
     std::string m_description;
 
-    double m_minimum;
-    double m_maximum;
+    WolkOptional<double> m_minimum;
+    WolkOptional<double> m_maximum;
 };
 }    // namespace wolkabout
 

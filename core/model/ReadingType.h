@@ -260,7 +260,6 @@ public:
     ReadingType(DataType dataType);
     ReadingType(ReadingType::Name name, ReadingType::MeasurmentUnit unit);
     ReadingType(std::string name, std::string unitSymbol);
-    ReadingType(std::string name, std::string unitSymbol, DataType dataType);
 
     const std::string& getName() const;
 
@@ -268,19 +267,15 @@ public:
 
     const std::string& getMeasurmentUnitSymbol() const;
 
-    DataType getDataType() const;
-
     bool operator==(ReadingType& rhs) const;
     bool operator!=(ReadingType& rhs) const;
 
 private:
     std::string m_name;
     std::string m_unit;
-    DataType m_dataType;
     std::string m_unitSymbol;
 
     void validate(ReadingType::Name name, ReadingType::MeasurmentUnit unit);
-    DataType dataTypeForName(ReadingType::Name name);
     std::string symbolForUnit(ReadingType::MeasurmentUnit unit);
 };
 

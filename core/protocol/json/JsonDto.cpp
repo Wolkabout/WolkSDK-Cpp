@@ -46,30 +46,22 @@ static std::string createMultivalue(const std::string& value, int size)
 /*** CONFIGURATION TEMPLATE ***/
 void to_json(json& j, const ConfigurationTemplate& configurationTemplate)
 {
-    auto dataType = [&]() -> std::string {
-        auto dataTypeStr = toString(configurationTemplate.getDataType());
-
-        return dataTypeStr.empty() ? throw std::invalid_argument("Invalid data type") : dataTypeStr;
-    }();
-
     json confJ;
 
     confJ["name"] = configurationTemplate.getName();
-    confJ["dataType"] = configurationTemplate.getDataType();
     confJ["reference"] = configurationTemplate.getReference();
     confJ["defaultValue"] = createMultivalue(configurationTemplate.getDefaultValue(), configurationTemplate.getSize());
     confJ["size"] = configurationTemplate.getSize();
     confJ["description"] = configurationTemplate.getDescription();
 
-    if (configurationTemplate.getDataType() == DataType::NUMERIC)
+    if (configurationTemplate.getMinimum())
     {
-        confJ["minimum"] = configurationTemplate.getMinimum();
-        confJ["maximum"] = configurationTemplate.getMaximum();
+        confJ["minimum"] = configurationTemplate.getMinimum().value();
     }
-    else
+
+    if (configurationTemplate.getMaximum())
     {
-        confJ["minimum"] = nullptr;
-        confJ["maximum"] = nullptr;
+        confJ["maximum"] = configurationTemplate.getMaximum().value();
     }
 
     if (configurationTemplate.getSize() > 1)
@@ -86,38 +78,36 @@ void to_json(json& j, const ConfigurationTemplate& configurationTemplate)
 
 void from_json(const json& j, ConfigurationTemplate& configurationTemplate)
 {
-    auto dataType = [&]() -> DataType {
-        std::string dataTypeStr = j.at("dataType").get<std::string>();
-        if (dataTypeStr == "STRING")
-        {
-            return DataType::STRING;
-        }
-        else if (dataTypeStr == "NUMERIC")
-        {
-            return DataType::NUMERIC;
-        }
-        else if (dataTypeStr == "BOOLEAN")
-        {
-            return DataType::BOOLEAN;
-        }
-        else
-        {
-            throw std::invalid_argument("Invalid data type");
-        }
-    }();
+    auto it_minimum = j.find("minimum");
+    WolkOptional<double> minimum;
+    if (it_minimum != j.end() && !j["minimum"].is_null())
+    {
+        minimum = j["minimum"].get<double>();
+    }
+
+    auto it_maximum = j.find("maximum");
+    WolkOptional<double> maximum;
+    if (it_maximum != j.end() && !j["maximum"].is_null())
+    {
+        maximum = j["maximum"].get<double>();
+    }
+
+    auto it_description = j.find("description");
+    std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
+
+    auto it_defaultValue = j.find("defaultValue");
+    std::string defaultValue = (it_defaultValue != j.end()) ? j.at("defaultValue").get<std::string>() : "";
 
     // clang-format off
     configurationTemplate =
             ConfigurationTemplate(
                 j.at("name").get<std::string>(),
                 j.at("reference").get<std::string>(),
-                dataType,
-                j.at("description").get<std::string>(),
-                j.at("defaultValue").is_null() ? 0 : j.at("defaultValue").get<std::string>(),
+                description,
+                defaultValue,
                 j.at("labels").is_null() ? std::vector<std::string>{} : j.at("labels").get<std::vector<std::string>>(),
-                j.at("minimum").is_null() ? 0 : j.at("minimum").get<double>(),
-                j.at("maximum").is_null() ? 0 : j.at("maximum").get<double>()
-            );
+                minimum,
+                maximum);
     // clang-format on
 }
 /*** CONFIGURATION TEMPLATE ***/
@@ -167,14 +157,21 @@ void to_json(json& j, const ActuatorTemplate& actuatorTemplate)
         actuatorJ["unit"]["symbol"] = nullptr;
     }
 
-    if (actuatorTemplate.getDataType() == DataType::NUMERIC)
+    if (actuatorTemplate.getMinimum())
     {
-        actuatorJ["minimum"] = actuatorTemplate.getMinimum();
-        actuatorJ["maximum"] = actuatorTemplate.getMaximum();
+        actuatorJ["minimum"] = actuatorTemplate.getMinimum().value();
     }
     else
     {
         actuatorJ["minimum"] = nullptr;
+    }
+
+    if (actuatorTemplate.getMaximum())
+    {
+        actuatorJ["maximum"] = actuatorTemplate.getMaximum().value();
+    }
+    else
+    {
         actuatorJ["maximum"] = nullptr;
     }
 
@@ -184,10 +181,18 @@ void to_json(json& j, const ActuatorTemplate& actuatorTemplate)
 void from_json(const json& j, ActuatorTemplate& actuatorTemplate)
 {
     auto it_minimum = j.find("minimum");
-    double minimum = (it_minimum != j.end()) ? ((j["minimum"].is_null()) ? NULL : j["minimum"].get<double>()) : NULL;
+    WolkOptional<double> minimum;
+    if (it_minimum != j.end() && !j["minimum"].is_null())
+    {
+        minimum = j["minimum"].get<double>();
+    }
 
     auto it_maximum = j.find("maximum");
-    double maximum = (it_maximum != j.end()) ? ((j["maximum"].is_null()) ? NULL : j["maximum"].get<double>()) : NULL;
+    WolkOptional<double> maximum;
+    if (it_maximum != j.end() && !j["maximum"].is_null())
+    {
+        maximum = j["maximum"].get<double>();
+    }
 
     auto it_description = j.find("description");
     std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
@@ -224,14 +229,21 @@ void to_json(json& j, const SensorTemplate& sensorTemplate)
         sensorJ["unit"]["symbol"] = nullptr;
     }
 
-    if (sensorTemplate.getDataType() == DataType::NUMERIC)
+    if (sensorTemplate.getMinimum())
     {
-        sensorJ["minimum"] = sensorTemplate.getMinimum();
-        sensorJ["maximum"] = sensorTemplate.getMaximum();
+        sensorJ["minimum"] = sensorTemplate.getMinimum().value();
     }
     else
     {
         sensorJ["minimum"] = nullptr;
+    }
+
+    if (sensorTemplate.getMaximum())
+    {
+        sensorJ["maximum"] = sensorTemplate.getMaximum().value();
+    }
+    else
+    {
         sensorJ["maximum"] = nullptr;
     }
 
@@ -240,12 +252,19 @@ void to_json(json& j, const SensorTemplate& sensorTemplate)
 
 void from_json(const json& j, SensorTemplate& sensorTemplate)
 {
-
     auto it_minimum = j.find("minimum");
-    double minimum = (it_minimum != j.end()) ? ((j["minimum"].is_null()) ? NULL : j["minimum"].get<double>()) : NULL;
+    WolkOptional<double> minimum;
+    if (it_minimum != j.end() && !j["minimum"].is_null())
+    {
+        minimum = j["minimum"].get<double>();
+    }
 
     auto it_maximum = j.find("maximum");
-    double maximum = (it_maximum != j.end()) ? ((j["maximum"].is_null()) ? NULL : j["maximum"].get<double>()) : NULL;
+    WolkOptional<double> maximum;
+    if (it_maximum != j.end() && !j["maximum"].is_null())
+    {
+        maximum = j["maximum"].get<double>();
+    }
 
     auto it_description = j.find("description");
     std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";

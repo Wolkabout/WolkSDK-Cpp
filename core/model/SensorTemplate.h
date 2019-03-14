@@ -19,6 +19,7 @@
 
 #include "model/DataType.h"
 #include "model/ReadingType.h"
+#include "model/WolkOptional.h"
 
 namespace wolkabout
 {
@@ -28,19 +29,17 @@ public:
     SensorTemplate() = default;
 
     SensorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
-                   double minimum = 0, double maximum = 0);
+                   WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
 
     SensorTemplate(std::string name, std::string reference, ReadingType readingType, std::string description,
-                   double minimum = 0, double maximum = 0);
+                   WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
 
     SensorTemplate(std::string name, std::string reference, ReadingType::Name readingTypeName,
-                   ReadingType::MeasurmentUnit unit, std::string description, double minimum = 0, double maximum = 0);
+                   ReadingType::MeasurmentUnit unit, std::string description, WolkOptional<double> minimum = {},
+                   WolkOptional<double> maximum = {});
 
     SensorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
-                   std::string description, double minimum = 0, double maximum = 0);
-
-    SensorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
-                   DataType dataType, std::string description, double minimum = 0, double maximum = 0);
+                   std::string description, WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
 
     const std::string& getName() const;
 
@@ -52,11 +51,9 @@ public:
 
     const std::string& getDescription() const;
 
-    DataType getDataType() const;
+    WolkOptional<double> getMinimum() const;
 
-    double getMinimum() const;
-
-    double getMaximum() const;
+    WolkOptional<double> getMaximum() const;
 
     bool operator==(SensorTemplate& rhs) const;
     bool operator!=(SensorTemplate& rhs) const;
@@ -67,8 +64,8 @@ private:
     ReadingType m_readingType;
     std::string m_description;
 
-    double m_minimum;
-    double m_maximum;
+    WolkOptional<double> m_minimum;
+    WolkOptional<double> m_maximum;
 };
 }    // namespace wolkabout
 
