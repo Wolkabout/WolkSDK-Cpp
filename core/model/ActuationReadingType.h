@@ -46,15 +46,12 @@ public:
     ActuationReadingType(DataType);
     ActuationReadingType(ActuationReadingType::Name name, ActuationReadingType::MeasurmentUnit unit);
     ActuationReadingType(std::string name, std::string unitSymbol);
-    ActuationReadingType(std::string name, std::string unitSymbol, DataType dataType);
 
     const std::string& getName() const;
 
     const std::string& getMeasurmentUnit() const;
 
     const std::string& getMeasurmentUnitSymbol() const;
-
-    DataType getDataType() const;
 
     bool operator==(ActuationReadingType& rhs) const;
     bool operator!=(ActuationReadingType& rhs) const;
@@ -63,10 +60,8 @@ private:
     std::string m_name;
     std::string m_unit;
     std::string m_unitSymbol;
-    DataType m_dataType;
 
     void validate(ActuationReadingType::Name name, ActuationReadingType::MeasurmentUnit unit) const;
-    DataType dataTypeForName(ActuationReadingType::Name name) const;
     std::string symbolForUnit(ActuationReadingType::MeasurmentUnit unit) const;
 };
 

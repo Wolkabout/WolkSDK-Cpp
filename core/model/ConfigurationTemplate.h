@@ -18,6 +18,7 @@
 #define CONFIGTEMPLATE_H
 
 #include "model/DataType.h"
+#include "model/WolkOptional.h"
 
 #include <vector>
 
@@ -27,26 +28,24 @@ class ConfigurationTemplate
 {
 public:
     ConfigurationTemplate() = default;
-    ConfigurationTemplate(std::string name, std::string reference, DataType dataType, std::string description,
-                          std::string defaultValue, double minimum = 0, double maximum = 0);
+    ConfigurationTemplate(std::string name, std::string reference, std::string description, std::string defaultValue,
+                          WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
 
-    ConfigurationTemplate(std::string name, std::string reference, DataType dataType, std::string description,
-                          std::string defaultValue, std::vector<std::string> labels, double minimum = 0,
-                          double maximum = 0);
+    ConfigurationTemplate(std::string name, std::string reference, std::string description, std::string defaultValue,
+                          std::vector<std::string> labels, WolkOptional<double> minimum = {},
+                          WolkOptional<double> maximum = {});
 
     const std::string& getName() const;
 
     const std::string& getReference() const;
 
-    DataType getDataType() const;
-
     const std::string& getDescription() const;
 
     const std::string& getDefaultValue() const;
 
-    double getMinimum() const;
+    WolkOptional<double> getMinimum() const;
 
-    double getMaximum() const;
+    WolkOptional<double> getMaximum() const;
 
     const std::vector<std::string>& getLabels() const;
 
@@ -58,12 +57,11 @@ public:
 private:
     std::string m_name;
     std::string m_reference;
-    DataType m_dataType;
     std::string m_description;
     std::string m_defaultValue;
 
-    double m_minimum;
-    double m_maximum;
+    WolkOptional<double> m_minimum;
+    WolkOptional<double> m_maximum;
 
     std::vector<std::string> m_labels;
     size_t m_size;
