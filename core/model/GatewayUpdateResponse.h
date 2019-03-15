@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,7 @@ public:
     };
 
     GatewayUpdateResponse() = default;
-    GatewayUpdateResponse(GatewayUpdateResponse::Result result, std::string description = "");
-
-    virtual ~GatewayUpdateResponse() = default;
+    explicit GatewayUpdateResponse(GatewayUpdateResponse::Result result, std::string description = "");
 
     const GatewayUpdateResponse::Result& getResult() const;
 

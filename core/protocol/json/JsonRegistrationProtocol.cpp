@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@
 #include "model/DataType.h"
 #include "model/GatewayUpdateRequest.h"
 #include "model/GatewayUpdateResponse.h"
+#include "model/Message.h"
 #include "model/SubdeviceRegistrationRequest.h"
 #include "model/SubdeviceRegistrationResponse.h"
-// #include "model/DeviceReregistrationResponse.h"
-#include "model/Message.h"
 #include "protocol/json/JsonDto.h"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"

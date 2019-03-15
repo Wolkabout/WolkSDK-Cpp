@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-#include "ConfigurationTemplate.h"
+#include "model/ConfigurationTemplate.h"
 
-#include <cmath>
-#include <stdexcept>
 #include <utility>
 
 namespace wolkabout
@@ -25,7 +23,8 @@ namespace wolkabout
 ConfigurationTemplate::ConfigurationTemplate(std::string name, std::string reference, DataType dataType,
                                              std::string description, std::string defaultValue,
                                              WolkOptional<double> minimum, WolkOptional<double> maximum)
-: ConfigurationTemplate(name, reference, dataType, description, defaultValue, {}, minimum, maximum)
+: ConfigurationTemplate(std::move(name), std::move(reference), dataType, std::move(description),
+                        std::move(defaultValue), {}, minimum, maximum)
 {
 }
 

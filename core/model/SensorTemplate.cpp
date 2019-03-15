@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 
 #include "model/SensorTemplate.h"
 
+#include <utility>
+
 namespace wolkabout
 {
 SensorTemplate::SensorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
                                WolkOptional<double> minimum, WolkOptional<double> maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
-, m_readingType{std::move(dataType)}
+, m_readingType{dataType}
 , m_description{std::move(description)}
 , m_minimum{minimum}
 , m_maximum{maximum}
@@ -46,7 +48,7 @@ SensorTemplate::SensorTemplate(std::string name, std::string reference, ReadingT
 
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
-, m_readingType{ReadingType(std::move(readingTypeName), std::move(unit))}
+, m_readingType{ReadingType{readingTypeName, unit}}
 , m_description{std::move(description)}
 , m_minimum{minimum}
 , m_maximum{maximum}
@@ -58,7 +60,7 @@ SensorTemplate::SensorTemplate(std::string name, std::string reference, std::str
                                WolkOptional<double> maximum)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
-, m_readingType{ReadingType(std::move(readingTypeName), std::move(unitSymbol))}
+, m_readingType{ReadingType{std::move(readingTypeName), std::move(unitSymbol)}}
 , m_description{std::move(description)}
 , m_minimum(minimum)
 , m_maximum(maximum)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TEMPLATE_H
-#define TEMPLATE_H
+#ifndef DEVICETEMPLATE_H
+#define DEVICETEMPLATE_H
 
 #include "model/ActuatorTemplate.h"
 #include "model/AlarmTemplate.h"
@@ -25,17 +25,20 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace wolkabout
 {
 class DeviceTemplate
 {
 public:
-    DeviceTemplate(std::vector<ConfigurationTemplate> configurations = {}, std::vector<SensorTemplate> sensors = {},
-                   std::vector<AlarmTemplate> alarms = {}, std::vector<ActuatorTemplate> actuators = {},
-                   std::string firmwareUpdateType = "", std::map<std::string, std::string> typeParameters = {},
-                   std::map<std::string, std::string> connectivityParameters = {},
-                   std::map<std::string, bool> firmwareUpdateParameters = {});
+    explicit DeviceTemplate(std::vector<ConfigurationTemplate> configurations = {},
+                            std::vector<SensorTemplate> sensors = {}, std::vector<AlarmTemplate> alarms = {},
+                            std::vector<ActuatorTemplate> actuators = {}, std::string firmwareUpdateType = "",
+                            std::map<std::string, std::string> typeParameters = {},
+                            std::map<std::string, std::string> connectivityParameters = {},
+                            std::map<std::string, bool> firmwareUpdateParameters = {});
 
     DeviceTemplate& addConfiguration(const ConfigurationTemplate& configurationTemplate);
     DeviceTemplate& addSensor(const SensorTemplate& sensorTemplate);
@@ -83,4 +86,4 @@ private:
 };
 }    // namespace wolkabout
 
-#endif    // TEMPLATE_H
+#endif    // DEVICETEMPLATE_H

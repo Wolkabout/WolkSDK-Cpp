@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ namespace wolkabout
 SubdeviceRegistrationResponse::SubdeviceRegistrationResponse(std::string subdeviceKey,
                                                              SubdeviceRegistrationResponse::Result result,
                                                              std::string description)
-: m_subdeviceKey(std::move(subdeviceKey)), m_result(std::move(result)), m_description(std::move(description))
+: m_subdeviceKey(std::move(subdeviceKey)), m_result(result), m_description(std::move(description))
 {
 }
 

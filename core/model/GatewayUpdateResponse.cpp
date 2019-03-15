@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 #include "model/GatewayUpdateResponse.h"
 
-#include <string>
 #include <utility>
 
 namespace wolkabout
 {
 GatewayUpdateResponse::GatewayUpdateResponse(GatewayUpdateResponse::Result result, std::string description)
-: m_result(std::move(result)), m_description(std::move(description))
+: m_result(result), m_description(std::move(description))
 {
 }
 

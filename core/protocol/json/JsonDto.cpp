@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,16 @@
 #include "model/SubdeviceRegistrationRequest.h"
 #include "model/SubdeviceRegistrationResponse.h"
 
+#include <string>
+
 using nlohmann::json;
 
 namespace wolkabout
 {
-static std::string createMultivalue(const std::string& value, int size)
+static std::string createMultivalue(const std::string& value, size_t size)
 {
     std::string multivalue = "";
-    for (int i = 0; i < size; ++i)
+    for (size_t i = 0; i < size; ++i)
     {
         multivalue += value;
         if (i < size - 1)
@@ -382,47 +384,29 @@ void to_json(json& j, const SubdeviceRegistrationResponse& dto)
         {
         case SubdeviceRegistrationResponse::Result::OK:
             return "OK";
-            break;
-
         case SubdeviceRegistrationResponse::Result::ERROR_GATEWAY_NOT_FOUND:
             return "ERROR_GATEWAY_NOT_FOUND";
-            break;
-
         case SubdeviceRegistrationResponse::Result::ERROR_KEY_CONFLICT:
             return "ERROR_KEY_CONFLICT";
-            break;
-
         case SubdeviceRegistrationResponse::Result::ERROR_NOT_A_GATEWAY:
             return "ERROR_NOT_A_GATEWAY";
-            break;
-
         case SubdeviceRegistrationResponse::Result::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED:
             return "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED";
-            break;
-
         case SubdeviceRegistrationResponse::Result::ERROR_VALIDATION_ERROR:
             return "ERROR_VALIDATION_ERROR";
-            break;
-
         case SubdeviceRegistrationResponse::Result::ERROR_INVALID_DTO:
             return "ERROR_INVALID_DTO";
-            break;
-
         case SubdeviceRegistrationResponse::Result::ERROR_KEY_MISSING:
             return "ERROR_KEY_MISSING";
-            break;
-
         case SubdeviceRegistrationResponse::Result::ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN:
             return "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN";
-            break;
-
         case SubdeviceRegistrationResponse::Result::ERROR_UNKNOWN:
             return "ERROR_UNKNOWN";
-            break;
-
         default:
+        {
             assert(false);
             throw std::invalid_argument("Unhandled result");
+        }
         }
     }();
 
@@ -517,39 +501,25 @@ void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto)
         {
         case GatewayUpdateResponse::Result::OK:
             return "OK";
-            break;
-
         case GatewayUpdateResponse::Result::ERROR_GATEWAY_NOT_FOUND:
             return "ERROR_GATEWAY_NOT_FOUND";
-            break;
-
         case GatewayUpdateResponse::Result::ERROR_KEY_CONFLICT:
             return "ERROR_KEY_CONFLICT";
-            break;
-
         case GatewayUpdateResponse::Result::ERROR_NOT_A_GATEWAY:
             return "ERROR_NOT_A_GATEWAY";
-            break;
-
         case GatewayUpdateResponse::Result::ERROR_VALIDATION_ERROR:
             return "ERROR_VALIDATION_ERROR";
-            break;
-
         case GatewayUpdateResponse::Result::ERROR_INVALID_DTO:
             return "ERROR_INVALID_DTO";
-            break;
-
         case GatewayUpdateResponse::Result::ERROR_KEY_MISSING:
             return "ERROR_KEY_MISSING";
-            break;
-
         case GatewayUpdateResponse::Result::ERROR_UNKNOWN:
             return "ERROR_UNKNOWN";
-            break;
-
         default:
+        {
             assert(false);
             throw std::invalid_argument("Unhandled result");
+        }
         }
     }();
 

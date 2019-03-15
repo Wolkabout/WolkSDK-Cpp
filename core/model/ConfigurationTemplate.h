@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef CONFIGTEMPLATE_H
-#define CONFIGTEMPLATE_H
+#ifndef CONFIGURATIONTEMPLATE_H
+#define CONFIGURATIONTEMPLATE_H
 
 #include "model/DataType.h"
 #include "model/WolkOptional.h"
 
+#include <string>
 #include <vector>
 
 namespace wolkabout
@@ -72,4 +73,4 @@ private:
 };
 }    // namespace wolkabout
 
-#endif    // CONFIGTEMPLATE_H
+#endif    // CONFIGURATIONTEMPLATE_H
