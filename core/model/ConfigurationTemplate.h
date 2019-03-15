@@ -28,16 +28,19 @@ class ConfigurationTemplate
 {
 public:
     ConfigurationTemplate() = default;
-    ConfigurationTemplate(std::string name, std::string reference, std::string description, std::string defaultValue,
-                          WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
+    ConfigurationTemplate(std::string name, std::string reference, DataType dataType, std::string description,
+                          std::string defaultValue, WolkOptional<double> minimum = {},
+                          WolkOptional<double> maximum = {});
 
-    ConfigurationTemplate(std::string name, std::string reference, std::string description, std::string defaultValue,
-                          std::vector<std::string> labels, WolkOptional<double> minimum = {},
+    ConfigurationTemplate(std::string name, std::string reference, DataType dataType, std::string description,
+                          std::string defaultValue, std::vector<std::string> labels, WolkOptional<double> minimum = {},
                           WolkOptional<double> maximum = {});
 
     const std::string& getName() const;
 
     const std::string& getReference() const;
+
+    DataType getDataType() const;
 
     const std::string& getDescription() const;
 
@@ -57,6 +60,7 @@ public:
 private:
     std::string m_name;
     std::string m_reference;
+    DataType m_dataType;
     std::string m_description;
     std::string m_defaultValue;
 
