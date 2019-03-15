@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,10 @@
 #define JSONSINGLEREFERENCEPROTOCOL_H
 
 #include "protocol/DataProtocol.h"
+
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace wolkabout
 {

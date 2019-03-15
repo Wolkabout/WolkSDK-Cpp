@@ -29,7 +29,7 @@ class GatewayUpdateRequest
 public:
     GatewayUpdateRequest() = default;
     GatewayUpdateRequest(std::string gatewayName, std::string gatewayKey, DeviceTemplate gatewayTemplate);
-    GatewayUpdateRequest(DetailedDevice gateway);
+    explicit GatewayUpdateRequest(DetailedDevice gateway);
 
     virtual ~GatewayUpdateRequest() = default;
 

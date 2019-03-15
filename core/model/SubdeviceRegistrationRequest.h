@@ -29,11 +29,11 @@ class SubdeviceRegistrationRequest
 public:
     SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceTemplate,
                                  bool defaultBinding = true);
-    SubdeviceRegistrationRequest(DetailedDevice device, bool defaultBinding = true);
+    explicit SubdeviceRegistrationRequest(DetailedDevice device, bool defaultBinding = true);
 
     const std::string& getSubdeviceName() const;
     const std::string& getSubdeviceKey() const;
-    const bool& getDefaultBinding() const;
+    bool getDefaultBinding() const;
 
     const DeviceTemplate& getTemplate() const;
 
