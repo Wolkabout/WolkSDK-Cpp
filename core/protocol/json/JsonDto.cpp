@@ -46,9 +46,16 @@ static std::string createMultivalue(const std::string& value, int size)
 /*** CONFIGURATION TEMPLATE ***/
 void to_json(json& j, const ConfigurationTemplate& configurationTemplate)
 {
+    auto dataType = [&]() -> std::string {
+        auto dataTypeStr = toString(configurationTemplate.getDataType());
+
+        return dataTypeStr.empty() ? throw std::invalid_argument("Invalid data type") : dataTypeStr;
+    }();
+
     json confJ;
 
     confJ["name"] = configurationTemplate.getName();
+    confJ["dataType"] = dataType;
     confJ["reference"] = configurationTemplate.getReference();
     confJ["defaultValue"] = createMultivalue(configurationTemplate.getDefaultValue(), configurationTemplate.getSize());
     confJ["size"] = configurationTemplate.getSize();
@@ -78,6 +85,26 @@ void to_json(json& j, const ConfigurationTemplate& configurationTemplate)
 
 void from_json(const json& j, ConfigurationTemplate& configurationTemplate)
 {
+    auto dataType = [&]() -> DataType {
+        std::string dataTypeStr = j.at("dataType").get<std::string>();
+        if (dataTypeStr == "STRING")
+        {
+            return DataType::STRING;
+        }
+        else if (dataTypeStr == "NUMERIC")
+        {
+            return DataType::NUMERIC;
+        }
+        else if (dataTypeStr == "BOOLEAN")
+        {
+            return DataType::BOOLEAN;
+        }
+        else
+        {
+            throw std::invalid_argument("Invalid data type");
+        }
+    }();
+
     auto it_minimum = j.find("minimum");
     WolkOptional<double> minimum;
     if (it_minimum != j.end() && !j["minimum"].is_null())
@@ -103,6 +130,7 @@ void from_json(const json& j, ConfigurationTemplate& configurationTemplate)
             ConfigurationTemplate(
                 j.at("name").get<std::string>(),
                 j.at("reference").get<std::string>(),
+                dataType,
                 description,
                 defaultValue,
                 j.at("labels").is_null() ? std::vector<std::string>{} : j.at("labels").get<std::vector<std::string>>(),
