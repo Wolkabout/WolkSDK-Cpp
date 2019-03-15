@@ -250,6 +250,21 @@ bool wolkabout::DeviceTemplate::operator==(DeviceTemplate& rhs) const
         return false;
     }
 
+    if (m_typeParameters != rhs.m_typeParameters)
+    {
+        return false;
+    }
+
+    if (m_connectivityParameters != rhs.m_connectivityParameters)
+    {
+        return false;
+    }
+
+    if (m_firmwareUpdateParameters != rhs.m_firmwareUpdateParameters)
+    {
+        return false;
+    }
+
     for (unsigned long long int i = 0; i < m_configurations.size(); ++i)
     {
         if (m_configurations.at(i) != rhs.m_configurations.at(i))
