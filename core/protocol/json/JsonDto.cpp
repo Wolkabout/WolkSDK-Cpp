@@ -411,8 +411,9 @@ void to_json(json& j, const SubdeviceRegistrationResponse& dto)
     }();
 
     // clang-format off
+    json j_payload = {{"deviceKey", dto.getSubdeviceKey()}};
     j = {
-        {"payload", {"deviceKey", dto.getSubdeviceKey()}},
+        {"payload" , j_payload},
         {"result", resultStr},
         {"description", dto.getDescription()}
     };
