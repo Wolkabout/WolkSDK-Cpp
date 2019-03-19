@@ -516,6 +516,8 @@ void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto)
             return "ERROR_KEY_MISSING";
         case GatewayUpdateResponse::Result::ERROR_SUBDEVICE_MANAGEMENT_CHANGE_NOT_ALLOWED:
             return "ERROR_SUBDEVICE_MANAGEMENT_CHANGE_NOT_ALLOWED";
+        case GatewayUpdateResponse::Result::ERROR_GATEWAY_UPDATE_FORBIDDEN:
+            return "ERROR_GATEWAY_UPDATE_FORBIDDEN";
         case GatewayUpdateResponse::Result::ERROR_UNKNOWN:
             return "ERROR_UNKNOWN";
         default:
@@ -568,6 +570,10 @@ GatewayUpdateResponse gateway_update_response_from_json(const json& j)
             else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_CHANGE_NOT_ALLOWED")
             {
                 return GatewayUpdateResponse::Result::ERROR_SUBDEVICE_MANAGEMENT_CHANGE_NOT_ALLOWED;
+            }
+            else if (resultStr == "ERROR_GATEWAY_UPDATE_FORBIDDEN")
+            {
+                return GatewayUpdateResponse::Result::ERROR_GATEWAY_UPDATE_FORBIDDEN;
             }
             else
             {
