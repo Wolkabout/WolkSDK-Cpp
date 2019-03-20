@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "FirmwareUpdateStatus.h"
+#include "model/FirmwareUpdateStatus.h"
 
 namespace wolkabout
 {
@@ -23,13 +23,8 @@ FirmwareUpdateStatus::FirmwareUpdateStatus(std::vector<std::string> deviceKeys, 
 {
 }
 
-FirmwareUpdateStatus::FirmwareUpdateStatus(FirmwareUpdateStatus::Status status) : FirmwareUpdateStatus({}, status) {}
-
 FirmwareUpdateStatus::FirmwareUpdateStatus(std::vector<std::string> deviceKeys, FirmwareUpdateStatus::Error errorCode)
 : m_deviceKeys{std::move(deviceKeys)}, m_status{FirmwareUpdateStatus::Status::ERROR}, m_errorCode{errorCode}
-{
-}
-FirmwareUpdateStatus::FirmwareUpdateStatus(FirmwareUpdateStatus::Error errorCode) : FirmwareUpdateStatus({}, errorCode)
 {
 }
 

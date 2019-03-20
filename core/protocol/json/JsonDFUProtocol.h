@@ -23,6 +23,7 @@ namespace wolkabout
 class FirmwareUpdateAbort;
 class FirmwareUpdateInstall;
 class FirmwareUpdateStatus;
+class FirmwareVersion;
 
 class JsonDFUProtocol : public Protocol
 {
@@ -34,14 +35,10 @@ public:
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
-    bool isFirmwareUpdateInstall(const Message& message) const;
-    bool isFirmwareUpdateAbort(const Message& message) const;
-
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const FirmwareUpdateStatus& firmwareUpdateStatus) const;
 
-    std::unique_ptr<Message> makeFromFirmwareVersion(const std::string& deviceKey,
-                                                     const std::string& firmwareVerion) const;
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey, const FirmwareVersion& firmwareVersion) const;
 
     std::unique_ptr<FirmwareUpdateInstall> makeFirmwareUpdateInstall(const Message& message) const;
     std::unique_ptr<FirmwareUpdateAbort> makeFirmwareUpdateAbort(const Message& message) const;

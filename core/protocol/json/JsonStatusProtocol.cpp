@@ -17,9 +17,9 @@
 #include "protocol/json/JsonStatusProtocol.h"
 #include "Json.h"
 #include "model/DeviceStatus.h"
+#include "model/DeviceStatusConfirm.h"
 #include "model/DeviceStatusResponse.h"
 #include "model/DeviceStatusUpdate.h"
-#include "model/DeviceStatusConfirm.h"
 #include "model/Message.h"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
@@ -110,12 +110,12 @@ void to_json(json& j, const DeviceStatusConfirm& dto)
     auto resultStr = [&]() -> std::string {
         switch (dto.getResult())
         {
-            case PlatformResult::OK:
-                return "OK";
-                break;
+        case PlatformResult::OK:
+            return "OK";
+            break;
 
-            default:
-                throw std::invalid_argument("Unhandled result");
+        default:
+            throw std::invalid_argument("Unhandled result");
         }
     }();
 

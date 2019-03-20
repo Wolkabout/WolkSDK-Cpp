@@ -26,7 +26,6 @@ class FirmwareUpdateAbort
 {
 public:
     FirmwareUpdateAbort(std::vector<std::string> deviceKeys);
-    FirmwareUpdateAbort();
 
     const std::vector<std::string>& getDeviceKeys() const;
 

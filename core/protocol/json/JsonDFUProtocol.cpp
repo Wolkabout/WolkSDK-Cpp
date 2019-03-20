@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-#include "JsonDFUProtocol.h"
-#include "Json.h"
+#include "protocol/json/JsonDFUProtocol.h"
 #include "model/FirmwareUpdateAbort.h"
 #include "model/FirmwareUpdateInstall.h"
 #include "model/FirmwareUpdateStatus.h"
+#include "model/FirmwareVersion.h"
 #include "model/Message.h"
+#include "protocol/json/Json.h"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
@@ -159,16 +160,6 @@ std::vector<std::string> JsonDFUProtocol::getInboundChannelsForDevice(const std:
     return channels;
 }
 
-bool JsonDFUProtocol::isFirmwareUpdateInstall(const wolkabout::Message& message) const
-{
-    return StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT);
-}
-
-bool JsonDFUProtocol::isFirmwareUpdateAbort(const wolkabout::Message& message) const
-{
-    return StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_ABORT_TOPIC_ROOT);
-}
-
 std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceKey,
                                                       const FirmwareUpdateStatus& firmwareUpdateStatus) const
 {
@@ -176,7 +167,7 @@ std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceK
     const std::string payload = jPayload.dump();
     std::string topic = FIRMWARE_UPDATE_STATUS_TOPIC_ROOT + m_devicePrefix + deviceKey;
 
-    // add subdevice key to topic of only one subdevice
+    // add subdevice key to topic if only one subdevice
     if (m_isGateway && firmwareUpdateStatus.getDeviceKeys().size() == 1 &&
         firmwareUpdateStatus.getDeviceKeys()[0] != deviceKey)
     {
@@ -186,16 +177,31 @@ std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceK
     return std::unique_ptr<Message>(new Message(payload, topic));
 }
 
-std::unique_ptr<Message> JsonDFUProtocol::makeFromFirmwareVersion(const std::string& deviceKey,
-                                                                  const std::string& firmwareVerion) const
+std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceKey,
+                                                      const FirmwareVersion& version) const
 {
-    const std::string topic = FIRMWARE_VERSION_TOPIC_ROOT + m_devicePrefix + deviceKey;
-    return std::unique_ptr<Message>(new Message(firmwareVerion, topic));
+    std::string topic;
+    if (m_isGateway && deviceKey != version.getDeviceKey())
+    {
+        topic = FIRMWARE_VERSION_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + DEVICE_PATH_PREFIX +
+                version.getDeviceKey();
+    }
+    else
+    {
+        topic = FIRMWARE_VERSION_TOPIC_ROOT + m_devicePrefix + deviceKey;
+    }
+
+    return std::unique_ptr<Message>(new Message(version.getVersion(), topic));
 }
 
 std::unique_ptr<FirmwareUpdateInstall> JsonDFUProtocol::makeFirmwareUpdateInstall(
   const wolkabout::Message& message) const
 {
+    if (!StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
     try
     {
         json j = json::parse(message.getContent());
@@ -210,6 +216,11 @@ std::unique_ptr<FirmwareUpdateInstall> JsonDFUProtocol::makeFirmwareUpdateInstal
 
 std::unique_ptr<FirmwareUpdateAbort> JsonDFUProtocol::makeFirmwareUpdateAbort(const wolkabout::Message& message) const
 {
+    if (!StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_ABORT_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
     try
     {
         json j = json::parse(message.getContent());

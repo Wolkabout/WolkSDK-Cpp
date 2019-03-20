@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-#include "FirmwareUpdateAbort.h"
+#include "model/FirmwareVersion.h"
+
+#include <utility>
 
 namespace wolkabout
 {
-FirmwareUpdateAbort::FirmwareUpdateAbort(std::vector<std::string> deviceKeys) : m_deviceKeys{std::move(deviceKeys)} {}
-
-const std::vector<std::string>& FirmwareUpdateAbort::getDeviceKeys() const
+FirmwareVersion::FirmwareVersion(std::string deviceKey, std::string version)
+: m_deviceKey{std::move(deviceKey)}, m_version{std::move(version)}
 {
-    return m_deviceKeys;
+}
+
+const std::string& FirmwareVersion::getDeviceKey() const
+{
+    return m_deviceKey;
+}
+
+const std::string& FirmwareVersion::getVersion() const
+{
+    return m_version;
 }
 }    // namespace wolkabout

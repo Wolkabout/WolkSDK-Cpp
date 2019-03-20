@@ -47,8 +47,6 @@ public:
 
     FirmwareUpdateStatus(std::vector<std::string> deviceKeys, FirmwareUpdateStatus::Status status);
     FirmwareUpdateStatus(std::vector<std::string> deviceKeys, FirmwareUpdateStatus::Error errorCode);
-    FirmwareUpdateStatus(FirmwareUpdateStatus::Status status);
-    FirmwareUpdateStatus(FirmwareUpdateStatus::Error errorCode);
 
     const std::vector<std::string>& getDeviceKeys() const;
     FirmwareUpdateStatus::Status getStatus() const;

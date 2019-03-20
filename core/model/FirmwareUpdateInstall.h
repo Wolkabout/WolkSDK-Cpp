@@ -25,17 +25,16 @@ namespace wolkabout
 class FirmwareUpdateInstall
 {
 public:
-    FirmwareUpdateInstall(std::vector<std::string> deviceKeys, std::string name, std::string hash);
-    FirmwareUpdateInstall(std::string name, std::string hash);
+    FirmwareUpdateInstall(std::vector<std::string> deviceKeys, std::string fileName, std::string fileHash);
 
     const std::vector<std::string>& getDeviceKeys() const;
-    const std::string& getName() const;
-    const std::string& getHash() const;
+    const std::string& getFileName() const;
+    const std::string& getFileHash() const;
 
 private:
     std::vector<std::string> m_deviceKeys;
-    std::string m_name;
-    std::string m_hash;
+    std::string m_fileName;
+    std::string m_fileHash;
 };
 }    // namespace wolkabout
 
