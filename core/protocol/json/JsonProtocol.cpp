@@ -23,6 +23,7 @@
 #include "model/ConfigurationSetCommand.h"
 #include "model/Message.h"
 #include "model/SensorReading.h"
+#include "protocol/json/Json.h"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
@@ -33,22 +34,6 @@ using nlohmann::json;
 
 namespace wolkabout
 {
-const std::string JsonProtocol::NAME = "JsonProtocol";
-
-const std::string JsonProtocol::CHANNEL_DELIMITER = "/";
-const std::string JsonProtocol::CHANNEL_MULTI_LEVEL_WILDCARD = "#";
-const std::string JsonProtocol::CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
-
-const std::string JsonProtocol::DEVICE_TYPE = "d";
-const std::string JsonProtocol::REFERENCE_TYPE = "r";
-const std::string JsonProtocol::DEVICE_TO_PLATFORM_TYPE = "d2p";
-const std::string JsonProtocol::PLATFORM_TO_DEVICE_TYPE = "p2d";
-
-const std::string JsonProtocol::DEVICE_PATH_PREFIX = "d/";
-const std::string JsonProtocol::REFERENCE_PATH_PREFIX = "r/";
-const std::string JsonProtocol::DEVICE_TO_PLATFORM_DIRECTION = "d2p/";
-const std::string JsonProtocol::PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
-
 const std::string JsonProtocol::SENSOR_READING_TOPIC_ROOT = "d2p/sensor_reading/";
 const std::string JsonProtocol::EVENTS_TOPIC_ROOT = "d2p/events/";
 const std::string JsonProtocol::ACTUATION_STATUS_TOPIC_ROOT = "d2p/actuator_status/";
@@ -56,8 +41,8 @@ const std::string JsonProtocol::CONFIGURATION_RESPONSE_TOPIC_ROOT = "d2p/configu
 
 const std::string JsonProtocol::ACTUATION_SET_TOPIC_ROOT = "p2d/actuator_set/";
 const std::string JsonProtocol::ACTUATION_GET_TOPIC_ROOT = "p2d/actuator_get/";
-const std::string JsonProtocol::CONFIGURATION_SET_REQUEST_TOPIC_ROOT = "p2d/configuration_set/";
-const std::string JsonProtocol::CONFIGURATION_GET_REQUEST_TOPIC_ROOT = "p2d/configuration_get/";
+const std::string JsonProtocol::CONFIGURATION_SET_TOPIC_ROOT = "p2d/configuration_set/";
+const std::string JsonProtocol::CONFIGURATION_GET_TOPIC_ROOT = "p2d/configuration_get/";
 
 const std::string JsonProtocol::MULTIVALUE_READING_DELIMITER = ",";
 
@@ -137,29 +122,58 @@ static void to_json(json& j, const std::shared_ptr<ActuatorStatus>& p)
     to_json(j, *p);
 }
 
-const std::string& JsonProtocol::getName() const
+JsonProtocol::JsonProtocol(bool isGateway) : m_isGateway{isGateway}
 {
-    return NAME;
+    if (isGateway)
+    {
+        m_devicePrefix = GATEWAY_PATH_PREFIX;
+    }
+    else
+    {
+        m_devicePrefix = DEVICE_PATH_PREFIX;
+    }
 }
 
 std::vector<std::string> JsonProtocol::getInboundChannels() const
 {
-    return {ACTUATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
-              REFERENCE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
-            ACTUATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
-              REFERENCE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
-            CONFIGURATION_GET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
-            CONFIGURATION_SET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD};
+    if (m_isGateway)
+    {
+        return {ACTUATION_GET_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+                ACTUATION_SET_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+                CONFIGURATION_GET_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+                CONFIGURATION_SET_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD};
+    }
+    else
+    {
+        return {ACTUATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
+                  REFERENCE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+                ACTUATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
+                  REFERENCE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+                CONFIGURATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+                CONFIGURATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD};
+    }
 }
 
 std::vector<std::string> JsonProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    return {ACTUATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
-              CHANNEL_MULTI_LEVEL_WILDCARD,
-            ACTUATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
-              CHANNEL_MULTI_LEVEL_WILDCARD,
-            CONFIGURATION_GET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey,
-            CONFIGURATION_SET_REQUEST_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey};
+    if (m_isGateway)
+    {
+        return {
+          ACTUATION_GET_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + CHANNEL_MULTI_LEVEL_WILDCARD,
+          ACTUATION_SET_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + CHANNEL_MULTI_LEVEL_WILDCARD,
+          CONFIGURATION_GET_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+            CHANNEL_MULTI_LEVEL_WILDCARD,
+          CONFIGURATION_SET_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+            CHANNEL_MULTI_LEVEL_WILDCARD};
+    }
+    {
+        return {ACTUATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
+                  CHANNEL_MULTI_LEVEL_WILDCARD,
+                ACTUATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
+                  CHANNEL_MULTI_LEVEL_WILDCARD,
+                CONFIGURATION_GET_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey,
+                CONFIGURATION_SET_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey};
+    }
 }
 
 std::unique_ptr<Message> JsonProtocol::makeMessage(
@@ -170,7 +184,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(
         return nullptr;
     }
 
-    const std::string topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+    const std::string topic = SENSOR_READING_TOPIC_ROOT + m_devicePrefix + deviceKey + CHANNEL_DELIMITER +
                               REFERENCE_PATH_PREFIX + sensorReadings.front()->getReference();
 
     std::vector<json> payload(sensorReadings.size());
@@ -215,7 +229,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
 
     const json jPayload(alarms);
     const std::string payload = jPayload.dump();
-    const std::string topic = EVENTS_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+    const std::string topic = EVENTS_TOPIC_ROOT + m_devicePrefix + deviceKey + CHANNEL_DELIMITER +
                               REFERENCE_PATH_PREFIX + alarms.front()->getReference();
 
     return std::unique_ptr<Message>(new Message(payload, topic));
@@ -232,7 +246,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(
 
     const json jPayload(actuatorStatuses.front());
     const std::string payload = jPayload.dump();
-    const std::string topic = ACTUATION_STATUS_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+    const std::string topic = ACTUATION_STATUS_TOPIC_ROOT + m_devicePrefix + deviceKey + CHANNEL_DELIMITER +
                               REFERENCE_PATH_PREFIX + actuatorStatuses.front()->getReference();
 
     return std::unique_ptr<Message>(new Message(payload, topic));
@@ -255,7 +269,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
 
     const json jPayload{{"values", data}};
     const std::string payload = jPayload.dump();
-    const std::string topic = CONFIGURATION_RESPONSE_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
+    const std::string topic = CONFIGURATION_RESPONSE_TOPIC_ROOT + m_devicePrefix + deviceKey;
 
     return std::unique_ptr<Message>(new Message(payload, topic));
 }
@@ -350,12 +364,12 @@ bool JsonProtocol::isActuatorGetMessage(const Message& message) const
 
 bool JsonProtocol::isConfigurationSetMessage(const Message& message) const
 {
-    return StringUtils::startsWith(message.getChannel(), CONFIGURATION_SET_REQUEST_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), CONFIGURATION_SET_TOPIC_ROOT);
 }
 
 bool JsonProtocol::isConfigurationGetMessage(const Message& message) const
 {
-    return StringUtils::startsWith(message.getChannel(), CONFIGURATION_GET_REQUEST_TOPIC_ROOT);
+    return StringUtils::startsWith(message.getChannel(), CONFIGURATION_GET_TOPIC_ROOT);
 }
 
 std::string JsonProtocol::extractReferenceFromChannel(const std::string& topic) const

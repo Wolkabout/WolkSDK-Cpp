@@ -28,7 +28,7 @@ namespace wolkabout
 class JsonProtocol : public DataProtocol
 {
 public:
-    const std::string& getName() const override;
+    JsonProtocol(bool isGateway = false);
 
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
@@ -61,24 +61,11 @@ public:
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
 private:
+    bool m_isGateway;
+    std::string m_devicePrefix;
+
     std::string joinMultiValues(const std::vector<std::string>& values, const std::string& delimiter) const;
     std::vector<std::string> parseMultiValues(const std::string& values, const std::string& delimiter) const;
-
-    static const std::string NAME;
-
-    static const std::string CHANNEL_DELIMITER;
-    static const std::string CHANNEL_MULTI_LEVEL_WILDCARD;
-    static const std::string CHANNEL_SINGLE_LEVEL_WILDCARD;
-
-    static const std::string DEVICE_TYPE;
-    static const std::string REFERENCE_TYPE;
-    static const std::string DEVICE_TO_PLATFORM_TYPE;
-    static const std::string PLATFORM_TO_DEVICE_TYPE;
-
-    static const std::string DEVICE_PATH_PREFIX;
-    static const std::string REFERENCE_PATH_PREFIX;
-    static const std::string DEVICE_TO_PLATFORM_DIRECTION;
-    static const std::string PLATFORM_TO_DEVICE_DIRECTION;
 
     static const std::string SENSOR_READING_TOPIC_ROOT;
     static const std::string EVENTS_TOPIC_ROOT;
@@ -87,8 +74,8 @@ private:
 
     static const std::string ACTUATION_SET_TOPIC_ROOT;
     static const std::string ACTUATION_GET_TOPIC_ROOT;
-    static const std::string CONFIGURATION_SET_REQUEST_TOPIC_ROOT;
-    static const std::string CONFIGURATION_GET_REQUEST_TOPIC_ROOT;
+    static const std::string CONFIGURATION_SET_TOPIC_ROOT;
+    static const std::string CONFIGURATION_GET_TOPIC_ROOT;
 
     static const std::string MULTIVALUE_READING_DELIMITER;
 };

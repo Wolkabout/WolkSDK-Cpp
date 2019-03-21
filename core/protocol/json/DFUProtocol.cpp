@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include "model/FirmwareUpdateCommand.h"
 #include "model/FirmwareUpdateResponse.h"
 #include "model/Message.h"
+#include "protocol/json/Json.h"
 #include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
 
@@ -27,11 +28,6 @@ using nlohmann::json;
 
 namespace wolkabout
 {
-const std::string DFUProtocol::NAME = "DFUProtocol";
-
-const std::string DFUProtocol::CHANNEL_DELIMITER = "/";
-const std::string DFUProtocol::CHANNEL_WILDCARD = "#";
-
 const std::string DFUProtocol::FIRMWARE_UPDATE_STATUS_TOPIC_ROOT = "service/status/firmware/";
 const std::string DFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "firmware/version/";
 
@@ -167,16 +163,11 @@ static void from_json(const json& j, FirmwareUpdateCommand& p)
 }
 /*** FIRMWARE UPDATE COMMAND ***/
 
-const std::string& DFUProtocol::getName() const
-{
-    return NAME;
-}
-
 std::vector<std::string> DFUProtocol::getInboundChannels() const
 {
     std::vector<std::string> channels;
     std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [](const std::string& source) { return source + CHANNEL_WILDCARD; });
+                   [](const std::string& source) { return source + CHANNEL_MULTI_LEVEL_WILDCARD; });
     return channels;
 }
 

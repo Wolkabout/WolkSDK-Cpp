@@ -61,8 +61,6 @@ public:
 
     virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                                  const std::vector<ConfigurationItem>& configuration) const = 0;
-
-    inline Type getType() const override final { return Protocol::Type::DATA; }
 };
 }    // namespace wolkabout
 

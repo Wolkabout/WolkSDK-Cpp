@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 #include "model/FileUploadInitiate.h"
 #include "model/FileUploadStatus.h"
 #include "model/Message.h"
+#include "protocol/json/Json.h"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
@@ -31,17 +32,6 @@ using nlohmann::json;
 
 namespace wolkabout
 {
-const std::string JsonDownloadProtocol::NAME = "FileDownloadProtocol";
-
-const std::string JsonDownloadProtocol::CHANNEL_DELIMITER = "/";
-const std::string JsonDownloadProtocol::CHANNEL_MULTI_LEVEL_WILDCARD = "#";
-const std::string JsonDownloadProtocol::CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
-
-const std::string JsonDownloadProtocol::GATEWAY_PATH_PREFIX = "g/";
-const std::string JsonDownloadProtocol::DEVICE_PATH_PREFIX = "d/";
-const std::string JsonDownloadProtocol::DEVICE_TO_PLATFORM_DIRECTION = "d2p/";
-const std::string JsonDownloadProtocol::PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
-
 const std::string JsonDownloadProtocol::FILE_UPLOAD_INITIATE_TOPIC_ROOT = "p2d/file_upload_initiate/";
 const std::string JsonDownloadProtocol::FILE_UPLOAD_ABORT_TOPIC_ROOT = "p2d/file_upload_abort/";
 const std::string JsonDownloadProtocol::FILE_UPLOAD_STATUS_TOPIC_ROOT = "d2p/file_upload_status/";
@@ -151,11 +141,6 @@ JsonDownloadProtocol::JsonDownloadProtocol(bool isGateway)
     }
 }
 
-const std::string& JsonDownloadProtocol::getName() const
-{
-    return NAME;
-}
-
 std::vector<std::string> JsonDownloadProtocol::getInboundChannels() const
 {
     static std::vector<std::string> channels = [&] {
@@ -180,55 +165,100 @@ std::vector<std::string> JsonDownloadProtocol::getInboundChannelsForDevice(const
 
 bool JsonDownloadProtocol::isBinary(const Message& message) const
 {
+    LOG(TRACE) << METHOD_INFO;
+
     return StringUtils::startsWith(message.getChannel(), BINARY_RESPONSE_TOPIC_ROOT);
 }
 
 bool JsonDownloadProtocol::isUploadInitiate(const Message& message) const
 {
+    LOG(TRACE) << METHOD_INFO;
+
     return StringUtils::startsWith(message.getChannel(), FILE_UPLOAD_INITIATE_TOPIC_ROOT);
 }
 
 bool JsonDownloadProtocol::isUploadAbort(const Message& message) const
 {
+    LOG(TRACE) << METHOD_INFO;
+
     return StringUtils::startsWith(message.getChannel(), FILE_UPLOAD_ABORT_TOPIC_ROOT);
 }
 
 std::unique_ptr<BinaryData> JsonDownloadProtocol::makeBinaryData(const Message& message) const
 {
+    LOG(TRACE) << METHOD_INFO;
+
+    if (!StringUtils::startsWith(message.getChannel(), BINARY_RESPONSE_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
     try
     {
         return std::unique_ptr<BinaryData>(new BinaryData(ByteUtils::toByteArray(message.getContent())));
     }
-    catch (const std::invalid_argument&)
+    catch (std::exception& e)
     {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize binary data: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize binary data";
         return nullptr;
     }
 }
 
 std::unique_ptr<FileUploadInitiate> JsonDownloadProtocol::makeFileUploadInitiate(const Message& message) const
 {
+    LOG(TRACE) << METHOD_INFO;
+
+    if (!StringUtils::startsWith(message.getChannel(), FILE_UPLOAD_INITIATE_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
     try
     {
         json j = json::parse(message.getContent());
 
         return std::unique_ptr<FileUploadInitiate>(new FileUploadInitiate(file_upload_initiate_from_json(j)));
     }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize file upload initiate: " << e.what();
+        return nullptr;
+    }
     catch (...)
     {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize file upload initiate";
         return nullptr;
     }
 }
 
 std::unique_ptr<FileUploadAbort> JsonDownloadProtocol::makeFileUploadAbort(const Message& message) const
 {
+    LOG(TRACE) << METHOD_INFO;
+
+    if (!StringUtils::startsWith(message.getChannel(), FILE_UPLOAD_ABORT_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
     try
     {
         json j = json::parse(message.getContent());
 
         return std::unique_ptr<FileUploadAbort>(new FileUploadAbort(file_upload_abort_from_json(j)));
     }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize file upload abort: " << e.what();
+        return nullptr;
+    }
     catch (...)
     {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize file upload abort";
         return nullptr;
     }
 }
@@ -236,21 +266,53 @@ std::unique_ptr<FileUploadAbort> JsonDownloadProtocol::makeFileUploadAbort(const
 std::unique_ptr<Message> JsonDownloadProtocol::makeMessage(const std::string& deviceKey,
                                                            const FilePacketRequest& filePacketRequest) const
 {
-    const json jPayload(filePacketRequest);
-    const std::string payload = jPayload.dump();
-    const std::string topic = BINARY_REQUEST_TOPIC_ROOT + m_devicePrefix + deviceKey;
+    LOG(TRACE) << METHOD_INFO;
 
-    return std::unique_ptr<Message>(new Message(payload, topic));
+    try
+    {
+        const std::string topic = BINARY_REQUEST_TOPIC_ROOT + m_devicePrefix + deviceKey;
+
+        const json jPayload(filePacketRequest);
+        const std::string payload = jPayload.dump();
+
+        return std::unique_ptr<Message>(new Message(payload, topic));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to serialize file packet request: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to serialize file packet request";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> JsonDownloadProtocol::makeMessage(const std::string& deviceKey,
                                                            const FileUploadStatus& fileUploadStatus) const
 {
-    const json jPayload(fileUploadStatus);
-    const std::string payload = jPayload.dump();
-    const std::string topic = FILE_UPLOAD_STATUS_TOPIC_ROOT + m_devicePrefix + deviceKey;
+    LOG(TRACE) << METHOD_INFO;
 
-    return std::unique_ptr<Message>(new Message(payload, topic));
+    try
+    {
+        const std::string topic = FILE_UPLOAD_STATUS_TOPIC_ROOT + m_devicePrefix + deviceKey;
+
+        const json jPayload(fileUploadStatus);
+        const std::string payload = jPayload.dump();
+
+        return std::unique_ptr<Message>(new Message(payload, topic));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to serialize file upload status: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to serialize file upload status";
+        return nullptr;
+    }
 }
 
 std::string JsonDownloadProtocol::extractDeviceKeyFromChannel(const std::string& topic) const

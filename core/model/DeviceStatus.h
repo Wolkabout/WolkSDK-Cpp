@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,30 @@
 #ifndef DEVICESTATUS_H
 #define DEVICESTATUS_H
 
+#include <string>
+
 namespace wolkabout
 {
-enum class DeviceStatus
+class DeviceStatus
 {
-    CONNECTED,
-    OFFLINE,
-    SLEEP,
-    SERVICE
+public:
+    enum class Status
+    {
+        CONNECTED,
+        OFFLINE,
+        SLEEP,
+        SERVICE
+    };
+
+    DeviceStatus(std::string deviceKey, DeviceStatus::Status status);
+
+    const std::string& getDeviceKey() const;
+    DeviceStatus::Status getStatus() const;
+
+private:
+    std::string m_deviceKey;
+    DeviceStatus::Status m_status;
 };
-}
+}    // namespace wolkabout
 
 #endif    // DEVICESTATUS_H

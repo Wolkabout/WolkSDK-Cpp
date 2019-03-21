@@ -39,10 +39,9 @@ public:
     {
         UNSPECIFIED_ERROR = 0,
         FILE_NOT_PRESENT = 1,
-        FILE_HASH_MISMATCH = 2,
-        FILE_SYSTEM_ERROR = 3,
-        INSTALLATION_FAILED = 4,
-        SUBDEVICE_NOT_PRESENT = 5
+        FILE_SYSTEM_ERROR = 2,
+        INSTALLATION_FAILED = 3,
+        SUBDEVICE_NOT_PRESENT = 4
     };
 
     FirmwareUpdateStatus(std::vector<std::string> deviceKeys, FirmwareUpdateStatus::Status status);

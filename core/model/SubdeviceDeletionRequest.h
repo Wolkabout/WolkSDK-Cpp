@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-#include "model/DeviceStatusResponse.h"
+#ifndef SUBDEVICEDELETIONREQUEST_H
+#define SUBDEVICEDELETIONREQUEST_H
+
+#include <string>
 
 namespace wolkabout
 {
-DeviceStatusResponse::DeviceStatusResponse(DeviceStatus status) : m_status{status} {}
-
-DeviceStatus DeviceStatusResponse::getStatus() const
+class SubdeviceDeletionRequest
 {
-    return m_status;
-}
+public:
+    explicit SubdeviceDeletionRequest(std::string deviceKey);
+
+    const std::string& getDeviceKey() const;
+
+private:
+    std::string m_deviceKey;
+};
 }    // namespace wolkabout
+
+#endif    // SUBDEVICEDELETIONREQUEST_H

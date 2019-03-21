@@ -27,7 +27,6 @@ namespace wolkabout
 class JsonSingleReferenceProtocol : public DataProtocol
 {
 public:
-    const std::string& getName() const override;
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
@@ -56,11 +55,6 @@ public:
 private:
     std::string joinMultiValues(const std::vector<std::string>& values, const std::string& delimiter) const;
     std::vector<std::string> parseMultiValues(const std::string& values, const std::string& delimiter) const;
-
-    static const std::string NAME;
-
-    static const std::string CHANNEL_DELIMITER;
-    static const std::string CHANNEL_WILDCARD;
 
     static const std::string SENSOR_READING_TOPIC_ROOT;
     static const std::string ALARMS_TOPIC_ROOT;

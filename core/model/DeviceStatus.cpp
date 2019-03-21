@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-#ifndef DEVICESTATUSUPDATE_H
-#define DEVICESTATUSUPDATE_H
+#include "model/DeviceStatus.h"
 
-#include "DeviceStatus.h"
+#include <utility>
 
 namespace wolkabout
 {
-class DeviceStatusUpdate
+DeviceStatus::DeviceStatus(std::string deviceKey, DeviceStatus::Status status)
+: m_deviceKey{std::move(deviceKey)}, m_status{status}
 {
-public:
-    DeviceStatusUpdate(DeviceStatus status);
+}
 
-    DeviceStatus getStatus() const;
+const std::string& DeviceStatus::getDeviceKey() const
+{
+    return m_deviceKey;
+}
 
-private:
-    const DeviceStatus m_status;
-};
+DeviceStatus::Status DeviceStatus::getStatus() const
+{
+    return m_status;
+}
 }    // namespace wolkabout
-
-#endif    // DEVICESTATUSUPDATE_H

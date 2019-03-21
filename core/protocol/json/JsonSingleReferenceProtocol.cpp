@@ -23,6 +23,7 @@
 #include "model/ConfigurationSetCommand.h"
 #include "model/Message.h"
 #include "model/SensorReading.h"
+#include "protocol/json/Json.h"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
@@ -31,11 +32,6 @@ using nlohmann::json;
 
 namespace wolkabout
 {
-const std::string JsonSingleReferenceProtocol::NAME = "JsonSingleReferenceProtocol";
-
-const std::string JsonSingleReferenceProtocol::CHANNEL_DELIMITER = "/";
-const std::string JsonSingleReferenceProtocol::CHANNEL_WILDCARD = "#";
-
 const std::string JsonSingleReferenceProtocol::SENSOR_READING_TOPIC_ROOT = "readings/";
 const std::string JsonSingleReferenceProtocol::ALARMS_TOPIC_ROOT = "events/";
 const std::string JsonSingleReferenceProtocol::ACTUATION_STATUS_TOPIC_ROOT = "actuators/status/";
@@ -126,19 +122,15 @@ namespace serializer_jsr
     }
 }    // namespace serializer_jsr
 
-const std::string& JsonSingleReferenceProtocol::getName() const
-{
-    return NAME;
-}
-
 std::vector<std::string> JsonSingleReferenceProtocol::getInboundChannels() const
 {
-    return {ACTUATION_COMMAND_TOPIC_ROOT + CHANNEL_WILDCARD, CONFIGURATION_COMMAND_TOPIC_ROOT + CHANNEL_WILDCARD};
+    return {ACTUATION_COMMAND_TOPIC_ROOT + CHANNEL_MULTI_LEVEL_WILDCARD,
+            CONFIGURATION_COMMAND_TOPIC_ROOT + CHANNEL_MULTI_LEVEL_WILDCARD};
 }
 
 std::vector<std::string> JsonSingleReferenceProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    return {ACTUATION_COMMAND_TOPIC_ROOT + deviceKey + CHANNEL_DELIMITER + CHANNEL_WILDCARD,
+    return {ACTUATION_COMMAND_TOPIC_ROOT + deviceKey + CHANNEL_DELIMITER + CHANNEL_MULTI_LEVEL_WILDCARD,
             CONFIGURATION_COMMAND_TOPIC_ROOT + deviceKey};
 }
 

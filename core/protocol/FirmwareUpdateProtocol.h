@@ -38,8 +38,6 @@ public:
     virtual bool isFirmwareUpdateMessage(const Message& message) const = 0;
 
     virtual std::unique_ptr<FirmwareUpdateCommand> makeFirmwareUpdateCommand(const Message& message) const = 0;
-
-    inline Type getType() const override final { return Protocol::Type::FIRMWARE_UPDATE; }
 };
 }    // namespace wolkabout
 

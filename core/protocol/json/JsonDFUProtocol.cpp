@@ -31,8 +31,6 @@ using nlohmann::json;
 
 namespace wolkabout
 {
-const std::string JsonDFUProtocol::NAME = "DFU";
-
 const std::string JsonDFUProtocol::FIRMWARE_UPDATE_STATUS_TOPIC_ROOT = "d2p/firmware_update_status/";
 const std::string JsonDFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "d2p/firmware_version/";
 
@@ -94,16 +92,7 @@ static FirmwareUpdateInstall firmware_update_install_from_json(const json& j)
         return "";
     }();
 
-    const std::string hash = [&]() -> std::string {
-        if (j.find("fileHash") != j.end())
-        {
-            return j.at("fileHash").get<std::string>();
-        }
-
-        return "";
-    }();
-
-    return FirmwareUpdateInstall(deviceKeys, name, hash);
+    return FirmwareUpdateInstall(deviceKeys, name);
 }
 /*** FIRMWARE UPDATE INSTALL ***/
 
@@ -135,11 +124,6 @@ JsonDFUProtocol::JsonDFUProtocol(bool isGateway) : m_isGateway{isGateway}
     }
 }
 
-const std::string& JsonDFUProtocol::getName() const
-{
-    return NAME;
-}
-
 std::vector<std::string> JsonDFUProtocol::getInboundChannels() const
 {
     static std::vector<std::string> channels = {
@@ -163,23 +147,41 @@ std::vector<std::string> JsonDFUProtocol::getInboundChannelsForDevice(const std:
 std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceKey,
                                                       const FirmwareUpdateStatus& firmwareUpdateStatus) const
 {
-    const json jPayload(firmwareUpdateStatus);
-    const std::string payload = jPayload.dump();
-    std::string topic = FIRMWARE_UPDATE_STATUS_TOPIC_ROOT + m_devicePrefix + deviceKey;
+    LOG(TRACE) << METHOD_INFO;
 
-    // add subdevice key to topic if only one subdevice
-    if (m_isGateway && firmwareUpdateStatus.getDeviceKeys().size() == 1 &&
-        firmwareUpdateStatus.getDeviceKeys()[0] != deviceKey)
+    try
     {
-        topic += CHANNEL_DELIMITER + DEVICE_PATH_PREFIX + firmwareUpdateStatus.getDeviceKeys()[0];
-    }
+        std::string topic = FIRMWARE_UPDATE_STATUS_TOPIC_ROOT + m_devicePrefix + deviceKey;
 
-    return std::unique_ptr<Message>(new Message(payload, topic));
+        // add subdevice key to topic if only one subdevice
+        if (m_isGateway && firmwareUpdateStatus.getDeviceKeys().size() == 1 &&
+            firmwareUpdateStatus.getDeviceKeys()[0] != deviceKey)
+        {
+            topic += CHANNEL_DELIMITER + DEVICE_PATH_PREFIX + firmwareUpdateStatus.getDeviceKeys()[0];
+        }
+
+        const json jPayload(firmwareUpdateStatus);
+        const std::string payload = jPayload.dump();
+
+        return std::unique_ptr<Message>(new Message(payload, topic));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "Firmware update protocol: Unable to serialize firmware update status: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "Firmware update protocol: Unable to serialize firmware update status";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceKey,
                                                       const FirmwareVersion& version) const
 {
+    LOG(TRACE) << METHOD_INFO;
+
     std::string topic;
     if (m_isGateway && deviceKey != version.getDeviceKey())
     {
@@ -197,6 +199,8 @@ std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceK
 std::unique_ptr<FirmwareUpdateInstall> JsonDFUProtocol::makeFirmwareUpdateInstall(
   const wolkabout::Message& message) const
 {
+    LOG(TRACE) << METHOD_INFO;
+
     if (!StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT))
     {
         return nullptr;
@@ -208,14 +212,22 @@ std::unique_ptr<FirmwareUpdateInstall> JsonDFUProtocol::makeFirmwareUpdateInstal
 
         return std::unique_ptr<FirmwareUpdateInstall>(new FirmwareUpdateInstall(firmware_update_install_from_json(j)));
     }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "Firmware update protocol: Unable to deserialize firmware install command: " << e.what();
+        return nullptr;
+    }
     catch (...)
     {
+        LOG(DEBUG) << "Firmware update protocol: Unable to deserialize firmware install command";
         return nullptr;
     }
 }
 
 std::unique_ptr<FirmwareUpdateAbort> JsonDFUProtocol::makeFirmwareUpdateAbort(const wolkabout::Message& message) const
 {
+    LOG(TRACE) << METHOD_INFO;
+
     if (!StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_ABORT_TOPIC_ROOT))
     {
         return nullptr;
@@ -227,8 +239,14 @@ std::unique_ptr<FirmwareUpdateAbort> JsonDFUProtocol::makeFirmwareUpdateAbort(co
 
         return std::unique_ptr<FirmwareUpdateAbort>(new FirmwareUpdateAbort(firmware_update_abort_from_json(j)));
     }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "Firmware update protocol: Unable to deserialize firmware abort command: " << e.what();
+        return nullptr;
+    }
     catch (...)
     {
+        LOG(DEBUG) << "Firmware update protocol: Unable to deserialize firmware abort command";
         return nullptr;
     }
 }

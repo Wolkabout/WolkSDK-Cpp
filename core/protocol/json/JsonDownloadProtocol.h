@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef JSONDOWNLOADPROTOCOL_H
 #define JSONDOWNLOADPROTOCOL_H
 
@@ -25,7 +26,6 @@ class JsonDownloadProtocol : public FileDownloadProtocol
 public:
     explicit JsonDownloadProtocol(bool isGateway = false);
 
-    const std::string& getName() const override;
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
@@ -51,17 +51,6 @@ public:
 
 private:
     std::string m_devicePrefix;
-
-    static const std::string NAME;
-
-    static const std::string CHANNEL_DELIMITER;
-    static const std::string CHANNEL_MULTI_LEVEL_WILDCARD;
-    static const std::string CHANNEL_SINGLE_LEVEL_WILDCARD;
-
-    static const std::string GATEWAY_PATH_PREFIX;
-    static const std::string DEVICE_PATH_PREFIX;
-    static const std::string DEVICE_TO_PLATFORM_DIRECTION;
-    static const std::string PLATFORM_TO_DEVICE_DIRECTION;
 
     static const std::string FILE_UPLOAD_INITIATE_TOPIC_ROOT;
     static const std::string FILE_UPLOAD_ABORT_TOPIC_ROOT;

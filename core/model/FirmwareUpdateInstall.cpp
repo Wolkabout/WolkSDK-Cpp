@@ -18,9 +18,8 @@
 
 namespace wolkabout
 {
-FirmwareUpdateInstall::FirmwareUpdateInstall(std::vector<std::string> deviceKeys, std::string fileName,
-                                             std::string fileHash)
-: m_deviceKeys{std::move(deviceKeys)}, m_fileName{std::move(fileName)}, m_fileHash{std::move(fileHash)}
+FirmwareUpdateInstall::FirmwareUpdateInstall(std::vector<std::string> deviceKeys, std::string fileName)
+: m_deviceKeys{std::move(deviceKeys)}, m_fileName{std::move(fileName)}
 {
 }
 
@@ -32,10 +31,5 @@ const std::vector<std::string>& FirmwareUpdateInstall::getDeviceKeys() const
 const std::string& FirmwareUpdateInstall::getFileName() const
 {
     return m_fileName;
-}
-
-const std::string& FirmwareUpdateInstall::getFileHash() const
-{
-    return m_fileHash;
 }
 }    // namespace wolkabout

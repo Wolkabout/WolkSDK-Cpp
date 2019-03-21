@@ -34,8 +34,6 @@ class FileUploadStatus;
 class FileDownloadProtocol : public Protocol
 {
 public:
-    inline Type getType() const override final { return Protocol::Type::FILE_DOWNLOAD; }
-
     virtual bool isBinary(const Message& message) const = 0;
 
     virtual std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const = 0;
