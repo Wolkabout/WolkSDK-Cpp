@@ -17,6 +17,7 @@
 #ifndef JSONDTO_H
 #define JSONDTO_H
 
+#include "model/PlatformResult.h"
 #include "utilities/json.hpp"
 
 namespace wolkabout
@@ -56,6 +57,8 @@ GatewayUpdateResponse gateway_update_response_from_json(const nlohmann::json& j)
 
 void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
 SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j);
+
+void from_json(const nlohmann::json& j, PlatformResult& result);
 }    // namespace wolkabout
 
 #endif    // JSONDTO_H

@@ -17,6 +17,8 @@
 #ifndef PLATFORMRESULT_H
 #define PLATFORMRESULT_H
 
+#include <string>
+
 namespace wolkabout
 {
 enum class PlatformResult
@@ -28,6 +30,8 @@ enum class PlatformResult
     ERROR_DEVICE_NOT_FOUND,
     ERROR_INVALID_DEVICE
 };
-}
+
+std::string to_string(PlatformResult result);
+}    // namespace wolkabout
 
 #endif    // PLATFORMRESULT_H

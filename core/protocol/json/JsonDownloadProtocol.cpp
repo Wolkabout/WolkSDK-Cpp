@@ -16,6 +16,8 @@
 
 #include "protocol/json/JsonDownloadProtocol.h"
 #include "model/BinaryData.h"
+#include "model/FileDelete.h"
+#include "model/FileList.h"
 #include "model/FilePacketRequest.h"
 #include "model/FileUploadAbort.h"
 #include "model/FileUploadInitiate.h"
@@ -38,6 +40,14 @@ const std::string JsonDownloadProtocol::FILE_UPLOAD_STATUS_TOPIC_ROOT = "d2p/fil
 
 const std::string JsonDownloadProtocol::BINARY_REQUEST_TOPIC_ROOT = "d2p/file_binary_request/";
 const std::string JsonDownloadProtocol::BINARY_RESPONSE_TOPIC_ROOT = "p2d/file_binary_response/";
+
+const std::string JsonDownloadProtocol::FILE_DELETE_TOPIC_ROOT = "p2d/file_delete/";
+const std::string JsonDownloadProtocol::FILE_PURGE_TOPIC_ROOT = "p2d/file_purge/";
+
+const std::string JsonDownloadProtocol::FILE_LIST_REQUEST_TOPIC_ROOT = "p2d/file_list_request/";
+const std::string JsonDownloadProtocol::FILE_LIST_RESPONSE_TOPIC_ROOT = "d2p/file_list_response/";
+const std::string JsonDownloadProtocol::FILE_LIST_UPDATE_TOPIC_ROOT = "d2p/file_list_update/";
+const std::string JsonDownloadProtocol::FILE_LIST_CONFIRM_TOPIC_ROOT = "p2d/file_list_confirm/";
 
 const std::vector<std::string> JsonDownloadProtocol::INBOUND_CHANNELS = {
   FILE_UPLOAD_INITIATE_TOPIC_ROOT, FILE_UPLOAD_ABORT_TOPIC_ROOT, BINARY_RESPONSE_TOPIC_ROOT};
@@ -78,6 +88,20 @@ static void to_json(json& j, const FileUploadStatus& p)
     }
 }
 /*** FILE UPLOAD STATUS ***/
+
+/*** FILE LIST ***/
+static void to_json(json& j, const FileList& list)
+{
+    j = json::array();
+
+    for (const auto& fileName : list.getFileNames())
+    {
+        json innerJ;
+        innerJ["fileName"] = fileName;
+        j.push_back(innerJ);
+    }
+}
+/*** FILE LIST ***/
 
 /*** FILE UPLOAD INITIATE ***/
 static FileUploadInitiate file_upload_initiate_from_json(const json& j)
@@ -128,6 +152,22 @@ static FileUploadAbort file_upload_abort_from_json(const json& j)
     return FileUploadAbort(name);
 }
 /*** FILE UPLOAD ABORT ***/
+
+/*** FILE DELETE ***/
+static FileDelete file_delete_from_json(const json& j)
+{
+    const std::string name = [&]() -> std::string {
+        if (j.find("fileName") != j.end())
+        {
+            return j.at("fileName").get<std::string>();
+        }
+
+        return "";
+    }();
+
+    return FileDelete(name);
+}
+/*** FILE DELETE ***/
 
 JsonDownloadProtocol::JsonDownloadProtocol(bool isGateway)
 {
@@ -263,6 +303,76 @@ std::unique_ptr<FileUploadAbort> JsonDownloadProtocol::makeFileUploadAbort(const
     }
 }
 
+std::unique_ptr<FileDelete> JsonDownloadProtocol::makeFileDelete(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    if (!StringUtils::startsWith(message.getChannel(), FILE_DELETE_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
+    try
+    {
+        json j = json::parse(message.getContent());
+
+        return std::unique_ptr<FileDelete>(new FileDelete(file_delete_from_json(j)));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize file delete command: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize file delete command";
+        return nullptr;
+    }
+}
+
+bool JsonDownloadProtocol::isFilePurge(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    return StringUtils::startsWith(message.getChannel(), FILE_PURGE_TOPIC_ROOT);
+}
+
+bool JsonDownloadProtocol::isFileListRequest(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    return StringUtils::startsWith(message.getChannel(), FILE_LIST_REQUEST_TOPIC_ROOT);
+}
+
+std::unique_ptr<PlatformResult> JsonDownloadProtocol::makeFileListConfirm(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    if (!StringUtils::startsWith(message.getChannel(), FILE_LIST_CONFIRM_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
+    try
+    {
+        json j = json::parse(message.getContent());
+
+        PlatformResult result = j;
+
+        return std::unique_ptr<PlatformResult>(new PlatformResult(result));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize file list confirm: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to deserialize file list confirm";
+        return nullptr;
+    }
+}
+
 std::unique_ptr<Message> JsonDownloadProtocol::makeMessage(const std::string& deviceKey,
                                                            const FilePacketRequest& filePacketRequest) const
 {
@@ -311,6 +421,58 @@ std::unique_ptr<Message> JsonDownloadProtocol::makeMessage(const std::string& de
     catch (...)
     {
         LOG(DEBUG) << "File download protocol: Unable to serialize file upload status";
+        return nullptr;
+    }
+}
+
+std::unique_ptr<Message> JsonDownloadProtocol::makeFileListUpdateMessage(const std::string& deviceKey,
+                                                                         const wolkabout::FileList& fileList) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    try
+    {
+        const std::string topic = FILE_LIST_UPDATE_TOPIC_ROOT + m_devicePrefix + deviceKey;
+
+        const json jPayload(fileList);
+        const std::string payload = jPayload.dump();
+
+        return std::unique_ptr<Message>(new Message(payload, topic));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to serialize file list update: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to serialize file list update";
+        return nullptr;
+    }
+}
+
+std::unique_ptr<Message> JsonDownloadProtocol::makeFileListResponseMessage(const std::string& deviceKey,
+                                                                           const wolkabout::FileList& fileList) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    try
+    {
+        const std::string topic = FILE_LIST_RESPONSE_TOPIC_ROOT + m_devicePrefix + deviceKey;
+
+        const json jPayload(fileList);
+        const std::string payload = jPayload.dump();
+
+        return std::unique_ptr<Message>(new Message(payload, topic));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to serialize file list response: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "File download protocol: Unable to serialize file list response";
         return nullptr;
     }
 }

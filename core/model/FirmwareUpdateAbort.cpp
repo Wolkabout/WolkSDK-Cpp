@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#include "FirmwareUpdateAbort.h"
+#include "model/FirmwareUpdateAbort.h"
+
+#include <utility>
 
 namespace wolkabout
 {
