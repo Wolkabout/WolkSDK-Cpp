@@ -109,18 +109,14 @@ JsonStatusProtocol::JsonStatusProtocol(bool isGateway) : m_isGateway{isGateway}
 
 std::vector<std::string> JsonStatusProtocol::getInboundChannels() const
 {
-    std::vector<std::string> channels;
-    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [](const std::string& source) { return source + CHANNEL_MULTI_LEVEL_WILDCARD; });
-    return channels;
+    return {DEVICE_STATUS_REQUEST_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+            DEVICE_STATUS_CONFIRM_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD, PONG_TOPIC_ROOT};
 }
 
 std::vector<std::string> JsonStatusProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    std::vector<std::string> channels;
-    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [&](const std::string& source) -> std::string { return source + deviceKey; });
-    return channels;
+    return {DEVICE_STATUS_REQUEST_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey,
+            DEVICE_STATUS_CONFIRM_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey, PONG_TOPIC_ROOT + deviceKey};
 }
 
 bool JsonStatusProtocol::isStatusRequestMessage(const Message& message) const

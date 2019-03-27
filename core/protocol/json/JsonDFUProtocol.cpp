@@ -126,22 +126,18 @@ JsonDFUProtocol::JsonDFUProtocol(bool isGateway) : m_isGateway{isGateway}
 
 std::vector<std::string> JsonDFUProtocol::getInboundChannels() const
 {
-    static std::vector<std::string> channels = {
+    return {
       FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
       FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
     };
-
-    return channels;
 }
 
 std::vector<std::string> JsonDFUProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    static std::vector<std::string> channels = {
+    return {
       FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + m_devicePrefix + deviceKey,
       FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + m_devicePrefix + deviceKey,
     };
-
-    return channels;
 }
 
 std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceKey,

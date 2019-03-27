@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#include "FileUploadInitiate.h"
+#include "model/FileUploadInitiate.h"
+
+#include <utility>
 
 namespace wolkabout
 {

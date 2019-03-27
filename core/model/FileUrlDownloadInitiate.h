@@ -14,34 +14,23 @@
  * limitations under the License.
  */
 
-#include "model/FileUploadStatus.h"
+#ifndef FILEURLDOWNLOADINITIATE_H
+#define FILEURLDOWNLOADINITIATE_H
 
-#include <utility>
+#include <string>
 
 namespace wolkabout
 {
-FileUploadStatus::FileUploadStatus(std::string fileName, FileTransferStatus status)
-: m_fileName{std::move(fileName)}, m_status{status}, m_errorCode{}
+class FileUrlDownloadInitiate
 {
-}
+public:
+    explicit FileUrlDownloadInitiate(std::string fileUrl);
 
-FileUploadStatus::FileUploadStatus(std::string fileName, FileTransferError errorCode)
-: m_fileName{std::move(fileName)}, m_status{FileTransferStatus::ERROR}, m_errorCode{errorCode}
-{
-}
+    const std::string& getUrl() const;
 
-const std::string& FileUploadStatus::getFileName() const
-{
-    return m_fileName;
-}
-
-FileTransferStatus FileUploadStatus::getStatus() const
-{
-    return m_status;
-}
-
-const WolkOptional<FileTransferError>& FileUploadStatus::getErrorCode() const
-{
-    return m_errorCode;
-}
+private:
+    std::string m_fileUrl;
+};
 }    // namespace wolkabout
+
+#endif    // FILEURLDOWNLOADINITIATE_H

@@ -44,22 +44,16 @@ const std::string JsonRegistrationProtocol::SUBDEVICE_DELETION_RESPONSE_TOPIC_RO
 
 std::vector<std::string> JsonRegistrationProtocol::getInboundChannels() const
 {
-    static std::vector<std::string> channels = {
-      SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
-      GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
-      SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD};
-
-    return channels;
+    return {SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+            GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+            SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD};
 }
 
 std::vector<std::string> JsonRegistrationProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    static std::vector<std::string> channels = {
-      SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey,
-      GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey,
-      SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey};
-
-    return channels;
+    return {SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey,
+            GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey,
+            SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey};
 }
 
 std::string JsonRegistrationProtocol::extractDeviceKeyFromChannel(const std::string& topic) const

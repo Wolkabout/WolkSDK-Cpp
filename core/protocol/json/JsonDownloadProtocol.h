@@ -32,6 +32,9 @@ class FilePurge;
 class FileUploadAbort;
 class FileUploadInitiate;
 class FileUploadStatus;
+class FileUrlDownloadAbort;
+class FileUrlDownloadInitiate;
+class FileUrlDownloadStatus;
 class Message;
 
 class JsonDownloadProtocol : public Protocol
@@ -64,6 +67,10 @@ public:
 
     std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const;
 
+    std::unique_ptr<FileUrlDownloadInitiate> makeFileUrlDownloadInitiate(const Message& message) const;
+
+    std::unique_ptr<FileUrlDownloadAbort> makeFileUrlDownloadAbort(const Message& message) const;
+
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const FilePacketRequest& filePacketRequest) const;
 
@@ -72,6 +79,9 @@ public:
     std::unique_ptr<Message> makeFileListUpdateMessage(const std::string& deviceKey, const FileList& fileList) const;
 
     std::unique_ptr<Message> makeFileListResponseMessage(const std::string& deviceKey, const FileList& fileList) const;
+
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                         const FileUrlDownloadStatus& fileUrlDownloadStatus) const;
 
 private:
     std::string m_devicePrefix;
@@ -90,6 +100,10 @@ private:
     static const std::string FILE_LIST_RESPONSE_TOPIC_ROOT;
     static const std::string FILE_LIST_UPDATE_TOPIC_ROOT;
     static const std::string FILE_LIST_CONFIRM_TOPIC_ROOT;
+
+    static const std::string FILE_URL_DOWNLOAD_INITIATE_TOPIC_ROOT;
+    static const std::string FILE_URL_DOWNLOAD_ABORT_TOPIC_ROOT;
+    static const std::string FILE_URL_DOWNLOAD_STATUS_TOPIC_ROOT;
 
     static const std::vector<std::string> INBOUND_CHANNELS;
 };
