@@ -28,6 +28,8 @@ namespace wolkabout
 class JsonRegistrationProtocol : public RegistrationProtocol
 {
 public:
+    JsonRegistrationProtocol(bool isGateway = true);
+
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
@@ -53,6 +55,9 @@ public:
     std::string getResponseChannel(const std::string& deviceKey, const Message& message) const override;
 
 private:
+    bool m_isGateway;
+    std::string m_devicePrefix;
+
     static const std::string SUBDEVICE_REGISTRATION_REQUEST_TOPIC_ROOT;
     static const std::string SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT;
     static const std::string GATEWAY_UPDATE_REQUEST_TOPIC_ROOT;

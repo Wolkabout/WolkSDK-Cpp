@@ -42,16 +42,28 @@ const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT =
 const std::string JsonRegistrationProtocol::SUBDEVICE_DELETION_REQUEST_TOPIC_ROOT = "d2p/delete_subdevice_request/";
 const std::string JsonRegistrationProtocol::SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT = "p2d/delete_subdevice_response/";
 
+JsonRegistrationProtocol::JsonRegistrationProtocol(bool isGateway) : m_isGateway{isGateway}
+{
+    if (isGateway)
+    {
+        m_devicePrefix = GATEWAY_PATH_PREFIX;
+    }
+    else
+    {
+        m_devicePrefix = DEVICE_PATH_PREFIX;
+    }
+}
+
 std::vector<std::string> JsonRegistrationProtocol::getInboundChannels() const
 {
-    return {SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+    return {SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
             GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
             SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD};
 }
 
 std::vector<std::string> JsonRegistrationProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    return {SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey,
+    return {SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + m_devicePrefix + deviceKey,
             GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey,
             SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey};
 }
@@ -104,7 +116,7 @@ std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string
     try
     {
         const json jsonPayload(request);
-        const std::string channel = SUBDEVICE_REGISTRATION_REQUEST_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey;
+        const std::string channel = SUBDEVICE_REGISTRATION_REQUEST_TOPIC_ROOT + m_devicePrefix + deviceKey;
 
         const auto content = jsonPayload.dump();
 
@@ -225,7 +237,7 @@ std::string JsonRegistrationProtocol::getResponseChannel(const std::string& devi
 
     if (StringUtils::startsWith(message.getChannel(), SUBDEVICE_REGISTRATION_REQUEST_TOPIC_ROOT))
     {
-        return SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey;
+        return SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + m_devicePrefix + deviceKey;
     }
     else if (StringUtils::startsWith(message.getChannel(), SUBDEVICE_DELETION_REQUEST_TOPIC_ROOT))
     {
