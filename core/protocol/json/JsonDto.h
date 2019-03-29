@@ -58,7 +58,7 @@ GatewayUpdateResponse gateway_update_response_from_json(const nlohmann::json& j)
 void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
 SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j);
 
-void from_json(const nlohmann::json& j, PlatformResult& result);
+PlatformResult platform_result_from_json(const nlohmann::json& j);
 }    // namespace wolkabout
 
 #endif    // JSONDTO_H

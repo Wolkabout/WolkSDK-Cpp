@@ -587,26 +587,24 @@ GatewayUpdateResponse gateway_update_response_from_json(const json& j)
 }
 /*** GATEWAY UPDATE RESPONSE DTO ***/
 
-void from_json(const nlohmann::json& j, PlatformResult& result)
+PlatformResult platform_result_from_json(const nlohmann::json& j)
 {
-    result = [&]() -> PlatformResult {
-        auto resultStr = j.at("result").get<std::string>();
+    auto resultStr = j.at("result").get<std::string>();
 
-        if (resultStr == "OK")
-            return PlatformResult::OK;
-        else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
-            return PlatformResult::ERROR_GATEWAY_NOT_FOUND;
-        else if (resultStr == "ERROR_KEY_MISSING")
-            return PlatformResult::ERROR_KEY_MISSING;
-        else if (resultStr == "ERROR_NOT_A_GATEWAY")
-            return PlatformResult::ERROR_NOT_A_GATEWAY;
-        else if (resultStr == "ERROR_DEVICE_NOT_FOUND")
-            return PlatformResult::ERROR_DEVICE_NOT_FOUND;
-        else if (resultStr == "ERROR_INVALID_DEVICE")
-            return PlatformResult::ERROR_INVALID_DEVICE;
+    if (resultStr == "OK")
+        return PlatformResult::OK;
+    else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
+        return PlatformResult::ERROR_GATEWAY_NOT_FOUND;
+    else if (resultStr == "ERROR_KEY_MISSING")
+        return PlatformResult::ERROR_KEY_MISSING;
+    else if (resultStr == "ERROR_NOT_A_GATEWAY")
+        return PlatformResult::ERROR_NOT_A_GATEWAY;
+    else if (resultStr == "ERROR_DEVICE_NOT_FOUND")
+        return PlatformResult::ERROR_DEVICE_NOT_FOUND;
+    else if (resultStr == "ERROR_INVALID_DEVICE")
+        return PlatformResult::ERROR_INVALID_DEVICE;
 
-        auto errorMsg = "Invalid value for platform result: " + resultStr;
-        throw std::logic_error(errorMsg);
-    }();
+    auto errorMsg = "Invalid value for platform result: " + resultStr;
+    throw std::logic_error(errorMsg);
 }
 }    // namespace wolkabout

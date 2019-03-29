@@ -27,6 +27,7 @@
 #include "model/FileUrlDownloadStatus.h"
 #include "model/Message.h"
 #include "protocol/json/Json.h"
+#include "protocol/json/JsonDto.h"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
@@ -386,9 +387,7 @@ std::unique_ptr<PlatformResult> JsonDownloadProtocol::makeFileListConfirm(const 
     {
         json j = json::parse(message.getContent());
 
-        PlatformResult result = j;
-
-        return std::unique_ptr<PlatformResult>(new PlatformResult(result));
+        return std::unique_ptr<PlatformResult>(new PlatformResult(platform_result_from_json(j)));
     }
     catch (std::exception& e)
     {
