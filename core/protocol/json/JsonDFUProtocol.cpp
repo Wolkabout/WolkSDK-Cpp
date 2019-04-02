@@ -32,7 +32,7 @@ using nlohmann::json;
 namespace wolkabout
 {
 const std::string JsonDFUProtocol::FIRMWARE_UPDATE_STATUS_TOPIC_ROOT = "d2p/firmware_update_status/";
-const std::string JsonDFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "d2p/firmware_version/";
+const std::string JsonDFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "d2p/firmware_version_update/";
 
 const std::string JsonDFUProtocol::FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT = "p2d/firmware_update_install/";
 const std::string JsonDFUProtocol::FIRMWARE_UPDATE_ABORT_TOPIC_ROOT = "p2d/firmware_update_abort/";
