@@ -31,7 +31,7 @@ void Timer::start(std::chrono::milliseconds interval, std::function<void()> call
 
     m_isRunning = true;
 
-    auto thread = [=] {
+    m_worker.reset(new std::thread([=] {
         std::unique_lock<std::mutex> lock{m_lock};
         m_condition.wait_for(lock, interval, [=] { return !m_isRunning; });
 
@@ -42,9 +42,7 @@ void Timer::start(std::chrono::milliseconds interval, std::function<void()> call
         }
 
         m_isRunning = false;
-    };
-
-    m_worker.reset(new std::thread(thread));
+    }));
 }
 
 void Timer::run(std::chrono::milliseconds interval, std::function<void()> callback)
@@ -53,7 +51,7 @@ void Timer::run(std::chrono::milliseconds interval, std::function<void()> callba
 
     m_isRunning = true;
 
-    auto thread = [=] {
+    m_worker.reset(new std::thread([=] {
         while (m_isRunning)
         {
             std::unique_lock<std::mutex> lock{m_lock};
@@ -65,9 +63,7 @@ void Timer::run(std::chrono::milliseconds interval, std::function<void()> callba
                 callback();
             }
         }
-    };
-
-    m_worker.reset(new std::thread(thread));
+    }));
 }
 
 void Timer::stop()
@@ -83,7 +79,7 @@ void Timer::stop()
 
 bool Timer::running() const
 {
-    return m_isRunning || (m_worker && m_worker->joinable());
+    return m_isRunning;
 }
 
 }    // namespace wolkabout
