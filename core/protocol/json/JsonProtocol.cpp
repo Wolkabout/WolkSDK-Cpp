@@ -411,7 +411,19 @@ std::string JsonProtocol::extractDeviceKeyFromChannel(const std::string& topic) 
         return topic.substr(pos, keyEndPosition - pos);
     }
 
-    return "";
+    const std::string gatewayPathPrefix = CHANNEL_DELIMITER + GATEWAY_PATH_PREFIX;
+
+    const auto gatewayKeyStartPosition = topic.find(gatewayPathPrefix);
+    if (gatewayKeyStartPosition == std::string::npos)
+    {
+        return "";
+    }
+
+    const auto keyEndPosition = topic.find(CHANNEL_DELIMITER, gatewayKeyStartPosition + gatewayPathPrefix.size());
+
+    const auto pos = gatewayKeyStartPosition + gatewayPathPrefix.size();
+
+    return topic.substr(pos, keyEndPosition - pos);
 }
 
 std::string JsonProtocol::joinMultiValues(const std::vector<std::string>& values, const std::string& delimiter) const
