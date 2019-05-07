@@ -13,30 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FILEDOWNLOADPROTOCOL_H
-#define FILEDOWNLOADPROTOCOL_H
 
-#include "protocol/Protocol.h"
-
-#include <memory>
-#include <string>
+#include "DeviceStatusConfirm.h"
 
 namespace wolkabout
 {
-class BinaryData;
-class FilePacketRequest;
-class Message;
+DeviceStatusConfirm::DeviceStatusConfirm(PlatformResult result) : m_result{result} {}
 
-class FileDownloadProtocol : public Protocol
+PlatformResult DeviceStatusConfirm::getResult() const
 {
-public:
-    virtual bool isBinary(const Message& message) const = 0;
-
-    virtual std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const = 0;
-
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const FilePacketRequest& filePacketRequest) const = 0;
-};
+    return m_result;
+}
 }    // namespace wolkabout
-
-#endif    // FILEDOWNLOADPROTOCOL_H

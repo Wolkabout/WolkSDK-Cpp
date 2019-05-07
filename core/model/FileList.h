@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-#include "model/DeviceStatusResponse.h"
+#ifndef FILELIST_H
+#define FILELIST_H
+
+#include <string>
+#include <vector>
 
 namespace wolkabout
 {
-DeviceStatusResponse::DeviceStatusResponse(DeviceStatus status) : m_status{status} {}
-
-DeviceStatus DeviceStatusResponse::getStatus() const
+class FileList
 {
-    return m_status;
-}
+public:
+    FileList(std::vector<std::string> files);
+
+    const std::vector<std::string>& getFileNames() const;
+
+private:
+    std::vector<std::string> m_fileNames;
+};
 }    // namespace wolkabout
+
+#endif    // FILELIST_H

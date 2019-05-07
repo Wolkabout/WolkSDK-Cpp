@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FILEDOWNLOADPROTOCOL_H
-#define FILEDOWNLOADPROTOCOL_H
 
-#include "protocol/Protocol.h"
+#ifndef FIRMWAREUPDATEABORT_H
+#define FIRMWAREUPDATEABORT_H
 
-#include <memory>
 #include <string>
+#include <vector>
 
 namespace wolkabout
 {
-class BinaryData;
-class FilePacketRequest;
-class Message;
-
-class FileDownloadProtocol : public Protocol
+class FirmwareUpdateAbort
 {
 public:
-    virtual bool isBinary(const Message& message) const = 0;
+    FirmwareUpdateAbort(std::vector<std::string> deviceKeys);
 
-    virtual std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const = 0;
+    const std::vector<std::string>& getDeviceKeys() const;
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const FilePacketRequest& filePacketRequest) const = 0;
+private:
+    std::vector<std::string> m_deviceKeys;
 };
 }    // namespace wolkabout
 
-#endif    // FILEDOWNLOADPROTOCOL_H
+#endif    // FIRMWAREUPDATEABORT_H

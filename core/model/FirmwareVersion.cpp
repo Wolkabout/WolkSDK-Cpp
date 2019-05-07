@@ -14,33 +14,24 @@
  * limitations under the License.
  */
 
-#ifndef DEVICESTATUS_H
-#define DEVICESTATUS_H
+#include "model/FirmwareVersion.h"
 
-#include <string>
+#include <utility>
 
 namespace wolkabout
 {
-class DeviceStatus
+FirmwareVersion::FirmwareVersion(std::string deviceKey, std::string version)
+: m_deviceKey{std::move(deviceKey)}, m_version{std::move(version)}
 {
-public:
-    enum class Status
-    {
-        CONNECTED,
-        OFFLINE,
-        SLEEP,
-        SERVICE
-    };
+}
 
-    DeviceStatus(std::string deviceKey, DeviceStatus::Status status);
+const std::string& FirmwareVersion::getDeviceKey() const
+{
+    return m_deviceKey;
+}
 
-    const std::string& getDeviceKey() const;
-    DeviceStatus::Status getStatus() const;
-
-private:
-    std::string m_deviceKey;
-    DeviceStatus::Status m_status;
-};
+const std::string& FirmwareVersion::getVersion() const
+{
+    return m_version;
+}
 }    // namespace wolkabout
-
-#endif    // DEVICESTATUS_H

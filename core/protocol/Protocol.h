@@ -25,19 +25,7 @@ namespace wolkabout
 class Protocol
 {
 public:
-    enum class Type
-    {
-        DATA,
-        REGISTRATION,
-        FIRMWARE_UPDATE,
-        STATUS,
-        FILE_DOWNLOAD
-    };
-
     virtual ~Protocol() = default;
-
-    virtual Type getType() const = 0;
-    virtual const std::string& getName() const = 0;
 
     /**
      * @brief Get generic inbound channels
@@ -51,6 +39,7 @@ public:
      * @return
      */
     virtual std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const = 0;
+
     virtual std::string extractDeviceKeyFromChannel(const std::string& topic) const = 0;
 };
 }    // namespace wolkabout

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef JSONSTATUSPROTOCOL_H
 #define JSONSTATUSPROTOCOL_H
 
@@ -23,7 +24,7 @@ namespace wolkabout
 class JsonStatusProtocol : public StatusProtocol
 {
 public:
-    const std::string& getName() const override;
+    explicit JsonStatusProtocol(bool isGateway = true);
 
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
@@ -31,10 +32,16 @@ public:
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
     bool isStatusRequestMessage(const Message& message) const override;
+    bool isStatusConfirmMessage(const Message& message) const override;
     bool isPongMessage(const Message& message) const override;
 
-    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                         const DeviceStatusResponse& response) const override;
+    std::unique_ptr<Message> makeStatusResponseMessage(const std::string& deviceKey,
+                                                       const DeviceStatus& response) const override;
+
+    std::unique_ptr<Message> makeStatusUpdateMessage(const std::string& deviceKey,
+                                                     const DeviceStatus& response) const override;
+
+    std::unique_ptr<Message> makeLastWillMessage(const std::string& deviceKey) const override;
 
     std::unique_ptr<Message> makeLastWillMessage(const std::vector<std::string>& deviceKeys) const override;
 
@@ -47,15 +54,14 @@ public:
     static const std::string STATUS_RESPONSE_STATUS_OFFLINE;
 
 private:
-    static const std::string NAME;
-
-    static const std::string CHANNEL_DELIMITER;
-    static const std::string CHANNEL_WILDCARD;
-    static const std::string DEVICE_PATH_PREFIX;
+    bool m_isGateway;
+    std::string m_devicePrefix;
 
     static const std::string LAST_WILL_TOPIC;
     static const std::string DEVICE_STATUS_REQUEST_TOPIC_ROOT;
     static const std::string DEVICE_STATUS_RESPONSE_TOPIC_ROOT;
+    static const std::string DEVICE_STATUS_UPDATE_TOPIC_ROOT;
+    static const std::string DEVICE_STATUS_CONFIRM_TOPIC_ROOT;
     static const std::string PONG_TOPIC_ROOT;
     static const std::string PING_TOPIC_ROOT;
 

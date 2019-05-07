@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include "model/BinaryData.h"
 #include "model/FilePacketRequest.h"
 #include "model/Message.h"
+#include "protocol/json/Json.h"
 #include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
 
@@ -27,11 +28,6 @@ using nlohmann::json;
 
 namespace wolkabout
 {
-const std::string DownloadProtocol::NAME = "FileDownloadProtocol";
-
-const std::string DownloadProtocol::CHANNEL_DELIMITER = "/";
-const std::string DownloadProtocol::CHANNEL_WILDCARD = "#";
-
 const std::string DownloadProtocol::FILE_HANDLING_STATUS_TOPIC_ROOT = "service/status/file/";
 
 const std::string DownloadProtocol::BINARY_TOPIC_ROOT = "service/binary/";
@@ -50,16 +46,11 @@ static void to_json(json& j, const std::shared_ptr<FilePacketRequest>& p)
 }
 /*** FILE PACKET_REQUEST ***/
 
-const std::string& DownloadProtocol::getName() const
-{
-    return NAME;
-}
-
 std::vector<std::string> DownloadProtocol::getInboundChannels() const
 {
     std::vector<std::string> channels;
     std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [](const std::string& source) { return source + CHANNEL_WILDCARD; });
+                   [](const std::string& source) { return source + CHANNEL_MULTI_LEVEL_WILDCARD; });
     return channels;
 }
 

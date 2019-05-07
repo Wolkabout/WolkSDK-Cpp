@@ -38,11 +38,10 @@ public:
         ERROR_UNKNOWN
     };
 
-    SubdeviceRegistrationResponse() = default;
     SubdeviceRegistrationResponse(std::string subdeviceKey, SubdeviceRegistrationResponse::Result result,
                                   std::string description = "");
 
-    const SubdeviceRegistrationResponse::Result& getResult() const;
+    SubdeviceRegistrationResponse::Result getResult() const;
 
     const std::string& getSubdeviceKey() const;
 

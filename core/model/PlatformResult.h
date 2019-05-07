@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FILEDOWNLOADPROTOCOL_H
-#define FILEDOWNLOADPROTOCOL_H
 
-#include "protocol/Protocol.h"
+#ifndef PLATFORMRESULT_H
+#define PLATFORMRESULT_H
 
-#include <memory>
 #include <string>
 
 namespace wolkabout
 {
-class BinaryData;
-class FilePacketRequest;
-class Message;
-
-class FileDownloadProtocol : public Protocol
+enum class PlatformResult
 {
-public:
-    virtual bool isBinary(const Message& message) const = 0;
-
-    virtual std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const = 0;
-
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const FilePacketRequest& filePacketRequest) const = 0;
+    OK = 0,
+    ERROR_GATEWAY_NOT_FOUND,
+    ERROR_KEY_MISSING,
+    ERROR_NOT_A_GATEWAY,
+    ERROR_DEVICE_NOT_FOUND,
+    ERROR_INVALID_DEVICE
 };
+
+std::string to_string(PlatformResult result);
 }    // namespace wolkabout
 
-#endif    // FILEDOWNLOADPROTOCOL_H
+#endif    // PLATFORMRESULT_H

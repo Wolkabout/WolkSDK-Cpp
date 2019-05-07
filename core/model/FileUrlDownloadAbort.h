@@ -13,30 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FILEDOWNLOADPROTOCOL_H
-#define FILEDOWNLOADPROTOCOL_H
 
-#include "protocol/Protocol.h"
+#ifndef FILEURLDOWNLOADABORT_H
+#define FILEURLDOWNLOADABORT_H
 
-#include <memory>
 #include <string>
 
 namespace wolkabout
 {
-class BinaryData;
-class FilePacketRequest;
-class Message;
-
-class FileDownloadProtocol : public Protocol
+class FileUrlDownloadAbort
 {
 public:
-    virtual bool isBinary(const Message& message) const = 0;
+    explicit FileUrlDownloadAbort(std::string fileUrl);
 
-    virtual std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const = 0;
+    const std::string& getUrl() const;
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const FilePacketRequest& filePacketRequest) const = 0;
+private:
+    std::string m_fileUrl;
 };
 }    // namespace wolkabout
 
-#endif    // FILEDOWNLOADPROTOCOL_H
+#endif    // FILEURLDOWNLOADABORT_H

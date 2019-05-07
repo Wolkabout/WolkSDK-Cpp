@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 
 #include "protocol/json/JsonDFUProtocol.h"
-#include "model/FirmwareUpdateCommand.h"
-#include "model/FirmwareUpdateResponse.h"
+#include "model/FirmwareUpdateAbort.h"
+#include "model/FirmwareUpdateInstall.h"
+#include "model/FirmwareUpdateStatus.h"
+#include "model/FirmwareVersion.h"
 #include "model/Message.h"
+#include "protocol/json/Json.h"
 #include "utilities/Logger.h"
 #include "utilities/StringUtils.h"
 #include "utilities/json.hpp"
@@ -28,40 +31,25 @@ using nlohmann::json;
 
 namespace wolkabout
 {
-const std::string JsonDFUProtocol::NAME = "DFU";
+const std::string JsonDFUProtocol::FIRMWARE_UPDATE_STATUS_TOPIC_ROOT = "d2p/firmware_update_status/";
+const std::string JsonDFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "d2p/firmware_version_update/";
 
-const std::string JsonDFUProtocol::CHANNEL_DELIMITER = "/";
-const std::string JsonDFUProtocol::CHANNEL_MULTI_LEVEL_WILDCARD = "#";
-const std::string JsonDFUProtocol::CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
-const std::string JsonDFUProtocol::DEVICE_PATH_PREFIX = "d/";
-const std::string JsonDFUProtocol::DEVICE_TO_PLATFORM_DIRECTION = "d2p/";
-const std::string JsonDFUProtocol::PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
+const std::string JsonDFUProtocol::FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT = "p2d/firmware_update_install/";
+const std::string JsonDFUProtocol::FIRMWARE_UPDATE_ABORT_TOPIC_ROOT = "p2d/firmware_update_abort/";
 
-const std::string JsonDFUProtocol::FIRMWARE_UPDATE_STATUS_TOPIC_ROOT = "d2p/firmware/";
-const std::string JsonDFUProtocol::FIRMWARE_VERSION_TOPIC_ROOT = "d2p/firmware_version/";
-
-const std::string JsonDFUProtocol::FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT = "p2d/firmware/";
-
-const std::vector<std::string> JsonDFUProtocol::INBOUND_CHANNELS = {FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT};
-
-/*** FIRMWARE UPDATE RESPONSE ***/
-static void to_json(json& j, const FirmwareUpdateResponse& p)
+/*** FIRMWARE UPDATE STATUS ***/
+static void to_json(json& j, const FirmwareUpdateStatus& p)
 {
     const std::string status = [&]() -> std::string {
         switch (p.getStatus())
         {
-        case FirmwareUpdateResponse::Status::FILE_TRANSFER:
-            return "FILE_TRANSFER";
-        case FirmwareUpdateResponse::Status::FILE_READY:
-            return "FILE_READY";
-        case FirmwareUpdateResponse::Status::INSTALLATION:
+        case FirmwareUpdateStatus::Status::INSTALLATION:
             return "INSTALLATION";
-        case FirmwareUpdateResponse::Status::COMPLETED:
+        case FirmwareUpdateStatus::Status::COMPLETED:
             return "COMPLETED";
-        case FirmwareUpdateResponse::Status::ABORTED:
+        case FirmwareUpdateStatus::Status::ABORTED:
             return "ABORTED";
-        case FirmwareUpdateResponse::Status::ERROR:
-            return "ERROR";
+        case FirmwareUpdateStatus::Status::ERROR:
         default:
             return "ERROR";
         }
@@ -75,183 +63,186 @@ static void to_json(json& j, const FirmwareUpdateResponse& p)
 
         j.emplace("error", static_cast<int>(errorCode));
     }
+
+    if (!p.getDeviceKeys().empty())
+    {
+        j["devices"] = p.getDeviceKeys();
+    }
 }
-/*** FIRMWARE UPDATE RESPONSE ***/
+/*** FIRMWARE UPDATE STATUS ***/
 
-/*** FIRMWARE UPDATE COMMAND ***/
-static void from_json(const json& j, FirmwareUpdateCommand& p)
+/*** FIRMWARE UPDATE INSTALL ***/
+static FirmwareUpdateInstall firmware_update_install_from_json(const json& j)
 {
-    const std::string typeStr = j.at("command").get<std::string>();
-
-    FirmwareUpdateCommand::Type type;
-    if (typeStr == "INSTALL")
-    {
-        type = FirmwareUpdateCommand::Type::INSTALL;
-    }
-    else if (typeStr == "ABORT")
-    {
-        type = FirmwareUpdateCommand::Type::ABORT;
-    }
-    else if (typeStr == "FILE_UPLOAD")
-    {
-        type = FirmwareUpdateCommand::Type::FILE_UPLOAD;
-    }
-    else if (typeStr == "URL_DOWNLOAD")
-    {
-        type = FirmwareUpdateCommand::Type::URL_DOWNLOAD;
-    }
-    else
-    {
-        type = FirmwareUpdateCommand::Type::UNKNOWN;
-    }
-
-    const bool autoInstall = [&]() -> bool {
-        if (j.find("autoInstall") != j.end())
+    const std::vector<std::string> deviceKeys = [&]() -> std::vector<std::string> {
+        if (j.find("devices") != j.end())
         {
-            return j.at("autoInstall").get<bool>();
+            return j.at("devices").get<std::vector<std::string>>();
         }
 
-        return false;
+        return {};
     }();
 
-    if (type == FirmwareUpdateCommand::Type::FILE_UPLOAD)
+    const std::string name = [&]() -> std::string {
+        if (j.find("fileName") != j.end())
+        {
+            return j.at("fileName").get<std::string>();
+        }
+
+        return "";
+    }();
+
+    return FirmwareUpdateInstall(deviceKeys, name);
+}
+/*** FIRMWARE UPDATE INSTALL ***/
+
+/*** FIRMWARE UPDATE ABORT ***/
+static FirmwareUpdateAbort firmware_update_abort_from_json(const json& j)
+{
+    const std::vector<std::string> deviceKeys = [&]() -> std::vector<std::string> {
+        if (j.find("devices") != j.end())
+        {
+            return j.at("devices").get<std::vector<std::string>>();
+        }
+
+        return {};
+    }();
+
+    return FirmwareUpdateAbort(deviceKeys);
+}
+/*** FIRMWARE UPDATE ABORT ***/
+
+JsonDFUProtocol::JsonDFUProtocol(bool isGateway) : m_isGateway{isGateway}
+{
+    if (isGateway)
     {
-        const std::string name = [&]() -> std::string {
-            if (j.find("fileName") != j.end())
-            {
-                return j.at("fileName").get<std::string>();
-            }
-
-            return "";
-        }();
-
-        const uint_fast64_t size = [&]() -> uint_fast64_t {
-            if (j.find("fileSize") != j.end())
-            {
-                return j.at("fileSize").get<uint_fast64_t>();
-            }
-
-            return 0;
-        }();
-
-        const std::string hash = [&]() -> std::string {
-            if (j.find("fileHash") != j.end())
-            {
-                return j.at("fileHash").get<std::string>();
-            }
-
-            return "";
-        }();
-
-        p = FirmwareUpdateCommand(type, name, size, hash, autoInstall);
-        return;
-    }
-    else if (type == FirmwareUpdateCommand::Type::URL_DOWNLOAD)
-    {
-        const std::string url = [&]() -> std::string {
-            if (j.find("fileUrl") != j.end())
-            {
-                return j.at("fileUrl").get<std::string>();
-            }
-
-            return "";
-        }();
-
-        p = FirmwareUpdateCommand(type, url, autoInstall);
-        return;
+        m_devicePrefix = GATEWAY_PATH_PREFIX;
     }
     else
     {
-        p = FirmwareUpdateCommand(type);
+        m_devicePrefix = DEVICE_PATH_PREFIX;
     }
-}
-/*** FIRMWARE UPDATE COMMAND ***/
-
-const std::string& JsonDFUProtocol::getName() const
-{
-    return NAME;
 }
 
 std::vector<std::string> JsonDFUProtocol::getInboundChannels() const
 {
-    std::vector<std::string> channels;
-    std::transform(
-      INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-      [](const std::string& source) { return source + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD; });
-    return channels;
+    return {
+      FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
+      FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
+    };
 }
 
 std::vector<std::string> JsonDFUProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    std::vector<std::string> channels;
-    std::transform(INBOUND_CHANNELS.cbegin(), INBOUND_CHANNELS.cend(), std::back_inserter(channels),
-                   [&](const std::string& source) -> std::string { return source + DEVICE_PATH_PREFIX + deviceKey; });
-    return channels;
+    return {
+      FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + m_devicePrefix + deviceKey,
+      FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + m_devicePrefix + deviceKey,
+    };
 }
 
 std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceKey,
-                                                      const FirmwareUpdateResponse& firmwareUpdateResponse) const
+                                                      const FirmwareUpdateStatus& firmwareUpdateStatus) const
 {
-    const json jPayload(firmwareUpdateResponse);
-    const std::string payload = jPayload.dump();
-    const std::string topic = FIRMWARE_UPDATE_STATUS_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
+    LOG(TRACE) << METHOD_INFO;
 
-    return std::unique_ptr<Message>(new Message(payload, topic));
-}
-
-std::unique_ptr<Message> JsonDFUProtocol::makeFromFirmwareVersion(const std::string& deviceKey,
-                                                                  const std::string& firmwareVerion) const
-{
-    const std::string topic = FIRMWARE_VERSION_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
-    return std::unique_ptr<Message>(new Message(firmwareVerion, topic));
-}
-
-bool JsonDFUProtocol::isFirmwareUpdateMessage(const Message& message) const
-{
-    return StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_COMMAND_TOPIC_ROOT);
-}
-
-std::unique_ptr<FirmwareUpdateCommand> JsonDFUProtocol::makeFirmwareUpdateCommand(const Message& message) const
-{
     try
     {
-        const std::string content = message.getContent();
+        std::string topic = FIRMWARE_UPDATE_STATUS_TOPIC_ROOT + m_devicePrefix + deviceKey;
 
-        if (StringUtils::startsWith(content, "{"))
+        // add subdevice key to topic if only one subdevice
+        if (m_isGateway && firmwareUpdateStatus.getDeviceKeys().size() == 1 &&
+            firmwareUpdateStatus.getDeviceKeys()[0] != deviceKey)
         {
-            json j = json::parse(content);
-
-            return std::unique_ptr<FirmwareUpdateCommand>(new FirmwareUpdateCommand(j.get<FirmwareUpdateCommand>()));
+            topic += CHANNEL_DELIMITER + DEVICE_PATH_PREFIX + firmwareUpdateStatus.getDeviceKeys()[0];
         }
-        else
-        {
-            FirmwareUpdateCommand::Type type;
-            if (content == "INSTALL")
-            {
-                type = FirmwareUpdateCommand::Type::INSTALL;
-            }
-            else if (content == "ABORT")
-            {
-                type = FirmwareUpdateCommand::Type::ABORT;
-            }
-            else if (content == "FILE_UPLOAD")
-            {
-                type = FirmwareUpdateCommand::Type::FILE_UPLOAD;
-            }
-            else if (content == "URL_DOWNLOAD")
-            {
-                type = FirmwareUpdateCommand::Type::URL_DOWNLOAD;
-            }
-            else
-            {
-                type = FirmwareUpdateCommand::Type::UNKNOWN;
-            }
 
-            return std::unique_ptr<FirmwareUpdateCommand>(new FirmwareUpdateCommand(type));
-        }
+        const json jPayload(firmwareUpdateStatus);
+        const std::string payload = jPayload.dump();
+
+        return std::unique_ptr<Message>(new Message(payload, topic));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "Firmware update protocol: Unable to serialize firmware update status: " << e.what();
+        return nullptr;
     }
     catch (...)
     {
+        LOG(DEBUG) << "Firmware update protocol: Unable to serialize firmware update status";
+        return nullptr;
+    }
+}
+
+std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceKey,
+                                                      const FirmwareVersion& version) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    std::string topic;
+    if (m_isGateway && deviceKey != version.getDeviceKey())
+    {
+        topic = FIRMWARE_VERSION_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + DEVICE_PATH_PREFIX +
+                version.getDeviceKey();
+    }
+    else
+    {
+        topic = FIRMWARE_VERSION_TOPIC_ROOT + m_devicePrefix + deviceKey;
+    }
+
+    return std::unique_ptr<Message>(new Message(version.getVersion(), topic));
+}
+
+std::unique_ptr<FirmwareUpdateInstall> JsonDFUProtocol::makeFirmwareUpdateInstall(
+  const wolkabout::Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    if (!StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
+    try
+    {
+        json j = json::parse(message.getContent());
+
+        return std::unique_ptr<FirmwareUpdateInstall>(new FirmwareUpdateInstall(firmware_update_install_from_json(j)));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "Firmware update protocol: Unable to deserialize firmware install command: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "Firmware update protocol: Unable to deserialize firmware install command";
+        return nullptr;
+    }
+}
+
+std::unique_ptr<FirmwareUpdateAbort> JsonDFUProtocol::makeFirmwareUpdateAbort(const wolkabout::Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    if (!StringUtils::startsWith(message.getChannel(), FIRMWARE_UPDATE_ABORT_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
+    try
+    {
+        json j = json::parse(message.getContent());
+
+        return std::unique_ptr<FirmwareUpdateAbort>(new FirmwareUpdateAbort(firmware_update_abort_from_json(j)));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "Firmware update protocol: Unable to deserialize firmware abort command: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "Firmware update protocol: Unable to deserialize firmware abort command";
         return nullptr;
     }
 }

@@ -13,30 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FILEDOWNLOADPROTOCOL_H
-#define FILEDOWNLOADPROTOCOL_H
 
-#include "protocol/Protocol.h"
-
-#include <memory>
 #include <string>
+
+#ifndef FIRMWAREVERSION_H
+#define FIRMWAREVERSION_H
 
 namespace wolkabout
 {
-class BinaryData;
-class FilePacketRequest;
-class Message;
-
-class FileDownloadProtocol : public Protocol
+class FirmwareVersion
 {
 public:
-    virtual bool isBinary(const Message& message) const = 0;
+    FirmwareVersion(std::string deviceKey, std::string version);
 
-    virtual std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const = 0;
+    const std::string& getDeviceKey() const;
+    const std::string& getVersion() const;
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const FilePacketRequest& filePacketRequest) const = 0;
+private:
+    std::string m_deviceKey;
+    std::string m_version;
 };
 }    // namespace wolkabout
 
-#endif    // FILEDOWNLOADPROTOCOL_H
+#endif    // FIRMWAREVERSION_H

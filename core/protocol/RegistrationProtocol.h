@@ -28,24 +28,31 @@ class Message;
 class GatewayUpdateRequest;
 class GatewayUpdateResponse;
 class SubdeviceRegistrationRequest;
+class SubdeviceDeletionRequest;
 class SubdeviceRegistrationResponse;
 
 class RegistrationProtocol : public Protocol
 {
 public:
-    virtual bool isSubdeviceRegistrationResponseMessage(const Message& message) const = 0;
-    virtual bool isGatewayUpdateResponseMessage(const Message& message) const = 0;
+    virtual bool isSubdeviceRegistrationResponse(const Message& message) const = 0;
+    virtual bool isGatewayUpdateResponse(const Message& message) const = 0;
+    virtual bool isSubdeviceDeletionResponse(const Message& message) const = 0;
 
-    virtual std::unique_ptr<Message> makeMessage(const SubdeviceRegistrationRequest& request) const = 0;
+    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                                 const SubdeviceRegistrationRequest& request) const = 0;
 
-    virtual std::unique_ptr<Message> makeMessage(const GatewayUpdateRequest& request) const = 0;
+    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                                 const GatewayUpdateRequest& request) const = 0;
+
+    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                                 const SubdeviceDeletionRequest& request) const = 0;
 
     virtual std::unique_ptr<SubdeviceRegistrationResponse> makeSubdeviceRegistrationResponse(
       const Message& message) const = 0;
 
     virtual std::unique_ptr<GatewayUpdateResponse> makeGatewayUpdateResponse(const Message& message) const = 0;
 
-    inline Type getType() const override { return Protocol::Type::REGISTRATION; }
+    virtual std::string getResponseChannel(const std::string& deviceKey, const Message& message) const = 0;
 };
 }    // namespace wolkabout
 

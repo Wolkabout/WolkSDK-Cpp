@@ -13,30 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FILEDOWNLOADPROTOCOL_H
-#define FILEDOWNLOADPROTOCOL_H
 
-#include "protocol/Protocol.h"
+#ifndef FILEUPLOADSTATUS_H
+#define FILEUPLOADSTATUS_H
 
-#include <memory>
+#include "model/FileTransferStatus.h"
+#include "model/WolkOptional.h"
+
 #include <string>
 
 namespace wolkabout
 {
-class BinaryData;
-class FilePacketRequest;
-class Message;
-
-class FileDownloadProtocol : public Protocol
+class FileUploadStatus
 {
 public:
-    virtual bool isBinary(const Message& message) const = 0;
+    FileUploadStatus(std::string fileName, FileTransferStatus status);
+    FileUploadStatus(std::string fileName, FileTransferError errorCode);
 
-    virtual std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const = 0;
+    const std::string& getFileName() const;
+    FileTransferStatus getStatus() const;
+    const WolkOptional<FileTransferError>& getErrorCode() const;
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const FilePacketRequest& filePacketRequest) const = 0;
+private:
+    std::string m_fileName;
+    FileTransferStatus m_status;
+    WolkOptional<FileTransferError> m_errorCode;
 };
 }    // namespace wolkabout
 
-#endif    // FILEDOWNLOADPROTOCOL_H
+#endif    // FILEUPLOADSTATUS_H

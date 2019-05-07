@@ -17,6 +17,8 @@
 #ifndef STRINGUTILS_H
 #define STRINGUTILS_H
 
+#include "utilities/ByteUtils.h"
+
 #include <string>
 #include <vector>
 
@@ -47,7 +49,7 @@ public:
 
     static bool isBase64(unsigned char c);
 
-    static std::string base64Encode(const char* bytesToEncode, unsigned int len);
+    static std::string base64Encode(const ByteArray& bytesToEncode);
 
     static std::string base64Decode(const std::string& encodedString);
 

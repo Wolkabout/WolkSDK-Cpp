@@ -27,7 +27,7 @@ SubdeviceRegistrationResponse::SubdeviceRegistrationResponse(std::string subdevi
 {
 }
 
-const SubdeviceRegistrationResponse::Result& SubdeviceRegistrationResponse::getResult() const
+SubdeviceRegistrationResponse::Result SubdeviceRegistrationResponse::getResult() const
 {
     return m_result;
 }

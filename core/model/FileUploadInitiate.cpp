@@ -13,30 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FILEDOWNLOADPROTOCOL_H
-#define FILEDOWNLOADPROTOCOL_H
 
-#include "protocol/Protocol.h"
+#include "model/FileUploadInitiate.h"
 
-#include <memory>
-#include <string>
+#include <utility>
 
 namespace wolkabout
 {
-class BinaryData;
-class FilePacketRequest;
-class Message;
-
-class FileDownloadProtocol : public Protocol
+FileUploadInitiate::FileUploadInitiate(std::string name, std::uint64_t size, std::string hash)
+: m_name{std::move(name)}, m_size{size}, m_hash{std::move(hash)}
 {
-public:
-    virtual bool isBinary(const Message& message) const = 0;
+}
 
-    virtual std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const = 0;
+const std::string& FileUploadInitiate::getName() const
+{
+    return m_name;
+}
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const FilePacketRequest& filePacketRequest) const = 0;
-};
+std::uint64_t FileUploadInitiate::getSize() const
+{
+    return m_size;
+}
+
+const std::string& FileUploadInitiate::getHash() const
+{
+    return m_hash;
+}
+
 }    // namespace wolkabout
-
-#endif    // FILEDOWNLOADPROTOCOL_H

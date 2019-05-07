@@ -16,7 +16,6 @@
 
 #include "model/FirmwareUpdateCommand.h"
 
-#include <string>
 #include <utility>
 
 namespace wolkabout

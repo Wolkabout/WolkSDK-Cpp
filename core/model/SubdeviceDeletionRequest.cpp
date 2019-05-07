@@ -14,33 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef DEVICESTATUS_H
-#define DEVICESTATUS_H
-
-#include <string>
+#include "model/SubdeviceDeletionRequest.h"
 
 namespace wolkabout
 {
-class DeviceStatus
+SubdeviceDeletionRequest::SubdeviceDeletionRequest(std::string deviceKey) : m_deviceKey{std::move(deviceKey)} {}
+
+const std::string& SubdeviceDeletionRequest::getDeviceKey() const
 {
-public:
-    enum class Status
-    {
-        CONNECTED,
-        OFFLINE,
-        SLEEP,
-        SERVICE
-    };
-
-    DeviceStatus(std::string deviceKey, DeviceStatus::Status status);
-
-    const std::string& getDeviceKey() const;
-    DeviceStatus::Status getStatus() const;
-
-private:
-    std::string m_deviceKey;
-    DeviceStatus::Status m_status;
-};
+    return m_deviceKey;
+}
 }    // namespace wolkabout
-
-#endif    // DEVICESTATUS_H

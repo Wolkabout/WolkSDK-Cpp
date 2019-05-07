@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WolkAbout Technology s.r.o.
+ * Copyright 2018 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,20 @@
  * limitations under the License.
  */
 
-#ifndef DEVICESTATUS_H
-#define DEVICESTATUS_H
-
-#include <string>
+#ifndef JSON_H
+#define JSON_H
 
 namespace wolkabout
 {
-class DeviceStatus
-{
-public:
-    enum class Status
-    {
-        CONNECTED,
-        OFFLINE,
-        SLEEP,
-        SERVICE
-    };
+const std::string CHANNEL_DELIMITER = "/";
+const std::string CHANNEL_MULTI_LEVEL_WILDCARD = "#";
+const std::string CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
 
-    DeviceStatus(std::string deviceKey, DeviceStatus::Status status);
-
-    const std::string& getDeviceKey() const;
-    DeviceStatus::Status getStatus() const;
-
-private:
-    std::string m_deviceKey;
-    DeviceStatus::Status m_status;
-};
+const std::string GATEWAY_PATH_PREFIX = "g/";
+const std::string DEVICE_PATH_PREFIX = "d/";
+const std::string REFERENCE_PATH_PREFIX = "r/";
+const std::string DEVICE_TO_PLATFORM_DIRECTION = "d2p/";
+const std::string PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
 }    // namespace wolkabout
 
-#endif    // DEVICESTATUS_H
+#endif    // JSON_H

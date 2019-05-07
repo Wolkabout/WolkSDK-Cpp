@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef DOWNLOADPROTOCOL_H
 #define DOWNLOADPROTOCOL_H
 
@@ -23,7 +24,6 @@ namespace wolkabout
 class DownloadProtocol : public FileDownloadProtocol
 {
 public:
-    const std::string& getName() const override;
     std::vector<std::string> getInboundChannels() const override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
@@ -37,11 +37,6 @@ public:
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
 private:
-    static const std::string NAME;
-
-    static const std::string CHANNEL_DELIMITER;
-    static const std::string CHANNEL_WILDCARD;
-
     static const std::string FILE_HANDLING_STATUS_TOPIC_ROOT;
 
     static const std::string BINARY_TOPIC_ROOT;

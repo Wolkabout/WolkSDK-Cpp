@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 WolkAbout Technology s.r.o.
+ * Copyright 2019 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-#ifndef DEVICESTATUSRESPONSE_H
-#define DEVICESTATUSRESPONSE_H
-
-#include "model/DeviceStatus.h"
+#include "FileUploadAbort.h"
 
 namespace wolkabout
 {
-class DeviceStatusResponse
+FileUploadAbort::FileUploadAbort(std::string name) : m_name{std::move(name)} {}
+
+const std::string& FileUploadAbort::getName() const
 {
-public:
-    DeviceStatusResponse(DeviceStatus status);
+    return m_name;
+}
 
-    DeviceStatus getStatus() const;
-
-private:
-    const DeviceStatus m_status;
-};
 }    // namespace wolkabout
-
-#endif    // DEVICESTATUSRESPONSE_H
