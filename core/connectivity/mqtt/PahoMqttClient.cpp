@@ -78,12 +78,14 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
         if (!token->is_complete() || !m_isConnected)
         {
             LOG(DEBUG) << "Connecting failed: token timeout";
+            m_client.reset();
             return false;
         }
     }
     catch (mqtt::exception& e)
     {
         LOG(DEBUG) << "Connecting failed: exception code " << e.get_reason_code();
+        m_client.reset();
         return false;
     }
 
