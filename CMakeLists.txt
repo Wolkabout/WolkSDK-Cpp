@@ -53,6 +53,23 @@ add_subdirectory(mqtt lib)
 
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
+# Paho MQTT c
+
+set(PAHO_MQTT_C_VERSION "1.3.1")
+include(ExternalProject)
+
+if(NOT DEFINED CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/build")
+endif(NOT DEFINED CMAKE_PREFIX_PATH)
+include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
+
+ExternalProject_Add(pahomqttc
+        GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.c"
+        GIT_TAG "v${PAHO_MQTT_C_VERSION}"
+        UPDATE_COMMAND ""
+        CMAKE_ARGS -DPAHO_WITH_SSL=TRUE -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DCMAKE_INSTALL_RPATH='.'
+        )
+
 # WolkAbout c++ SDK
 include_directories(SYSTEM "${SSL_INCLUDE_DIR}")
 
@@ -62,6 +79,8 @@ file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqtt pthread)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,./")
+
+add_dependencies(${LIBRARY_NAME} pahomqttc)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
 
