@@ -49,8 +49,9 @@ IF (NOT SSL_LIBS)
 ENDIF (NOT SSL_LIBS)
 
 add_definitions(-DOPENSSL)
-add_subdirectory(lib)
+# add_subdirectory(lib)
 
+include_directories(SYSTEM "${SSL_INCLUDE_DIR}")
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
 # Paho MQTT c
@@ -80,7 +81,6 @@ ExternalProject_Add(pahomqttcpp
 )
 
 # WolkAbout c++ SDK
-include_directories(SYSTEM "${SSL_INCLUDE_DIR}")
 
 file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CURRENT_LIST_DIR}/core/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
