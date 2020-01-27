@@ -49,7 +49,7 @@ IF (NOT SSL_LIBS)
 ENDIF (NOT SSL_LIBS)
 
 add_definitions(-DOPENSSL)
-add_subdirectory(mqtt lib)
+add_subdirectory(lib)
 
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
