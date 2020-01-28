@@ -1,4 +1,4 @@
-# Copyright 2018 WolkAbout Technology s.r.o.
+# Copyright 2020 WolkAbout Technology s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ project(WolkAboutCore C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
-                                            -pedantic-errors -Wcast-align                                              \
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra                                                              \
+                                             -Wcast-align                                                              \
                                             -Wcast-qual -Wconversion                                                   \
                                             -Wdisabled-optimization                                                    \
                                             -Wfloat-equal -Wformat=2                                                   \
@@ -32,6 +32,22 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic             
                                             -Werror=unreachable-code -Wunused                                          \
                                             -Wvariadic-macros                                                          \
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
+
+if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+endif(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+
+if(NOT DEFINED CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/build")
+endif(NOT DEFINED CMAKE_PREFIX_PATH)
+
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+
+add_subdirectory(dependencies)
+
+include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+
 
 # ssl
 IF (NOT SSL_INCLUDE_DIR)
@@ -49,48 +65,23 @@ IF (NOT SSL_LIBS)
 ENDIF (NOT SSL_LIBS)
 
 add_definitions(-DOPENSSL)
-# add_subdirectory(lib)
-
-include_directories(SYSTEM "${SSL_INCLUDE_DIR}")
+include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
-# Paho MQTT c
-
-set(PAHO_MQTT_C_VERSION "1.3.1")
-set(PAHO_MQTT_CPP_VERSION "1.1")
-include(ExternalProject)
-
-if(NOT DEFINED CMAKE_PREFIX_PATH)
-    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/build")
-endif(NOT DEFINED CMAKE_PREFIX_PATH)
-include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
-
-ExternalProject_Add(pahomqttc
-        GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.c"
-        GIT_TAG "v${PAHO_MQTT_C_VERSION}"
-        UPDATE_COMMAND ""
-        CMAKE_ARGS -DPAHO_WITH_SSL=TRUE -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DCMAKE_INSTALL_RPATH='.'
-        )
-
-ExternalProject_Add(pahomqttcpp
-    GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.cpp"
-    GIT_TAG "v${PAHO_MQTT_CPP_VERSION}"
-    UPDATE_COMMAND ""
-    CMAKE_ARGS -DPAHO_WITH_SSL=TRUE -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} -DPAHO_MQTT_C_INCLUDE_DIRS=${CMAKE_PREFIX_PATH}/include -DCMAKE_INSTALL_RPATH='.'
-    DEPENDS pahomqttc
-)
-
 # WolkAbout c++ SDK
+include_directories(SYSTEM "${SSL_INCLUDE_DIR}" "${CMAKE_PREFIX_PATH}/include") 
 
 file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CURRENT_LIST_DIR}/core/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
-
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqtt pthread)
+
+target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqttpp3 paho-mqtt3as pthread)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,./")
 
 add_dependencies(${PROJECT_NAME} pahomqttcpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_PREFIX_PATH}/include" "${CMAKE_PREFIX_PATH}/include/mqtt")
 
 add_subdirectory(cmake)
