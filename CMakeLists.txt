@@ -17,8 +17,8 @@ project(WolkAboutCore C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra                                                              \
-                                             -Wcast-align                                                              \
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
+                                            -pedantic-errors -Wcast-align                                              \
                                             -Wcast-qual -Wconversion                                                   \
                                             -Wdisabled-optimization                                                    \
                                             -Wfloat-equal -Wformat=2                                                   \
@@ -76,10 +76,10 @@ file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CUR
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqttpp3 paho-mqtt3as pthread)
+target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqttpp3 paho-mqtt3as pthread poco)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,./")
 
-add_dependencies(${PROJECT_NAME} pahomqttcpp)
+add_dependencies(${PROJECT_NAME} pahomqttcpp poco)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_PREFIX_PATH}/include" "${CMAKE_PREFIX_PATH}/include/mqtt")
