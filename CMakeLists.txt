@@ -17,8 +17,8 @@ project(WolkAboutCore C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra                                                              \
-                                             -Wcast-align                                                              \
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
+                                            -pedantic-errors -Wcast-align                                              \
                                             -Wcast-qual -Wconversion                                                   \
                                             -Wdisabled-optimization                                                    \
                                             -Wfloat-equal -Wformat=2                                                   \
