@@ -16,6 +16,7 @@ cmake_minimum_required(VERSION 3.5)
 project(WolkAboutCore C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
+add_subdirectory(dependencies)
 
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
                                             -pedantic-errors -Wcast-align                                              \
@@ -43,7 +44,6 @@ endif(NOT DEFINED CMAKE_PREFIX_PATH)
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
-add_subdirectory(dependencies)
 
 include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include" "${SSL_INCLUDE_DIR}")
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_BINARY_DIR}/lib)
