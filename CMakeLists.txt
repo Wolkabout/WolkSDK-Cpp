@@ -16,6 +16,15 @@ cmake_minimum_required(VERSION 3.5)
 project(WolkAboutCore C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
+
+if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+endif(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+
+if(NOT DEFINED CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/build")
+endif(NOT DEFINED CMAKE_PREFIX_PATH)
+
 add_subdirectory(dependencies)
 
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
@@ -34,20 +43,10 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic             
                                             -Wvariadic-macros                                                          \
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
 
-if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-endif(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-
-if(NOT DEFINED CMAKE_PREFIX_PATH)
-    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/build")
-endif(NOT DEFINED CMAKE_PREFIX_PATH)
-
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-
 
 include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include" "${SSL_INCLUDE_DIR}")
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_BINARY_DIR}/lib)
-
 
 # ssl
 IF (NOT SSL_INCLUDE_DIR)
