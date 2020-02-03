@@ -45,8 +45,8 @@ SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 add_subdirectory(dependencies)
 
-include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
-link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include" "${SSL_INCLUDE_DIR}")
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_BINARY_DIR}/lib)
 
 
 # ssl
@@ -65,12 +65,8 @@ IF (NOT SSL_LIBS)
 ENDIF (NOT SSL_LIBS)
 
 add_definitions(-DOPENSSL)
-include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
-link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-link_directories(${CMAKE_BINARY_DIR}/lib)
 
 # WolkAbout c++ SDK
-include_directories(SYSTEM "${SSL_INCLUDE_DIR}" "${CMAKE_PREFIX_PATH}/include") 
 
 file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CURRENT_LIST_DIR}/core/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
