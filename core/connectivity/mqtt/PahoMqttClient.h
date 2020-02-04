@@ -17,20 +17,27 @@
 #ifndef PAHOMQTTCLIENT_H
 #define PAHOMQTTCLIENT_H
 
-#include "async_client.h"
 #include "connectivity/mqtt/MqttClient.h"
 
 #include <atomic>
+#include <memory>
 #include <mutex>
 #include <string>
 
+namespace mqtt
+{
+class async_client;
+}
+
 namespace wolkabout
 {
-class PahoMqttClient : public MqttClient, public mqtt::callback
+class MqttCallback;
+
+class PahoMqttClient : public MqttClient
 {
 public:
     PahoMqttClient();
-    virtual ~PahoMqttClient() = default;
+    virtual ~PahoMqttClient();
 
     bool connect(const std::string& username, const std::string& password, const std::string& host,
                  const std::string& clientId) override;
@@ -45,6 +52,7 @@ private:
     std::atomic_bool m_isConnected;
 
     std::unique_ptr<mqtt::async_client> m_client;
+    std::unique_ptr<MqttCallback> m_callback;
 
     std::mutex m_mutex;
 
@@ -52,11 +60,6 @@ private:
     static const unsigned short MQTT_ACTION_COMPLETITION_TIMEOUT_MSEC;
     static const unsigned short MQTT_KEEP_ALIVE_SEC;
     static const unsigned short MQTT_QOS;
-
-    void connected(const mqtt::string& cause) override;
-    void connection_lost(const mqtt::string& cause) override;
-    void message_arrived(mqtt::const_message_ptr msg) override;
-    void delivery_complete(mqtt::delivery_token_ptr tok) override;
 };
 }    // namespace wolkabout
 
