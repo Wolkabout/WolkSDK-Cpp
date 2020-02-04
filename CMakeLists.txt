@@ -46,7 +46,7 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic             
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include" "${SSL_INCLUDE_DIR}")
-link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_BINARY_DIR}/lib)
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 # ssl
 IF (NOT SSL_INCLUDE_DIR)

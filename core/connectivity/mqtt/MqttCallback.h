@@ -29,7 +29,7 @@ class MqttCallback : public mqtt::callback
 public:
 	MqttCallback(std::function<void()> onConnect, std::function<void()> onConnectionLost,
 				 std::function<void(mqtt::const_message_ptr)> onMessageArrived,
-				 std::function<void()> onDeliveryComplete);
+				 std::function<void(mqtt::delivery_token_ptr)> onDeliveryComplete);
     void connected(const mqtt::string& cause) override;
     void connection_lost(const mqtt::string& cause) override;
     void message_arrived(mqtt::const_message_ptr msg) override;
@@ -38,7 +38,7 @@ private:
 	std::function<void()> m_onConnectCallback;
 	std::function<void()> m_onConnectionLostCallback;
 	std::function<void(mqtt::const_message_ptr)> m_onMessageArrivedCallback;
-	std::function<void()> m_onDeliveryCompleteCallback;
+	std::function<void(mqtt::delivery_token_ptr)> m_onDeliveryCompleteCallback;
 
 };
 }    // namespace wolkabout

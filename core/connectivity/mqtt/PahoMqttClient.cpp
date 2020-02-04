@@ -48,7 +48,7 @@ PahoMqttClient::PahoMqttClient() : m_isConnected(false)
     {
         m_onMessageReceived(msg->get_topic(), msg->get_payload_str());
     }
-}, [&] {}));
+}, [&](mqtt::delivery_token_ptr tok) {}));
 }
 
 bool PahoMqttClient::connect(const std::string& username, const std::string& password, const std::string& host,

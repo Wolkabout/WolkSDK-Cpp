@@ -16,13 +16,11 @@
 
 #include "connectivity/mqtt/MqttCallback.h"
 
-#include <string>
-
 namespace wolkabout
 {
 MqttCallback::MqttCallback(std::function<void()> onConnect, std::function<void()> onConnectionLost,
                         std::function<void(mqtt::const_message_ptr)> onMessageArrived,
-                        std::function<void()> onDeliveryComplete)
+                        std::function<void(mqtt::delivery_token_ptr)> onDeliveryComplete)
 : m_onConnectCallback(onConnect)
 , m_onConnectionLostCallback(onConnectionLost)
 , m_onMessageArrivedCallback(onMessageArrived)
@@ -43,8 +41,8 @@ void MqttCallback::message_arrived(mqtt::const_message_ptr msg)
 	m_onMessageArrivedCallback(msg);
 }
 
-void MqttCallback::delivery_complete(mqtt::delivery_token_ptr /* tok */)
+void MqttCallback::delivery_complete(mqtt::delivery_token_ptr tok)
 {
-	m_onDeliveryCompleteCallback();
+	m_onDeliveryCompleteCallback(tok);
 }
 }    // namespace wolkabout
