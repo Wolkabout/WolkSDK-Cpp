@@ -1,4 +1,4 @@
-# Copyright 2018 WolkAbout Technology s.r.o.
+# Copyright 2020 WolkAbout Technology s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,16 @@ project(WolkAboutCore C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 
+if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+endif(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+
+if(NOT DEFINED CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/build")
+endif(NOT DEFINED CMAKE_PREFIX_PATH)
+
+add_subdirectory(dependencies)
+
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
                                             -pedantic-errors -Wcast-align                                              \
                                             -Wcast-qual -Wconversion                                                   \
@@ -32,6 +42,11 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic             
                                             -Werror=unreachable-code -Wunused                                          \
                                             -Wvariadic-macros                                                          \
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
+
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+
+include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include" "${SSL_INCLUDE_DIR}")
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 # ssl
 IF (NOT SSL_INCLUDE_DIR)
@@ -49,19 +64,17 @@ IF (NOT SSL_LIBS)
 ENDIF (NOT SSL_LIBS)
 
 add_definitions(-DOPENSSL)
-add_subdirectory(mqtt lib)
-
-link_directories(${CMAKE_BINARY_DIR}/lib)
 
 # WolkAbout c++ SDK
-include_directories(SYSTEM "${SSL_INCLUDE_DIR}")
 
 file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CURRENT_LIST_DIR}/core/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
-
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqtt pthread)
+
+target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqttpp3 paho-mqtt3as pthread)
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,./")
+
+add_dependencies(${PROJECT_NAME} pahomqttcpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
 

@@ -16,10 +16,12 @@
 
 #include "PahoMqttClient.h"
 #include "MqttClient.h"
-#include "async_client.h"
+#include "mqtt/async_client.h"
 #include "utilities/Logger.h"
+#include "connectivity/mqtt/MqttCallback.h"
 
 #include <atomic>
+#include <memory>
 #include <string>
 
 namespace wolkabout
@@ -29,7 +31,25 @@ const unsigned short PahoMqttClient::MQTT_ACTION_COMPLETITION_TIMEOUT_MSEC = 200
 const unsigned short PahoMqttClient::MQTT_KEEP_ALIVE_SEC = 60;
 const unsigned short PahoMqttClient::MQTT_QOS = 2;
 
-PahoMqttClient::PahoMqttClient() : m_isConnected(false) {}
+PahoMqttClient::PahoMqttClient() : m_isConnected(false)
+{
+    m_callback.reset(new MqttCallback([&] {
+        LOG(DEBUG) << "Connected";
+        m_isConnected = true;
+}, [&] {
+    LOG(DEBUG) << "Connection lost";
+    m_isConnected = false;
+    if (m_onConnectionLost)
+    {
+        m_onConnectionLost();
+    }
+}, [&](mqtt::const_message_ptr msg) {
+    if (m_onMessageReceived)
+    {
+        m_onMessageReceived(msg->get_topic(), msg->get_payload_str());
+    }
+}, [&](mqtt::delivery_token_ptr tok) {}));
+}
 
 bool PahoMqttClient::connect(const std::string& username, const std::string& password, const std::string& host,
                              const std::string& clientId)
@@ -42,7 +62,7 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
 
     m_isConnected = false;
     m_client.reset(new mqtt::async_client(host, clientId));
-    m_client->set_callback(*this);
+    m_client->set_callback(*m_callback);
 
     mqtt::connect_options connectOptions;
     connectOptions.set_user_name(username);
@@ -181,29 +201,5 @@ bool PahoMqttClient::publish(const std::string& topic, const std::string& messag
     return true;
 }
 
-void PahoMqttClient::connected(const mqtt::string& /* cause */)
-{
-    LOG(DEBUG) << "Connected";
-    m_isConnected = true;
-}
-
-void PahoMqttClient::connection_lost(const mqtt::string& /* cause */)
-{
-    LOG(DEBUG) << "Connection lost";
-    m_isConnected = false;
-    if (m_onConnectionLost)
-    {
-        m_onConnectionLost();
-    }
-}
-
-void PahoMqttClient::message_arrived(mqtt::const_message_ptr msg)
-{
-    if (m_onMessageReceived)
-    {
-        m_onMessageReceived(msg->get_topic(), msg->get_payload_str());
-    }
-}
-
-void PahoMqttClient::delivery_complete(mqtt::delivery_token_ptr /* tok */) {}
+PahoMqttClient::~PahoMqttClient() = default;
 }    // namespace wolkabout
