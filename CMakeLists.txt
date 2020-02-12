@@ -48,25 +48,8 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic             
 
 
 
-include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include" "${SSL_INCLUDE_DIR}")
+include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-
-# ssl
-IF (NOT SSL_INCLUDE_DIR)
-    message(FATAL_ERROR
-            "SSL include dir must be specified with: -DSSL_INCLUDE_DIR=...")
-ENDIF (NOT SSL_INCLUDE_DIR)
-
-IF (NOT IS_ABSOLUTE ${SSL_INCLUDE_DIR})
-    set(SSL_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/${SSL_INCLUDE_DIR}")
-ENDIF (NOT IS_ABSOLUTE ${SSL_INCLUDE_DIR})
-
-IF (NOT SSL_LIBS)
-    message(FATAL_ERROR
-            "SSL link path must be specified with: -DSSL_LIBS=...")
-ENDIF (NOT SSL_LIBS)
-
-add_definitions(-DOPENSSL)
 
 find_package(Threads REQUIRED)
 
@@ -76,7 +59,7 @@ file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CUR
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} ${SSL_LIBS} paho-mqttpp3 paho-mqtt3as Threads::Threads)
+target_link_libraries(${PROJECT_NAME} crypto paho-mqttpp3 paho-mqtt3as Threads::Threads)
 set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
 
 add_dependencies(${PROJECT_NAME} pahomqttcpp)
