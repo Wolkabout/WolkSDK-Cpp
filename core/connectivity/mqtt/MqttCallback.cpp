@@ -19,13 +19,14 @@
 namespace wolkabout
 {
 MqttCallback::MqttCallback(std::function<void()> onConnect, std::function<void()> onConnectionLost,
-                        std::function<void(mqtt::const_message_ptr)> onMessageArrived,
-                        std::function<void(mqtt::delivery_token_ptr)> onDeliveryComplete)
+                           std::function<void(mqtt::const_message_ptr)> onMessageArrived,
+                           std::function<void(mqtt::delivery_token_ptr)> onDeliveryComplete)
 : m_onConnectCallback(onConnect)
 , m_onConnectionLostCallback(onConnectionLost)
 , m_onMessageArrivedCallback(onMessageArrived)
 , m_onDeliveryCompleteCallback(onDeliveryComplete)
-{}
+{
+}
 void MqttCallback::connected(const mqtt::string& /* cause */)
 {
     m_onConnectCallback();
@@ -33,16 +34,16 @@ void MqttCallback::connected(const mqtt::string& /* cause */)
 
 void MqttCallback::connection_lost(const mqtt::string& /* cause */)
 {
-	m_onConnectionLostCallback();
+    m_onConnectionLostCallback();
 }
 
 void MqttCallback::message_arrived(mqtt::const_message_ptr msg)
 {
-	m_onMessageArrivedCallback(msg);
+    m_onMessageArrivedCallback(msg);
 }
 
 void MqttCallback::delivery_complete(mqtt::delivery_token_ptr tok)
 {
-	m_onDeliveryCompleteCallback(tok);
+    m_onDeliveryCompleteCallback(tok);
 }
 }    // namespace wolkabout
