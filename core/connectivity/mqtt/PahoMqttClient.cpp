@@ -16,9 +16,9 @@
 
 #include "PahoMqttClient.h"
 #include "MqttClient.h"
+#include "connectivity/mqtt/MqttCallback.h"
 #include "mqtt/async_client.h"
 #include "utilities/Logger.h"
-#include "connectivity/mqtt/MqttCallback.h"
 
 #include <atomic>
 #include <memory>
@@ -33,22 +33,26 @@ const unsigned short PahoMqttClient::MQTT_QOS = 2;
 
 PahoMqttClient::PahoMqttClient() : m_isConnected(false)
 {
-    m_callback.reset(new MqttCallback([&] {
-        LOG(DEBUG) << "Connected";
-        m_isConnected = true;
-}, [&] {
-    LOG(DEBUG) << "Connection lost";
-    m_isConnected = false;
-    if (m_onConnectionLost)
-    {
-        m_onConnectionLost();
-    }
-}, [&](mqtt::const_message_ptr msg) {
-    if (m_onMessageReceived)
-    {
-        m_onMessageReceived(msg->get_topic(), msg->get_payload_str());
-    }
-}, [&](mqtt::delivery_token_ptr tok) {}));
+    m_callback.reset(new MqttCallback(
+      [&] {
+          LOG(DEBUG) << "Connected";
+          m_isConnected = true;
+      },
+      [&] {
+          LOG(DEBUG) << "Connection lost";
+          m_isConnected = false;
+          if (m_onConnectionLost)
+          {
+              m_onConnectionLost();
+          }
+      },
+      [&](mqtt::const_message_ptr msg) {
+          if (m_onMessageReceived)
+          {
+              m_onMessageReceived(msg->get_topic(), msg->get_payload_str());
+          }
+      },
+      [&](mqtt::delivery_token_ptr tok) {}));
 }
 
 bool PahoMqttClient::connect(const std::string& username, const std::string& password, const std::string& host,
