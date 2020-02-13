@@ -15,7 +15,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(WolkAboutCore C CXX)
 
-
 if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endif(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
@@ -27,7 +26,6 @@ endif(NOT DEFINED CMAKE_PREFIX_PATH)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 add_subdirectory(dependencies)
-
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
@@ -46,8 +44,6 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic             
                                             -Wvariadic-macros                                                          \
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
 
-
-
 include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
@@ -62,8 +58,8 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} crypto paho-mqttpp3 paho-mqtt3as Threads::Threads)
 set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
 
-add_dependencies(${PROJECT_NAME} pahomqttcpp)
+add_dependencies(${PROJECT_NAME} pahomqttcpp libgtest)
 
-target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core" "${CMAKE_CURRENT_LIST_DIR}/dependencies")
 
 add_subdirectory(cmake)
