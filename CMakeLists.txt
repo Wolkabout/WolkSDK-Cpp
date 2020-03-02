@@ -15,10 +15,13 @@
 cmake_minimum_required(VERSION 3.5)
 project(WolkAboutCore C CXX)
 
-
 if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endif(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+
+if(NOT DEFINED CMAKE_LIBRARY_INCLUDE_DIRECTORY)
+    set(CMAKE_LIBRARY_INCLUDE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include")
+endif(NOT DEFINED CMAKE_LIBRARY_INCLUDE_DIRECTORY)
 
 if(NOT DEFINED CMAKE_PREFIX_PATH)
     set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/build")
@@ -27,7 +30,6 @@ endif(NOT DEFINED CMAKE_PREFIX_PATH)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 add_subdirectory(dependencies)
-
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
@@ -45,8 +47,6 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic             
                                             -Werror=unreachable-code -Wunused                                          \
                                             -Wvariadic-macros                                                          \
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
-
-
 
 include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
