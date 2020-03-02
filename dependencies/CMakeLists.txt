@@ -12,7 +12,6 @@ ExternalProject_Add(pahomqttc
                -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
                -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
                -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
-               -DCMAKE_INSTALL_RPATH='$ORIGIN'
 )
 
 ExternalProject_Add(pahomqttcpp
@@ -24,7 +23,6 @@ ExternalProject_Add(pahomqttcpp
                -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
                -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
                -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
-               -DCMAKE_INSTALL_RPATH='$ORIGIN'
     DEPENDS pahomqttc
 )
 
@@ -35,5 +33,4 @@ ExternalProject_Add(libgtest
                -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_LIBRARY_INCLUDE_DIRECTORY}
                -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
                -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
-               -DCMAKE_INSTALL_RPATH='$ORIGIN'
 )

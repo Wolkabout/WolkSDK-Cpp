@@ -62,8 +62,8 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} crypto paho-mqttpp3 paho-mqtt3as Threads::Threads)
 set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
 
-add_dependencies(${PROJECT_NAME} pahomqttcpp libgtest)
+add_dependencies(${PROJECT_NAME} pahomqttcpp)
 
-target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core" "${CMAKE_CURRENT_LIST_DIR}/dependencies")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
 
 add_subdirectory(cmake)
