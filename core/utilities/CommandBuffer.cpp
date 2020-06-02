@@ -49,8 +49,11 @@ void CommandBuffer::stop()
 {
     m_isRunning = false;
     notify();
-    if (m_worker->joinable())
+
+    if (m_worker && m_worker->joinable())
+    {
         m_worker->join();
+    }
 }
 
 std::shared_ptr<CommandBuffer::Command> CommandBuffer::popCommand()
