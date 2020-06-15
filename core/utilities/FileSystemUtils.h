@@ -18,6 +18,7 @@
 #define FILESYSTEMUTILS_H
 
 #include "utilities/ByteUtils.h"
+
 #include <cstddef>
 #include <string>
 #include <vector>

@@ -15,6 +15,7 @@
  */
 
 #include "persistence/inmemory/InMemoryPersistence.h"
+
 #include "persistence/Persistence.h"
 
 #include <cstddef>

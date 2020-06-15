@@ -15,6 +15,7 @@
  */
 
 #include "protocol/json/JsonStatusProtocol.h"
+
 #include "Json.h"
 #include "model/DeviceStatus.h"
 #include "model/DeviceStatusConfirm.h"

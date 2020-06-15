@@ -15,6 +15,7 @@
  */
 
 #include "protocol/json/JsonSingleReferenceProtocol.h"
+
 #include "model/ActuatorGetCommand.h"
 #include "model/ActuatorSetCommand.h"
 #include "model/ActuatorStatus.h"

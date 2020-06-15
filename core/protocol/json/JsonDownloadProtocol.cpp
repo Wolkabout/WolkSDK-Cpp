@@ -15,6 +15,7 @@
  */
 
 #include "protocol/json/JsonDownloadProtocol.h"
+
 #include "model/BinaryData.h"
 #include "model/FileDelete.h"
 #include "model/FileList.h"

@@ -15,6 +15,7 @@
  */
 
 #include "utilities/ConsoleLogger.h"
+
 #include <iostream>
 
 namespace wolkabout
