@@ -18,6 +18,7 @@
 #define STATUSPROTOCOL_H
 
 #include "protocol/Protocol.h"
+
 #include <memory>
 #include <string>
 

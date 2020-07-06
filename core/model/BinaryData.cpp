@@ -15,6 +15,7 @@
  */
 
 #include "BinaryData.h"
+
 #include <stdexcept>
 
 namespace wolkabout

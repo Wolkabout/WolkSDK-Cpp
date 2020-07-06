@@ -15,6 +15,7 @@
  */
 
 #include "connectivity/mqtt/MqttConnectivityService.h"
+
 #include "model/Message.h"
 
 namespace wolkabout

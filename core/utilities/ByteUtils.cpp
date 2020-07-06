@@ -15,6 +15,7 @@
  */
 
 #include "utilities/ByteUtils.h"
+
 #include "openssl/sha.h"
 
 namespace wolkabout

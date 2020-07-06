@@ -15,6 +15,7 @@
  */
 
 #include "protocol/json/JsonDto.h"
+
 #include "model/ActuatorTemplate.h"
 #include "model/AlarmTemplate.h"
 #include "model/ConfigurationTemplate.h"

@@ -18,6 +18,7 @@
 #define CONSOLELOGGER_H
 
 #include "utilities/Logger.h"
+
 #include <atomic>
 
 namespace wolkabout

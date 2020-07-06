@@ -15,6 +15,7 @@
  */
 
 #include "model/ActuatorStatus.h"
+
 #include "model/Reading.h"
 
 #include <string>

@@ -15,6 +15,7 @@
  */
 
 #include "model/SensorReading.h"
+
 #include "model/Reading.h"
 
 #include <string>

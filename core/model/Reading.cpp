@@ -15,6 +15,7 @@
  */
 
 #include "model/Reading.h"
+
 #include "utilities/StringUtils.h"
 
 namespace wolkabout

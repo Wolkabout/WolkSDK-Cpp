@@ -15,6 +15,7 @@
  */
 
 #include "protocol/json/JsonRegistrationProtocol.h"
+
 #include "model/GatewayUpdateRequest.h"
 #include "model/GatewayUpdateResponse.h"
 #include "model/Message.h"

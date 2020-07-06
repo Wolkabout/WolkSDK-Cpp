@@ -15,6 +15,7 @@
  */
 
 #include "protocol/json/DownloadProtocol.h"
+
 #include "model/BinaryData.h"
 #include "model/FilePacketRequest.h"
 #include "model/Message.h"

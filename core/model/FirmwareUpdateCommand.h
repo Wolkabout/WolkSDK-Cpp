@@ -18,6 +18,7 @@
 #define FIRMWAREUPDATECOMMAND_H
 
 #include "WolkOptional.h"
+
 #include <cstdint>
 #include <string>
 

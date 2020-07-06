@@ -15,6 +15,7 @@
  */
 
 #include "protocol/json/DFUProtocol.h"
+
 #include "model/FirmwareUpdateCommand.h"
 #include "model/FirmwareUpdateResponse.h"
 #include "model/Message.h"
