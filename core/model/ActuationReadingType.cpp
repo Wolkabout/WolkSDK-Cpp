@@ -199,7 +199,7 @@ std::string toString(ActuationReadingType::Name name)
     {
     case ActuationReadingType::Name::COUNT:
     {
-        return "COUNT(ACTUATOR)";
+        return "RANGE (ACTUATOR)";
     }
     case ActuationReadingType::Name::SWITCH:
     {
@@ -207,7 +207,7 @@ std::string toString(ActuationReadingType::Name name)
     }
     case ActuationReadingType::Name::STRING:
     {
-        return "STRING(ACTUATOR)";
+        return "TEXT(ACTUATOR)";
     }
     default:
     {
@@ -239,7 +239,7 @@ std::string toString(ActuationReadingType::MeasurmentUnit unit)
     }
     default:
     {
-        throw std::logic_error(std::string("Undefined Actuation measurment unit: ") +
+        throw std::logic_error(std::string("Undefined Actuation measurement unit: ") +
                                std::to_string(static_cast<int>(unit)));
     }
     }
