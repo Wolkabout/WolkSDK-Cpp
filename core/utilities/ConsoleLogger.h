@@ -20,6 +20,9 @@
 #include "utilities/Logger.h"
 
 #include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <thread>
 
 namespace wolkabout
 {
@@ -27,14 +30,27 @@ class ConsoleLogger : public Logger
 {
 public:
     ConsoleLogger();
+    ~ConsoleLogger();
 
     void logEntry(Log& log) override;
     void setLogLevel(wolkabout::LogLevel level) override;
 
+    void flushAt(LogLevel level);
+    void flushEvery(std::chrono::seconds period);
+
 private:
+    void flush();
+
     static std::string getFormattedDateTime();
 
-    std::atomic<LogLevel> m_level;
+    std::atomic<LogLevel> m_level{LogLevel::ERROR};
+    std::atomic<LogLevel> m_flushAtLevel{LogLevel::INFO};
+    std::chrono::seconds m_flushEvery{5};
+
+    std::atomic_bool m_run;
+    std::condition_variable m_condition;
+    std::mutex m_mutex;
+    std::thread m_flusher;
 };
 }    // namespace wolkabout
 
