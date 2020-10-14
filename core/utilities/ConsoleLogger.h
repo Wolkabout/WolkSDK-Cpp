@@ -45,7 +45,7 @@ private:
 
     std::atomic<LogLevel> m_level{LogLevel::ERROR};
     std::atomic<LogLevel> m_flushAtLevel{LogLevel::INFO};
-    std::chrono::seconds m_flushEvery{5};
+    std::chrono::seconds m_flushPeriod{5};
 
     std::atomic_bool m_run;
     std::condition_variable m_condition;

@@ -97,7 +97,7 @@ void ConsoleLogger::flushEvery(std::chrono::seconds period)
     m_condition.notify_one();
 
     std::lock_guard<std::mutex> guard{m_mutex};
-    m_flushEvery = period;
+    m_flushPeriod = period;
 }
 
 void ConsoleLogger::flush()
@@ -107,7 +107,7 @@ void ConsoleLogger::flush()
     {
         std::unique_lock<std::mutex> lock{m_mutex};
 
-        m_condition.wait_for(lock, m_flushEvery);
+        m_condition.wait_for(lock, m_flushPeriod);
 
         std::cout << std::flush;
     }
