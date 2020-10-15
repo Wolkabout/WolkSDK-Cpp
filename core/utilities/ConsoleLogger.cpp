@@ -18,6 +18,15 @@
 
 #include <iostream>
 
+namespace
+{
+const std::string LOG_TRACE = "TRACE";
+const std::string LOG_DEBUG = "DEBUG";
+const std::string LOG_INFO = "INFO";
+const std::string LOG_WARN = "WARNING";
+const std::string LOG_ERROR = "ERROR";
+}    // namespace
+
 namespace wolkabout
 {
 ConsoleLogger::ConsoleLogger() : m_flusher{[this] { flush(); }} {}
@@ -41,27 +50,27 @@ void ConsoleLogger::logEntry(Log& log)
         {
         case LogLevel::TRACE:
         {
-            std::cout << getFormattedDateTime() << "[T]" << log.getMessage();
+            std::cout << getFormattedDateTime() << "[" << LOG_TRACE << "]" << log.getMessage();
             break;
         }
         case LogLevel::DEBUG:
         {
-            std::cout << getFormattedDateTime() << "[D]" << log.getMessage();
+            std::cout << getFormattedDateTime() << "[" << LOG_DEBUG << "]" << log.getMessage();
             break;
         }
         case LogLevel::INFO:
         {
-            std::cout << getFormattedDateTime() << "[I]" << log.getMessage();
+            std::cout << getFormattedDateTime() << "[" << LOG_INFO << "]" << log.getMessage();
             break;
         }
         case LogLevel::WARN:
         {
-            std::cout << getFormattedDateTime() << "[W]" << log.getMessage();
+            std::cout << getFormattedDateTime() << "[" << LOG_WARN << "]" << log.getMessage();
             break;
         }
         case LogLevel::ERROR:
         {
-            std::cout << getFormattedDateTime() << "[E]" << log.getMessage();
+            std::cout << getFormattedDateTime() << "[" << LOG_ERROR << "]" << log.getMessage();
             break;
         }
         }
