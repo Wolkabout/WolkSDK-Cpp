@@ -18,9 +18,29 @@
 
 #include <iostream>
 
+namespace
+{
+const std::string LOG_TRACE = "TRACE";
+const std::string LOG_DEBUG = "DEBUG";
+const std::string LOG_INFO = "INFO";
+const std::string LOG_WARN = "WARNING";
+const std::string LOG_ERROR = "ERROR";
+}    // namespace
+
 namespace wolkabout
 {
-ConsoleLogger::ConsoleLogger() : m_level{LogLevel::ERROR} {}
+ConsoleLogger::ConsoleLogger() : m_flusher{[this] { flush(); }} {}
+
+ConsoleLogger::~ConsoleLogger()
+{
+    m_run = false;
+    m_condition.notify_one();
+
+    if (m_flusher.joinable())
+    {
+        m_flusher.join();
+    }
+}
 
 void ConsoleLogger::logEntry(Log& log)
 {
@@ -30,29 +50,38 @@ void ConsoleLogger::logEntry(Log& log)
         {
         case LogLevel::TRACE:
         {
-            std::cout << getFormattedDateTime() << "[T]" << log.getMessage() << "\n";
+            std::cout << getFormattedDateTime() << "[" << LOG_TRACE << "]" << log.getMessage();
             break;
         }
         case LogLevel::DEBUG:
         {
-            std::cout << getFormattedDateTime() << "[D]" << log.getMessage() << "\n";
+            std::cout << getFormattedDateTime() << "[" << LOG_DEBUG << "]" << log.getMessage();
             break;
         }
         case LogLevel::INFO:
         {
-            std::cout << getFormattedDateTime() << "[I]" << log.getMessage() << "\n";
+            std::cout << getFormattedDateTime() << "[" << LOG_INFO << "]" << log.getMessage();
             break;
         }
         case LogLevel::WARN:
         {
-            std::cout << getFormattedDateTime() << "[W]" << log.getMessage() << "\n";
+            std::cout << getFormattedDateTime() << "[" << LOG_WARN << "]" << log.getMessage();
             break;
         }
         case LogLevel::ERROR:
         {
-            std::cout << getFormattedDateTime() << "[E]" << log.getMessage() << "\n";
+            std::cout << getFormattedDateTime() << "[" << LOG_ERROR << "]" << log.getMessage();
             break;
         }
+        }
+
+        if (static_cast<int>(log.getLogLevel()) >= static_cast<int>(m_flushAtLevel.load()))
+        {
+            std::cout << std::endl;
+        }
+        else
+        {
+            std::cout << "\n";
         }
     }
 }
@@ -60,6 +89,37 @@ void ConsoleLogger::logEntry(Log& log)
 void ConsoleLogger::setLogLevel(wolkabout::LogLevel level)
 {
     m_level = level;
+}
+
+void ConsoleLogger::flushAt(LogLevel level)
+{
+    m_flushAtLevel = level;
+}
+
+void ConsoleLogger::flushEvery(std::chrono::seconds period)
+{
+    if (period.count() == 0)
+    {
+        m_run = false;
+    }
+
+    m_condition.notify_one();
+
+    std::lock_guard<std::mutex> guard{m_mutex};
+    m_flushPeriod = period;
+}
+
+void ConsoleLogger::flush()
+{
+    m_run = true;
+    while (m_run)
+    {
+        std::unique_lock<std::mutex> lock{m_mutex};
+
+        m_condition.wait_for(lock, m_flushPeriod);
+
+        std::cout << std::flush;
+    }
 }
 
 std::string ConsoleLogger::getFormattedDateTime()
