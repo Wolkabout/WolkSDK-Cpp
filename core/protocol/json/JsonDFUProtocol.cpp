@@ -113,31 +113,27 @@ static FirmwareUpdateAbort firmware_update_abort_from_json(const json& j)
 }
 /*** FIRMWARE UPDATE ABORT ***/
 
-JsonDFUProtocol::JsonDFUProtocol(bool isGateway) : m_isGateway{isGateway}
-{
-    if (isGateway)
-    {
-        m_devicePrefix = GATEWAY_PATH_PREFIX;
-    }
-    else
-    {
-        m_devicePrefix = DEVICE_PATH_PREFIX;
-    }
-}
+JsonDFUProtocol::JsonDFUProtocol(bool isGateway) : m_isGateway{isGateway} {}
 
 std::vector<std::string> JsonDFUProtocol::getInboundChannels() const
 {
     return {
-      FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
-      FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
+      FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+      FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + DEVICE_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+      FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+      FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
     };
 }
 
 std::vector<std::string> JsonDFUProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
     return {
-      FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + m_devicePrefix + deviceKey,
-      FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + m_devicePrefix + deviceKey,
+      FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey,
+      FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey,
+      FIRMWARE_UPDATE_INSTALL_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + DEVICE_PATH_PREFIX +
+        CHANNEL_MULTI_LEVEL_WILDCARD,
+      FIRMWARE_UPDATE_ABORT_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + DEVICE_PATH_PREFIX +
+        CHANNEL_MULTI_LEVEL_WILDCARD,
     };
 }
 
@@ -148,13 +144,32 @@ std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceK
 
     try
     {
-        std::string topic = FIRMWARE_UPDATE_STATUS_TOPIC_ROOT + m_devicePrefix + deviceKey;
+        std::string topic = FIRMWARE_UPDATE_STATUS_TOPIC_ROOT;
 
-        // add subdevice key to topic if only one subdevice
-        if (m_isGateway && firmwareUpdateStatus.getDeviceKeys().size() == 1 &&
-            firmwareUpdateStatus.getDeviceKeys()[0] != deviceKey)
+        if (m_isGateway)
         {
-            topic += CHANNEL_DELIMITER + DEVICE_PATH_PREFIX + firmwareUpdateStatus.getDeviceKeys()[0];
+            // update status of gateway
+            if (firmwareUpdateStatus.getDeviceKeys().size() == 1 &&
+                firmwareUpdateStatus.getDeviceKeys()[0] == deviceKey)
+            {
+                topic += DEVICE_PATH_PREFIX + deviceKey;
+            }
+            // update status of single subdevice
+            else if (firmwareUpdateStatus.getDeviceKeys().size() == 1 &&
+                     firmwareUpdateStatus.getDeviceKeys()[0] != deviceKey)
+            {
+                topic += GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + DEVICE_PATH_PREFIX +
+                         firmwareUpdateStatus.getDeviceKeys()[0];
+            }
+            // update status of multiple subdevices
+            else
+            {
+                topic += DEVICE_PATH_PREFIX + deviceKey;
+            }
+        }
+        else
+        {
+            topic += DEVICE_PATH_PREFIX + deviceKey;
         }
 
         const json jPayload(firmwareUpdateStatus);
@@ -180,14 +195,16 @@ std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceK
     LOG(TRACE) << METHOD_INFO;
 
     std::string topic;
+    // subdevice
     if (m_isGateway && deviceKey != version.getDeviceKey())
     {
         topic = FIRMWARE_VERSION_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + DEVICE_PATH_PREFIX +
                 version.getDeviceKey();
     }
+    // gateway or regular device
     else
     {
-        topic = FIRMWARE_VERSION_TOPIC_ROOT + m_devicePrefix + deviceKey;
+        topic = FIRMWARE_VERSION_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
     }
 
     return std::unique_ptr<Message>(new Message(version.getVersion(), topic));

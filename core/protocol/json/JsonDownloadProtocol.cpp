@@ -196,16 +196,9 @@ static void to_json(json& j, const FileUrlDownloadStatus& p)
 }
 /*** FILE URL DOWNLOAD STATUS ***/
 
-JsonDownloadProtocol::JsonDownloadProtocol(bool isGateway)
+JsonDownloadProtocol::JsonDownloadProtocol(bool /*isGateway*/)
 {
-    if (isGateway)
-    {
-        m_devicePrefix = GATEWAY_PATH_PREFIX;
-    }
-    else
-    {
-        m_devicePrefix = DEVICE_PATH_PREFIX;
-    }
+    m_devicePrefix = DEVICE_PATH_PREFIX;
 }
 
 std::vector<std::string> JsonDownloadProtocol::getInboundChannels() const

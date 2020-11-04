@@ -45,7 +45,6 @@ public:
 
 private:
     bool m_isGateway;
-    std::string m_devicePrefix;
 
     static const std::string FIRMWARE_UPDATE_STATUS_TOPIC_ROOT;
     static const std::string FIRMWARE_VERSION_TOPIC_ROOT;
