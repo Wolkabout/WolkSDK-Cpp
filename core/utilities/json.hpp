@@ -12812,8 +12812,7 @@ private:
 
     @since version 1.0.0
     */
-    union json_value
-    {
+    union json_value {
         /// object (stored with pointer to save storage)
         object_t* object;
         /// array (stored with pointer to save storage)

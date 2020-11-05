@@ -62,7 +62,6 @@ public:
 
 private:
     bool m_isGateway;
-    std::string m_devicePrefix;
 
     std::string joinMultiValues(const std::vector<std::string>& values, const std::string& delimiter) const;
     std::vector<std::string> parseMultiValues(const std::string& values, const std::string& delimiter) const;
