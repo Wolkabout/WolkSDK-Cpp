@@ -148,18 +148,19 @@ std::unique_ptr<Message> JsonDFUProtocol::makeMessage(const std::string& deviceK
 
         if (m_isGateway)
         {
-            // update status of gateway
-            if (firmwareUpdateStatus.getDeviceKeys().size() == 1 &&
-                firmwareUpdateStatus.getDeviceKeys()[0] == deviceKey)
+            if (firmwareUpdateStatus.getDeviceKeys().size() == 1)
             {
-                topic += DEVICE_PATH_PREFIX + deviceKey;
-            }
-            // update status of single subdevice
-            else if (firmwareUpdateStatus.getDeviceKeys().size() == 1 &&
-                     firmwareUpdateStatus.getDeviceKeys()[0] != deviceKey)
-            {
-                topic += GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + DEVICE_PATH_PREFIX +
-                         firmwareUpdateStatus.getDeviceKeys()[0];
+                // update status of gateway
+                if (firmwareUpdateStatus.getDeviceKeys()[0] == deviceKey)
+                {
+                    topic += DEVICE_PATH_PREFIX + deviceKey;
+                }
+                // update status of single subdevice
+                else
+                {
+                    topic += GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + DEVICE_PATH_PREFIX +
+                             firmwareUpdateStatus.getDeviceKeys()[0];
+                }
             }
             // update status of multiple subdevices
             else
