@@ -59,10 +59,10 @@ file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CUR
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} crypto paho-mqttpp3 paho-mqtt3as Threads::Threads)
+target_link_libraries(${PROJECT_NAME} crypto paho-mqttpp3 paho-mqtt3as PocoCrypto PocoFoundation PocoNet PocoNetSSL Threads::Threads)
 set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
 
-add_dependencies(${PROJECT_NAME} pahomqttcpp)
+add_dependencies(${PROJECT_NAME} pahomqttcpp libpoco)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
 
