@@ -86,6 +86,7 @@ void SimpleUrlDownloader::run()
     {
         LOG(ERROR) << "Failed to parse url: " << e.what();
         m_onFailCallback(m_url, FileTransferError::MALFORMED_URL);
+        m_run = false;
         return;
     }
 
@@ -100,6 +101,7 @@ void SimpleUrlDownloader::run()
     {
         LOG(ERROR) << "Failed to open url: " << e.what();
         m_onFailCallback(m_url, FileTransferError::UNSPECIFIED_ERROR);
+        m_run = false;
         return;
     }
 
@@ -108,6 +110,7 @@ void SimpleUrlDownloader::run()
     if (fileName.empty())
     {
         m_onFailCallback(m_url, FileTransferError::MALFORMED_URL);
+        m_run = false;
         return;
     }
 
@@ -144,6 +147,8 @@ void SimpleUrlDownloader::run()
     {
         assembler.clear();
     }
+
+    m_run = false;
 }
 
 void SimpleUrlDownloader::stop()
