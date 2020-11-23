@@ -37,9 +37,9 @@ ExternalProject_Add(libgtest
 )
 
 ExternalProject_Add(libpoco
-	GIT_REPOSITORY "https://github.com/pocoproject/poco"
+    GIT_REPOSITORY "https://github.com/pocoproject/poco"
     GIT_TAG "poco-${POCO_VERSION}-release"
-	CMAKE_ARGS -DPOCO_STATIC=ON
+    CMAKE_ARGS -DPOCO_STATIC=ON
                -DDISABLE_CPP14=TRUE
                -DENABLE_ENCODINGS=OFF
                -DENABLE_ENCODINGS_COMPILER=OFF
