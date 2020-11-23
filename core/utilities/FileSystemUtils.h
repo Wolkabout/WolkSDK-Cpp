@@ -19,12 +19,18 @@
 
 #include "utilities/ByteUtils.h"
 
-#include <cstddef>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 namespace wolkabout
 {
+class FileSystemException : public std::runtime_error
+{
+public:
+    using std::runtime_error::runtime_error;
+};
+
 class FileSystemUtils
 {
 public:
