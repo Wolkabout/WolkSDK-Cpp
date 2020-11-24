@@ -15,6 +15,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(WolkAboutCore C CXX)
 
+OPTION(BUILD_PAHO_MQTT "Build the library with Paho MQTT and allow MQTT connection to the platform." ON)
+OPTION(BUILD_POCO "Build the library with Poco." ON)
+OPTION(BUILD_GTEST "Build the library with GTest." ON)
+
 if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endif(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
@@ -59,10 +63,23 @@ file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CUR
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} crypto paho-mqttpp3 paho-mqtt3as PocoCrypto PocoFoundation PocoNet PocoNetSSL Threads::Threads)
+target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES} Threads::Threads)
+
+if (BUILD_PAHO_MQTT)
+    target_link_libraries(${PROJECT_NAME} paho-mqttpp3 paho-mqtt3as)
+endif ()
+if (BUILD_POCO)
+    target_link_libraries(${PROJECT_NAME} PocoCrypto PocoFoundation PocoNet PocoNetSSL)
+endif ()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
 
-add_dependencies(${PROJECT_NAME} pahomqttcpp libpoco)
+if (BUILD_PAHO_MQTT)
+    add_dependencies(${PROJECT_NAME} pahomqttcpp)
+endif ()
+if (BUILD_POCO)
+    add_dependencies(${PROJECT_NAME} libpoco)
+endif ()
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
 
