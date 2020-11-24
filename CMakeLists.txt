@@ -19,24 +19,24 @@ OPTION(BUILD_PAHO_MQTT "Build the library with Paho MQTT and allow MQTT connecti
 OPTION(BUILD_POCO "Build the library with Poco." ON)
 OPTION(BUILD_GTEST "Build the library with GTest." ON)
 
-if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+if (NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-endif(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+endif (NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
 
-if(NOT DEFINED CMAKE_LIBRARY_INCLUDE_DIRECTORY)
+if (NOT DEFINED CMAKE_LIBRARY_INCLUDE_DIRECTORY)
     set(CMAKE_LIBRARY_INCLUDE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include")
-endif(NOT DEFINED CMAKE_LIBRARY_INCLUDE_DIRECTORY)
+endif (NOT DEFINED CMAKE_LIBRARY_INCLUDE_DIRECTORY)
 
-if(NOT DEFINED CMAKE_PREFIX_PATH)
+if (NOT DEFINED CMAKE_PREFIX_PATH)
     set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/build")
-endif(NOT DEFINED CMAKE_PREFIX_PATH)
+endif (NOT DEFINED CMAKE_PREFIX_PATH)
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 add_subdirectory(dependencies)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
                                             -pedantic-errors -Wcast-align                                              \
                                             -Wcast-qual -Wconversion                                                   \
                                             -Wdisabled-optimization                                                    \
@@ -57,30 +57,58 @@ link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 find_package(Threads REQUIRED)
 
-# WolkAbout c++ SDK
+# WolkAbout C++ SDK, in their separated packages
+include_directories(core)
+file(GLOB INSTALL_HEADER_FILES)
+set(INSTALL_TARGETS)
 
+# Utilities
+file(GLOB CORE_HEADER_FILES core/*.h)
+file(GLOB CONNECTIVITY_HEADER_FILES core/connectivity/*.h)
+file(GLOB MODEL_HEADER_FILES core/model/*.h)
+file(GLOB PERSISTENCE_HEADER_FILES core/persistence/*.h)
+file(GLOB PROTOCOL_HEADER_FILES core/protocol/*.h)
+file(GLOB SERVICE_HEADER_FILES core/service/*.h)
+file(GLOB UTILITY_HEADER_FILES core/utilities/*.h core/utilities/*.hpp core/Version.h)
+file(GLOB UTILITY_SOURCE_FILES core/utilities/*.cpp)
+
+add_library(${PROJECT_NAME}Utility SHARED ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
+set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
+
+list(APPEND INSTALL_HEADER_FILES ${UTILITY_HEADER_FILES})
+list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
+
+# Build the MQTT logic if Paho is enabled
+if (BUILD_PAHO_MQTT)
+    file(GLOB MQTT_SOURCE_FILES core/connectivity/*.cpp
+            core/model/*.cpp
+            core/persistence/*.cpp
+            core/protocol/*.cpp
+            core/service/*.cpp)
+
+    add_library(${PROJECT_NAME} SHARED ${MQTT_SOURCE_FILES} ${CORE_HEADER_FILES} ${CONNECTIVITY_HEADER_FILES}
+            ${MODEL_HEADER_FILES} ${PERSISTENCE_HEADER_FILES} ${PROTOCOL_HEADER_FILES} ${SERVICE_HEADER_FILES})
+    target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as)
+    set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
+    add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}Utility pahomqttc pahomqttcpp)
+
+    list(APPEND INSTALL_HEADER_FILES ${MQTT_HEADER_FILES})
+    list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
+endif ()
+
+# Create the install rule
+install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+if (BUILD_PAHO_MQTT)
+    install(FILES ${CORE_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk)
+    install(FILES ${CONNECTIVITY_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/connectivity)
+    install(FILES ${MODEL_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/model)
+    install(FILES ${PERSISTENCE_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/persistence)
+    install(FILES ${PROTOCOL_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/protocol)
+    install(FILES ${SERVICE_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/service)
+endif ()
+install(FILES ${UTILITY_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/utilities)
+
+# Prepare the format rule
 file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CURRENT_LIST_DIR}/core/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
-
-target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES} Threads::Threads)
-
-if (BUILD_PAHO_MQTT)
-    target_link_libraries(${PROJECT_NAME} paho-mqttpp3 paho-mqtt3as)
-endif ()
-if (BUILD_POCO)
-    target_link_libraries(${PROJECT_NAME} PocoCrypto PocoFoundation PocoNet PocoNetSSL)
-endif ()
-
-set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
-
-if (BUILD_PAHO_MQTT)
-    add_dependencies(${PROJECT_NAME} pahomqttcpp)
-endif ()
-if (BUILD_POCO)
-    add_dependencies(${PROJECT_NAME} libpoco)
-endif ()
-
-target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}/core")
-
 add_subdirectory(cmake)
