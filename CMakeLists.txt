@@ -63,12 +63,6 @@ file(GLOB INSTALL_HEADER_FILES)
 set(INSTALL_TARGETS)
 
 # Utilities
-file(GLOB CORE_HEADER_FILES core/*.h)
-file(GLOB CONNECTIVITY_HEADER_FILES core/connectivity/*.h)
-file(GLOB MODEL_HEADER_FILES core/model/*.h)
-file(GLOB PERSISTENCE_HEADER_FILES core/persistence/*.h)
-file(GLOB PROTOCOL_HEADER_FILES core/protocol/*.h)
-file(GLOB SERVICE_HEADER_FILES core/service/*.h)
 file(GLOB UTILITY_HEADER_FILES core/utilities/*.h core/utilities/*.hpp core/Version.h)
 file(GLOB UTILITY_SOURCE_FILES core/utilities/*.cpp)
 
@@ -80,6 +74,12 @@ list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
 
 # Build the MQTT logic if Paho is enabled
 if (BUILD_PAHO_MQTT)
+    file(GLOB CORE_HEADER_FILES core/*.h)
+    file(GLOB CONNECTIVITY_HEADER_FILES core/connectivity/*.h)
+    file(GLOB MODEL_HEADER_FILES core/model/*.h)
+    file(GLOB PERSISTENCE_HEADER_FILES core/persistence/*.h)
+    file(GLOB PROTOCOL_HEADER_FILES core/protocol/*.h)
+    file(GLOB SERVICE_HEADER_FILES core/service/*.h)
     file(GLOB MQTT_SOURCE_FILES core/connectivity/*.cpp
             core/model/*.cpp
             core/persistence/*.cpp
