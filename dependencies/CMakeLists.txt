@@ -52,7 +52,7 @@ if (BUILD_POCO)
             -DENABLE_MONGODB=OFF
             -DENABLE_REDIS=OFF
             -DENABLE_PDF=OFF
-            -DENABLE_UTIL=OFF
+            -DENABLE_UTIL=ON
             -DENABLE_NET=ON
             -DENABLE_NETSSL=ON
             -DENABLE_NETSSL_WIN=OFF
