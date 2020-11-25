@@ -16,7 +16,7 @@ cmake_minimum_required(VERSION 3.5)
 project(WolkAboutCore C CXX)
 
 # Options for our library
-OPTION(BUILD_PAHO_MQTT "Build the library with Paho MQTT and allow MQTT connection to the platform." ON)
+OPTION(BUILD_CONNECTIVITY "Build the library with Paho MQTT and allow MQTT connection to the platform." ON)
 OPTION(BUILD_POCO "Build the library with Poco." ON)
 OPTION(BUILD_GTEST "Build the library with GTest." ON)
 
@@ -164,7 +164,7 @@ set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
 list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
 
 # Build the MQTT logic if Paho is enabled
-if (BUILD_PAHO_MQTT)
+if (BUILD_CONNECTIVITY)
     file(GLOB CORE_HEADER_FILES core/*.h)
     file(GLOB CONNECTIVITY_HEADER_FILES core/connectivity/*.h)
     file(GLOB MODEL_HEADER_FILES core/model/*.h)
@@ -188,7 +188,7 @@ endif ()
 
 # Create the install rule
 install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-if (BUILD_PAHO_MQTT)
+if (BUILD_CONNECTIVITY)
     install(FILES ${CORE_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk)
     install(FILES ${CONNECTIVITY_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/connectivity)
     install(FILES ${MODEL_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/model)

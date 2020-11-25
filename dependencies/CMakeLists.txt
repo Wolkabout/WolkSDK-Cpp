@@ -5,7 +5,7 @@ set(PAHO_MQTT_CPP_VERSION "1.1")
 set(GTEST_VERSION "1.10.0")
 set(POCO_VERSION "1.9.4")
 
-if (BUILD_PAHO_MQTT)
+if (BUILD_CONNECTIVITY)
     ExternalProject_Add(pahomqttc
             GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.c"
             GIT_TAG "v${PAHO_MQTT_C_VERSION}"
