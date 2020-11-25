@@ -32,3 +32,6 @@ out/
 *.exe
 *.out
 *.app
+
+# CLion
+.idea/

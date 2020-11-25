@@ -5,64 +5,69 @@ set(PAHO_MQTT_CPP_VERSION "1.1")
 set(GTEST_VERSION "1.10.0")
 set(POCO_VERSION "1.9.4")
 
-ExternalProject_Add(pahomqttc
-    GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.c"
-    GIT_TAG "v${PAHO_MQTT_C_VERSION}"
-    UPDATE_COMMAND ""
-    CMAKE_ARGS -DPAHO_WITH_SSL=TRUE
-               -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-               -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
-               -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
-)
+if (BUILD_CONNECTIVITY)
+    ExternalProject_Add(pahomqttc
+            GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.c"
+            GIT_TAG "v${PAHO_MQTT_C_VERSION}"
+            UPDATE_COMMAND ""
+            CMAKE_ARGS -DPAHO_WITH_SSL=TRUE
+            -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+            -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
+            -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+            )
 
-ExternalProject_Add(pahomqttcpp
-    GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.cpp"
-    GIT_TAG "v${PAHO_MQTT_CPP_VERSION}"
-    UPDATE_COMMAND ""
-    CMAKE_ARGS -DPAHO_WITH_SSL=TRUE
-               -DPAHO_MQTT_C_INCLUDE_DIRS=${CMAKE_PREFIX_PATH}/include
-               -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-               -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
-               -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
-    DEPENDS pahomqttc
-)
+    ExternalProject_Add(pahomqttcpp
+            GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.cpp"
+            GIT_TAG "v${PAHO_MQTT_CPP_VERSION}"
+            UPDATE_COMMAND ""
+            CMAKE_ARGS -DPAHO_WITH_SSL=TRUE
+            -DPAHO_MQTT_C_INCLUDE_DIRS=${CMAKE_PREFIX_PATH}/include
+            -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+            -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
+            -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+            DEPENDS pahomqttc
+            )
+endif ()
 
-ExternalProject_Add(libgtest
-    GIT_REPOSITORY "https://github.com/google/googletest"
-    GIT_TAG "release-${GTEST_VERSION}"
-    CMAKE_ARGS -DCMAKE_INSTALL_LIBDIR=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-               -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_LIBRARY_INCLUDE_DIRECTORY}
-               -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
-               -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
-)
+if (BUILD_GTEST)
+    ExternalProject_Add(libgtest
+            GIT_REPOSITORY "https://github.com/google/googletest"
+            GIT_TAG "release-${GTEST_VERSION}"
+            CMAKE_ARGS -DBUILD_SHARED_LIBS=ON
+            -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
+            -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+            )
+endif ()
 
-ExternalProject_Add(libpoco
-    GIT_REPOSITORY "https://github.com/pocoproject/poco"
-    GIT_TAG "poco-${POCO_VERSION}-release"
-    CMAKE_ARGS -DPOCO_STATIC=ON
-               -DDISABLE_CPP14=TRUE
-               -DENABLE_ENCODINGS=OFF
-               -DENABLE_ENCODINGS_COMPILER=OFF
-               -DENABLE_XML=OFF
-               -DENABLE_JSON=OFF
-               -DENABLE_MONGODB=OFF
-               -DENABLE_REDIS=OFF
-               -DENABLE_PDF=OFF
-               -DENABLE_UTIL=OFF
-               -DENABLE_NET=ON
-               -DENABLE_NETSSL=ON
-               -DENABLE_NETSSL_WIN=OFF
-               -DENABLE_CRYPTO=ON
-               -DENABLE_DATA=OFF
-               -DENABLE_DATA_SQLITE=OFF
-               -DENABLE_DATA_MYSQL=OFF
-               -DENABLE_DATA_ODBC=OFF
-               -DENABLE_SEVENZIP=OFF
-               -DENABLE_ZIP=OFF
-               -DENABLE_APACHECONNECTOR=OFF
-               -DENABLE_CPPPARSER=OFF
-               -DENABLE_POCODOC=OFF
-               -DENABLE_PAGECOMPILER=OFF
-               -DENABLE_PAGECOMPILER_FILE2PAGE=OFF
-               -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
-)
+if (BUILD_POCO)
+    ExternalProject_Add(libpoco
+            GIT_REPOSITORY "https://github.com/pocoproject/poco"
+            GIT_TAG "poco-${POCO_VERSION}-release"
+            CMAKE_ARGS -DPOCO_STATIC=ON
+            -DDISABLE_CPP14=TRUE
+            -DENABLE_ENCODINGS=${POCO_ENABLE_ENCODINGS}
+            -DENABLE_ENCODINGS_COMPILER=${POCO_ENABLE_ENCODINGS_COMPILER}
+            -DENABLE_XML=${POCO_ENABLE_XML}
+            -DENABLE_JSON=${POCO_ENABLE_JSON}
+            -DENABLE_MONGODB=${POCO_ENABLE_MONGODB}
+            -DENABLE_REDIS=${POCO_ENABLE_REDIS}
+            -DENABLE_PDF=${POCO_ENABLE_PDF}
+            -DENABLE_UTIL=${POCO_ENABLE_UTIL}
+            -DENABLE_NET=${POCO_ENABLE_NET}
+            -DENABLE_NETSSL=${POCO_ENABLE_NETSSL}
+            -DENABLE_NETSSL_WIN=${POCO_ENABLE_NETSSL_WIN}
+            -DENABLE_CRYPTO=${POCO_ENABLE_CRYPTO}
+            -DENABLE_DATA=${POCO_ENABLE_DATA}
+            -DENABLE_DATA_SQLITE=${POCO_ENABLE_DATA_SQLITE}
+            -DENABLE_DATA_MYSQL=${POCO_ENABLE_DATA_MYSQL}
+            -DENABLE_DATA_ODBC=${POCO_ENABLE_DATA_ODBC}
+            -DENABLE_SEVENZIP=${POCO_ENABLE_SEVENZIP}
+            -DENABLE_ZIP=${POCO_ENABLE_ZIP}
+            -DENABLE_APACHECONNECTOR=${POCO_ENABLE_APACHECONNECTOR}
+            -DENABLE_CPPPARSER=${POCO_ENABLE_CPPPARSER}
+            -DENABLE_POCODOC=${POCO_ENABLE_POCODOC}
+            -DENABLE_PAGECOMPILER=${POCO_ENABLE_PAGECOMPILER}
+            -DENABLE_PAGECOMPILER_FILE2PAGE=${POCO_ENABLE_PAGECOMPILER_FILE2PAGE}
+            -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
+            )
+endif ()
