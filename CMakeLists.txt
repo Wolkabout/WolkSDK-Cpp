@@ -36,7 +36,7 @@ SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 add_subdirectory(dependencies)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}    -Wall -Wextra -pedantic                                                    \
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}     -Wall -Wextra -pedantic                                                    \
                                             -pedantic-errors -Wcast-align                                              \
                                             -Wcast-qual -Wconversion                                                   \
                                             -Wdisabled-optimization                                                    \
@@ -59,7 +59,6 @@ find_package(Threads REQUIRED)
 
 # WolkAbout C++ SDK, in their separated packages
 include_directories(core)
-file(GLOB INSTALL_HEADER_FILES)
 set(INSTALL_TARGETS)
 
 # Utilities
@@ -69,7 +68,6 @@ file(GLOB UTILITY_SOURCE_FILES core/utilities/*.cpp)
 add_library(${PROJECT_NAME}Utility SHARED ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
 
-list(APPEND INSTALL_HEADER_FILES ${UTILITY_HEADER_FILES})
 list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
 
 # Build the MQTT logic if Paho is enabled
@@ -92,7 +90,6 @@ if (BUILD_PAHO_MQTT)
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
     add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}Utility pahomqttc pahomqttcpp)
 
-    list(APPEND INSTALL_HEADER_FILES ${MQTT_HEADER_FILES})
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
 endif ()
 
