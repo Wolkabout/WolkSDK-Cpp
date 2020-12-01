@@ -160,6 +160,7 @@ file(GLOB UTILITY_SOURCE_FILES core/utilities/*.cpp)
 
 add_library(${PROJECT_NAME}Utility SHARED ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
+target_link_libraries(${PROJECT_NAME}Utility PUBLIC crypto)
 
 list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
 
