@@ -378,49 +378,6 @@ SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json
 /*** SUBDEVICE REGISTRATION REQUEST DTO ***/
 
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
-void to_json(json& j, const SubdeviceRegistrationResponse& dto)
-{
-    auto resultStr = [&]() -> std::string {
-        switch (dto.getResult())
-        {
-        case SubdeviceRegistrationResponse::Result::OK:
-            return "OK";
-        case SubdeviceRegistrationResponse::Result::ERROR_GATEWAY_NOT_FOUND:
-            return "ERROR_GATEWAY_NOT_FOUND";
-        case SubdeviceRegistrationResponse::Result::ERROR_KEY_CONFLICT:
-            return "ERROR_KEY_CONFLICT";
-        case SubdeviceRegistrationResponse::Result::ERROR_NOT_A_GATEWAY:
-            return "ERROR_NOT_A_GATEWAY";
-        case SubdeviceRegistrationResponse::Result::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED:
-            return "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED";
-        case SubdeviceRegistrationResponse::Result::ERROR_VALIDATION_ERROR:
-            return "ERROR_VALIDATION_ERROR";
-        case SubdeviceRegistrationResponse::Result::ERROR_INVALID_DTO:
-            return "ERROR_INVALID_DTO";
-        case SubdeviceRegistrationResponse::Result::ERROR_KEY_MISSING:
-            return "ERROR_KEY_MISSING";
-        case SubdeviceRegistrationResponse::Result::ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN:
-            return "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN";
-        case SubdeviceRegistrationResponse::Result::ERROR_UNKNOWN:
-            return "ERROR_UNKNOWN";
-        default:
-        {
-            assert(false);
-            throw std::invalid_argument("Unhandled result");
-        }
-        }
-    }();
-
-    // clang-format off
-    json j_payload = {{"deviceKey", dto.getSubdeviceKey()}};
-    j = {
-        {"payload" , j_payload},
-        {"result", resultStr},
-        {"description", dto.getDescription()}
-    };
-    // clang-format on
-}
-
 SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j)
 {
     auto result = [&]() -> SubdeviceRegistrationResponse::Result {
@@ -431,35 +388,35 @@ SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nl
         }
         else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
         {
-            return SubdeviceRegistrationResponse::Result::ERROR_GATEWAY_NOT_FOUND;
+            return SubdeviceRegistrationResponse::Result::GATEWAY_NOT_FOUND;
         }
-        else if (resultStr == "ERROR_NOT_A_GATEWAY")
+        else if (resultStr == "VALIDATION_ERROR")
         {
-            return SubdeviceRegistrationResponse::Result::ERROR_NOT_A_GATEWAY;
+            return SubdeviceRegistrationResponse::Result::VALIDATION_ERROR;
         }
-        else if (resultStr == "ERROR_KEY_CONFLICT")
+        else if (resultStr == "ERROR_INVALID_SUBDEVICE_DTO")
         {
-            return SubdeviceRegistrationResponse::Result::ERROR_KEY_CONFLICT;
-        }
-        else if (resultStr == "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED")
-        {
-            return SubdeviceRegistrationResponse::Result::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED;
-        }
-        else if (resultStr == "ERROR_VALIDATION_ERROR")
-        {
-            return SubdeviceRegistrationResponse::Result::ERROR_VALIDATION_ERROR;
-        }
-        else if (resultStr == "ERROR_INVALID_DTO")
-        {
-            return SubdeviceRegistrationResponse::Result::ERROR_INVALID_DTO;
-        }
-        else if (resultStr == "ERROR_KEY_MISSING")
-        {
-            return SubdeviceRegistrationResponse::Result::ERROR_KEY_MISSING;
+            return SubdeviceRegistrationResponse::Result::INVALID_SUBDEVICE_DTO;
         }
         else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
         {
-            return SubdeviceRegistrationResponse::Result::ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN;
+            return SubdeviceRegistrationResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN;
+        }
+        else if (resultStr == "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED")
+        {
+            return SubdeviceRegistrationResponse::Result::MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED;
+        }
+        else if (resultStr == "ERROR_NOT_A_GATEWAY")
+        {
+            return SubdeviceRegistrationResponse::Result::NOT_A_GATEWAY;
+        }
+        else if (resultStr == "ERROR_KEY_CONFLICT")
+        {
+            return SubdeviceRegistrationResponse::Result::KEY_CONFLICT;
+        }
+        else if (resultStr == "MISSING_UNIT")
+        {
+            return SubdeviceRegistrationResponse::Result::MISSING_UNIT;
         }
         else
         {
@@ -495,47 +452,6 @@ void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto)
 /*** GATEWAY UPDATE REQUEST DTO ***/
 
 /*** GATEWAY UPDATE RESPONSE DTO ***/
-
-void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto)
-{
-    auto resultStr = [&]() -> std::string {
-        switch (dto.getResult())
-        {
-        case GatewayUpdateResponse::Result::OK:
-            return "OK";
-        case GatewayUpdateResponse::Result::ERROR_GATEWAY_NOT_FOUND:
-            return "ERROR_GATEWAY_NOT_FOUND";
-        case GatewayUpdateResponse::Result::ERROR_KEY_CONFLICT:
-            return "ERROR_KEY_CONFLICT";
-        case GatewayUpdateResponse::Result::ERROR_NOT_A_GATEWAY:
-            return "ERROR_NOT_A_GATEWAY";
-        case GatewayUpdateResponse::Result::ERROR_VALIDATION_ERROR:
-            return "ERROR_VALIDATION_ERROR";
-        case GatewayUpdateResponse::Result::ERROR_INVALID_DTO:
-            return "ERROR_INVALID_DTO";
-        case GatewayUpdateResponse::Result::ERROR_KEY_MISSING:
-            return "ERROR_KEY_MISSING";
-        case GatewayUpdateResponse::Result::ERROR_SUBDEVICE_MANAGEMENT_CHANGE_NOT_ALLOWED:
-            return "ERROR_SUBDEVICE_MANAGEMENT_CHANGE_NOT_ALLOWED";
-        case GatewayUpdateResponse::Result::ERROR_GATEWAY_UPDATE_FORBIDDEN:
-            return "ERROR_GATEWAY_UPDATE_FORBIDDEN";
-        case GatewayUpdateResponse::Result::ERROR_UNKNOWN:
-            return "ERROR_UNKNOWN";
-        default:
-        {
-            assert(false);
-            throw std::invalid_argument("Unhandled result");
-        }
-        }
-    }();
-
-    // clang-format off
-    j = {
-        {"result", resultStr},
-        {"description", dto.getDescription()}
-    };
-}
-
 GatewayUpdateResponse gateway_update_response_from_json(const json& j)
 {
     auto result = [&]() -> GatewayUpdateResponse::Result {
@@ -546,35 +462,23 @@ GatewayUpdateResponse gateway_update_response_from_json(const json& j)
             }
             else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
             {
-                return GatewayUpdateResponse::Result::ERROR_GATEWAY_NOT_FOUND;
+                return GatewayUpdateResponse::Result::GATEWAY_NOT_FOUND;
             }
-            else if (resultStr == "ERROR_NOT_A_GATEWAY")
-            {
-                return GatewayUpdateResponse::Result::ERROR_NOT_A_GATEWAY;
+	        else if (resultStr == "VALIDATION_ERROR")
+	        {
+	            return GatewayUpdateResponse::Result::VALIDATION_ERROR;
             }
-            else if (resultStr == "ERROR_KEY_CONFLICT")
-            {
-                return GatewayUpdateResponse::Result::ERROR_KEY_CONFLICT;
+	        else if (resultStr == "ERROR_GATEWAY_UPDATE_FORBIDDEN")
+	        {
+                return GatewayUpdateResponse::Result::GATEWAY_UPDATE_FORBIDDEN;
             }
-            else if (resultStr == "ERROR_VALIDATION_ERROR")
-            {
-                return GatewayUpdateResponse::Result::ERROR_VALIDATION_ERROR;
+	        else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
+	        {
+                return GatewayUpdateResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN;
             }
-            else if (resultStr == "ERROR_INVALID_DTO")
+	        else if (resultStr == "MISSING_UNIT")
             {
-                return GatewayUpdateResponse::Result::ERROR_INVALID_DTO;
-            }
-            else if (resultStr == "ERROR_KEY_MISSING")
-            {
-                return GatewayUpdateResponse::Result::ERROR_KEY_MISSING;
-            }
-            else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_CHANGE_NOT_ALLOWED")
-            {
-                return GatewayUpdateResponse::Result::ERROR_SUBDEVICE_MANAGEMENT_CHANGE_NOT_ALLOWED;
-            }
-            else if (resultStr == "ERROR_GATEWAY_UPDATE_FORBIDDEN")
-            {
-                return GatewayUpdateResponse::Result::ERROR_GATEWAY_UPDATE_FORBIDDEN;
+	            return GatewayUpdateResponse::Result::MISSING_UNIT;
             }
             else
             {
