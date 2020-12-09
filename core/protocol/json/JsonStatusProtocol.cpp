@@ -42,7 +42,7 @@ const std::vector<std::string> JsonStatusProtocol::INBOUND_CHANNELS = {
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATE_FIELD = "state";
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_CONNECTED = "CONNECTED";
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_SLEEP = "SLEEP";
-const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_SERVICE = "SERVICE";
+const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_SERVICE = "SERVICE_MODE";
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_OFFLINE = "OFFLINE";
 
 void to_json(json& j, const DeviceStatus& p)
