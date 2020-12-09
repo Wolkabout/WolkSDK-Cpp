@@ -37,6 +37,7 @@ public:
     bool isSubdeviceRegistrationResponse(const Message& message) const override;
     bool isGatewayUpdateResponse(const Message& message) const override;
     bool isSubdeviceDeletionResponse(const Message& message) const override;
+    bool isSubdeviceUpdateResponse(const Message& message) const override;
 
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const SubdeviceRegistrationRequest& request) const override;
@@ -47,10 +48,15 @@ public:
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const SubdeviceDeletionRequest& request) const override;
 
+    std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                         const SubdeviceUpdateRequest& request) const override;
+
     std::unique_ptr<SubdeviceRegistrationResponse> makeSubdeviceRegistrationResponse(
       const Message& message) const override;
 
     std::unique_ptr<GatewayUpdateResponse> makeGatewayUpdateResponse(const Message& message) const override;
+
+    std::unique_ptr<SubdeviceUpdateResponse> makeSubdeviceUpdateResponse(const Message& message) const override;
 
     std::string getResponseChannel(const std::string& deviceKey, const Message& message) const override;
 
@@ -64,6 +70,8 @@ private:
     static const std::string GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT;
     static const std::string SUBDEVICE_DELETION_REQUEST_TOPIC_ROOT;
     static const std::string SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT;
+    static const std::string SUBDEVICE_UPDATE_REQUEST_TOPIC_ROOT;
+    static const std::string SUBDEVICE_UPDATE_RESPONSE_TOPIC_ROOT;
 };
 }    // namespace wolkabout
 

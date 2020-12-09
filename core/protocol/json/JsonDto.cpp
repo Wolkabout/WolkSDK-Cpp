@@ -24,6 +24,8 @@
 #include "model/SensorTemplate.h"
 #include "model/SubdeviceRegistrationRequest.h"
 #include "model/SubdeviceRegistrationResponse.h"
+#include "model/SubdeviceUpdateRequest.h"
+#include "model/SubdeviceUpdateResponse.h"
 
 #include <string>
 
@@ -347,15 +349,19 @@ void to_json(json& j, const SubdeviceRegistrationRequest& dto)
         {"name", dto.getSubdeviceName()},
         {"deviceKey", dto.getSubdeviceKey()},
         {"defaultBinding", dto.getDefaultBinding()},
-        {"configurations", dto.getTemplate().getConfigurations()},
         {"sensors", dto.getTemplate().getSensors()},
-        {"alarms", dto.getTemplate().getAlarms()},
         {"actuators", dto.getTemplate().getActuators()},
-        {"firmwareUpdateType", dto.getTemplate().getFirmwareUpdateType()},
+        {"alarms", dto.getTemplate().getAlarms()},
+        {"configurations", dto.getTemplate().getConfigurations()},
         {"typeParameters", dto.getTemplate().getTypeParameters()},
         {"connectivityParameters", dto.getTemplate().getConnectivityParameters()},
         {"firmwareUpdateParameters", dto.getTemplate().getFirmwareUpdateParameters()}
     };
+
+    if (!dto.getType().empty())
+    {
+        j["type"] = dto.getType();
+    }
     // clang-format on
 }
 
@@ -364,16 +370,19 @@ SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json
     DeviceTemplate subdeviceTemplate = DeviceTemplate(
       j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
       j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
-      j.at("actuators").get<std::vector<ActuatorTemplate>>(), j.at("firmwareUpdateType").get<std::string>(),
+      j.at("actuators").get<std::vector<ActuatorTemplate>>(), "" /*no firmwareUpdateType in request*/,
       j.at("typeParameters").get<std::map<std::string, std::string>>(),
       j.at("connectivityParameters").get<std::map<std::string, std::string>>(),
       j.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
 
     auto it_defaultBinding = j.find("defaultBinding");
-
     bool defaultBinding = (it_defaultBinding != j.end()) ? j.at("defaultBinding").get<bool>() : false;
+
+    auto it_type = j.find("type");
+    std::string type = (it_type != j.end()) ? j.at("type").get<std::string>() : "";
+
     return SubdeviceRegistrationRequest(j.at("name").get<std::string>(), j.at("deviceKey").get<std::string>(),
-                                        subdeviceTemplate, defaultBinding);
+                                        subdeviceTemplate, defaultBinding, type);
 }
 /*** SUBDEVICE REGISTRATION REQUEST DTO ***/
 
@@ -455,42 +464,101 @@ void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto)
 GatewayUpdateResponse gateway_update_response_from_json(const json& j)
 {
     auto result = [&]() -> GatewayUpdateResponse::Result {
-            std::string resultStr = j.at("result").get<std::string>();
-            if (resultStr == "OK")
-            {
-                return GatewayUpdateResponse::Result::OK;
-            }
-            else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
-            {
-                return GatewayUpdateResponse::Result::GATEWAY_NOT_FOUND;
-            }
-	        else if (resultStr == "VALIDATION_ERROR")
-	        {
-	            return GatewayUpdateResponse::Result::VALIDATION_ERROR;
-            }
-	        else if (resultStr == "ERROR_GATEWAY_UPDATE_FORBIDDEN")
-	        {
-                return GatewayUpdateResponse::Result::GATEWAY_UPDATE_FORBIDDEN;
-            }
-	        else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
-	        {
-                return GatewayUpdateResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN;
-            }
-	        else if (resultStr == "MISSING_UNIT")
-            {
-	            return GatewayUpdateResponse::Result::MISSING_UNIT;
-            }
-            else
-            {
-                return GatewayUpdateResponse::Result::ERROR_UNKNOWN;
-            }
-        }();
+        std::string resultStr = j.at("result").get<std::string>();
+        if (resultStr == "OK")
+        {
+            return GatewayUpdateResponse::Result::OK;
+        }
+        else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
+        {
+            return GatewayUpdateResponse::Result::GATEWAY_NOT_FOUND;
+        }
+        else if (resultStr == "VALIDATION_ERROR")
+        {
+            return GatewayUpdateResponse::Result::VALIDATION_ERROR;
+        }
+        else if (resultStr == "ERROR_GATEWAY_UPDATE_FORBIDDEN")
+        {
+            return GatewayUpdateResponse::Result::GATEWAY_UPDATE_FORBIDDEN;
+        }
+        else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
+        {
+            return GatewayUpdateResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN;
+        }
+        else if (resultStr == "MISSING_UNIT")
+        {
+            return GatewayUpdateResponse::Result::MISSING_UNIT;
+        }
+        else
+        {
+            return GatewayUpdateResponse::Result::ERROR_UNKNOWN;
+        }
+    }();
 
     std::string description = (j.at("description").is_null() ? "" : j.at("description").get<std::string>());
 
     return GatewayUpdateResponse(result, description);
 }
 /*** GATEWAY UPDATE RESPONSE DTO ***/
+
+/*** SUBDEVICE UPDATE REQUEST DTO ***/
+void to_json(json& j, const SubdeviceUpdateRequest& dto)
+{
+    // clang-format off
+    j = {
+        {"updateDefaultSemantics", dto.getUpdateDefaultSemantics()},
+        {"add", {
+            {"sensors", dto.getSensors()},
+            {"actuators", dto.getActuators()},
+            {"alarms", dto.getAlarms()},
+            {"configurations", dto.getConfigurations()}}
+        }
+    };
+    // clang-format on
+}
+/*** SUBDEVICE UPDATE REQUEST DTO ***/
+
+/*** SUBDEVICE UPDATE RESPONSE DTO ***/
+SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json& j, const std::string& deviceKey)
+{
+    auto result = [&]() -> SubdeviceUpdateResponse::Result {
+        std::string resultStr = j.at("result").get<std::string>();
+        if (resultStr == "OK")
+        {
+            return SubdeviceUpdateResponse::Result::OK;
+        }
+        else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
+        {
+            return SubdeviceUpdateResponse::Result::GATEWAY_NOT_FOUND;
+        }
+        else if (resultStr == "VALIDATION_ERROR")
+        {
+            return SubdeviceUpdateResponse::Result::VALIDATION_ERROR;
+        }
+        else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
+        {
+            return SubdeviceUpdateResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN;
+        }
+        else if (resultStr == "ERROR_NOT_A_GATEWAY")
+        {
+            return SubdeviceUpdateResponse::Result::NOT_A_GATEWAY;
+        }
+        else if (resultStr == "MISSING_UNIT")
+        {
+            return SubdeviceUpdateResponse::Result::MISSING_UNIT;
+        }
+        else
+        {
+            return SubdeviceUpdateResponse::Result::ERROR_UNKNOWN;
+        }
+    }();
+
+    std::string description = (j.at("description").is_null()) ? "" : j.at("description").get<std::string>();
+
+    return SubdeviceUpdateResponse(deviceKey, result, description);
+}
+
+/*** SUBDEVICE UPDATE RESPONSE DTO ***/
 
 PlatformResult platform_result_from_json(const nlohmann::json& j)
 {

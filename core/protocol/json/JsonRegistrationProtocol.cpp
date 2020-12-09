@@ -22,6 +22,8 @@
 #include "model/SubdeviceDeletionRequest.h"
 #include "model/SubdeviceRegistrationRequest.h"
 #include "model/SubdeviceRegistrationResponse.h"
+#include "model/SubdeviceUpdateRequest.h"
+#include "model/SubdeviceUpdateResponse.h"
 #include "protocol/json/Json.h"
 #include "protocol/json/JsonDto.h"
 #include "utilities/Logger.h"
@@ -42,6 +44,8 @@ const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_REQUEST_TOPIC_ROOT = 
 const std::string JsonRegistrationProtocol::GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT = "p2d/update_gateway_response/";
 const std::string JsonRegistrationProtocol::SUBDEVICE_DELETION_REQUEST_TOPIC_ROOT = "d2p/delete_subdevice_request/";
 const std::string JsonRegistrationProtocol::SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT = "p2d/delete_subdevice_response/";
+const std::string JsonRegistrationProtocol::SUBDEVICE_UPDATE_REQUEST_TOPIC_ROOT = "d2p/update_subdevice_request/";
+const std::string JsonRegistrationProtocol::SUBDEVICE_UPDATE_RESPONSE_TOPIC_ROOT = "p2d/update_subdevice_response/";
 
 JsonRegistrationProtocol::JsonRegistrationProtocol(bool isGateway) : m_isGateway{isGateway}
 {
@@ -59,14 +63,16 @@ std::vector<std::string> JsonRegistrationProtocol::getInboundChannels() const
 {
     return {SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
             GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
-            SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD};
+            SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD,
+            SUBDEVICE_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + CHANNEL_MULTI_LEVEL_WILDCARD};
 }
 
 std::vector<std::string> JsonRegistrationProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
     return {SUBDEVICE_REGISTRATION_RESPONSE_TOPIC_ROOT + m_devicePrefix + deviceKey,
             GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey,
-            SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey};
+            SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey,
+            SUBDEVICE_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey};
 }
 
 std::string JsonRegistrationProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
@@ -107,6 +113,13 @@ bool JsonRegistrationProtocol::isSubdeviceDeletionResponse(const Message& messag
     LOG(TRACE) << METHOD_INFO;
 
     return StringUtils::startsWith(message.getChannel(), SUBDEVICE_DELETION_RESPONSE_TOPIC_ROOT);
+}
+
+bool JsonRegistrationProtocol::isSubdeviceUpdateResponse(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    return StringUtils::startsWith(message.getChannel(), SUBDEVICE_UPDATE_RESPONSE_TOPIC_ROOT);
 }
 
 std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string& deviceKey,
@@ -173,6 +186,33 @@ std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string
     return std::unique_ptr<Message>(new Message("", channel));
 }
 
+std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string& deviceKey,
+                                                               const SubdeviceUpdateRequest& request) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    try
+    {
+        const json jsonPayload(request);
+        const std::string channel = SUBDEVICE_UPDATE_REQUEST_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey +
+                                    CHANNEL_DELIMITER + DEVICE_PATH_PREFIX + request.getSubdeviceKey();
+
+        const auto content = jsonPayload.dump();
+
+        return std::unique_ptr<Message>(new Message(content, channel));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "Subdevice registration protocol: Unable to serialize subdevice update request: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "Subdevice registration protocol: Unable to serialize subdevice update request";
+        return nullptr;
+    }
+}
+
 std::unique_ptr<SubdeviceRegistrationResponse> JsonRegistrationProtocol::makeSubdeviceRegistrationResponse(
   const Message& message) const
 {
@@ -232,6 +272,43 @@ std::unique_ptr<GatewayUpdateResponse> JsonRegistrationProtocol::makeGatewayUpda
     }
 }
 
+std::unique_ptr<SubdeviceUpdateResponse> JsonRegistrationProtocol::makeSubdeviceUpdateResponse(
+  const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    if (!StringUtils::startsWith(message.getChannel(), SUBDEVICE_UPDATE_RESPONSE_TOPIC_ROOT))
+    {
+        return nullptr;
+    }
+
+    auto deviceKey = extractDeviceKeyFromChannel(message.getChannel());
+
+    if (deviceKey.empty())
+    {
+        LOG(DEBUG) << "Subdevice registration protocol: Unable to extract key from subdevice update response";
+        return nullptr;
+    }
+
+    try
+    {
+        const json jsonResponse = json::parse(message.getContent());
+        SubdeviceUpdateResponse response = subdevice_update_response_from_json(jsonResponse, deviceKey);
+
+        return std::unique_ptr<SubdeviceUpdateResponse>(new SubdeviceUpdateResponse(response));
+    }
+    catch (std::exception& e)
+    {
+        LOG(DEBUG) << "Subdevice registration protocol: Unable to deserialize subdevice update response: " << e.what();
+        return nullptr;
+    }
+    catch (...)
+    {
+        LOG(DEBUG) << "Subdevice registration protocol: Unable to deserialize subdevice update response";
+        return nullptr;
+    }
+}
+
 std::string JsonRegistrationProtocol::getResponseChannel(const std::string& deviceKey, const Message& message) const
 {
     LOG(TRACE) << METHOD_INFO;
@@ -247,6 +324,10 @@ std::string JsonRegistrationProtocol::getResponseChannel(const std::string& devi
     else if (StringUtils::startsWith(message.getChannel(), GATEWAY_UPDATE_REQUEST_TOPIC_ROOT))
     {
         return GATEWAY_UPDATE_RESPONSE_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey;
+    }
+    else if (StringUtils::startsWith(message.getChannel(), SUBDEVICE_UPDATE_REQUEST_TOPIC_ROOT))
+    {
+        return SUBDEVICE_UPDATE_RESPONSE_TOPIC_ROOT + m_devicePrefix + deviceKey;
     }
 
     return "";

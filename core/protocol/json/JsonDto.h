@@ -31,6 +31,8 @@ class GatewayUpdateRequest;
 class GatewayUpdateResponse;
 class SubdeviceRegistrationRequest;
 class SubdeviceRegistrationResponse;
+class SubdeviceUpdateRequest;
+class SubdeviceUpdateResponse;
 
 void to_json(nlohmann::json& j, const ConfigurationTemplate& configurationTemplate);
 void from_json(const nlohmann::json& j, ConfigurationTemplate& configurationTemplate);
@@ -55,8 +57,11 @@ SubdeviceRegistrationRequest subdevice_registration_request_from_json(const nloh
 void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto);
 GatewayUpdateResponse gateway_update_response_from_json(const nlohmann::json& j);
 
-void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
 SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j);
+
+void to_json(nlohmann::json& j, const SubdeviceUpdateRequest& dto);
+
+SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json& j, const std::string& deviceKey);
 
 PlatformResult platform_result_from_json(const nlohmann::json& j);
 }    // namespace wolkabout

@@ -21,19 +21,22 @@
 namespace wolkabout
 {
 SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey,
-                                                           DeviceTemplate subdeviceTemplate, bool defaultBinding)
+                                                           DeviceTemplate subdeviceTemplate, bool defaultBinding,
+                                                           std::string type)
 : m_subdeviceName(std::move(subdeviceName))
 , m_subdeviceKey(std::move(subdeviceKey))
 , m_subdeviceTemplate(std::move(subdeviceTemplate))
 , m_defaultBinding(defaultBinding)
+, m_type(std::move(type))
 {
 }
 
-SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(DetailedDevice device, bool defaultBinding)
+SubdeviceRegistrationRequest::SubdeviceRegistrationRequest(DetailedDevice device, bool defaultBinding, std::string type)
 : m_subdeviceName(device.getName())
 , m_subdeviceKey(device.getKey())
 , m_subdeviceTemplate(device.getTemplate())
 , m_defaultBinding(defaultBinding)
+, m_type(std::move(type))
 {
 }
 
@@ -50,6 +53,11 @@ const std::string& SubdeviceRegistrationRequest::getSubdeviceKey() const
 bool SubdeviceRegistrationRequest::getDefaultBinding() const
 {
     return m_defaultBinding;
+}
+
+std::string SubdeviceRegistrationRequest::getType() const
+{
+    return m_type;
 }
 
 const DeviceTemplate& SubdeviceRegistrationRequest::getTemplate() const
