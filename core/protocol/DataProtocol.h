@@ -17,6 +17,7 @@
 #ifndef DATAPROTOCOL_H
 #define DATAPROTOCOL_H
 
+#include "model/ActuatorGetCommand.h"
 #include "protocol/Protocol.h"
 
 #include <memory>
@@ -27,7 +28,6 @@ namespace wolkabout
 {
 class Message;
 class ActuatorSetCommand;
-class ActuatorGetCommand;
 class ActuatorStatus;
 class Alarm;
 class ConfigurationSetCommand;
@@ -45,8 +45,9 @@ public:
     virtual bool isConfigurationSetMessage(const Message& message) const = 0;
     virtual bool isConfigurationGetMessage(const Message& message) const { return false; }
 
-    virtual std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const = 0;
-    virtual std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const { return nullptr; }
+    virtual std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const { return nullptr; }
+
+    virtual std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const = 0;
 
     virtual std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(const Message& message) const = 0;
 
