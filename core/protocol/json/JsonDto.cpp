@@ -387,6 +387,49 @@ SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json
 /*** SUBDEVICE REGISTRATION REQUEST DTO ***/
 
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
+void to_json(json& j, const SubdeviceRegistrationResponse& dto)
+{
+    auto resultStr = [&]() -> std::string {
+        switch (dto.getResult())
+        {
+        case SubdeviceRegistrationResponse::Result::OK:
+            return "OK";
+        case SubdeviceRegistrationResponse::Result::GATEWAY_NOT_FOUND:
+            return "ERROR_GATEWAY_NOT_FOUND";
+        case SubdeviceRegistrationResponse::Result::VALIDATION_ERROR:
+            return "VALIDATION_ERROR";
+        case SubdeviceRegistrationResponse::Result::INVALID_SUBDEVICE_DTO:
+            return "ERROR_INVALID_SUBDEVICE_DTO";
+        case SubdeviceRegistrationResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN:
+            return "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN";
+        case SubdeviceRegistrationResponse::Result::MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED:
+            return "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED";
+        case SubdeviceRegistrationResponse::Result::NOT_A_GATEWAY:
+            return "ERROR_NOT_A_GATEWAY";
+        case SubdeviceRegistrationResponse::Result::KEY_CONFLICT:
+            return "ERROR_KEY_CONFLICT";
+        case SubdeviceRegistrationResponse::Result::MISSING_UNIT:
+            return "MISSING_UNIT";
+        case SubdeviceRegistrationResponse::Result::ERROR_UNKNOWN:
+            return "ERROR_UNKNOWN";
+        default:
+        {
+            assert(false);
+            throw std::invalid_argument("Unhandled result");
+        }
+        }
+    }();
+
+    // clang-format off
+    json j_payload = {{"deviceKey", dto.getSubdeviceKey()}};
+    j = {
+        {"payload" , j_payload},
+        {"result", resultStr},
+        {"description", dto.getDescription()}
+    };
+    // clang-format on
+}
+
 SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j)
 {
     auto result = [&]() -> SubdeviceRegistrationResponse::Result {

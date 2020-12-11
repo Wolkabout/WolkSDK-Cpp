@@ -57,6 +57,7 @@ SubdeviceRegistrationRequest subdevice_registration_request_from_json(const nloh
 void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto);
 GatewayUpdateResponse gateway_update_response_from_json(const nlohmann::json& j);
 
+void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
 SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j);
 
 void to_json(nlohmann::json& j, const SubdeviceUpdateRequest& dto);
