@@ -559,9 +559,64 @@ void to_json(json& j, const SubdeviceUpdateRequest& dto)
     };
     // clang-format on
 }
+
+SubdeviceUpdateRequest subdevice_update_request_from_json(const nlohmann::json& j, const std::string& deviceKey)
+{
+    DeviceTemplate subdeviceTemplate = DeviceTemplate(
+      j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
+      j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
+      j.at("actuators").get<std::vector<ActuatorTemplate>>(), "" /*no firmwareUpdateType in request*/,
+      j.at("typeParameters").get<std::map<std::string, std::string>>(),
+      j.at("connectivityParameters").get<std::map<std::string, std::string>>(),
+      j.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
+
+    auto configurations = j["add"].at("configurations").get<std::vector<ConfigurationTemplate>>();
+    auto sensors = j["add"].at("sensors").get<std::vector<SensorTemplate>>();
+    auto actuators = j["add"].at("actuators").get<std::vector<ActuatorTemplate>>();
+    auto alarms = j["add"].at("alarms").get<std::vector<AlarmTemplate>>();
+
+    bool updateDefaultSemantics = j.at("updateDefaultSemantics").get<bool>();
+
+    return SubdeviceUpdateRequest(deviceKey, updateDefaultSemantics, configurations, sensors, alarms, actuators);
+}
 /*** SUBDEVICE UPDATE REQUEST DTO ***/
 
 /*** SUBDEVICE UPDATE RESPONSE DTO ***/
+void to_json(nlohmann::json& j, const SubdeviceUpdateResponse& dto)
+{
+    auto resultStr = [&]() -> std::string {
+        switch (dto.getResult())
+        {
+        case SubdeviceUpdateResponse::Result::OK:
+            return "OK";
+        case SubdeviceUpdateResponse::Result::GATEWAY_NOT_FOUND:
+            return "ERROR_GATEWAY_NOT_FOUND";
+        case SubdeviceUpdateResponse::Result::VALIDATION_ERROR:
+            return "VALIDATION_ERROR";
+        case SubdeviceUpdateResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN:
+            return "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN";
+        case SubdeviceUpdateResponse::Result::NOT_A_GATEWAY:
+            return "ERROR_NOT_A_GATEWAY";
+        case SubdeviceUpdateResponse::Result::MISSING_UNIT:
+            return "MISSING_UNIT";
+        case SubdeviceUpdateResponse::Result::ERROR_UNKNOWN:
+            return "ERROR_UNKNOWN";
+        default:
+        {
+            assert(false);
+            throw std::invalid_argument("Unhandled result");
+        }
+        }
+    }();
+
+    // clang-format off
+    j = {
+        {"result", resultStr},
+        {"description", dto.getDescription()}
+    };
+    // clang-format on
+}
+
 SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json& j, const std::string& deviceKey)
 {
     auto result = [&]() -> SubdeviceUpdateResponse::Result {
@@ -623,4 +678,5 @@ PlatformResult platform_result_from_json(const nlohmann::json& j)
     auto errorMsg = "Invalid value for platform result: " + resultStr;
     throw std::logic_error(errorMsg);
 }
+
 }    // namespace wolkabout

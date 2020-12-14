@@ -61,7 +61,9 @@ void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
 SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j);
 
 void to_json(nlohmann::json& j, const SubdeviceUpdateRequest& dto);
+SubdeviceUpdateRequest subdevice_update_request_from_json(const nlohmann::json& j, const std::string& deviceKey);
 
+void to_json(nlohmann::json& j, const SubdeviceUpdateResponse& dto);
 SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json& j, const std::string& deviceKey);
 
 PlatformResult platform_result_from_json(const nlohmann::json& j);
