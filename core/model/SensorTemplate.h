@@ -30,18 +30,15 @@ class SensorTemplate
 public:
     SensorTemplate() = default;
 
-    SensorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
-                   WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
+    SensorTemplate(std::string name, std::string reference, DataType dataType, std::string description);
 
-    SensorTemplate(std::string name, std::string reference, ReadingType readingType, std::string description,
-                   WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
+    SensorTemplate(std::string name, std::string reference, ReadingType readingType, std::string description);
 
     SensorTemplate(std::string name, std::string reference, ReadingType::Name readingTypeName,
-                   ReadingType::MeasurmentUnit unit, std::string description, WolkOptional<double> minimum = {},
-                   WolkOptional<double> maximum = {});
+                   ReadingType::MeasurmentUnit unit, std::string description);
 
     SensorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
-                   std::string description, WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
+                   std::string description);
 
     const std::string& getName() const;
 
@@ -53,10 +50,6 @@ public:
 
     const std::string& getDescription() const;
 
-    WolkOptional<double> getMinimum() const;
-
-    WolkOptional<double> getMaximum() const;
-
     bool operator==(SensorTemplate& rhs) const;
     bool operator!=(SensorTemplate& rhs) const;
 
@@ -65,9 +58,6 @@ private:
     std::string m_reference;
     ReadingType m_readingType;
     std::string m_description;
-
-    WolkOptional<double> m_minimum;
-    WolkOptional<double> m_maximum;
 };
 }    // namespace wolkabout
 

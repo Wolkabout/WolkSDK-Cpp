@@ -68,16 +68,6 @@ void to_json(json& j, const ConfigurationTemplate& configurationTemplate)
     confJ["size"] = configurationTemplate.getSize();
     confJ["description"] = configurationTemplate.getDescription();
 
-    if (configurationTemplate.getMinimum())
-    {
-        confJ["minimum"] = configurationTemplate.getMinimum().value();
-    }
-
-    if (configurationTemplate.getMaximum())
-    {
-        confJ["maximum"] = configurationTemplate.getMaximum().value();
-    }
-
     if (configurationTemplate.getSize() > 1)
     {
         confJ["labels"] = configurationTemplate.getLabels();
@@ -112,20 +102,6 @@ void from_json(const json& j, ConfigurationTemplate& configurationTemplate)
         }
     }();
 
-    auto it_minimum = j.find("minimum");
-    WolkOptional<double> minimum;
-    if (it_minimum != j.end() && !j["minimum"].is_null())
-    {
-        minimum = j["minimum"].get<double>();
-    }
-
-    auto it_maximum = j.find("maximum");
-    WolkOptional<double> maximum;
-    if (it_maximum != j.end() && !j["maximum"].is_null())
-    {
-        maximum = j["maximum"].get<double>();
-    }
-
     auto it_description = j.find("description");
     std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
 
@@ -140,9 +116,7 @@ void from_json(const json& j, ConfigurationTemplate& configurationTemplate)
                 dataType,
                 description,
                 defaultValue,
-                j.at("labels").is_null() ? std::vector<std::string>{} : j.at("labels").get<std::vector<std::string>>(),
-                minimum,
-                maximum);
+                j.at("labels").is_null() ? std::vector<std::string>{} : j.at("labels").get<std::vector<std::string>>());
     // clang-format on
 }
 /*** CONFIGURATION TEMPLATE ***/
@@ -192,43 +166,11 @@ void to_json(json& j, const ActuatorTemplate& actuatorTemplate)
         actuatorJ["unit"]["symbol"] = nullptr;
     }
 
-    if (actuatorTemplate.getMinimum())
-    {
-        actuatorJ["minimum"] = actuatorTemplate.getMinimum().value();
-    }
-    else
-    {
-        actuatorJ["minimum"] = nullptr;
-    }
-
-    if (actuatorTemplate.getMaximum())
-    {
-        actuatorJ["maximum"] = actuatorTemplate.getMaximum().value();
-    }
-    else
-    {
-        actuatorJ["maximum"] = nullptr;
-    }
-
     j = actuatorJ;
 }
 
 void from_json(const json& j, ActuatorTemplate& actuatorTemplate)
 {
-    auto it_minimum = j.find("minimum");
-    WolkOptional<double> minimum;
-    if (it_minimum != j.end() && !j["minimum"].is_null())
-    {
-        minimum = j["minimum"].get<double>();
-    }
-
-    auto it_maximum = j.find("maximum");
-    WolkOptional<double> maximum;
-    if (it_maximum != j.end() && !j["maximum"].is_null())
-    {
-        maximum = j["maximum"].get<double>();
-    }
-
     auto it_description = j.find("description");
     std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
 
@@ -238,9 +180,7 @@ void from_json(const json& j, ActuatorTemplate& actuatorTemplate)
                 j.at("reference").get<std::string>(),
                 j["unit"].at("readingTypeName").get<std::string>(),
                 j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
-                description,
-                minimum,
-                maximum};
+                description};
     // clang-format on
 }
 /*** ACTUATOR TEMPLATE ***/
@@ -264,53 +204,18 @@ void to_json(json& j, const SensorTemplate& sensorTemplate)
         sensorJ["unit"]["symbol"] = nullptr;
     }
 
-    if (sensorTemplate.getMinimum())
-    {
-        sensorJ["minimum"] = sensorTemplate.getMinimum().value();
-    }
-    else
-    {
-        sensorJ["minimum"] = nullptr;
-    }
-
-    if (sensorTemplate.getMaximum())
-    {
-        sensorJ["maximum"] = sensorTemplate.getMaximum().value();
-    }
-    else
-    {
-        sensorJ["maximum"] = nullptr;
-    }
-
     j = sensorJ;
 }
 
 void from_json(const json& j, SensorTemplate& sensorTemplate)
 {
-    auto it_minimum = j.find("minimum");
-    WolkOptional<double> minimum;
-    if (it_minimum != j.end() && !j["minimum"].is_null())
-    {
-        minimum = j["minimum"].get<double>();
-    }
-
-    auto it_maximum = j.find("maximum");
-    WolkOptional<double> maximum;
-    if (it_maximum != j.end() && !j["maximum"].is_null())
-    {
-        maximum = j["maximum"].get<double>();
-    }
-
     auto it_description = j.find("description");
     std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
 
-    sensorTemplate = SensorTemplate{j.at("name").get<std::string>(),
-                                    j.at("reference").get<std::string>(),
-                                    j["unit"].at("readingTypeName").get<std::string>(),
-                                    j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
-                                    description,
-                                    minimum,
-                                    maximum};
+    sensorTemplate =
+      SensorTemplate{j.at("name").get<std::string>(), j.at("reference").get<std::string>(),
+                     j["unit"].at("readingTypeName").get<std::string>(),
+                     j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(), description};
 }
 /*** SENSOR TEMPLATE ***/
 

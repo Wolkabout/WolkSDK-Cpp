@@ -30,18 +30,16 @@ class ActuatorTemplate
 public:
     ActuatorTemplate() = default;
 
-    ActuatorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
-                     WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
+    ActuatorTemplate(std::string name, std::string reference, DataType dataType, std::string description);
 
-    ActuatorTemplate(std::string name, std::string reference, ActuationReadingType readingType, std::string description,
-                     WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
+    ActuatorTemplate(std::string name, std::string reference, ActuationReadingType readingType,
+                     std::string description);
 
     ActuatorTemplate(std::string name, std::string reference, ActuationReadingType::Name readingTypeName,
-                     ActuationReadingType::MeasurmentUnit unit, std::string description,
-                     WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
+                     ActuationReadingType::MeasurmentUnit unit, std::string description);
 
     ActuatorTemplate(std::string name, std::string reference, std::string readingTypeName, std::string unitSymbol,
-                     std::string description, WolkOptional<double> minimum = {}, WolkOptional<double> maximum = {});
+                     std::string description);
 
     const std::string& getName() const;
 
@@ -53,10 +51,6 @@ public:
 
     const std::string& getReadingTypeName() const;
 
-    WolkOptional<double> getMinimum() const;
-
-    WolkOptional<double> getMaximum() const;
-
     bool operator==(ActuatorTemplate& rhs) const;
     bool operator!=(ActuatorTemplate& rhs) const;
 
@@ -65,9 +59,6 @@ private:
     std::string m_reference;
     ActuationReadingType m_readingType;
     std::string m_description;
-
-    WolkOptional<double> m_minimum;
-    WolkOptional<double> m_maximum;
 };
 }    // namespace wolkabout
 
