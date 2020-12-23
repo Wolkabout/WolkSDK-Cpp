@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WolkAbout Technology s.r.o.
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 #ifndef SUBDEVICEREGISTRATIONRESPONSE_H
 #define SUBDEVICEREGISTRATIONRESPONSE_H
 
+#include "PlatformResult.h"
+
 #include <string>
 
 namespace wolkabout
@@ -24,33 +26,14 @@ namespace wolkabout
 class SubdeviceRegistrationResponse
 {
 public:
-    enum class Result
-    {
-        OK,
-        GATEWAY_NOT_FOUND,
-        VALIDATION_ERROR,
-        INVALID_SUBDEVICE_DTO,
-        SUBDEVICE_MANAGEMENT_FORBIDDEN,
-        MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED,
-        NOT_A_GATEWAY,
-        KEY_CONFLICT,
-        MISSING_UNIT,
-        ERROR_UNKNOWN
-    };
-
-    SubdeviceRegistrationResponse(std::string subdeviceKey, SubdeviceRegistrationResponse::Result result,
-                                  std::string description = "");
-
-    SubdeviceRegistrationResponse::Result getResult() const;
+    SubdeviceRegistrationResponse(std::string subdeviceKey, PlatformResult result);
 
     const std::string& getSubdeviceKey() const;
-
-    const std::string& getDescription() const;
+    const PlatformResult& getResult() const;
 
 private:
     std::string m_subdeviceKey;
-    SubdeviceRegistrationResponse::Result m_result;
-    std::string m_description;
+    PlatformResult m_result;
 };
 }    // namespace wolkabout
 

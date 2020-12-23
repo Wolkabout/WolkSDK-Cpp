@@ -19,9 +19,11 @@
 #include "model/ActuatorTemplate.h"
 #include "model/AlarmTemplate.h"
 #include "model/ConfigurationTemplate.h"
+#include "model/DeviceStatusConfirm.h"
 #include "model/GatewayUpdateRequest.h"
 #include "model/GatewayUpdateResponse.h"
 #include "model/SensorTemplate.h"
+#include "model/SubdeviceDeletionResponse.h"
 #include "model/SubdeviceRegistrationRequest.h"
 #include "model/SubdeviceRegistrationResponse.h"
 #include "model/SubdeviceUpdateRequest.h"
@@ -341,6 +343,46 @@ void from_json(const json& j, DeviceTemplate& deviceTemplate)
 }
 /*** DEVICE TEMPLATE ***/
 
+/*** GATEWAY UPDATE REQUEST DTO ***/
+
+void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto)
+{
+    // clang-format off
+    j = {
+        {"sensors", dto.getTemplate().getSensors()},
+        {"actuators", dto.getTemplate().getActuators()},
+        {"alarms", dto.getTemplate().getAlarms()},
+        {"configurations", dto.getTemplate().getConfigurations()}
+    };
+    // clang-format on
+}
+
+/*** GATEWAY UPDATE REQUEST DTO ***/
+
+/*** GATEWAY UPDATE RESPONSE DTO ***/
+void to_json(json& j, const GatewayUpdateResponse& dto)
+{
+    // clang-format off
+    j = {
+        {"result", dto.getResult().getMessage()},
+        {"description", dto.getResult().getDescription()}
+    };
+    // clang-format on
+}
+
+GatewayUpdateResponse gateway_update_response_from_json(const json& j)
+{
+    auto result = platform_result_from_string(j.at("result").get<std::string>());
+
+    if (!j.at("description").is_null())
+    {
+        result.setDescription(j.at("description").get<std::string>());
+    }
+
+    return GatewayUpdateResponse(result);
+}
+/*** GATEWAY UPDATE RESPONSE DTO ***/
+
 /*** SUBDEVICE REGISTRATION REQUEST DTO ***/
 void to_json(json& j, const SubdeviceRegistrationRequest& dto)
 {
@@ -348,13 +390,11 @@ void to_json(json& j, const SubdeviceRegistrationRequest& dto)
     j = {
         {"name", dto.getSubdeviceName()},
         {"deviceKey", dto.getSubdeviceKey()},
-        {"defaultBinding", dto.getDefaultBinding()},
         {"sensors", dto.getTemplate().getSensors()},
         {"actuators", dto.getTemplate().getActuators()},
         {"alarms", dto.getTemplate().getAlarms()},
         {"configurations", dto.getTemplate().getConfigurations()},
-        {"typeParameters", dto.getTemplate().getTypeParameters()},
-        {"connectivityParameters", dto.getTemplate().getConnectivityParameters()},
+        {"defaultBinding", dto.getDefaultBinding()},
         {"firmwareUpdateParameters", dto.getTemplate().getFirmwareUpdateParameters()}
     };
 
@@ -371,8 +411,7 @@ SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json
       j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
       j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
       j.at("actuators").get<std::vector<ActuatorTemplate>>(), "" /*no firmwareUpdateType in request*/,
-      j.at("typeParameters").get<std::map<std::string, std::string>>(),
-      j.at("connectivityParameters").get<std::map<std::string, std::string>>(),
+      {} /*no typeParameters in request*/, {} /*no connectivityParameters in request*/,
       j.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
 
     auto it_defaultBinding = j.find("defaultBinding");
@@ -389,160 +428,31 @@ SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
 void to_json(json& j, const SubdeviceRegistrationResponse& dto)
 {
-    auto resultStr = [&]() -> std::string {
-        switch (dto.getResult())
-        {
-        case SubdeviceRegistrationResponse::Result::OK:
-            return "OK";
-        case SubdeviceRegistrationResponse::Result::GATEWAY_NOT_FOUND:
-            return "ERROR_GATEWAY_NOT_FOUND";
-        case SubdeviceRegistrationResponse::Result::VALIDATION_ERROR:
-            return "VALIDATION_ERROR";
-        case SubdeviceRegistrationResponse::Result::INVALID_SUBDEVICE_DTO:
-            return "ERROR_INVALID_SUBDEVICE_DTO";
-        case SubdeviceRegistrationResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN:
-            return "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN";
-        case SubdeviceRegistrationResponse::Result::MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED:
-            return "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED";
-        case SubdeviceRegistrationResponse::Result::NOT_A_GATEWAY:
-            return "ERROR_NOT_A_GATEWAY";
-        case SubdeviceRegistrationResponse::Result::KEY_CONFLICT:
-            return "ERROR_KEY_CONFLICT";
-        case SubdeviceRegistrationResponse::Result::MISSING_UNIT:
-            return "MISSING_UNIT";
-        case SubdeviceRegistrationResponse::Result::ERROR_UNKNOWN:
-            return "ERROR_UNKNOWN";
-        default:
-        {
-            assert(false);
-            throw std::invalid_argument("Unhandled result");
-        }
-        }
-    }();
-
     // clang-format off
     json j_payload = {{"deviceKey", dto.getSubdeviceKey()}};
     j = {
         {"payload" , j_payload},
-        {"result", resultStr},
-        {"description", dto.getDescription()}
+        {"result", dto.getResult().getMessage()},
+        {"description", dto.getResult().getDescription()}
     };
     // clang-format on
 }
 
 SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j)
 {
-    auto result = [&]() -> SubdeviceRegistrationResponse::Result {
-        std::string resultStr = j.at("result").get<std::string>();
-        if (resultStr == "OK")
-        {
-            return SubdeviceRegistrationResponse::Result::OK;
-        }
-        else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
-        {
-            return SubdeviceRegistrationResponse::Result::GATEWAY_NOT_FOUND;
-        }
-        else if (resultStr == "VALIDATION_ERROR")
-        {
-            return SubdeviceRegistrationResponse::Result::VALIDATION_ERROR;
-        }
-        else if (resultStr == "ERROR_INVALID_SUBDEVICE_DTO")
-        {
-            return SubdeviceRegistrationResponse::Result::INVALID_SUBDEVICE_DTO;
-        }
-        else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
-        {
-            return SubdeviceRegistrationResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN;
-        }
-        else if (resultStr == "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED")
-        {
-            return SubdeviceRegistrationResponse::Result::MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED;
-        }
-        else if (resultStr == "ERROR_NOT_A_GATEWAY")
-        {
-            return SubdeviceRegistrationResponse::Result::NOT_A_GATEWAY;
-        }
-        else if (resultStr == "ERROR_KEY_CONFLICT")
-        {
-            return SubdeviceRegistrationResponse::Result::KEY_CONFLICT;
-        }
-        else if (resultStr == "MISSING_UNIT")
-        {
-            return SubdeviceRegistrationResponse::Result::MISSING_UNIT;
-        }
-        else
-        {
-            return SubdeviceRegistrationResponse::Result::ERROR_UNKNOWN;
-        }
-    }();
+    auto result = platform_result_from_string(j.at("result").get<std::string>());
 
-    std::string description = (j.at("description").is_null()) ? "" : j.at("description").get<std::string>();
+    if (!j.at("description").is_null())
+    {
+        result.setDescription(j.at("description").get<std::string>());
+    }
 
-    return SubdeviceRegistrationResponse(j["payload"].at("deviceKey").get<std::string>(), result, description);
+    const auto key = j["payload"].at("deviceKey").get<std::string>();
+
+    return SubdeviceRegistrationResponse(key, result);
 }
 
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
-
-/*** GATEWAY UPDATE REQUEST DTO ***/
-
-void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto)
-{
-    // clang-format off
-    j = {
-        {"firmwareUpdateType", dto.getTemplate().getFirmwareUpdateType()},
-        {"sensors", dto.getTemplate().getSensors()},
-        {"actuators", dto.getTemplate().getActuators()},
-        {"alarms", dto.getTemplate().getAlarms()},
-        {"configurations", dto.getTemplate().getConfigurations()},
-        {"typeParameters", dto.getTemplate().getTypeParameters()},
-        {"connectivityParameters", dto.getTemplate().getConnectivityParameters()},
-        {"firmwareUpdateParameters", dto.getTemplate().getFirmwareUpdateParameters()}
-    };
-    // clang-format on
-}
-
-/*** GATEWAY UPDATE REQUEST DTO ***/
-
-/*** GATEWAY UPDATE RESPONSE DTO ***/
-GatewayUpdateResponse gateway_update_response_from_json(const json& j)
-{
-    auto result = [&]() -> GatewayUpdateResponse::Result {
-        std::string resultStr = j.at("result").get<std::string>();
-        if (resultStr == "OK")
-        {
-            return GatewayUpdateResponse::Result::OK;
-        }
-        else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
-        {
-            return GatewayUpdateResponse::Result::GATEWAY_NOT_FOUND;
-        }
-        else if (resultStr == "VALIDATION_ERROR")
-        {
-            return GatewayUpdateResponse::Result::VALIDATION_ERROR;
-        }
-        else if (resultStr == "ERROR_GATEWAY_UPDATE_FORBIDDEN")
-        {
-            return GatewayUpdateResponse::Result::GATEWAY_UPDATE_FORBIDDEN;
-        }
-        else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
-        {
-            return GatewayUpdateResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN;
-        }
-        else if (resultStr == "MISSING_UNIT")
-        {
-            return GatewayUpdateResponse::Result::MISSING_UNIT;
-        }
-        else
-        {
-            return GatewayUpdateResponse::Result::ERROR_UNKNOWN;
-        }
-    }();
-
-    std::string description = (j.at("description").is_null() ? "" : j.at("description").get<std::string>());
-
-    return GatewayUpdateResponse(result, description);
-}
-/*** GATEWAY UPDATE RESPONSE DTO ***/
 
 /*** SUBDEVICE UPDATE REQUEST DTO ***/
 void to_json(json& j, const SubdeviceUpdateRequest& dto)
@@ -562,14 +472,6 @@ void to_json(json& j, const SubdeviceUpdateRequest& dto)
 
 SubdeviceUpdateRequest subdevice_update_request_from_json(const nlohmann::json& j, const std::string& deviceKey)
 {
-    DeviceTemplate subdeviceTemplate = DeviceTemplate(
-      j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
-      j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
-      j.at("actuators").get<std::vector<ActuatorTemplate>>(), "" /*no firmwareUpdateType in request*/,
-      j.at("typeParameters").get<std::map<std::string, std::string>>(),
-      j.at("connectivityParameters").get<std::map<std::string, std::string>>(),
-      j.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
-
     auto configurations = j["add"].at("configurations").get<std::vector<ConfigurationTemplate>>();
     auto sensors = j["add"].at("sensors").get<std::vector<SensorTemplate>>();
     auto actuators = j["add"].at("actuators").get<std::vector<ActuatorTemplate>>();
@@ -584,99 +486,124 @@ SubdeviceUpdateRequest subdevice_update_request_from_json(const nlohmann::json& 
 /*** SUBDEVICE UPDATE RESPONSE DTO ***/
 void to_json(nlohmann::json& j, const SubdeviceUpdateResponse& dto)
 {
-    auto resultStr = [&]() -> std::string {
-        switch (dto.getResult())
-        {
-        case SubdeviceUpdateResponse::Result::OK:
-            return "OK";
-        case SubdeviceUpdateResponse::Result::GATEWAY_NOT_FOUND:
-            return "ERROR_GATEWAY_NOT_FOUND";
-        case SubdeviceUpdateResponse::Result::VALIDATION_ERROR:
-            return "VALIDATION_ERROR";
-        case SubdeviceUpdateResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN:
-            return "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN";
-        case SubdeviceUpdateResponse::Result::NOT_A_GATEWAY:
-            return "ERROR_NOT_A_GATEWAY";
-        case SubdeviceUpdateResponse::Result::MISSING_UNIT:
-            return "MISSING_UNIT";
-        case SubdeviceUpdateResponse::Result::ERROR_UNKNOWN:
-            return "ERROR_UNKNOWN";
-        default:
-        {
-            assert(false);
-            throw std::invalid_argument("Unhandled result");
-        }
-        }
-    }();
-
     // clang-format off
     j = {
-        {"result", resultStr},
-        {"description", dto.getDescription()}
+        {"result", dto.getResult().getMessage()},
+        {"description", dto.getResult().getDescription()}
     };
     // clang-format on
 }
 
 SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json& j, const std::string& deviceKey)
 {
-    auto result = [&]() -> SubdeviceUpdateResponse::Result {
-        std::string resultStr = j.at("result").get<std::string>();
-        if (resultStr == "OK")
-        {
-            return SubdeviceUpdateResponse::Result::OK;
-        }
-        else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
-        {
-            return SubdeviceUpdateResponse::Result::GATEWAY_NOT_FOUND;
-        }
-        else if (resultStr == "VALIDATION_ERROR")
-        {
-            return SubdeviceUpdateResponse::Result::VALIDATION_ERROR;
-        }
-        else if (resultStr == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
-        {
-            return SubdeviceUpdateResponse::Result::SUBDEVICE_MANAGEMENT_FORBIDDEN;
-        }
-        else if (resultStr == "ERROR_NOT_A_GATEWAY")
-        {
-            return SubdeviceUpdateResponse::Result::NOT_A_GATEWAY;
-        }
-        else if (resultStr == "MISSING_UNIT")
-        {
-            return SubdeviceUpdateResponse::Result::MISSING_UNIT;
-        }
-        else
-        {
-            return SubdeviceUpdateResponse::Result::ERROR_UNKNOWN;
-        }
-    }();
+    auto result = platform_result_from_string(j.at("result").get<std::string>());
 
-    std::string description = (j.at("description").is_null()) ? "" : j.at("description").get<std::string>();
+    if (!j.at("description").is_null())
+    {
+        result.setDescription(j.at("description").get<std::string>());
+    }
 
-    return SubdeviceUpdateResponse(deviceKey, result, description);
+    return SubdeviceUpdateResponse(deviceKey, result);
+}
+/*** SUBDEVICE UPDATE RESPONSE DTO ***/
+
+/*** SUBDEVICE DELETION RESPONSE DTO ***/
+void to_json(nlohmann::json& j, const SubdeviceDeletionResponse& dto)
+{
+    j = {{"result", dto.getResult().getMessage()}};
 }
 
-/*** SUBDEVICE UPDATE RESPONSE DTO ***/
+SubdeviceDeletionResponse subdevice_deletion_response_from_json(const nlohmann::json& j, const std::string& deviceKey)
+{
+    const auto result = platform_result_from_string(j.at("result").get<std::string>());
+
+    return SubdeviceDeletionResponse(deviceKey, result);
+}
+/*** SUBDEVICE DELETION RESPONSE DTO ***/
 
 PlatformResult platform_result_from_json(const nlohmann::json& j)
 {
-    auto resultStr = j.at("result").get<std::string>();
+    auto result = platform_result_from_string(j.at("result").get<std::string>());
 
-    if (resultStr == "OK")
-        return PlatformResult::OK;
-    else if (resultStr == "ERROR_GATEWAY_NOT_FOUND")
-        return PlatformResult::ERROR_GATEWAY_NOT_FOUND;
-    else if (resultStr == "ERROR_KEY_MISSING")
-        return PlatformResult::ERROR_KEY_MISSING;
-    else if (resultStr == "ERROR_NOT_A_GATEWAY")
-        return PlatformResult::ERROR_NOT_A_GATEWAY;
-    else if (resultStr == "ERROR_DEVICE_NOT_FOUND")
-        return PlatformResult::ERROR_DEVICE_NOT_FOUND;
-    else if (resultStr == "ERROR_INVALID_DEVICE")
-        return PlatformResult::ERROR_INVALID_DEVICE;
+    auto it_description = j.find("description");
+    if (it_description != j.end() && !j.at("description").is_null())
+    {
+        result.setDescription(j.at("description").get<std::string>());
+    }
 
-    auto errorMsg = "Invalid value for platform result: " + resultStr;
-    throw std::logic_error(errorMsg);
+    return result;
+}
+
+PlatformResult platform_result_from_string(const std::string& str)
+{
+    const auto code = [&] {
+        if (str == "OK")
+        {
+            return PlatformResult::Code::OK;
+        }
+        else if (str == "ERROR_GATEWAY_NOT_FOUND")
+        {
+            return PlatformResult::Code::ERROR_GATEWAY_NOT_FOUND;
+        }
+        else if (str == "ERROR_DEVICE_NOT_FOUND")
+        {
+            return PlatformResult::Code::ERROR_DEVICE_NOT_FOUND;
+        }
+        else if (str == "ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN")
+        {
+            return PlatformResult::Code::ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN;
+        }
+        else if (str == "ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED")
+        {
+            return PlatformResult::Code::ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED;
+        }
+        else if (str == "ERROR_NOT_A_GATEWAY")
+        {
+            return PlatformResult::Code::ERROR_NOT_A_GATEWAY;
+        }
+        else if (str == "ERROR_INVALID_DEVICE")
+        {
+            return PlatformResult::Code::ERROR_INVALID_DEVICE;
+        }
+        else if (str == "ERROR_KEY_CONFLICT")
+        {
+            return PlatformResult::Code::ERROR_KEY_CONFLICT;
+        }
+        else if (str == "ERROR_READING_PAYLOAD")
+        {
+            return PlatformResult::Code::ERROR_READING_PAYLOAD;
+        }
+        else if (str == "ERROR_VALIDATION")
+        {
+            return PlatformResult::Code::ERROR_VALIDATION;
+        }
+        else if (str == "VALIDATION_ERROR")
+        {
+            return PlatformResult::Code::VALIDATION_ERROR;
+        }
+        else if (str == "INVALID_SUBDEVICE_DTO")
+        {
+            return PlatformResult::Code::INVALID_SUBDEVICE_DTO;
+        }
+        else if (str == "PARSE_ERROR")
+        {
+            return PlatformResult::Code::PARSE_ERROR;
+        }
+        else if (str == "MISSING_UNIT")
+        {
+            return PlatformResult::Code::MISSING_UNIT;
+        }
+        else if (str == "ERROR_UNKNOWN")
+        {
+            return PlatformResult::Code::ERROR_UNKNOWN;
+        }
+        else
+        {
+            return PlatformResult::Code::NOT_SUPPORTED;
+        }
+    }();
+
+    return {code, str};
 }
 
 }    // namespace wolkabout

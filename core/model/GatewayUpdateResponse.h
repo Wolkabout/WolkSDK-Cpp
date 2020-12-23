@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WolkAbout Technology s.r.o.
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,34 +17,19 @@
 #ifndef GATEWAYUPDATERESPONSE_H
 #define GATEWAYUPDATERESPONSE_H
 
-#include <string>
+#include "PlatformResult.h"
 
 namespace wolkabout
 {
 class GatewayUpdateResponse
 {
 public:
-    enum class Result
-    {
-        OK,
-        GATEWAY_NOT_FOUND,
-        VALIDATION_ERROR,
-        GATEWAY_UPDATE_FORBIDDEN,
-        SUBDEVICE_MANAGEMENT_FORBIDDEN,
-        MISSING_UNIT,
-        ERROR_UNKNOWN
-    };
+    GatewayUpdateResponse(PlatformResult result);
 
-    GatewayUpdateResponse() = default;
-    explicit GatewayUpdateResponse(GatewayUpdateResponse::Result result, std::string description = "");
-
-    const GatewayUpdateResponse::Result& getResult() const;
-
-    const std::string& getDescription() const;
+    const PlatformResult& getResult() const;
 
 private:
-    GatewayUpdateResponse::Result m_result;
-    std::string m_description;
+    PlatformResult m_result;
 };
 }    // namespace wolkabout
 

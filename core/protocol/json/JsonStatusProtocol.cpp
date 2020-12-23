@@ -17,6 +17,7 @@
 #include "protocol/json/JsonStatusProtocol.h"
 
 #include "Json.h"
+#include "JsonDto.h"
 #include "model/DeviceStatus.h"
 #include "model/DeviceStatusConfirm.h"
 #include "model/Message.h"
@@ -76,21 +77,9 @@ void to_json(json& j, const DeviceStatus& p)
 /*** DEVICE STATUS CONFIRM DTO ***/
 void to_json(json& j, const DeviceStatusConfirm& dto)
 {
-    auto resultStr = [&]() -> std::string {
-        switch (dto.getResult())
-        {
-        case PlatformResult::OK:
-            return "OK";
-            break;
-
-        default:
-            throw std::invalid_argument("Unhandled result");
-        }
-    }();
-
     // clang-format off
     j = {
-            {"result", resultStr}
+        {"result", dto.getResult().getMessage()}
     };
     // clang-format on
 }

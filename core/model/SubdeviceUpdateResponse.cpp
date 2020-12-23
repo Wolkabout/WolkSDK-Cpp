@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 WolkAbout Technology s.r.o.
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-#include "model/SubdeviceUpdateResponse.h"
+#include "SubdeviceUpdateResponse.h"
 
 #include <utility>
 
 namespace wolkabout
 {
-SubdeviceUpdateResponse::SubdeviceUpdateResponse(std::string subdeviceKey, Result result, std::string description)
-: m_subdeviceKey(std::move(subdeviceKey)), m_result(result), m_description(std::move(description))
+SubdeviceUpdateResponse::SubdeviceUpdateResponse(std::string subdeviceKey, PlatformResult result)
+: m_subdeviceKey{std::move(subdeviceKey)}, m_result{std::move(result)}
 {
 }
 
-SubdeviceUpdateResponse::Result SubdeviceUpdateResponse::getResult() const
+const PlatformResult& SubdeviceUpdateResponse::getResult() const
 {
     return m_result;
-}
-
-const std::string& SubdeviceUpdateResponse::getDescription() const
-{
-    return m_description;
 }
 
 const std::string& SubdeviceUpdateResponse::getSubdeviceKey() const

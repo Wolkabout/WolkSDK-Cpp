@@ -20,7 +20,7 @@ namespace wolkabout
 {
 DeviceStatusConfirm::DeviceStatusConfirm(PlatformResult result) : m_result{result} {}
 
-PlatformResult DeviceStatusConfirm::getResult() const
+const PlatformResult& DeviceStatusConfirm::getResult() const
 {
     return m_result;
 }

@@ -25,10 +25,11 @@ namespace wolkabout
 class ActuatorTemplate;
 class AlarmTemplate;
 class ConfigurationTemplate;
-class SensorTemplate;
 class DeviceTemplate;
 class GatewayUpdateRequest;
 class GatewayUpdateResponse;
+class SensorTemplate;
+class SubdeviceDeletionResponse;
 class SubdeviceRegistrationRequest;
 class SubdeviceRegistrationResponse;
 class SubdeviceUpdateRequest;
@@ -51,11 +52,11 @@ void from_json(const nlohmann::json& j, DeviceTemplate& deviceTemplate);
 
 void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto);
 
-void to_json(nlohmann::json& j, const SubdeviceRegistrationRequest& dto);
-SubdeviceRegistrationRequest subdevice_registration_request_from_json(const nlohmann::json& j);
-
 void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto);
 GatewayUpdateResponse gateway_update_response_from_json(const nlohmann::json& j);
+
+void to_json(nlohmann::json& j, const SubdeviceRegistrationRequest& dto);
+SubdeviceRegistrationRequest subdevice_registration_request_from_json(const nlohmann::json& j);
 
 void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
 SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j);
@@ -66,7 +67,11 @@ SubdeviceUpdateRequest subdevice_update_request_from_json(const nlohmann::json& 
 void to_json(nlohmann::json& j, const SubdeviceUpdateResponse& dto);
 SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json& j, const std::string& deviceKey);
 
+void to_json(nlohmann::json& j, const SubdeviceDeletionResponse& dto);
+SubdeviceDeletionResponse subdevice_deletion_response_from_json(const nlohmann::json& j, const std::string& deviceKey);
+
 PlatformResult platform_result_from_json(const nlohmann::json& j);
+PlatformResult platform_result_from_string(const std::string& str);
 }    // namespace wolkabout
 
 #endif    // JSONDTO_H

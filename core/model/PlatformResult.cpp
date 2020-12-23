@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WolkAbout Technology s.r.o.
+ * Copyright 2020 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,40 +14,32 @@
  * limitations under the License.
  */
 
-#include "model/PlatformResult.h"
+#include "PlatformResult.h"
 
 namespace wolkabout
 {
-std::string to_string(PlatformResult result)
+PlatformResult::PlatformResult(PlatformResult::Code code, std::string message, std::string description)
+: m_code{code}, m_message{std::move(message)}, m_description{std::move(description)}
 {
-    switch (result)
-    {
-    case PlatformResult::OK:
-    {
-        return "OK";
-    }
-    case PlatformResult::ERROR_GATEWAY_NOT_FOUND:
-    {
-        return "ERROR_GATEWAY_NOT_FOUND";
-    }
-    case PlatformResult::ERROR_KEY_MISSING:
-    {
-        return "ERROR_KEY_MISSING";
-    }
-    case PlatformResult::ERROR_NOT_A_GATEWAY:
-    {
-        return "ERROR_NOT_A_GATEWAY";
-    }
-    case PlatformResult::ERROR_DEVICE_NOT_FOUND:
-    {
-        return "ERROR_DEVICE_NOT_FOUND";
-    }
-    case PlatformResult::ERROR_INVALID_DEVICE:
-    {
-        return "ERROR_INVALID_DEVICE";
-    }
-    }
+}
 
-    return "";
+PlatformResult::Code PlatformResult::getCode() const
+{
+    return m_code;
+}
+
+const std::string& PlatformResult::getMessage() const
+{
+    return m_message;
+}
+
+const std::string& PlatformResult::getDescription() const
+{
+    return m_description;
+}
+
+void PlatformResult::setDescription(std::string description)
+{
+    m_description = std::move(description);
 }
 }    // namespace wolkabout
