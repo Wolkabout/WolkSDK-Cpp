@@ -58,7 +58,7 @@ AlarmTemplate& AlarmTemplate::setDescription(const std::string& description)
     return *this;
 }
 
-bool AlarmTemplate::operator==(AlarmTemplate& rhs) const
+bool AlarmTemplate::operator==(const AlarmTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
     {
@@ -68,7 +68,7 @@ bool AlarmTemplate::operator==(AlarmTemplate& rhs) const
     return true;
 }
 
-bool AlarmTemplate::operator!=(AlarmTemplate& rhs) const
+bool AlarmTemplate::operator!=(const AlarmTemplate& rhs) const
 {
     return !(*this == rhs);
 }

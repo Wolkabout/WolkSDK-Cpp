@@ -51,8 +51,8 @@ public:
 
     const std::string& getReadingTypeName() const;
 
-    bool operator==(ActuatorTemplate& rhs) const;
-    bool operator!=(ActuatorTemplate& rhs) const;
+    bool operator==(const ActuatorTemplate& rhs) const;
+    bool operator!=(const ActuatorTemplate& rhs) const;
 
 private:
     std::string m_name;

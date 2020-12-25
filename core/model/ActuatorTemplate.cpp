@@ -81,7 +81,7 @@ const std::string& ActuatorTemplate::getReadingTypeName() const
     return m_readingType.getName();
 }
 
-bool ActuatorTemplate::operator==(ActuatorTemplate& rhs) const
+bool ActuatorTemplate::operator==(const ActuatorTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
     {
@@ -96,7 +96,7 @@ bool ActuatorTemplate::operator==(ActuatorTemplate& rhs) const
     return true;
 }
 
-bool ActuatorTemplate::operator!=(ActuatorTemplate& rhs) const
+bool ActuatorTemplate::operator!=(const ActuatorTemplate& rhs) const
 {
     return !(*this == rhs);
 }

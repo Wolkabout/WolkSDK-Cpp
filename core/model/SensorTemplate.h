@@ -50,8 +50,8 @@ public:
 
     const std::string& getDescription() const;
 
-    bool operator==(SensorTemplate& rhs) const;
-    bool operator!=(SensorTemplate& rhs) const;
+    bool operator==(const SensorTemplate& rhs) const;
+    bool operator!=(const SensorTemplate& rhs) const;
 
 private:
     std::string m_name;

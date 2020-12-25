@@ -81,7 +81,7 @@ const std::string& SensorTemplate::getReadingTypeName() const
     return m_readingType.getName();
 }
 
-bool SensorTemplate::operator==(SensorTemplate& rhs) const
+bool SensorTemplate::operator==(const SensorTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
     {
@@ -96,7 +96,7 @@ bool SensorTemplate::operator==(SensorTemplate& rhs) const
     return true;
 }
 
-bool SensorTemplate::operator!=(SensorTemplate& rhs) const
+bool SensorTemplate::operator!=(const SensorTemplate& rhs) const
 {
     return !(*this == rhs);
 }

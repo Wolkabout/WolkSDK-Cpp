@@ -68,7 +68,7 @@ const std::vector<std::string>& ConfigurationTemplate::getLabels() const
     return m_labels;
 }
 
-bool ConfigurationTemplate::operator==(ConfigurationTemplate& rhs) const
+bool ConfigurationTemplate::operator==(const ConfigurationTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description ||
         m_dataType != rhs.m_dataType)
@@ -97,7 +97,7 @@ bool ConfigurationTemplate::operator==(ConfigurationTemplate& rhs) const
     return true;
 }
 
-bool ConfigurationTemplate::operator!=(ConfigurationTemplate& rhs) const
+bool ConfigurationTemplate::operator!=(const ConfigurationTemplate& rhs) const
 {
     return !(*this == rhs);
 }

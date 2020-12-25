@@ -47,8 +47,8 @@ public:
 
     size_t getSize() const;
 
-    bool operator==(ConfigurationTemplate& rhs) const;
-    bool operator!=(ConfigurationTemplate& rhs) const;
+    bool operator==(const ConfigurationTemplate& rhs) const;
+    bool operator!=(const ConfigurationTemplate& rhs) const;
 
 private:
     std::string m_name;

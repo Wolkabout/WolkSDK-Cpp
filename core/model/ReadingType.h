@@ -267,8 +267,8 @@ public:
 
     const std::string& getMeasurmentUnitSymbol() const;
 
-    bool operator==(ReadingType& rhs) const;
-    bool operator!=(ReadingType& rhs) const;
+    bool operator==(const ReadingType& rhs) const;
+    bool operator!=(const ReadingType& rhs) const;
 
 private:
     std::string m_name;
