@@ -36,6 +36,7 @@ public:
     const std::string& getKey() const;
     const std::string& getPassword() const;
 
+    DeviceTemplate& getTemplate();
     const DeviceTemplate& getTemplate() const;
 
     std::vector<std::string> getActuatorReferences() const;

@@ -59,6 +59,11 @@ public:
     const std::map<std::string, std::string>& getConnectivityParameters() const;
     const std::map<std::string, bool>& getFirmwareUpdateParameters() const;
 
+    std::unique_ptr<ConfigurationTemplate> getConfigurationTemplate(const std::string& reference) const;
+    std::unique_ptr<SensorTemplate> getSensorTemplate(const std::string& reference) const;
+    std::unique_ptr<AlarmTemplate> getAlarmTemplate(const std::string& reference) const;
+    std::unique_ptr<ActuatorTemplate> getActuatorTemplate(const std::string& reference) const;
+
     std::unique_ptr<ConfigurationTemplate> getConfigurationTemplate(
       std::function<bool(const ConfigurationTemplate&)> filter) const;
     std::unique_ptr<SensorTemplate> getSensorTemplate(std::function<bool(const SensorTemplate&)> filter) const;

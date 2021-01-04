@@ -48,6 +48,11 @@ const std::string& DetailedDevice::getPassword() const
     return m_password;
 }
 
+DeviceTemplate& DetailedDevice::getTemplate()
+{
+    return m_deviceTemplate;
+}
+
 const DeviceTemplate& DetailedDevice::getTemplate() const
 {
     return m_deviceTemplate;
