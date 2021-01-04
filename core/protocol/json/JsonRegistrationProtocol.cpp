@@ -194,8 +194,17 @@ std::unique_ptr<Message> JsonRegistrationProtocol::makeMessage(const std::string
     try
     {
         const json jsonPayload(request);
-        const std::string channel = SUBDEVICE_UPDATE_REQUEST_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey +
-                                    CHANNEL_DELIMITER + DEVICE_PATH_PREFIX + request.getSubdeviceKey();
+
+        std::string channel;
+        if (m_isGateway)
+        {
+            channel = SUBDEVICE_UPDATE_REQUEST_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+                      DEVICE_PATH_PREFIX + request.getSubdeviceKey();
+        }
+        else
+        {
+            channel = SUBDEVICE_UPDATE_REQUEST_TOPIC_ROOT + m_devicePrefix + deviceKey;
+        }
 
         const auto content = jsonPayload.dump();
 
