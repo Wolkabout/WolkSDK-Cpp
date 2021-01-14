@@ -35,42 +35,44 @@ class SubdeviceRegistrationResponse;
 class SubdeviceUpdateRequest;
 class SubdeviceUpdateResponse;
 
-void to_json(nlohmann::json& j, const ConfigurationTemplate& configurationTemplate);
-void from_json(const nlohmann::json& j, ConfigurationTemplate& configurationTemplate);
+void to_json(nlohmann::json& destinationJ, const ConfigurationTemplate& configurationTemplate);
+void from_json(const nlohmann::json& sourceJ, ConfigurationTemplate& configurationTemplate);
 
-void to_json(nlohmann::json& j, const AlarmTemplate& alarmTemplate);
-void from_json(const nlohmann::json& j, AlarmTemplate& alarmTemplate);
+void to_json(nlohmann::json& destinationJ, const AlarmTemplate& alarmTemplate);
+void from_json(const nlohmann::json& sourceJ, AlarmTemplate& alarmTemplate);
 
-void to_json(nlohmann::json& j, const ActuatorTemplate& actuatorTemplate);
-void from_json(const nlohmann::json& j, ActuatorTemplate& actuatorTemplate);
+void to_json(nlohmann::json& destinationJ, const ActuatorTemplate& actuatorTemplate);
+void from_json(const nlohmann::json& sourceJ, ActuatorTemplate& actuatorTemplate);
 
-void to_json(nlohmann::json& j, const SensorTemplate& sensorTemplate);
-void from_json(const nlohmann::json& j, SensorTemplate& sensorTemplate);
+void to_json(nlohmann::json& destinationJ, const SensorTemplate& sensorTemplate);
+void from_json(const nlohmann::json& sourceJ, SensorTemplate& sensorTemplate);
 
-void to_json(nlohmann::json& j, const DeviceTemplate& deviceTemplate);
-void from_json(const nlohmann::json& j, DeviceTemplate& deviceTemplate);
+void to_json(nlohmann::json& destinationJ, const DeviceTemplate& deviceTemplate);
+void from_json(const nlohmann::json& sourceJ, DeviceTemplate& deviceTemplate);
 
-void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto);
+void to_json(nlohmann::json& destinationJ, const GatewayUpdateRequest& dto);
 
-void to_json(nlohmann::json& j, const GatewayUpdateResponse& dto);
-GatewayUpdateResponse gateway_update_response_from_json(const nlohmann::json& j);
+void to_json(nlohmann::json& destinationJ, const GatewayUpdateResponse& dto);
+GatewayUpdateResponse gateway_update_response_from_json(const nlohmann::json& sourceJ);
 
-void to_json(nlohmann::json& j, const SubdeviceRegistrationRequest& dto);
-SubdeviceRegistrationRequest subdevice_registration_request_from_json(const nlohmann::json& j);
+void to_json(nlohmann::json& destinationJ, const SubdeviceRegistrationRequest& dto);
+SubdeviceRegistrationRequest subdevice_registration_request_from_json(const nlohmann::json& sourceJ);
 
-void to_json(nlohmann::json& j, const SubdeviceRegistrationResponse& dto);
-SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j);
+void to_json(nlohmann::json& destinationJ, const SubdeviceRegistrationResponse& dto);
+SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& sourceJ);
 
-void to_json(nlohmann::json& j, const SubdeviceUpdateRequest& dto);
-SubdeviceUpdateRequest subdevice_update_request_from_json(const nlohmann::json& j, const std::string& deviceKey);
+void to_json(nlohmann::json& destinationJ, const SubdeviceUpdateRequest& dto);
+SubdeviceUpdateRequest subdevice_update_request_from_json(const nlohmann::json& sourceJ, const std::string& deviceKey);
 
-void to_json(nlohmann::json& j, const SubdeviceUpdateResponse& dto);
-SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json& j, const std::string& deviceKey);
+void to_json(nlohmann::json& destinationJ, const SubdeviceUpdateResponse& dto);
+SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json& sourceJ,
+                                                            const std::string& deviceKey);
 
-void to_json(nlohmann::json& j, const SubdeviceDeletionResponse& dto);
-SubdeviceDeletionResponse subdevice_deletion_response_from_json(const nlohmann::json& j, const std::string& deviceKey);
+void to_json(nlohmann::json& destinationJ, const SubdeviceDeletionResponse& dto);
+SubdeviceDeletionResponse subdevice_deletion_response_from_json(const nlohmann::json& sourceJ,
+                                                                const std::string& deviceKey);
 
-PlatformResult platform_result_from_json(const nlohmann::json& j);
+PlatformResult platform_result_from_json(const nlohmann::json& sourceJ);
 PlatformResult platform_result_from_string(const std::string& str);
 }    // namespace wolkabout
 

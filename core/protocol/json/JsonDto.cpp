@@ -51,7 +51,7 @@ static std::string createMultivalue(const std::string& value, size_t size)
 }
 
 /*** CONFIGURATION TEMPLATE ***/
-void to_json(json& j, const ConfigurationTemplate& configurationTemplate)
+void to_json(json& destinationJ, const ConfigurationTemplate& configurationTemplate)
 {
     auto dataType = [&]() -> std::string {
         auto dataTypeStr = toString(configurationTemplate.getDataType());
@@ -77,13 +77,13 @@ void to_json(json& j, const ConfigurationTemplate& configurationTemplate)
         confJ["labels"] = nullptr;
     }
 
-    j = confJ;
+    destinationJ = confJ;
 }
 
-void from_json(const json& j, ConfigurationTemplate& configurationTemplate)
+void from_json(const json& sourceJ, ConfigurationTemplate& configurationTemplate)
 {
-    auto dataType = [&]() -> DataType {
-        std::string dataTypeStr = j.at("dataType").get<std::string>();
+    const auto dataType = [&]() -> DataType {
+        std::string dataTypeStr = sourceJ.at("dataType").get<std::string>();
         if (dataTypeStr == "STRING")
         {
             return DataType::STRING;
@@ -102,30 +102,30 @@ void from_json(const json& j, ConfigurationTemplate& configurationTemplate)
         }
     }();
 
-    auto it_description = j.find("description");
-    std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
+    auto it_description = sourceJ.find("description");
+    std::string description = (it_description != sourceJ.end()) ? sourceJ.at("description").get<std::string>() : "";
 
-    auto it_defaultValue = j.find("defaultValue");
-    std::string defaultValue = (it_defaultValue != j.end()) ? j.at("defaultValue").get<std::string>() : "";
+    auto it_defaultValue = sourceJ.find("defaultValue");
+    std::string defaultValue = (it_defaultValue != sourceJ.end()) ? sourceJ.at("defaultValue").get<std::string>() : "";
 
     // clang-format off
     configurationTemplate =
             ConfigurationTemplate(
-                j.at("name").get<std::string>(),
-                j.at("reference").get<std::string>(),
+                sourceJ.at("name").get<std::string>(),
+                sourceJ.at("reference").get<std::string>(),
                 dataType,
                 description,
                 defaultValue,
-                j.at("labels").is_null() ? std::vector<std::string>{} : j.at("labels").get<std::vector<std::string>>());
+                sourceJ.at("labels").is_null() ? std::vector<std::string>{} : sourceJ.at("labels").get<std::vector<std::string>>());
     // clang-format on
 }
 /*** CONFIGURATION TEMPLATE ***/
 
 /*** ALARM TEMPLATE ***/
-void to_json(json& j, const AlarmTemplate& alarmTemplate)
+void to_json(json& destinationJ, const AlarmTemplate& alarmTemplate)
 {
     // clang-format off
-    j = {
+    destinationJ = {
         {"name", alarmTemplate.getName()},
         {"reference", alarmTemplate.getReference()},
         {"description", alarmTemplate.getDescription()},
@@ -133,22 +133,22 @@ void to_json(json& j, const AlarmTemplate& alarmTemplate)
     // clang-format on
 }
 
-void from_json(const json& j, AlarmTemplate& alarmTemplate)
+void from_json(const json& sourceJ, AlarmTemplate& alarmTemplate)
 {
-    auto it_description = j.find("description");
-    std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
+    auto it_description = sourceJ.find("description");
+    std::string description = (it_description != sourceJ.end()) ? sourceJ.at("description").get<std::string>() : "";
 
     // clang-format off
     alarmTemplate =
-            AlarmTemplate(j.at("name").get<std::string>(),
-                          j.at("reference").get<std::string>(),
+            AlarmTemplate(sourceJ.at("name").get<std::string>(),
+                          sourceJ.at("reference").get<std::string>(),
                           description);
     // clang-format on
 }
 /*** ALARM TEMPLATE ***/
 
 /*** ACTUATOR TEMPLATE ***/
-void to_json(json& j, const ActuatorTemplate& actuatorTemplate)
+void to_json(json& destinationJ, const ActuatorTemplate& actuatorTemplate)
 {
     json actuatorJ;
 
@@ -166,27 +166,27 @@ void to_json(json& j, const ActuatorTemplate& actuatorTemplate)
         actuatorJ["unit"]["symbol"] = nullptr;
     }
 
-    j = actuatorJ;
+    destinationJ = actuatorJ;
 }
 
-void from_json(const json& j, ActuatorTemplate& actuatorTemplate)
+void from_json(const json& sourceJ, ActuatorTemplate& actuatorTemplate)
 {
-    auto it_description = j.find("description");
-    std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
+    auto it_description = sourceJ.find("description");
+    std::string description = (it_description != sourceJ.end()) ? sourceJ.at("description").get<std::string>() : "";
 
     // clang-format off
     actuatorTemplate = ActuatorTemplate{
-                j.at("name").get<std::string>(),
-                j.at("reference").get<std::string>(),
-                j["unit"].at("readingTypeName").get<std::string>(),
-                j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(),
+                sourceJ.at("name").get<std::string>(),
+                sourceJ.at("reference").get<std::string>(),
+                sourceJ["unit"].at("readingTypeName").get<std::string>(),
+                sourceJ["unit"].at("symbol").is_null() ? "" : sourceJ["unit"].at("symbol").get<std::string>(),
                 description};
     // clang-format on
 }
 /*** ACTUATOR TEMPLATE ***/
 
 /*** SENSOR TEMPLATE ***/
-void to_json(json& j, const SensorTemplate& sensorTemplate)
+void to_json(json& destinationJ, const SensorTemplate& sensorTemplate)
 {
     json sensorJ;
 
@@ -204,26 +204,26 @@ void to_json(json& j, const SensorTemplate& sensorTemplate)
         sensorJ["unit"]["symbol"] = nullptr;
     }
 
-    j = sensorJ;
+    destinationJ = sensorJ;
 }
 
-void from_json(const json& j, SensorTemplate& sensorTemplate)
+void from_json(const json& sourceJ, SensorTemplate& sensorTemplate)
 {
-    auto it_description = j.find("description");
-    std::string description = (it_description != j.end()) ? j.at("description").get<std::string>() : "";
+    auto it_description = sourceJ.find("description");
+    std::string description = (it_description != sourceJ.end()) ? sourceJ.at("description").get<std::string>() : "";
 
-    sensorTemplate =
-      SensorTemplate{j.at("name").get<std::string>(), j.at("reference").get<std::string>(),
-                     j["unit"].at("readingTypeName").get<std::string>(),
-                     j["unit"].at("symbol").is_null() ? "" : j["unit"].at("symbol").get<std::string>(), description};
+    sensorTemplate = SensorTemplate{
+      sourceJ.at("name").get<std::string>(), sourceJ.at("reference").get<std::string>(),
+      sourceJ["unit"].at("readingTypeName").get<std::string>(),
+      sourceJ["unit"].at("symbol").is_null() ? "" : sourceJ["unit"].at("symbol").get<std::string>(), description};
 }
 /*** SENSOR TEMPLATE ***/
 
 /*** DEVICE TEMPLATE ***/
-void to_json(json& j, const DeviceTemplate& deviceTemplate)
+void to_json(json& destinationJ, const DeviceTemplate& deviceTemplate)
 {
     // clang-format off
-    j = {
+    destinationJ = {
         {"configurations", deviceTemplate.getConfigurations()},
         {"sensors", deviceTemplate.getSensors()},
         {"alarms", deviceTemplate.getAlarms()},
@@ -236,24 +236,24 @@ void to_json(json& j, const DeviceTemplate& deviceTemplate)
     // clang-format on
 }
 
-void from_json(const json& j, DeviceTemplate& deviceTemplate)
+void from_json(const json& sourceJ, DeviceTemplate& deviceTemplate)
 {
     deviceTemplate = DeviceTemplate(
-      j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
-      j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
-      j.at("actuators").get<std::vector<ActuatorTemplate>>(), j.at("firmwareUpdateType").get<std::string>(),
-      j.at("typeParameters").get<std::map<std::string, std::string>>(),
-      j.at("connectivityParameters").get<std::map<std::string, std::string>>(),
-      j.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
+      sourceJ.at("configurations").get<std::vector<ConfigurationTemplate>>(),
+      sourceJ.at("sensors").get<std::vector<SensorTemplate>>(), sourceJ.at("alarms").get<std::vector<AlarmTemplate>>(),
+      sourceJ.at("actuators").get<std::vector<ActuatorTemplate>>(), sourceJ.at("firmwareUpdateType").get<std::string>(),
+      sourceJ.at("typeParameters").get<std::map<std::string, std::string>>(),
+      sourceJ.at("connectivityParameters").get<std::map<std::string, std::string>>(),
+      sourceJ.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
 }
 /*** DEVICE TEMPLATE ***/
 
 /*** GATEWAY UPDATE REQUEST DTO ***/
 
-void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto)
+void to_json(json& destinationJ, const GatewayUpdateRequest& dto)
 {
     // clang-format off
-    j = {
+    destinationJ = {
         {"sensors", dto.getTemplate().getSensors()},
         {"actuators", dto.getTemplate().getActuators()},
         {"alarms", dto.getTemplate().getAlarms()},
@@ -265,23 +265,23 @@ void to_json(nlohmann::json& j, const GatewayUpdateRequest& dto)
 /*** GATEWAY UPDATE REQUEST DTO ***/
 
 /*** GATEWAY UPDATE RESPONSE DTO ***/
-void to_json(json& j, const GatewayUpdateResponse& dto)
+void to_json(json& destinationJ, const GatewayUpdateResponse& dto)
 {
     // clang-format off
-    j = {
+    destinationJ = {
         {"result", dto.getResult().getMessage()},
         {"description", dto.getResult().getDescription()}
     };
     // clang-format on
 }
 
-GatewayUpdateResponse gateway_update_response_from_json(const json& j)
+GatewayUpdateResponse gateway_update_response_from_json(const json& sourceJ)
 {
-    auto result = platform_result_from_string(j.at("result").get<std::string>());
+    auto result = platform_result_from_string(sourceJ.at("result").get<std::string>());
 
-    if (!j.at("description").is_null())
+    if (!sourceJ.at("description").is_null())
     {
-        result.setDescription(j.at("description").get<std::string>());
+        result.setDescription(sourceJ.at("description").get<std::string>());
     }
 
     return GatewayUpdateResponse(result);
@@ -289,10 +289,10 @@ GatewayUpdateResponse gateway_update_response_from_json(const json& j)
 /*** GATEWAY UPDATE RESPONSE DTO ***/
 
 /*** SUBDEVICE REGISTRATION REQUEST DTO ***/
-void to_json(json& j, const SubdeviceRegistrationRequest& dto)
+void to_json(json& destinationJ, const SubdeviceRegistrationRequest& dto)
 {
     // clang-format off
-    j = {
+    destinationJ = {
         {"name", dto.getSubdeviceName()},
         {"deviceKey", dto.getSubdeviceKey()},
         {"sensors", dto.getTemplate().getSensors()},
@@ -305,37 +305,38 @@ void to_json(json& j, const SubdeviceRegistrationRequest& dto)
 
     if (!dto.getType().empty())
     {
-        j["type"] = dto.getType();
+        destinationJ["type"] = dto.getType();
     }
     // clang-format on
 }
 
-SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json& j)
+SubdeviceRegistrationRequest subdevice_registration_request_from_json(const json& sourceJ)
 {
     DeviceTemplate subdeviceTemplate = DeviceTemplate(
-      j.at("configurations").get<std::vector<ConfigurationTemplate>>(),
-      j.at("sensors").get<std::vector<SensorTemplate>>(), j.at("alarms").get<std::vector<AlarmTemplate>>(),
-      j.at("actuators").get<std::vector<ActuatorTemplate>>(), "" /*no firmwareUpdateType in request*/,
+      sourceJ.at("configurations").get<std::vector<ConfigurationTemplate>>(),
+      sourceJ.at("sensors").get<std::vector<SensorTemplate>>(), sourceJ.at("alarms").get<std::vector<AlarmTemplate>>(),
+      sourceJ.at("actuators").get<std::vector<ActuatorTemplate>>(), "" /*no firmwareUpdateType in request*/,
       {} /*no typeParameters in request*/, {} /*no connectivityParameters in request*/,
-      j.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
+      sourceJ.at("firmwareUpdateParameters").get<std::map<std::string, bool>>());
 
-    auto it_defaultBinding = j.find("defaultBinding");
-    bool defaultBinding = (it_defaultBinding != j.end()) ? j.at("defaultBinding").get<bool>() : false;
+    auto it_defaultBinding = sourceJ.find("defaultBinding");
+    bool defaultBinding = (it_defaultBinding != sourceJ.end()) ? sourceJ.at("defaultBinding").get<bool>() : false;
 
-    auto it_type = j.find("type");
-    std::string type = (it_type != j.end()) ? j.at("type").get<std::string>() : "";
+    auto it_type = sourceJ.find("type");
+    std::string type = (it_type != sourceJ.end()) ? sourceJ.at("type").get<std::string>() : "";
 
-    return SubdeviceRegistrationRequest(j.at("name").get<std::string>(), j.at("deviceKey").get<std::string>(),
-                                        subdeviceTemplate, defaultBinding, type);
+    return SubdeviceRegistrationRequest(sourceJ.at("name").get<std::string>(),
+                                        sourceJ.at("deviceKey").get<std::string>(), subdeviceTemplate, defaultBinding,
+                                        type);
 }
 /*** SUBDEVICE REGISTRATION REQUEST DTO ***/
 
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
-void to_json(json& j, const SubdeviceRegistrationResponse& dto)
+void to_json(json& destinationJ, const SubdeviceRegistrationResponse& dto)
 {
     // clang-format off
     json j_payload = {{"deviceKey", dto.getSubdeviceKey()}};
-    j = {
+    destinationJ = {
         {"payload" , j_payload},
         {"result", dto.getResult().getMessage()},
         {"description", dto.getResult().getDescription()}
@@ -343,16 +344,16 @@ void to_json(json& j, const SubdeviceRegistrationResponse& dto)
     // clang-format on
 }
 
-SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nlohmann::json& j)
+SubdeviceRegistrationResponse subdevice_registration_response_from_json(const json& sourceJ)
 {
-    auto result = platform_result_from_string(j.at("result").get<std::string>());
+    auto result = platform_result_from_string(sourceJ.at("result").get<std::string>());
 
-    if (!j.at("description").is_null())
+    if (!sourceJ.at("description").is_null())
     {
-        result.setDescription(j.at("description").get<std::string>());
+        result.setDescription(sourceJ.at("description").get<std::string>());
     }
 
-    const auto key = j["payload"].at("deviceKey").get<std::string>();
+    const auto key = sourceJ["payload"].at("deviceKey").get<std::string>();
 
     return SubdeviceRegistrationResponse(key, result);
 }
@@ -360,10 +361,10 @@ SubdeviceRegistrationResponse subdevice_registration_response_from_json(const nl
 /*** SUBDEVICE REGISTRATION RESPONSE DTO ***/
 
 /*** SUBDEVICE UPDATE REQUEST DTO ***/
-void to_json(json& j, const SubdeviceUpdateRequest& dto)
+void to_json(json& destinationJ, const SubdeviceUpdateRequest& dto)
 {
     // clang-format off
-    j = {
+    destinationJ = {
         {"updateDefaultSemantics", dto.getUpdateDefaultSemantics()},
         {"add", {
             {"sensors", dto.getSensors()},
@@ -375,37 +376,37 @@ void to_json(json& j, const SubdeviceUpdateRequest& dto)
     // clang-format on
 }
 
-SubdeviceUpdateRequest subdevice_update_request_from_json(const nlohmann::json& j, const std::string& deviceKey)
+SubdeviceUpdateRequest subdevice_update_request_from_json(const json& sourceJ, const std::string& deviceKey)
 {
-    auto configurations = j["add"].at("configurations").get<std::vector<ConfigurationTemplate>>();
-    auto sensors = j["add"].at("sensors").get<std::vector<SensorTemplate>>();
-    auto actuators = j["add"].at("actuators").get<std::vector<ActuatorTemplate>>();
-    auto alarms = j["add"].at("alarms").get<std::vector<AlarmTemplate>>();
+    auto configurations = sourceJ["add"].at("configurations").get<std::vector<ConfigurationTemplate>>();
+    auto sensors = sourceJ["add"].at("sensors").get<std::vector<SensorTemplate>>();
+    auto actuators = sourceJ["add"].at("actuators").get<std::vector<ActuatorTemplate>>();
+    auto alarms = sourceJ["add"].at("alarms").get<std::vector<AlarmTemplate>>();
 
-    bool updateDefaultSemantics = j.at("updateDefaultSemantics").get<bool>();
+    bool updateDefaultSemantics = sourceJ.at("updateDefaultSemantics").get<bool>();
 
     return SubdeviceUpdateRequest(deviceKey, updateDefaultSemantics, configurations, sensors, alarms, actuators);
 }
 /*** SUBDEVICE UPDATE REQUEST DTO ***/
 
 /*** SUBDEVICE UPDATE RESPONSE DTO ***/
-void to_json(nlohmann::json& j, const SubdeviceUpdateResponse& dto)
+void to_json(json& destinationJ, const SubdeviceUpdateResponse& dto)
 {
     // clang-format off
-    j = {
+    destinationJ = {
         {"result", dto.getResult().getMessage()},
         {"description", dto.getResult().getDescription()}
     };
     // clang-format on
 }
 
-SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json& j, const std::string& deviceKey)
+SubdeviceUpdateResponse subdevice_update_response_from_json(const json& sourceJ, const std::string& deviceKey)
 {
-    auto result = platform_result_from_string(j.at("result").get<std::string>());
+    auto result = platform_result_from_string(sourceJ.at("result").get<std::string>());
 
-    if (!j.at("description").is_null())
+    if (!sourceJ.at("description").is_null())
     {
-        result.setDescription(j.at("description").get<std::string>());
+        result.setDescription(sourceJ.at("description").get<std::string>());
     }
 
     return SubdeviceUpdateResponse(deviceKey, result);
@@ -413,27 +414,27 @@ SubdeviceUpdateResponse subdevice_update_response_from_json(const nlohmann::json
 /*** SUBDEVICE UPDATE RESPONSE DTO ***/
 
 /*** SUBDEVICE DELETION RESPONSE DTO ***/
-void to_json(nlohmann::json& j, const SubdeviceDeletionResponse& dto)
+void to_json(json& destinationJ, const SubdeviceDeletionResponse& dto)
 {
-    j = {{"result", dto.getResult().getMessage()}};
+    destinationJ = {{"result", dto.getResult().getMessage()}};
 }
 
-SubdeviceDeletionResponse subdevice_deletion_response_from_json(const nlohmann::json& j, const std::string& deviceKey)
+SubdeviceDeletionResponse subdevice_deletion_response_from_json(const json& sourceJ, const std::string& deviceKey)
 {
-    const auto result = platform_result_from_string(j.at("result").get<std::string>());
+    const auto result = platform_result_from_string(sourceJ.at("result").get<std::string>());
 
     return SubdeviceDeletionResponse(deviceKey, result);
 }
 /*** SUBDEVICE DELETION RESPONSE DTO ***/
 
-PlatformResult platform_result_from_json(const nlohmann::json& j)
+PlatformResult platform_result_from_json(const json& sourceJ)
 {
-    auto result = platform_result_from_string(j.at("result").get<std::string>());
+    auto result = platform_result_from_string(sourceJ.at("result").get<std::string>());
 
-    auto it_description = j.find("description");
-    if (it_description != j.end() && !j.at("description").is_null())
+    auto it_description = sourceJ.find("description");
+    if (it_description != sourceJ.end() && !sourceJ.at("description").is_null())
     {
-        result.setDescription(j.at("description").get<std::string>());
+        result.setDescription(sourceJ.at("description").get<std::string>());
     }
 
     return result;
