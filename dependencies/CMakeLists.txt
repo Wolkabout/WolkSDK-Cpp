@@ -45,7 +45,7 @@ if (BUILD_POCO)
     ExternalProject_Add(libpoco
             GIT_REPOSITORY "https://github.com/pocoproject/poco"
             GIT_TAG "poco-${POCO_VERSION}-release"
-            CMAKE_ARGS -DPOCO_STATIC=ON
+            CMAKE_ARGS -DPOCO_STATIC=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON
             -DDISABLE_CPP14=TRUE
             -DENABLE_ENCODINGS=${POCO_ENABLE_ENCODINGS}
             -DENABLE_ENCODINGS_COMPILER=${POCO_ENABLE_ENCODINGS_COMPILER}
