@@ -471,10 +471,6 @@ PlatformResult platform_result_from_string(const std::string& str)
         {
             return PlatformResult::Code::ERROR_INVALID_DEVICE;
         }
-        else if (str == "ERROR_KEY_CONFLICT")
-        {
-            return PlatformResult::Code::ERROR_KEY_CONFLICT;
-        }
         else if (str == "ERROR_READING_PAYLOAD")
         {
             return PlatformResult::Code::ERROR_READING_PAYLOAD;
@@ -483,13 +479,13 @@ PlatformResult platform_result_from_string(const std::string& str)
         {
             return PlatformResult::Code::ERROR_VALIDATION;
         }
+        else if (str == "DATABASE_CONFLICT")
+        {
+            return PlatformResult::Code::DATABASE_CONFLICT;
+        }
         else if (str == "VALIDATION_ERROR")
         {
             return PlatformResult::Code::VALIDATION_ERROR;
-        }
-        else if (str == "INVALID_SUBDEVICE_DTO")
-        {
-            return PlatformResult::Code::INVALID_SUBDEVICE_DTO;
         }
         else if (str == "PARSE_ERROR")
         {
