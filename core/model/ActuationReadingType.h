@@ -52,8 +52,8 @@ public:
 
     const std::string& getMeasurmentUnitSymbol() const;
 
-    bool operator==(ActuationReadingType& rhs) const;
-    bool operator!=(ActuationReadingType& rhs) const;
+    bool operator==(const ActuationReadingType& rhs) const;
+    bool operator!=(const ActuationReadingType& rhs) const;
 
 private:
     std::string m_name;

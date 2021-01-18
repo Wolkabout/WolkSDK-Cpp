@@ -34,6 +34,8 @@ if (BUILD_GTEST)
             GIT_REPOSITORY "https://github.com/google/googletest"
             GIT_TAG "release-${GTEST_VERSION}"
             CMAKE_ARGS -DBUILD_SHARED_LIBS=ON
+            -DCMAKE_INSTALL_LIBDIR=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+            -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_LIBRARY_INCLUDE_DIRECTORY}
             -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
             -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
             )
@@ -43,7 +45,7 @@ if (BUILD_POCO)
     ExternalProject_Add(libpoco
             GIT_REPOSITORY "https://github.com/pocoproject/poco"
             GIT_TAG "poco-${POCO_VERSION}-release"
-            CMAKE_ARGS -DPOCO_STATIC=ON
+            CMAKE_ARGS -DPOCO_STATIC=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON
             -DDISABLE_CPP14=TRUE
             -DENABLE_ENCODINGS=${POCO_ENABLE_ENCODINGS}
             -DENABLE_ENCODINGS_COMPILER=${POCO_ENABLE_ENCODINGS_COMPILER}

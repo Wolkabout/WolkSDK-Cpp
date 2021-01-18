@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-#include "GatewayUpdateResponse.h"
+#ifndef SUBDEVICEUPDATERESPONSE_H
+#define SUBDEVICEUPDATERESPONSE_H
 
-#include <utility>
+#include "PlatformResult.h"
+
+#include <string>
 
 namespace wolkabout
 {
-GatewayUpdateResponse::GatewayUpdateResponse(PlatformResult result) : m_result(result) {}
-
-const PlatformResult& GatewayUpdateResponse::getResult() const
+class SubdeviceUpdateResponse
 {
-    return m_result;
-}
+public:
+    SubdeviceUpdateResponse(std::string subdeviceKey, PlatformResult result);
+
+    const std::string& getSubdeviceKey() const;
+    const PlatformResult& getResult() const;
+
+private:
+    std::string m_subdeviceKey;
+    PlatformResult m_result;
+};
 }    // namespace wolkabout
+
+#endif    // SUBDEVICEUPDATERESPONSE_H

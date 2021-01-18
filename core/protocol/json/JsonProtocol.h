@@ -34,14 +34,9 @@ public:
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
     bool isActuatorSetMessage(const Message& message) const override;
-    bool isActuatorGetMessage(const Message& message) const override;
-
     bool isConfigurationSetMessage(const Message& message) const override;
-    bool isConfigurationGetMessage(const Message& message) const override;
 
-    std::unique_ptr<ActuatorGetCommand> makeActuatorGetCommand(const Message& message) const override;
     std::unique_ptr<ActuatorSetCommand> makeActuatorSetCommand(const Message& message) const override;
-
     std::unique_ptr<ConfigurationSetCommand> makeConfigurationSetCommand(const Message& message) const override;
 
     std::unique_ptr<Message> makeMessage(
@@ -67,14 +62,12 @@ private:
     std::vector<std::string> parseMultiValues(const std::string& values, const std::string& delimiter) const;
 
     static const std::string SENSOR_READING_TOPIC_ROOT;
-    static const std::string EVENTS_TOPIC_ROOT;
+    static const std::string EVENT_TOPIC_ROOT;
     static const std::string ACTUATION_STATUS_TOPIC_ROOT;
-    static const std::string CONFIGURATION_RESPONSE_TOPIC_ROOT;
+    static const std::string CONFIGURATION_STATUS_TOPIC_ROOT;
 
     static const std::string ACTUATION_SET_TOPIC_ROOT;
-    static const std::string ACTUATION_GET_TOPIC_ROOT;
     static const std::string CONFIGURATION_SET_TOPIC_ROOT;
-    static const std::string CONFIGURATION_GET_TOPIC_ROOT;
 
     static const std::string MULTIVALUE_READING_DELIMITER;
 };

@@ -49,8 +49,6 @@ const std::string JsonDownloadProtocol::BINARY_RESPONSE_TOPIC_ROOT = "p2d/file_b
 const std::string JsonDownloadProtocol::FILE_DELETE_TOPIC_ROOT = "p2d/file_delete/";
 const std::string JsonDownloadProtocol::FILE_PURGE_TOPIC_ROOT = "p2d/file_purge/";
 
-const std::string JsonDownloadProtocol::FILE_LIST_REQUEST_TOPIC_ROOT = "p2d/file_list_request/";
-const std::string JsonDownloadProtocol::FILE_LIST_RESPONSE_TOPIC_ROOT = "d2p/file_list_response/";
 const std::string JsonDownloadProtocol::FILE_LIST_UPDATE_TOPIC_ROOT = "d2p/file_list_update/";
 const std::string JsonDownloadProtocol::FILE_LIST_CONFIRM_TOPIC_ROOT = "p2d/file_list_confirm/";
 
@@ -208,7 +206,6 @@ std::vector<std::string> JsonDownloadProtocol::getInboundChannels() const
             BINARY_RESPONSE_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
             FILE_DELETE_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
             FILE_PURGE_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
-            FILE_LIST_REQUEST_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
             FILE_LIST_CONFIRM_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
             FILE_URL_DOWNLOAD_INITIATE_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD,
             FILE_URL_DOWNLOAD_ABORT_TOPIC_ROOT + m_devicePrefix + CHANNEL_MULTI_LEVEL_WILDCARD};
@@ -221,7 +218,6 @@ std::vector<std::string> JsonDownloadProtocol::getInboundChannelsForDevice(const
             BINARY_RESPONSE_TOPIC_ROOT + m_devicePrefix + deviceKey,
             FILE_DELETE_TOPIC_ROOT + m_devicePrefix + deviceKey,
             FILE_PURGE_TOPIC_ROOT + m_devicePrefix + deviceKey,
-            FILE_LIST_REQUEST_TOPIC_ROOT + m_devicePrefix + deviceKey,
             FILE_LIST_CONFIRM_TOPIC_ROOT + m_devicePrefix + deviceKey,
             FILE_URL_DOWNLOAD_INITIATE_TOPIC_ROOT + m_devicePrefix + deviceKey,
             FILE_URL_DOWNLOAD_ABORT_TOPIC_ROOT + m_devicePrefix + deviceKey};
@@ -359,13 +355,6 @@ bool JsonDownloadProtocol::isFilePurge(const Message& message) const
     LOG(TRACE) << METHOD_INFO;
 
     return StringUtils::startsWith(message.getChannel(), FILE_PURGE_TOPIC_ROOT);
-}
-
-bool JsonDownloadProtocol::isFileListRequest(const Message& message) const
-{
-    LOG(TRACE) << METHOD_INFO;
-
-    return StringUtils::startsWith(message.getChannel(), FILE_LIST_REQUEST_TOPIC_ROOT);
 }
 
 std::unique_ptr<PlatformResult> JsonDownloadProtocol::makeFileListConfirm(const Message& message) const
@@ -524,32 +513,6 @@ std::unique_ptr<Message> JsonDownloadProtocol::makeFileListUpdateMessage(const s
     catch (...)
     {
         LOG(DEBUG) << "File download protocol: Unable to serialize file list update";
-        return nullptr;
-    }
-}
-
-std::unique_ptr<Message> JsonDownloadProtocol::makeFileListResponseMessage(const std::string& deviceKey,
-                                                                           const wolkabout::FileList& fileList) const
-{
-    LOG(TRACE) << METHOD_INFO;
-
-    try
-    {
-        const std::string topic = FILE_LIST_RESPONSE_TOPIC_ROOT + m_devicePrefix + deviceKey;
-
-        const json jPayload(fileList);
-        const std::string payload = jPayload.dump();
-
-        return std::unique_ptr<Message>(new Message(payload, topic));
-    }
-    catch (std::exception& e)
-    {
-        LOG(DEBUG) << "File download protocol: Unable to serialize file list response: " << e.what();
-        return nullptr;
-    }
-    catch (...)
-    {
-        LOG(DEBUG) << "File download protocol: Unable to serialize file list response";
         return nullptr;
     }
 }

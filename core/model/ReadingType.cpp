@@ -86,7 +86,7 @@ const std::string& ReadingType::getMeasurmentUnitSymbol() const
     return m_unitSymbol;
 }
 
-bool ReadingType::operator==(ReadingType& rhs) const
+bool ReadingType::operator==(const ReadingType& rhs) const
 {
     if (m_name != rhs.m_name || m_unitSymbol != rhs.m_unitSymbol)
     {
@@ -96,7 +96,7 @@ bool ReadingType::operator==(ReadingType& rhs) const
     return true;
 }
 
-bool ReadingType::operator!=(ReadingType& rhs) const
+bool ReadingType::operator!=(const ReadingType& rhs) const
 {
     return !(*this == rhs);
 }

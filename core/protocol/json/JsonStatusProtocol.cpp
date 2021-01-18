@@ -17,6 +17,7 @@
 #include "protocol/json/JsonStatusProtocol.h"
 
 #include "Json.h"
+#include "JsonDto.h"
 #include "model/DeviceStatus.h"
 #include "model/DeviceStatusConfirm.h"
 #include "model/Message.h"
@@ -42,7 +43,7 @@ const std::vector<std::string> JsonStatusProtocol::INBOUND_CHANNELS = {
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATE_FIELD = "state";
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_CONNECTED = "CONNECTED";
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_SLEEP = "SLEEP";
-const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_SERVICE = "SERVICE";
+const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_SERVICE = "SERVICE_MODE";
 const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_OFFLINE = "OFFLINE";
 
 void to_json(json& j, const DeviceStatus& p)
@@ -76,21 +77,9 @@ void to_json(json& j, const DeviceStatus& p)
 /*** DEVICE STATUS CONFIRM DTO ***/
 void to_json(json& j, const DeviceStatusConfirm& dto)
 {
-    auto resultStr = [&]() -> std::string {
-        switch (dto.getResult())
-        {
-        case PlatformResult::OK:
-            return "OK";
-            break;
-
-        default:
-            throw std::invalid_argument("Unhandled result");
-        }
-    }();
-
     // clang-format off
     j = {
-            {"result", resultStr}
+        {"result", dto.getResult().getMessage()}
     };
     // clang-format on
 }

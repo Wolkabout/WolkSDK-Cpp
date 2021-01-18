@@ -27,9 +27,11 @@ namespace wolkabout
 class Message;
 class GatewayUpdateRequest;
 class GatewayUpdateResponse;
-class SubdeviceRegistrationRequest;
 class SubdeviceDeletionRequest;
+class SubdeviceRegistrationRequest;
 class SubdeviceRegistrationResponse;
+class SubdeviceUpdateRequest;
+class SubdeviceUpdateResponse;
 
 class RegistrationProtocol : public Protocol
 {
@@ -37,6 +39,7 @@ public:
     virtual bool isSubdeviceRegistrationResponse(const Message& message) const = 0;
     virtual bool isGatewayUpdateResponse(const Message& message) const = 0;
     virtual bool isSubdeviceDeletionResponse(const Message& message) const = 0;
+    virtual bool isSubdeviceUpdateResponse(const Message& message) const = 0;
 
     virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                                  const SubdeviceRegistrationRequest& request) const = 0;
@@ -47,10 +50,15 @@ public:
     virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                                  const SubdeviceDeletionRequest& request) const = 0;
 
+    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
+                                                 const SubdeviceUpdateRequest& request) const = 0;
+
     virtual std::unique_ptr<SubdeviceRegistrationResponse> makeSubdeviceRegistrationResponse(
       const Message& message) const = 0;
 
     virtual std::unique_ptr<GatewayUpdateResponse> makeGatewayUpdateResponse(const Message& message) const = 0;
+
+    virtual std::unique_ptr<SubdeviceUpdateResponse> makeSubdeviceUpdateResponse(const Message& message) const = 0;
 
     virtual std::string getResponseChannel(const std::string& deviceKey, const Message& message) const = 0;
 };

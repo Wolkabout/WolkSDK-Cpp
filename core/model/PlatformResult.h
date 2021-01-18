@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 WolkAbout Technology s.r.o.
+ * Copyright 2020 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,42 @@
 
 namespace wolkabout
 {
-enum class PlatformResult
+class PlatformResult
 {
-    OK = 0,
-    ERROR_GATEWAY_NOT_FOUND,
-    ERROR_KEY_MISSING,
-    ERROR_NOT_A_GATEWAY,
-    ERROR_DEVICE_NOT_FOUND,
-    ERROR_INVALID_DEVICE
-};
+public:
+    enum class Code
+    {
+        OK = 0,
+        ERROR_GATEWAY_NOT_FOUND,
+        ERROR_DEVICE_NOT_FOUND,
+        ERROR_SUBDEVICE_MANAGEMENT_FORBIDDEN,
+        ERROR_MAXIMUM_NUMBER_OF_DEVICES_EXCEEDED,
+        ERROR_NOT_A_GATEWAY,
+        ERROR_INVALID_DEVICE,
+        ERROR_READING_PAYLOAD,
+        ERROR_VALIDATION,
+        DATABASE_CONFLICT,
+        VALIDATION_ERROR,
+        PARSE_ERROR,
+        MISSING_UNIT,
+        ERROR_UNKNOWN,
 
-std::string to_string(PlatformResult result);
+        NOT_SUPPORTED
+    };
+
+    PlatformResult(Code code, std::string message, std::string description = "");
+
+    Code getCode() const;
+    const std::string& getMessage() const;
+    const std::string& getDescription() const;
+
+    void setDescription(std::string description);
+
+private:
+    Code m_code;
+    std::string m_message;
+    std::string m_description;
+};
 }    // namespace wolkabout
 
 #endif    // PLATFORMRESULT_H

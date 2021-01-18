@@ -20,50 +20,39 @@
 
 namespace wolkabout
 {
-ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, DataType dataType, std::string description,
-                                   WolkOptional<double> minimum, WolkOptional<double> maximum)
+ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, DataType dataType, std::string description)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
 , m_readingType{std::move(dataType)}
 , m_description{std::move(description)}
-, m_minimum{minimum}
-, m_maximum{maximum}
 {
 }
 
 ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, ActuationReadingType readingType,
-                                   std::string description, WolkOptional<double> minimum, WolkOptional<double> maximum)
+                                   std::string description)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
 , m_readingType{std::move(readingType)}
 , m_description{std::move(description)}
-, m_minimum{minimum}
-, m_maximum{maximum}
 {
 }
 
 ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, ActuationReadingType::Name readingTypeName,
-                                   ActuationReadingType::MeasurmentUnit unit, std::string description,
-                                   WolkOptional<double> minimum, WolkOptional<double> maximum)
+                                   ActuationReadingType::MeasurmentUnit unit, std::string description)
 
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
 , m_readingType{ActuationReadingType(readingTypeName, unit)}
 , m_description{std::move(description)}
-, m_minimum{minimum}
-, m_maximum{maximum}
 {
 }
 
 ActuatorTemplate::ActuatorTemplate(std::string name, std::string reference, std::string readingTypeName,
-                                   std::string unitSymbol, std::string description, WolkOptional<double> minimum,
-                                   WolkOptional<double> maximum)
+                                   std::string unitSymbol, std::string description)
 : m_name{std::move(name)}
 , m_reference{std::move(reference)}
 , m_readingType{ActuationReadingType(std::move(readingTypeName), std::move(unitSymbol))}
 , m_description{std::move(description)}
-, m_minimum(minimum)
-, m_maximum(maximum)
 {
 }
 
@@ -92,17 +81,7 @@ const std::string& ActuatorTemplate::getReadingTypeName() const
     return m_readingType.getName();
 }
 
-WolkOptional<double> ActuatorTemplate::getMinimum() const
-{
-    return m_minimum;
-}
-
-WolkOptional<double> ActuatorTemplate::getMaximum() const
-{
-    return m_maximum;
-}
-
-bool ActuatorTemplate::operator==(ActuatorTemplate& rhs) const
+bool ActuatorTemplate::operator==(const ActuatorTemplate& rhs) const
 {
     if (m_name != rhs.m_name || m_reference != rhs.m_reference || m_description != rhs.m_description)
     {
@@ -114,15 +93,10 @@ bool ActuatorTemplate::operator==(ActuatorTemplate& rhs) const
         return false;
     }
 
-    if (m_minimum != rhs.m_minimum || m_maximum != rhs.m_maximum)
-    {
-        return false;
-    }
-
     return true;
 }
 
-bool ActuatorTemplate::operator!=(ActuatorTemplate& rhs) const
+bool ActuatorTemplate::operator!=(const ActuatorTemplate& rhs) const
 {
     return !(*this == rhs);
 }

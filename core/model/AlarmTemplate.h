@@ -36,8 +36,8 @@ public:
     const std::string& getDescription() const;
     AlarmTemplate& setDescription(const std::string& description);
 
-    bool operator==(AlarmTemplate& rhs) const;
-    bool operator!=(AlarmTemplate& rhs) const;
+    bool operator==(const AlarmTemplate& rhs) const;
+    bool operator!=(const AlarmTemplate& rhs) const;
 
 private:
     std::string m_name;

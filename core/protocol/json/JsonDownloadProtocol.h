@@ -61,8 +61,6 @@ public:
 
     bool isFilePurge(const Message& message) const;
 
-    bool isFileListRequest(const Message& message) const;
-
     std::unique_ptr<PlatformResult> makeFileListConfirm(const Message& message) const;
 
     std::unique_ptr<BinaryData> makeBinaryData(const Message& message) const;
@@ -77,8 +75,6 @@ public:
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey, const FileUploadStatus& fileUploadStatus) const;
 
     std::unique_ptr<Message> makeFileListUpdateMessage(const std::string& deviceKey, const FileList& fileList) const;
-
-    std::unique_ptr<Message> makeFileListResponseMessage(const std::string& deviceKey, const FileList& fileList) const;
 
     std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
                                          const FileUrlDownloadStatus& fileUrlDownloadStatus) const;
@@ -96,8 +92,6 @@ private:
     static const std::string FILE_DELETE_TOPIC_ROOT;
     static const std::string FILE_PURGE_TOPIC_ROOT;
 
-    static const std::string FILE_LIST_REQUEST_TOPIC_ROOT;
-    static const std::string FILE_LIST_RESPONSE_TOPIC_ROOT;
     static const std::string FILE_LIST_UPDATE_TOPIC_ROOT;
     static const std::string FILE_LIST_CONFIRM_TOPIC_ROOT;
 

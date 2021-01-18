@@ -134,6 +134,31 @@ const std::map<std::string, bool>& wolkabout::DeviceTemplate::getFirmwareUpdateP
     return m_firmwareUpdateParameters;
 }
 
+std::unique_ptr<wolkabout::ConfigurationTemplate> wolkabout::DeviceTemplate::getConfigurationTemplate(
+  const std::string& reference) const
+{
+    return getConfigurationTemplate(
+      [&](const ConfigurationTemplate& conf) { return conf.getReference() == reference; });
+}
+
+std::unique_ptr<wolkabout::SensorTemplate> wolkabout::DeviceTemplate::getSensorTemplate(
+  const std::string& reference) const
+{
+    return getSensorTemplate([&](const SensorTemplate& sensor) { return sensor.getReference() == reference; });
+}
+
+std::unique_ptr<wolkabout::AlarmTemplate> wolkabout::DeviceTemplate::getAlarmTemplate(
+  const std::string& reference) const
+{
+    return getAlarmTemplate([&](const AlarmTemplate& alarm) { return alarm.getReference() == reference; });
+}
+
+std::unique_ptr<wolkabout::ActuatorTemplate> wolkabout::DeviceTemplate::getActuatorTemplate(
+  const std::string& reference) const
+{
+    return getActuatorTemplate([&](const ActuatorTemplate& actuator) { return actuator.getReference() == reference; });
+}
+
 std::unique_ptr<wolkabout::SensorTemplate> wolkabout::DeviceTemplate::getSensorTemplate(
   std::function<bool(const SensorTemplate&)> filter) const
 {

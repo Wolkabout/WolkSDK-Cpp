@@ -28,12 +28,13 @@ class SubdeviceRegistrationRequest
 {
 public:
     SubdeviceRegistrationRequest(std::string subdeviceName, std::string subdeviceKey, DeviceTemplate subdeviceTemplate,
-                                 bool defaultBinding = true);
-    explicit SubdeviceRegistrationRequest(DetailedDevice device, bool defaultBinding = true);
+                                 bool defaultBinding = true, std::string type = "");
+    explicit SubdeviceRegistrationRequest(DetailedDevice device, bool defaultBinding = true, std::string type = "");
 
     const std::string& getSubdeviceName() const;
     const std::string& getSubdeviceKey() const;
     bool getDefaultBinding() const;
+    std::string getType() const;
 
     const DeviceTemplate& getTemplate() const;
 
@@ -42,6 +43,7 @@ private:
     std::string m_subdeviceKey;
     DeviceTemplate m_subdeviceTemplate;
     bool m_defaultBinding;
+    std::string m_type;
 };
 }    // namespace wolkabout
 

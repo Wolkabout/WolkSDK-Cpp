@@ -17,6 +17,8 @@
 #ifndef JSON_H
 #define JSON_H
 
+#include <string>
+
 namespace wolkabout
 {
 const std::string CHANNEL_DELIMITER = "/";
