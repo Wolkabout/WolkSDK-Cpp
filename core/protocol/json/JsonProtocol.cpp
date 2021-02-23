@@ -163,60 +163,180 @@ std::vector<std::string> JsonProtocol::getInboundChannelsForDevice(const std::st
 std::unique_ptr<Message> JsonProtocol::makeMessage(
   const std::string& deviceKey, const std::vector<std::shared_ptr<SensorReading>>& sensorReadings) const
 {
-    if (sensorReadings.size() == 0)
+    if (sensorReadings.empty())
     {
         return nullptr;
     }
 
-    const std::string topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
-                              REFERENCE_PATH_PREFIX + sensorReadings.front()->getReference();
+    // Check if every reference is the same
+    const auto firstRef = sensorReadings.front()->getReference();
+    bool anyDifferent =
+      std::any_of(sensorReadings.cbegin(), sensorReadings.cend(),
+                  [&](const std::shared_ptr<SensorReading>& reading) { return firstRef != reading->getReference(); });
 
-    std::vector<json> payload(sensorReadings.size());
-    std::transform(sensorReadings.begin(), sensorReadings.end(), payload.begin(),
-                   [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
-                       const std::vector<std::string> readingValues = sensorReading->getValues();
+    // Create the place for topic and payload
+    std::string topic;
+    json payload;
 
-                       std::string data;
+    // If all references are the same, just make a topic for that sensor and send each reading as data at different
+    // times
+    if (!anyDifferent)
+    {
+        topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
+                firstRef;
 
-                       if (readingValues.size() > 1)
-                       {
-                           data = joinMultiValues(readingValues, MULTIVALUE_READING_DELIMITER);
-                       }
-                       else
-                       {
-                           data = readingValues.front();
-                       }
+        std::vector<json> entries(sensorReadings.size());
+        std::transform(sensorReadings.begin(), sensorReadings.end(), entries.begin(),
+                       [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
+                           const std::vector<std::string> readingValues = sensorReading->getValues();
 
-                       if (sensorReading->getRtc() == 0)
-                       {
-                           return json{{"data", data}};
-                       }
-                       else
-                       {
-                           return json{{"utc", sensorReading->getRtc()}, {"data", data}};
-                       }
-                   });
+                           std::string data;
 
-    const json jPayload(payload);
-    const std::string content = jPayload.dump();
+                           if (readingValues.size() > 1)
+                           {
+                               data = joinMultiValues(readingValues, MULTIVALUE_READING_DELIMITER);
+                           }
+                           else
+                           {
+                               data = readingValues.front();
+                           }
 
-    return std::unique_ptr<Message>(new Message(content, topic));
+                           if (sensorReading->getRtc() == 0)
+                           {
+                               return json{{"data", data}};
+                           }
+                           else
+                           {
+                               return json{{"utc", sensorReading->getRtc()}, {"data", data}};
+                           }
+                       });
+
+        payload = json(entries);
+    }
+    // If not, form a message for the generic topic that allows multiple references at the same time
+    else
+    {
+        topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
+
+        // We have to sort the entries by the UTC
+        std::map<uint64_t, std::vector<std::shared_ptr<SensorReading>>> sensorReadingsByUTC;
+        for (const auto& sensorReading : sensorReadings)
+        {
+            // Check if we already have the UTC
+            if (sensorReadingsByUTC.find(sensorReading->getRtc()) != sensorReadingsByUTC.cend())
+                sensorReadingsByUTC[sensorReading->getRtc()].emplace_back(sensorReading);
+            else
+                sensorReadingsByUTC[sensorReading->getRtc()] = {sensorReading};
+        }
+
+        // Now, create a json object for each UTC
+        std::vector<json> entries(sensorReadingsByUTC.size());
+        std::transform(sensorReadingsByUTC.cbegin(), sensorReadingsByUTC.cend(), entries.begin(),
+                       [&](const std::pair<uint64_t, std::vector<std::shared_ptr<SensorReading>>>& pair) -> json {
+                           // Create the object, set the utc right away
+                           auto entryJson = json{{"utc", pair.first}};
+
+                           // Append all sensor readings in this UTC
+                           for (const auto& reading : pair.second)
+                           {
+                               const std::vector<std::string> readingValues = reading->getValues();
+                               if (readingValues.size() > 1)
+                                   entryJson[reading->getReference()] =
+                                     joinMultiValues(readingValues, MULTIVALUE_READING_DELIMITER);
+                               else
+                                   entryJson[reading->getReference()] = readingValues.front();
+                           }
+
+                           return entryJson;
+                       });
+
+        payload = json(entries);
+    }
+
+    // Create the message that will be sent, parse all objects in json vector to stringify into a json array
+    return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
 }
 
 std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
                                                    const std::vector<std::shared_ptr<Alarm>>& alarms) const
 {
-    if (alarms.size() == 0)
+    if (alarms.empty())
     {
         return nullptr;
     }
 
-    const json jPayload(alarms);
-    const std::string payload = jPayload.dump();
-    const std::string topic = EVENT_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
-                              REFERENCE_PATH_PREFIX + alarms.front()->getReference();
+    // Check if every reference is the same
+    const auto firstRef = alarms.front()->getReference();
+    bool anyDifferent = std::any_of(alarms.cbegin(), alarms.cend(), [&](const std::shared_ptr<Alarm>& reading) {
+        return firstRef != reading->getReference();
+    });
 
-    return std::unique_ptr<Message>(new Message(payload, topic));
+    // Create the place for topic and payload
+    std::string topic;
+    json payload;
+
+    // If all references are the same, just make a topic for that alarm and send each reading as data at different
+    // times
+    if (!anyDifferent)
+    {
+        topic = EVENT_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
+                alarms.front()->getReference();
+
+        std::vector<json> entries(alarms.size());
+        std::transform(alarms.begin(), alarms.end(), entries.begin(),
+                       [&](const std::shared_ptr<Alarm>& alarm) -> json {
+                           const std::vector<std::string> readingValues = alarm->getValues();
+
+                           std::string data = alarm->getValue();
+
+                           if (alarm->getRtc() == 0)
+                           {
+                               return json{{"data", data}};
+                           }
+                           else
+                           {
+                               return json{{"utc", alarm->getRtc()}, {"data", data}};
+                           }
+                       });
+
+        payload = json(entries);
+    }
+    // If not, form a message for the generic topic that allows multiple references at the same time
+    else
+    {
+        topic = EVENT_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
+
+        // We have to sort the entries by the UTC
+        std::map<uint64_t, std::vector<std::shared_ptr<Alarm>>> alarmsByUTC;
+        for (const auto& alarm : alarms)
+        {
+            // Check if we already have the UTC
+            if (alarmsByUTC.find(alarm->getRtc()) != alarmsByUTC.cend())
+                alarmsByUTC[alarm->getRtc()].emplace_back(alarm);
+            else
+                alarmsByUTC[alarm->getRtc()] = {alarm};
+        }
+
+        // Now, create a json object for each UTC
+        std::vector<json> entries(alarmsByUTC.size());
+        std::transform(alarmsByUTC.cbegin(), alarmsByUTC.cend(), entries.begin(),
+                       [&](const std::pair<uint64_t, std::vector<std::shared_ptr<Alarm>>>& pair) -> json {
+                           // Create the object, set the utc right away
+                           auto entryJson = json{{"utc", pair.first}};
+
+                           // Append all sensor readings in this UTC
+                           for (const auto& alarm : pair.second)
+                           {
+                               entryJson[alarm->getReference()] = alarm->getValue();
+                           }
+
+                           return entryJson;
+                       });
+
+        payload = json(entries);
+    }
+
+    return std::unique_ptr<Message>(new Message(payload.dump(), topic));
 }
 
 std::unique_ptr<Message> JsonProtocol::makeMessage(
