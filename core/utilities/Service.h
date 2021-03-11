@@ -22,8 +22,6 @@ public:
         stop();
         start();
     }
-
-    virtual void join() = 0;
 };
 }    // namespace wolkabout
 
