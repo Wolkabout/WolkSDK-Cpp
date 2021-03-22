@@ -30,14 +30,15 @@ enum class LogLevel
     DEBUG,
     INFO,
     WARN,
-    ERROR
+    ERROR,
+    OFF
 };
 
 /**
  * @brief Converts a log level from string.
  * @param level log level as string
- * @return corresponding log level (supported: ERROR, WARN, INFO, DEBUG and
- * TRACE. All other will be considered as ERROR)
+ * @return corresponding log level (supported: ERROR, WARN, INFO, DEBUG, TRACE and
+ * OFF. All other will be considered as ERROR)
  */
 wolkabout::LogLevel from_string(std::string level);
 

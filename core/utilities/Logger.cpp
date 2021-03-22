@@ -25,6 +25,8 @@ std::unique_ptr<Logger> Logger::m_instance;
 
 void Logger::operator+=(Log& log)
 {
+    if (log.getLogLevel() == LogLevel::OFF)
+        return;
     logEntry(log);
 }
 
@@ -69,6 +71,10 @@ wolkabout::LogLevel from_string(std::string level)
     else if (level.compare("WARN") == 0)
     {
         return wolkabout::LogLevel::WARN;
+    }
+    else if (level.compare("OFF") == 0)
+    {
+        return wolkabout::LogLevel::OFF;
     }
     else
     {
