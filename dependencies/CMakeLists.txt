@@ -1,9 +1,16 @@
 include(ExternalProject)
 
+set(SPDLOG_VERSION "1.7.0")
 set(PAHO_MQTT_C_VERSION "1.3.1")
 set(PAHO_MQTT_CPP_VERSION "1.1")
 set(GTEST_VERSION "1.10.0")
 set(POCO_VERSION "1.9.4")
+
+ExternalProject_Add(spdlog
+        GIT_REPOSITORY "https://github.com/gabime/spdlog"
+        GIT_TAG "v${SPDLOG_VERSION}"
+        CMAKE_ARGS -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+        )
 
 if (BUILD_CONNECTIVITY)
     ExternalProject_Add(pahomqttc
