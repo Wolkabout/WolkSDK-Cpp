@@ -162,6 +162,7 @@ add_library(${PROJECT_NAME}Utility SHARED ${UTILITY_SOURCE_FILES} ${UTILITY_HEAD
 target_include_directories(${PROJECT_NAME}Utility PUBLIC core/utilities)
 target_link_libraries(${PROJECT_NAME}Utility PUBLIC crypto)
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
+add_dependencies(${PROJECT_NAME}Utility spdlog)
 
 list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
 

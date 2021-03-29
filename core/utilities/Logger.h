@@ -17,6 +17,8 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <spdlog/sinks/ringbuffer_sink.h>
+#include <spdlog/spdlog.h>
 #include <memory>
 #include <sstream>
 
@@ -26,11 +28,11 @@ class Log;
 
 enum class LogLevel
 {
-    TRACE = 0,
-    DEBUG,
-    INFO,
+    INFO = 0,
     WARN,
     ERROR,
+    DEBUG,
+    TRACE,
     OFF
 };
 
@@ -51,6 +53,13 @@ wolkabout::LogLevel from_string(std::string level);
 class Logger
 {
 public:
+    enum class Type
+    {
+        CONSOLE = 1,
+        FILE = 2,
+        BUFFER = 4
+    };
+
     /**
      * @brief Logger destructor.
      */
@@ -62,29 +71,54 @@ public:
      */
     void operator+=(Log& log);
 
-    virtual void logEntry(Log& log) = 0;
+    void logEntry(const Log& log);
 
     /**
      * @brief Sets the log level.
      * @param level log level to be set
      */
-    virtual void setLogLevel(wolkabout::LogLevel level) = 0;
+    void setLogLevel(wolkabout::LogLevel level);
 
     /**
-     * @brief Sets the Logger single instance
-     * @param instance instance of logger to be used as singleton
+     * @brief Initialize logger.
+     * @param level Indicates logging level
+     * @param type Type of logger to use
+     * @param filePathWithExtension File path when using file based logger
      */
-    static void setInstance(std::unique_ptr<Logger> instance);
+    static void init(LogLevel level, Type type, const std::string& filePathWithExtension = "");
 
     /**
      * @brief Provides a logger singleton instance.
      * @return logger instance
      */
-    static Logger* getInstance();
+    static Logger& getInstance();
+
+    std::vector<std::string> buffer();
 
 private:
-    static std::unique_ptr<Logger> m_instance;
+    Logger() = default;
+    void logMessage(const Log& log, spdlog::logger& logger);
+
+    static void setupFileLogger(const std::string& filePathWithExtension);
+    static void setupConsoleLogger();
+    static void setupBufferLogger();
+    static void setupLoggerParams(LogLevel level);
+
+    std::shared_ptr<spdlog::logger> m_fileLogger = nullptr;
+    std::shared_ptr<spdlog::logger> m_consoleLogger = nullptr;
+    std::shared_ptr<spdlog::logger> m_bufferLogger = nullptr;
+    spdlog::sinks::ringbuffer_sink<std::mutex>* m_bufferSink = nullptr;
 };
+
+inline constexpr Logger::Type operator|(Logger::Type a, Logger::Type b)
+{
+    return static_cast<Logger::Type>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline constexpr bool operator&(Logger::Type a, Logger::Type b)
+{
+    return static_cast<int>(a) & static_cast<int>(b);
+}
 
 /**
  * @brief The Log class
@@ -98,7 +132,7 @@ public:
      * @brief Log constructor.
      * @param level log level that will be used for this log
      */
-    Log(wolkabout::LogLevel level);
+    explicit Log(wolkabout::LogLevel level);
 
     /**
      * @brief This is log appender for string value
@@ -134,9 +168,7 @@ template <typename T> Log& Log::operator<<(T value)
 
 #define PREPEND_NAMED_SCOPE(logLevel) wolkabout::LogLevel::logLevel
 
-#define LOG_(level)                       \
-    if (wolkabout::Logger::getInstance()) \
-    (*wolkabout::Logger::getInstance()) += wolkabout::Log(level)
+#define LOG_(level) wolkabout::Logger::getInstance() += wolkabout::Log(level)
 
 #define LOG(level) LOG_(PREPEND_NAMED_SCOPE(level))
 }    // namespace wolkabout
