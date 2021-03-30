@@ -74,10 +74,10 @@ public:
     void logEntry(const Log& log);
 
     /**
-     * @brief Sets the log level.
+     * @brief Sets the log level of the logger.
      * @param level log level to be set
      */
-    void setLogLevel(wolkabout::LogLevel level);
+    void setLevel(wolkabout::LogLevel level);
 
     /**
      * @brief Initialize logger.

@@ -103,7 +103,7 @@ void Logger::logEntry(const Log& log)
         logMessage(log, *m_bufferLogger);
     }
 }
-void Logger::setLogLevel(wolkabout::LogLevel level)
+void Logger::setLevel(wolkabout::LogLevel level)
 {
     switch (level)
     {
