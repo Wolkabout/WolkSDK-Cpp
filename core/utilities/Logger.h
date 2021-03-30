@@ -17,9 +17,9 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <memory>
 #include <spdlog/sinks/ringbuffer_sink.h>
 #include <spdlog/spdlog.h>
-#include <memory>
 #include <sstream>
 
 namespace wolkabout

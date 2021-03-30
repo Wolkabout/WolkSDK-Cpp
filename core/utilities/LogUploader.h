@@ -4,8 +4,8 @@
 #ifndef LOGUPLOADER_H
 #define LOGUPLOADER_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace wolkabout
 {
@@ -29,7 +29,6 @@ public:
      * @return Vector of file names as string
      */
     virtual std::vector<std::string> getRemoteLogs() = 0;
-
 };
 }    // namespace wolkabout
 
