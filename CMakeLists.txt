@@ -19,6 +19,7 @@ project(WolkAboutCore C CXX)
 OPTION(BUILD_CONNECTIVITY "Build the library with Paho MQTT and allow MQTT connection to the platform." ON)
 OPTION(BUILD_POCO "Build the library with Poco." ON)
 OPTION(BUILD_GTEST "Build the library with GTest." ON)
+OPTION(BUILD_AWS_LOG_UPLOADER "Build the library with AwsLogUploader." ON)
 
 # Options for Poco
 if (${BUILD_POCO})
@@ -165,6 +166,20 @@ set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
 add_dependencies(${PROJECT_NAME}Utility spdlog)
 
 list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
+
+# Build the AwsLogUploader
+if (BUILD_AWS_LOG_UPLOADER)
+    file(GLOB ALU_SOURCE_FILES core/log_uploader/*.cpp)
+    file(GLOB ALU_HEADER_FILES core/log_uploader/*.h)
+
+    add_library(${PROJECT_NAME}Aws SHARED ${ALU_SOURCE_FILES} ${ALU_HEADER_FILES})
+    target_include_directories(${PROJECT_NAME}Aws PUBLIC core/log_uploader)
+    target_link_libraries(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-cpp-sdk-core aws-cpp-sdk-s3)
+    set_target_properties(${PROJECT_NAME}Aws PROPERTIES INSTALL_RPATH "$ORIGIN")
+    add_dependencies(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-sdk)
+
+    list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Aws)
+endif()
 
 # Build the MQTT logic if Paho is enabled
 if (BUILD_CONNECTIVITY)

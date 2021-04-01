@@ -22,7 +22,7 @@ public:
      * @param pathToLogFile Path where the log file is located on the file system
      * @return Success of the operation
      */
-    virtual bool upload(std::string pathToLogFile) = 0;
+    virtual bool upload(const std::string& pathToLogFile) = 0;
 
     /**
      * @brief Get all the name of log files that are present on the remote server
