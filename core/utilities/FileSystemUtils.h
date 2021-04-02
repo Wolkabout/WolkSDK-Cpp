@@ -19,6 +19,7 @@
 
 #include "utilities/ByteUtils.h"
 
+#include <chrono>
 #include <cstddef>
 #include <string>
 #include <vector>
@@ -37,6 +38,8 @@ public:
     static bool createBinaryFileWithContent(const std::string& filePath, const ByteArray& content);
 
     static bool deleteFile(const std::string& filePath);
+
+    static time_t getFileLastModified(const std::string filePath);
 
     static bool isDirectoryPresent(const std::string& dirPath);
 

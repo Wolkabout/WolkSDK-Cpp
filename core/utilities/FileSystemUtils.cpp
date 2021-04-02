@@ -187,4 +187,26 @@ std::string FileSystemUtils::absolutePath(const std::string& path)
 
     return "";
 }
+std::time_t FileSystemUtils::getFileLastModified(const std::string filePath)
+{
+    std::time_t lastModified;
+    struct stat fileInfo;
+    if (stat(filePath.c_str(), &fileInfo) != 0)
+    {    // Use stat() to get the info
+        return lastModified;
+    }
+
+    if ((fileInfo.st_mode & S_IFMT) == S_IFDIR)
+    {
+        return lastModified;
+    }
+
+    //    fileInfo.st_size;    // Size in bytes
+    //    std::ctime(&fileInfo.st_ctime);    // Creation time
+
+    lastModified = fileInfo.st_mtime;    // Last mod time
+
+    return lastModified;
+}
+
 }    // namespace wolkabout

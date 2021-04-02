@@ -83,7 +83,7 @@ if (BUILD_POCO)
 endif ()
 
 if (BUILD_AWS_LOG_UPLOADER)
-    ExternalProject_Add(aws-sdk
+    ExternalProject_Add(aws-sdk-cpp
             GIT_REPOSITORY "https://github.com/aws/aws-sdk-cpp"
             GIT_TAG "${AWS_SDK_VERSION}"
             CMAKE_ARGS -DBUILD_SHARED_LIBS=ON

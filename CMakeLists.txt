@@ -176,7 +176,7 @@ if (BUILD_AWS_LOG_UPLOADER)
     target_include_directories(${PROJECT_NAME}Aws PUBLIC core/log_uploader)
     target_link_libraries(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-cpp-sdk-core aws-cpp-sdk-s3)
     set_target_properties(${PROJECT_NAME}Aws PROPERTIES INSTALL_RPATH "$ORIGIN")
-    add_dependencies(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-sdk)
+    add_dependencies(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-sdk-cpp)
 
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Aws)
 endif()
