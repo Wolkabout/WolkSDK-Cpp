@@ -19,7 +19,6 @@
 
 #include "utilities/ByteUtils.h"
 
-#include <chrono>
 #include <cstddef>
 #include <string>
 #include <vector>
