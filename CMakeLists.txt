@@ -200,7 +200,7 @@ if (BUILD_CONNECTIVITY)
     target_include_directories(${PROJECT_NAME} PUBLIC core core/connectivity core/model core/persistence core/protocol core/service)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as)
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
-    add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}Utility spdlog pahomqttc pahomqttcpp)
+    add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}Utility pahomqttc pahomqttcpp)
 
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
 endif ()
