@@ -12,9 +12,8 @@
 namespace wolkabout
 {
 AwsLogUploader::AwsLogUploader(const std::string& bucketName, const std::string& region)
+: m_bucketName(Aws::String(bucketName.c_str(), bucketName.size())), m_region(Aws::String(region.c_str(), region.size()))
 {
-    m_bucketName = Aws::String(bucketName.c_str(), bucketName.size());
-    m_region = Aws::String(region.c_str(), region.size());
 }
 
 bool wolkabout::AwsLogUploader::upload(const std::string& pathToLogFile)
