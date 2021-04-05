@@ -16,6 +16,8 @@
 
 #include "utilities/FileSystemUtils.h"
 
+#include "utilities/Logger.h"
+
 #include <dirent.h>
 #include <fstream>
 #include <sys/stat.h>
@@ -176,37 +178,44 @@ std::string FileSystemUtils::composePath(const std::string& fileName, const std:
 
 std::string FileSystemUtils::absolutePath(const std::string& path)
 {
-    char* reslovedPath = realpath(path.c_str(), NULL);
-    if (reslovedPath)
+    char* resolvedPath = realpath(path.c_str(), NULL);
+    if (resolvedPath)
     {
-        std::string fullPath(reslovedPath);
-        free(reslovedPath);
+        std::string fullPath(resolvedPath);
+        free(resolvedPath);
 
         return fullPath;
     }
 
     return "";
 }
-std::time_t FileSystemUtils::getFileLastModified(const std::string filePath)
+std::time_t FileSystemUtils::getLastModified(const std::string& path)
 {
     std::time_t lastModified;
     struct stat fileInfo;
-    if (stat(filePath.c_str(), &fileInfo) != 0)
-    {    // Use stat() to get the info
-        return lastModified;
-    }
-
-    if ((fileInfo.st_mode & S_IFMT) == S_IFDIR)
+    if (stat(path.c_str(), &fileInfo) != 0)
     {
+        LOG(ERROR) << "File '" << path << "' does not exist!";
         return lastModified;
     }
 
-    //    fileInfo.st_size;    // Size in bytes
-    //    std::ctime(&fileInfo.st_ctime);    // Creation time
-
-    lastModified = fileInfo.st_mtime;    // Last mod time
+    lastModified = fileInfo.st_mtime;
 
     return lastModified;
+}
+double FileSystemUtils::getFileSize(const std::string& path)
+{
+    double size;
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0)
+    {
+        LOG(ERROR) << "File '" << path << "' does not exist!";
+        return size;
+    }
+
+    size = static_cast<double>(fileInfo.st_size);
+
+    return size;
 }
 
 }    // namespace wolkabout

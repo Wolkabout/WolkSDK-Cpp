@@ -6,6 +6,7 @@
 #define LOGMANAGER_H
 
 #include "LogUploader.h"
+#include "Timer.h"
 
 #include <atomic>
 #include <chrono>
@@ -19,8 +20,9 @@ class LogManager
 {
 public:
     explicit LogManager(const std::string& logDirectory, const std::string& logExtension, const int& maxSize,
-                        const std::chrono::hours& uploadEvery = std::chrono::hours(0),
                         const std::chrono::hours& deleteAfter = std::chrono::hours(0),
+                        const std::chrono::hours& uploadEvery = std::chrono::hours(0),
+                        const std::chrono::hours& uploadAfter = std::chrono::hours(0),
                         std::shared_ptr<LogUploader> logUploader = nullptr);
 
     ~LogManager();
@@ -39,23 +41,26 @@ public:
     const std::chrono::hours& getDeleteAfter() const;
     void setDeleteAfter(const std::chrono::hours& deleteAfter);
     const std::string& getLogExtension() const;
+    void setLogExtension(const std::string& logExtension);
+    const std::chrono::hours& getUploadAfter() const;
+    void setUploadAfter(const std::chrono::hours& uploadAfter);
+    void uploadLogs();
 
 private:
     std::vector<std::string> getLogsToUpload();
     std::vector<std::string> getLogsToDelete();
+    std::vector<std::string> getLogFiles();
 
-    std::string m_logDirectory;
-    std::string m_logExtension;
-
-public:
-    void setLogExtension(const std::string& logExtension);
-
-private:
-    int m_maxSize;
+    wolkabout::Timer m_uploadTimer;
     std::chrono::hours m_uploadEvery;
     std::chrono::hours m_deleteAfter;
+    std::chrono::hours m_uploadAfter;
     std::atomic_bool m_running;
     std::shared_ptr<LogUploader> m_logUploader = nullptr;
+    std::string m_logDirectory;
+    std::string m_logExtension;
+    int m_maxSize;
+
 };
 
 }    // namespace wolkabout

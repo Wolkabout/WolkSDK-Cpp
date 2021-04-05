@@ -39,7 +39,9 @@ public:
 
     static bool deleteFile(const std::string& filePath);
 
-    static time_t getFileLastModified(const std::string filePath);
+    static time_t getLastModified(const std::string& path);
+
+    static double getFileSize(const std::string& path);
 
     static bool isDirectoryPresent(const std::string& dirPath);
 
