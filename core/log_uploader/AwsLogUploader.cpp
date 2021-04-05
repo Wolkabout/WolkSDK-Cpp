@@ -82,7 +82,6 @@ std::vector<std::string> wolkabout::AwsLogUploader::getRemoteLogs()
     std::vector<std::string> remoteLogs;
 
     Aws::SDKOptions options;
-    options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Debug;
     Aws::InitAPI(options);
     {
         Aws::Client::ClientConfiguration config;
