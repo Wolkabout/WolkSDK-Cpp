@@ -33,39 +33,46 @@ public:
     void stop();
     void restart();
 
+    void uploadLogs();
+    void deleteOldLogs();
+    void checkLogOverflow();
+
     const std::string& getLogDirectory() const;
     void setLogDirectory(const std::string& logDirectory);
     int getMaxSize() const;
     void setMaxSize(int maxSize);
+
     const std::chrono::hours& getUploadEvery() const;
     void setUploadEvery(const std::chrono::hours& uploadEvery);
+    const std::chrono::hours& getUploadAfter() const;
+    void setUploadAfter(const std::chrono::hours& uploadAfter);
+    const std::chrono::hours& getDeleteEvery() const;
+    void setDeleteEvery(const std::chrono::hours& deleteEvery);
     const std::chrono::hours& getDeleteAfter() const;
     void setDeleteAfter(const std::chrono::hours& deleteAfter);
     const std::string& getLogExtension() const;
     void setLogExtension(const std::string& logExtension);
-    const std::chrono::hours& getUploadAfter() const;
-    void setUploadAfter(const std::chrono::hours& uploadAfter);
-    void uploadLogs();
-    void deleteOldLogs();
-    const std::chrono::hours& getDeleteEvery() const;
-    void setDeleteEvery(const std::chrono::hours& deleteEvery);
 
 private:
     std::vector<std::string> getLogsToUpload();
     std::vector<std::string> getLogsToDelete();
     std::vector<std::string> getLogFiles();
 
-    wolkabout::Timer m_uploadTimer;
-    wolkabout::Timer m_deleteTimer;
-    std::chrono::hours m_uploadEvery;
-    std::chrono::hours m_uploadAfter;
-    std::chrono::hours m_deleteEvery;
-    std::chrono::hours m_deleteAfter;
-    std::atomic_bool m_running;
-    std::shared_ptr<LogUploader> m_logUploader = nullptr;
     std::string m_logDirectory;
     std::string m_logExtension;
     int m_maxSize;
+
+    wolkabout::Timer m_overflowTimer;
+    wolkabout::Timer m_deleteTimer;
+    wolkabout::Timer m_uploadTimer;
+    std::atomic_bool m_running;
+
+    std::chrono::hours m_deleteEvery;
+    std::chrono::hours m_deleteAfter;
+    std::chrono::hours m_uploadEvery;
+    std::chrono::hours m_uploadAfter;
+
+    std::shared_ptr<LogUploader> m_logUploader = nullptr;
 };
 
 }    // namespace wolkabout

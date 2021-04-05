@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <ctime>
 #include <exception>
+#include <functional>
 #include <iostream>
 
 namespace wolkabout
@@ -58,6 +59,12 @@ void LogManager::start()
 
     m_running = true;
 
+    if (m_maxSize > 0)
+    {
+        checkLogOverflow();
+        m_overflowTimer.run(std::chrono::minutes(5), [&] { checkLogOverflow(); });
+    }
+
     if (m_deleteEvery != std::chrono::hours(0))
     {
         deleteOldLogs();
@@ -79,6 +86,8 @@ void LogManager::stop()
     m_running = false;
 
     m_uploadTimer.stop();
+    m_deleteTimer.stop();
+    m_overflowTimer.stop();
 }
 
 const std::string& LogManager::getLogDirectory() const
@@ -266,7 +275,7 @@ void LogManager::uploadLogs()
 {
     if (m_uploadAfter == std::chrono::hours(0))
     {
-        LOG(INFO) << "Upload after is set to 0, not uploading logs";
+        LOG(DEBUG) << "Upload after is set to 0, not uploading logs";
         return;
     }
 
@@ -296,7 +305,7 @@ void LogManager::deleteOldLogs()
 {
     if (m_deleteAfter == std::chrono::hours(0))
     {
-        LOG(INFO) << "Delete after is set to 0, not deleting logs";
+        LOG(DEBUG) << "Delete after is set to 0, not deleting logs";
         return;
     }
 
@@ -313,6 +322,59 @@ void LogManager::deleteOldLogs()
         }
     }
     LOG(INFO) << "Ended deleting stale log files";
+}
+void LogManager::checkLogOverflow()
+{
+    if (m_maxSize == 0)
+    {
+        LOG(TRACE) << "Max log size set to 0, not checking for overflow";
+        return;
+    }
+
+    LOG(INFO) << "Checking for log overflow";
+
+    std::vector<std::string> logs = getLogFiles();
+
+    double logSize = 0;
+
+    for (auto& log : logs)
+    {
+        logSize += wolkabout::FileSystemUtils::getFileSize(log);
+    }
+
+    while (logSize > m_maxSize)
+    {
+        LOG(WARN) << "Log overflow, attempting to delete oldest log";
+        std::vector<std::pair<std::string, double>> logsWithAge(logs.size());
+
+        for (auto& log : logs)
+        {
+            logsWithAge.emplace_back(
+              std::make_pair(log, std::difftime(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
+                                                wolkabout::FileSystemUtils::getLastModified(log))));
+        }
+
+        std::sort(logsWithAge.begin(), logsWithAge.end(),
+                  [](const std::pair<std::string, int>& left, const std::pair<std::string, int>& right) {
+                      return left.second > right.second;
+                  });
+
+        const std::string oldLog = logsWithAge.begin()->first;
+
+        LOG(INFO) << "Deleting oldest log file: " << oldLog;
+
+        if (!wolkabout::FileSystemUtils::deleteFile(oldLog))
+        {
+            LOG(ERROR) << "Failed to delete log file: " << oldLog;
+        }
+
+        logSize = 0;
+
+        for (auto& log : logs)
+        {
+            logSize += wolkabout::FileSystemUtils::getFileSize(log);
+        }
+    }
 }
 
 }    // namespace wolkabout
