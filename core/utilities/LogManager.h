@@ -20,6 +20,7 @@ class LogManager
 {
 public:
     explicit LogManager(const std::string& logDirectory, const std::string& logExtension, const int& maxSize,
+                        const std::chrono::hours& deleteEvery = std::chrono::hours(0),
                         const std::chrono::hours& deleteAfter = std::chrono::hours(0),
                         const std::chrono::hours& uploadEvery = std::chrono::hours(0),
                         const std::chrono::hours& uploadAfter = std::chrono::hours(0),
@@ -45,6 +46,9 @@ public:
     const std::chrono::hours& getUploadAfter() const;
     void setUploadAfter(const std::chrono::hours& uploadAfter);
     void uploadLogs();
+    void deleteOldLogs();
+    const std::chrono::hours& getDeleteEvery() const;
+    void setDeleteEvery(const std::chrono::hours& deleteEvery);
 
 private:
     std::vector<std::string> getLogsToUpload();
@@ -52,15 +56,16 @@ private:
     std::vector<std::string> getLogFiles();
 
     wolkabout::Timer m_uploadTimer;
+    wolkabout::Timer m_deleteTimer;
     std::chrono::hours m_uploadEvery;
-    std::chrono::hours m_deleteAfter;
     std::chrono::hours m_uploadAfter;
+    std::chrono::hours m_deleteEvery;
+    std::chrono::hours m_deleteAfter;
     std::atomic_bool m_running;
     std::shared_ptr<LogUploader> m_logUploader = nullptr;
     std::string m_logDirectory;
     std::string m_logExtension;
     int m_maxSize;
-
 };
 
 }    // namespace wolkabout
