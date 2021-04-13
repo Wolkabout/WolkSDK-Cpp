@@ -57,6 +57,7 @@ private:
     std::vector<std::string> getLogsToUpload();
     std::vector<std::string> getLogsToDelete();
     std::vector<std::string> getLogFileNames();
+    double getTotalLogSize();
 
     std::string m_logDirectory;
     std::string m_logExtension;

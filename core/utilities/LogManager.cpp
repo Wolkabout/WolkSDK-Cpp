@@ -336,12 +336,7 @@ void LogManager::checkLogOverflow()
 
     std::vector<std::string> logs = getLogFileNames();
 
-    double logSize = 0;
-
-    for (auto& log : logs)
-    {
-        logSize += wolkabout::FileSystemUtils::getFileSize(log);
-    }
+    double logSize = getTotalLogSize();
 
     while (logSize > m_maxSize)
     {
@@ -369,13 +364,20 @@ void LogManager::checkLogOverflow()
             LOG(ERROR) << "Failed to delete log file: " << oldLog;
         }
 
-        logSize = 0;
-
-        for (auto& log : logs)
-        {
-            logSize += wolkabout::FileSystemUtils::getFileSize(log);
-        }
+        logSize = getTotalLogSize();
     }
+}
+
+double LogManager::getTotalLogSize()
+{
+    std::vector<std::string> logs = getLogFileNames();
+    double logSize = 0;
+
+    for (auto& log : logs)
+    {
+        logSize += wolkabout::FileSystemUtils::getFileSize(log);
+    }
+    return logSize;
 }
 
 }    // namespace wolkabout
