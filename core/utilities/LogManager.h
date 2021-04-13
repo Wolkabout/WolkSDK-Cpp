@@ -21,7 +21,7 @@ class LogManager
 public:
     explicit LogManager(const std::string& logDirectory, const std::string& logExtension, const int& maxSize,
                         const std::chrono::hours& deleteEvery = std::chrono::hours(0),
-                        const std::chrono::hours& deleteAfter = std::chrono::hours(0),
+                        const std::chrono::hours& deleteStaleAfter = std::chrono::hours(0),
                         const std::chrono::hours& uploadEvery = std::chrono::hours(0),
                         const std::chrono::hours& uploadAfter = std::chrono::hours(0),
                         std::shared_ptr<LogUploader> logUploader = nullptr);
@@ -56,7 +56,7 @@ public:
 private:
     std::vector<std::string> getLogsToUpload();
     std::vector<std::string> getLogsToDelete();
-    std::vector<std::string> getLogFiles();
+    std::vector<std::string> getLogFileNames();
 
     std::string m_logDirectory;
     std::string m_logExtension;

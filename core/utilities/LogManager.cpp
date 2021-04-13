@@ -18,14 +18,14 @@
 namespace wolkabout
 {
 LogManager::LogManager(const std::string& logDirectory, const std::string& logExtension, const int& maxSize,
-                       const std::chrono::hours& deleteEvery, const std::chrono::hours& deleteAfter,
+                       const std::chrono::hours& deleteEvery, const std::chrono::hours& deleteStaleAfter,
                        const std::chrono::hours& uploadEvery, const std::chrono::hours& uploadAfter,
                        std::shared_ptr<LogUploader> logUploader)
 : m_logDirectory(logDirectory)
 , m_deleteEvery(deleteEvery)
 , m_logExtension(logExtension)
 , m_maxSize(maxSize)
-, m_deleteAfter(deleteAfter)
+, m_deleteAfter(deleteStaleAfter)
 , m_uploadEvery(uploadEvery)
 , m_logUploader(std::move(logUploader))
 , m_uploadAfter(uploadAfter)
@@ -192,7 +192,7 @@ std::vector<std::string> LogManager::getLogsToDelete()
         return logFiles;
     }
 
-    logFiles = getLogFiles();
+    logFiles = getLogFileNames();
 
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
                                   [&](const std::string& file) -> bool {
@@ -209,19 +209,19 @@ std::vector<std::string> LogManager::getLogsToUpload()
 {
     std::vector<std::string> logFiles;
 
-    if (m_uploadAfter == std::chrono::hours(0))
-    {
-        LOG(DEBUG) << "Not uploading log files.";
-        return logFiles;
-    }
-
     if (!m_logUploader)
     {
         LOG(WARN) << "No LogUploader, no files will be uploaded.";
         return logFiles;
     }
 
-    logFiles = getLogFiles();
+    if (m_uploadAfter == std::chrono::hours(0))
+    {
+        LOG(DEBUG) << "Not uploading log files.";
+        return logFiles;
+    }
+
+    logFiles = getLogFileNames();
 
     std::vector<std::string> remoteFiles = m_logUploader->getRemoteLogs();
 
@@ -243,7 +243,7 @@ std::vector<std::string> LogManager::getLogsToUpload()
     return logFiles;
 }
 
-std::vector<std::string> LogManager::getLogFiles()
+std::vector<std::string> LogManager::getLogFileNames()
 {
     std::vector<std::string> logFiles;
 
@@ -273,15 +273,15 @@ void LogManager::setUploadAfter(const std::chrono::hours& uploadAfter)
 
 void LogManager::uploadLogs()
 {
-    if (m_uploadAfter == std::chrono::hours(0))
-    {
-        LOG(DEBUG) << "Upload after is set to 0, not uploading logs";
-        return;
-    }
-
     if (!m_logUploader)
     {
         LOG(WARN) << "No log uploader, not attempting upload of logs.";
+        return;
+    }
+
+    if (m_uploadAfter == std::chrono::hours(0))
+    {
+        LOG(DEBUG) << "Upload after is set to 0, not uploading logs";
         return;
     }
 
@@ -323,6 +323,7 @@ void LogManager::deleteOldLogs()
     }
     LOG(INFO) << "Ended deleting stale log files";
 }
+
 void LogManager::checkLogOverflow()
 {
     if (m_maxSize == 0)
@@ -333,7 +334,7 @@ void LogManager::checkLogOverflow()
 
     LOG(INFO) << "Checking for log overflow";
 
-    std::vector<std::string> logs = getLogFiles();
+    std::vector<std::string> logs = getLogFileNames();
 
     double logSize = 0;
 

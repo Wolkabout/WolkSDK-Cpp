@@ -198,10 +198,7 @@ std::time_t FileSystemUtils::getLastModified(const std::string& path)
         LOG(ERROR) << "File '" << path << "' does not exist!";
         return lastModified;
     }
-
-    lastModified = fileInfo.st_mtime;
-
-    return lastModified;
+    return fileInfo.st_mtime;
 }
 double FileSystemUtils::getFileSize(const std::string& path)
 {

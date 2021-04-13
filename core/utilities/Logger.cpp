@@ -26,7 +26,7 @@
 
 namespace
 {
-const unsigned BURRER_LOG_SIZE = 5000;
+const unsigned BUFFER_LOG_SIZE = 5000;
 }
 
 namespace wolkabout
@@ -196,7 +196,7 @@ void Logger::setupBufferLogger()
     auto& instance = getInstance();
 
     instance.m_bufferLogger = spdlog::synchronous_factory::template create<spdlog::sinks::ringbuffer_sink<std::mutex>>(
-      "bufferLogger", BURRER_LOG_SIZE);
+      "bufferLogger", BUFFER_LOG_SIZE);
     instance.m_bufferSink =
       dynamic_cast<spdlog::sinks::ringbuffer_sink<std::mutex>*>(instance.m_bufferLogger->sinks().at(0).get());
 }
@@ -252,12 +252,14 @@ std::string Log::getMessage() const
 
 std::vector<std::string> Logger::buffer()
 {
-    if (!m_bufferSink)
+    auto& instance = getInstance();
+
+    if (!instance.m_bufferSink)
     {
         return {};
     }
 
-    return m_bufferSink->last_formatted();
+    return instance.m_bufferSink->last_formatted();
 }
 
 wolkabout::LogLevel from_string(std::string level)
