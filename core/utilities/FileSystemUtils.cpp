@@ -16,6 +16,8 @@
 
 #include "utilities/FileSystemUtils.h"
 
+#include "utilities/Logger.h"
+
 #include <dirent.h>
 #include <fstream>
 #include <sys/stat.h>
@@ -176,15 +178,41 @@ std::string FileSystemUtils::composePath(const std::string& fileName, const std:
 
 std::string FileSystemUtils::absolutePath(const std::string& path)
 {
-    char* reslovedPath = realpath(path.c_str(), NULL);
-    if (reslovedPath)
+    char* resolvedPath = realpath(path.c_str(), NULL);
+    if (resolvedPath)
     {
-        std::string fullPath(reslovedPath);
-        free(reslovedPath);
+        std::string fullPath(resolvedPath);
+        free(resolvedPath);
 
         return fullPath;
     }
 
     return "";
 }
+std::time_t FileSystemUtils::getLastModified(const std::string& path)
+{
+    std::time_t lastModified;
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0)
+    {
+        LOG(ERROR) << "File '" << path << "' does not exist!";
+        return lastModified;
+    }
+    return fileInfo.st_mtime;
+}
+double FileSystemUtils::getFileSize(const std::string& path)
+{
+    double size;
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0)
+    {
+        LOG(ERROR) << "File '" << path << "' does not exist!";
+        return size;
+    }
+
+    size = static_cast<double>(fileInfo.st_size);
+
+    return size;
+}
+
 }    // namespace wolkabout

@@ -1,9 +1,17 @@
 include(ExternalProject)
 
+set(SPDLOG_VERSION "1.7.0")
 set(PAHO_MQTT_C_VERSION "1.3.1")
 set(PAHO_MQTT_CPP_VERSION "1.1")
 set(GTEST_VERSION "1.10.0")
 set(POCO_VERSION "1.9.4")
+set(AWS_SDK_VERSION "1.8.173")
+
+ExternalProject_Add(spdlog
+        GIT_REPOSITORY "https://github.com/gabime/spdlog"
+        GIT_TAG "v${SPDLOG_VERSION}"
+        CMAKE_ARGS -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+        )
 
 if (BUILD_CONNECTIVITY)
     ExternalProject_Add(pahomqttc
@@ -72,4 +80,17 @@ if (BUILD_POCO)
             -DENABLE_PAGECOMPILER_FILE2PAGE=${POCO_ENABLE_PAGECOMPILER_FILE2PAGE}
             -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
             )
+endif ()
+
+if (BUILD_AWS_LOG_UPLOADER)
+    ExternalProject_Add(aws-sdk-cpp
+            GIT_REPOSITORY "https://github.com/aws/aws-sdk-cpp"
+            GIT_TAG "${AWS_SDK_VERSION}"
+            CMAKE_ARGS -DBUILD_SHARED_LIBS=ON
+            -DBUILD_ONLY=s3
+            -DMINIMIZE_SIZE=ON
+            -DENABLE_TESTING=OFF
+            -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
+            -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+            -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH})
 endif ()
