@@ -283,21 +283,20 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
                 alarms.front()->getReference();
 
         std::vector<json> entries(alarms.size());
-        std::transform(alarms.begin(), alarms.end(), entries.begin(),
-                       [&](const std::shared_ptr<Alarm>& alarm) -> json {
-                           const std::vector<std::string> readingValues = alarm->getValues();
+        std::transform(alarms.begin(), alarms.end(), entries.begin(), [&](const std::shared_ptr<Alarm>& alarm) -> json {
+            const std::vector<std::string> readingValues = alarm->getValues();
 
-                           std::string data = alarm->getValue();
+            std::string data = alarm->getValue();
 
-                           if (alarm->getRtc() == 0)
-                           {
-                               return json{{"data", data}};
-                           }
-                           else
-                           {
-                               return json{{"utc", alarm->getRtc()}, {"data", data}};
-                           }
-                       });
+            if (alarm->getRtc() == 0)
+            {
+                return json{{"data", data}};
+            }
+            else
+            {
+                return json{{"utc", alarm->getRtc()}, {"data", data}};
+            }
+        });
 
         payload = json(entries);
     }

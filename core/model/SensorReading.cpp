@@ -25,13 +25,14 @@ namespace wolkabout
 {
 SensorReading::SensorReading() : Reading({""}, "") {}
 
-SensorReading::SensorReading(std::string value, std::string reference, unsigned long long int rtc)
-: Reading({std::move(value)}, std::move(reference), rtc)
+SensorReading::SensorReading(std::string value, std::string reference, unsigned long long int rtc, std::string key)
+: Reading({std::move(value)}, std::move(reference), rtc, key)
 {
 }
 
-SensorReading::SensorReading(std::vector<std::string> values, std::string reference, unsigned long long int rtc)
-: Reading(std::move(values), std::move(reference), rtc)
+SensorReading::SensorReading(std::vector<std::string> values, std::string reference, unsigned long long int rtc,
+                             std::string key)
+: Reading(std::move(values), std::move(reference), rtc, key)
 {
 }
 

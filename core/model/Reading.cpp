@@ -20,8 +20,9 @@
 
 namespace wolkabout
 {
-Reading::Reading(std::vector<std::string> values, std::string reference, unsigned long long int rtc)
-: m_values(std::move(values)), m_reference(std::move(reference)), m_rtc(rtc)
+Reading::Reading(std::vector<std::string> values, std::string reference, unsigned long long int rtc,
+                 std::string deviceKey)
+: m_values(std::move(values)), m_reference(std::move(reference)), m_rtc(rtc), m_key{std::move(deviceKey)}
 {
 }
 
@@ -48,5 +49,10 @@ const std::string& Reading::getReference() const
 unsigned long long Reading::getRtc() const
 {
     return m_rtc;
+}
+
+const std::string& Reading::getKey() const
+{
+    return m_key;
 }
 }    // namespace wolkabout

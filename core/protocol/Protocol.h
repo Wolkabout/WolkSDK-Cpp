@@ -17,6 +17,7 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
