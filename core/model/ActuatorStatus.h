@@ -17,7 +17,7 @@
 #ifndef ACTUATORSTATUS_H
 #define ACTUATORSTATUS_H
 
-#include "model/Reading.h"
+#include "core/model/Reading.h"
 
 #include <string>
 

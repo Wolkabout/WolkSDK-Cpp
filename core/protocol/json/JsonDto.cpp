@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-#include "protocol/json/JsonDto.h"
+#include "JsonDto.h"
 
-#include "model/ActuatorTemplate.h"
-#include "model/AlarmTemplate.h"
-#include "model/ConfigurationTemplate.h"
-#include "model/DeviceStatusConfirm.h"
-#include "model/GatewayUpdateRequest.h"
-#include "model/GatewayUpdateResponse.h"
-#include "model/SensorTemplate.h"
-#include "model/SubdeviceDeletionResponse.h"
-#include "model/SubdeviceRegistrationRequest.h"
-#include "model/SubdeviceRegistrationResponse.h"
-#include "model/SubdeviceUpdateRequest.h"
-#include "model/SubdeviceUpdateResponse.h"
+#include "core/model/ActuatorTemplate.h"
+#include "core/model/AlarmTemplate.h"
+#include "core/model/ConfigurationTemplate.h"
+#include "core/model/DeviceStatusConfirm.h"
+#include "core/model/GatewayUpdateRequest.h"
+#include "core/model/GatewayUpdateResponse.h"
+#include "core/model/SensorTemplate.h"
+#include "core/model/SubdeviceDeletionResponse.h"
+#include "core/model/SubdeviceRegistrationRequest.h"
+#include "core/model/SubdeviceRegistrationResponse.h"
+#include "core/model/SubdeviceUpdateRequest.h"
+#include "core/model/SubdeviceUpdateResponse.h"
 
 #include <string>
 

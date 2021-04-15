@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "utilities/StringUtils.h"
+#include "StringUtils.h"
 
 #include <algorithm>
 #include <cctype>

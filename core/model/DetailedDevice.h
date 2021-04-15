@@ -17,7 +17,7 @@
 #ifndef DETAILEDDEVICE_H
 #define DETAILEDDEVICE_H
 
-#include "model/DeviceTemplate.h"
+#include "core/model/DeviceTemplate.h"
 
 #include <string>
 #include <vector>

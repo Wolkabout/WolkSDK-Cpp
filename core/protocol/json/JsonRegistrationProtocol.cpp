@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-#include "protocol/json/JsonRegistrationProtocol.h"
+#include "JsonRegistrationProtocol.h"
 
-#include "model/GatewayUpdateRequest.h"
-#include "model/GatewayUpdateResponse.h"
-#include "model/Message.h"
-#include "model/SubdeviceDeletionRequest.h"
-#include "model/SubdeviceRegistrationRequest.h"
-#include "model/SubdeviceRegistrationResponse.h"
-#include "model/SubdeviceUpdateRequest.h"
-#include "model/SubdeviceUpdateResponse.h"
-#include "protocol/json/Json.h"
-#include "protocol/json/JsonDto.h"
-#include "utilities/Logger.h"
-#include "utilities/StringUtils.h"
-#include "utilities/json.hpp"
+#include "Json.h"
+#include "JsonDto.h"
+#include "core/model/GatewayUpdateRequest.h"
+#include "core/model/GatewayUpdateResponse.h"
+#include "core/model/Message.h"
+#include "core/model/SubdeviceDeletionRequest.h"
+#include "core/model/SubdeviceRegistrationRequest.h"
+#include "core/model/SubdeviceRegistrationResponse.h"
+#include "core/model/SubdeviceUpdateRequest.h"
+#include "core/model/SubdeviceUpdateResponse.h"
+#include "core/utilities/Logger.h"
+#include "core/utilities/StringUtils.h"
+#include "core/utilities/json.hpp"
 
 #include <cassert>
 

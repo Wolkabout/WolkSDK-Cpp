@@ -17,8 +17,8 @@
 #ifndef JSONDOWNLOADPROTOCOL_H
 #define JSONDOWNLOADPROTOCOL_H
 
-#include "model/PlatformResult.h"
-#include "protocol/Protocol.h"
+#include "core/model/PlatformResult.h"
+#include "core/protocol/Protocol.h"
 
 #include <memory>
 

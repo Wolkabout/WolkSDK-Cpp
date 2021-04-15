@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/FileUrlDownloadInitiate.h"
+#include "FileUrlDownloadInitiate.h"
 
 #include <utility>
 

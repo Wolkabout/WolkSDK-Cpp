@@ -17,7 +17,7 @@
 #ifndef INMEMORYPERSISTENCE_H
 #define INMEMORYPERSISTENCE_H
 
-#include "persistence/Persistence.h"
+#include "core/persistence/Persistence.h"
 
 #include <cstdint>
 #include <map>

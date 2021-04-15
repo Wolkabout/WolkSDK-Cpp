@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/GatewayUpdateRequest.h"
+#include "GatewayUpdateRequest.h"
 
 #include <utility>
 

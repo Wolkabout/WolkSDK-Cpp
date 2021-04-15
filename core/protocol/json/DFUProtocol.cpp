@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include "protocol/json/DFUProtocol.h"
+#include "DFUProtocol.h"
 
-#include "model/FirmwareUpdateCommand.h"
-#include "model/FirmwareUpdateResponse.h"
-#include "model/Message.h"
-#include "protocol/json/Json.h"
-#include "utilities/StringUtils.h"
-#include "utilities/json.hpp"
+#include "Json.h"
+#include "core/model/FirmwareUpdateCommand.h"
+#include "core/model/FirmwareUpdateResponse.h"
+#include "core/model/Message.h"
+#include "core/utilities/StringUtils.h"
+#include "core/utilities/json.hpp"
 
 #include <algorithm>
 

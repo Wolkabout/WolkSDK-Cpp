@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/ConfigurationTemplate.h"
+#include "ConfigurationTemplate.h"
 
 #include <utility>
 

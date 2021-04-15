@@ -17,10 +17,10 @@
 #ifndef PERSISTENCE_H
 #define PERSISTENCE_H
 
-#include "model/ActuatorStatus.h"
-#include "model/Alarm.h"
-#include "model/ConfigurationItem.h"
-#include "model/SensorReading.h"
+#include "core/model/ActuatorStatus.h"
+#include "core/model/Alarm.h"
+#include "core/model/ConfigurationItem.h"
+#include "core/model/SensorReading.h"
 
 #include <memory>
 #include <string>

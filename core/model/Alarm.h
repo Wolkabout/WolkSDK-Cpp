@@ -17,7 +17,7 @@
 #ifndef ALARM_H
 #define ALARM_H
 
-#include "model/Reading.h"
+#include "core/model/Reading.h"
 
 #include <string>
 

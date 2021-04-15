@@ -17,8 +17,8 @@
 #ifndef JSONDTO_H
 #define JSONDTO_H
 
-#include "model/PlatformResult.h"
-#include "utilities/json.hpp"
+#include "core/model/PlatformResult.h"
+#include "core/utilities/json.hpp"
 
 namespace wolkabout
 {

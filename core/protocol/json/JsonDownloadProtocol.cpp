@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-#include "protocol/json/JsonDownloadProtocol.h"
+#include "JsonDownloadProtocol.h"
 
-#include "model/BinaryData.h"
-#include "model/FileDelete.h"
-#include "model/FileList.h"
-#include "model/FilePacketRequest.h"
-#include "model/FileUploadAbort.h"
-#include "model/FileUploadInitiate.h"
-#include "model/FileUploadStatus.h"
-#include "model/FileUrlDownloadAbort.h"
-#include "model/FileUrlDownloadInitiate.h"
-#include "model/FileUrlDownloadStatus.h"
-#include "model/Message.h"
-#include "protocol/json/Json.h"
-#include "protocol/json/JsonDto.h"
-#include "utilities/Logger.h"
-#include "utilities/StringUtils.h"
-#include "utilities/json.hpp"
+#include "Json.h"
+#include "JsonDto.h"
+#include "core/model/BinaryData.h"
+#include "core/model/FileDelete.h"
+#include "core/model/FileList.h"
+#include "core/model/FilePacketRequest.h"
+#include "core/model/FileUploadAbort.h"
+#include "core/model/FileUploadInitiate.h"
+#include "core/model/FileUploadStatus.h"
+#include "core/model/FileUrlDownloadAbort.h"
+#include "core/model/FileUrlDownloadInitiate.h"
+#include "core/model/FileUrlDownloadStatus.h"
+#include "core/model/Message.h"
+#include "core/utilities/Logger.h"
+#include "core/utilities/StringUtils.h"
+#include "core/utilities/json.hpp"
 
 #include <algorithm>
 

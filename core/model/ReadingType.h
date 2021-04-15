@@ -16,7 +16,7 @@
 #ifndef READINGTYPE_H
 #define READINGTYPE_H
 
-#include "model/DataType.h"
+#include "core/model/DataType.h"
 
 #include <string>
 

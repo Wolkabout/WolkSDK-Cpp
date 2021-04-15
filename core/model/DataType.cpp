@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/DataType.h"
+#include "DataType.h"
 
 namespace wolkabout
 {

@@ -152,15 +152,17 @@ link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 find_package(Threads REQUIRED)
 
 # WolkAbout C++ SDK, in their separated packages
-include_directories(core)
 set(INSTALL_TARGETS)
 
 # Utilities
 file(GLOB_RECURSE UTILITY_HEADER_FILES core/utilities/*.h core/utilities/*.hpp core/Version.h)
 file(GLOB_RECURSE UTILITY_SOURCE_FILES core/utilities/*.cpp)
 
+# path for interface files
+file(COPY ${UTILITY_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/util/core/utilities)
+
 add_library(${PROJECT_NAME}Utility SHARED ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
-target_include_directories(${PROJECT_NAME}Utility PUBLIC core/utilities)
+target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/util)
 target_link_libraries(${PROJECT_NAME}Utility PUBLIC crypto)
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
 add_dependencies(${PROJECT_NAME}Utility spdlog)
@@ -172,8 +174,10 @@ if (BUILD_AWS_LOG_UPLOADER)
     file(GLOB ALU_SOURCE_FILES core/log_uploader/*.cpp)
     file(GLOB ALU_HEADER_FILES core/log_uploader/*.h)
 
+    file(COPY ${ALU_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/log/core/log_uploader)
+
     add_library(${PROJECT_NAME}Aws SHARED ${ALU_SOURCE_FILES} ${ALU_HEADER_FILES})
-    target_include_directories(${PROJECT_NAME}Aws PUBLIC core/log_uploader)
+    target_include_directories(${PROJECT_NAME}Aws PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/log)
     target_link_libraries(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-cpp-sdk-core aws-cpp-sdk-s3)
     set_target_properties(${PROJECT_NAME}Aws PROPERTIES INSTALL_RPATH "$ORIGIN")
     add_dependencies(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-sdk-cpp)
@@ -184,10 +188,13 @@ endif()
 # Build the MQTT logic if Paho is enabled
 if (BUILD_CONNECTIVITY)
     file(GLOB CORE_HEADER_FILES core/*.h)
-    file(GLOB_RECURSE CONNECTIVITY_HEADER_FILES core/connectivity/*.h)
+    file(GLOB CONNECTIVITY_HEADER_FILES core/connectivity/*.h)
+    file(GLOB CONNECTIVITY_MQTT_HEADER_FILES core/connectivity/mqtt/*.h)
     file(GLOB_RECURSE MODEL_HEADER_FILES core/model/*.h)
     file(GLOB_RECURSE PERSISTENCE_HEADER_FILES core/persistence/*.h)
+    file(GLOB_RECURSE PERSISTENCE_INMEMEORY_HEADER_FILES core/persistence/inmemory/*.h)
     file(GLOB_RECURSE PROTOCOL_HEADER_FILES core/protocol/*.h)
+    file(GLOB_RECURSE PROTOCOL_JSON_HEADER_FILES core/protocol/json/*.h)
     file(GLOB_RECURSE SERVICE_HEADER_FILES core/service/*.h)
     file(GLOB_RECURSE MQTT_SOURCE_FILES core/connectivity/*.cpp
             core/model/*.cpp
@@ -195,9 +202,20 @@ if (BUILD_CONNECTIVITY)
             core/protocol/*.cpp
             core/service/*.cpp)
 
+    file(COPY ${CORE_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core)
+    file(COPY ${CONNECTIVITY_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/connectivity)
+    file(COPY ${CONNECTIVITY_MQTT_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/connectivity/mqtt)
+    file(COPY ${MODEL_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/model)
+    file(COPY ${PERSISTENCE_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/persistence)
+    file(COPY ${PERSISTENCE_INMEMORY_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/persistence/inmemory)
+    file(COPY ${PROTOCOL_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/protocol)
+    file(COPY ${PROTOCOL_JSON_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/protocol/json)
+    file(COPY ${SERVICE_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/service)
+
     add_library(${PROJECT_NAME} SHARED ${MQTT_SOURCE_FILES} ${CORE_HEADER_FILES} ${CONNECTIVITY_HEADER_FILES}
-            ${MODEL_HEADER_FILES} ${PERSISTENCE_HEADER_FILES} ${PROTOCOL_HEADER_FILES} ${SERVICE_HEADER_FILES})
-    target_include_directories(${PROJECT_NAME} PUBLIC core core/connectivity core/model core/persistence core/protocol core/service)
+        ${CONNECTIVITY_MQTT_HEADER_FILES} ${MODEL_HEADER_FILES} ${PERSISTENCE_HEADER_FILES} ${PERSISTENCE_INMEMORY_HEADER_FILES}
+        ${PROTOCOL_HEADER_FILES} ${PROTOCOL_JSON_HEADER_FILES} ${SERVICE_HEADER_FILES})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as)
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
     add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}Utility pahomqttc pahomqttcpp)

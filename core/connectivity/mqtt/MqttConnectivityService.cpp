@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "connectivity/mqtt/MqttConnectivityService.h"
+#include "MqttConnectivityService.h"
 
-#include "model/Message.h"
+#include "core/model/Message.h"
 
 namespace wolkabout
 {

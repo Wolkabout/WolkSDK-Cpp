@@ -17,7 +17,7 @@
 #ifndef FIRMWAREUPDATESTATUS_H
 #define FIRMWAREUPDATESTATUS_H
 
-#include "model/WolkOptional.h"
+#include "core/model/WolkOptional.h"
 
 #include <string>
 #include <vector>

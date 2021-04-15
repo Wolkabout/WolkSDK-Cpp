@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/ReadingType.h"
+#include "ReadingType.h"
 
 #include <stdexcept>
 #include <utility>

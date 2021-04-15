@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/FirmwareUpdateCommand.h"
+#include "FirmwareUpdateCommand.h"
 
 #include <utility>
 

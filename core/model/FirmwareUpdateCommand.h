@@ -17,7 +17,7 @@
 #ifndef FIRMWAREUPDATECOMMAND_H
 #define FIRMWAREUPDATECOMMAND_H
 
-#include "WolkOptional.h"
+#include "core/model/WolkOptional.h"
 
 #include <cstdint>
 #include <string>

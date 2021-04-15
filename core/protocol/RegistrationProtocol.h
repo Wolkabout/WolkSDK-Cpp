@@ -17,7 +17,7 @@
 #ifndef REGISTRATIONPROTOCOL_H
 #define REGISTRATIONPROTOCOL_H
 
-#include "protocol/Protocol.h"
+#include "core/protocol/Protocol.h"
 
 #include <memory>
 #include <string>

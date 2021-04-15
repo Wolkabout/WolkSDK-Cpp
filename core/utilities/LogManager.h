@@ -5,8 +5,8 @@
 #ifndef LOGMANAGER_H
 #define LOGMANAGER_H
 
-#include "LogUploader.h"
-#include "Timer.h"
+#include "core/utilities/LogUploader.h"
+#include "core/utilities/Timer.h"
 
 #include <atomic>
 #include <chrono>

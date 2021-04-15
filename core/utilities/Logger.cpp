@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <iostream>
 #include <spdlog/common.h>
+#include <spdlog/spdlog.h>
 #include <spdlog/details/file_helper.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/sinks/ringbuffer_sink.h>
@@ -198,7 +199,7 @@ void Logger::setupBufferLogger()
     instance.m_bufferLogger = spdlog::synchronous_factory::template create<spdlog::sinks::ringbuffer_sink<std::mutex>>(
       "bufferLogger", BUFFER_LOG_SIZE);
     instance.m_bufferSink =
-      dynamic_cast<spdlog::sinks::ringbuffer_sink<std::mutex>*>(instance.m_bufferLogger->sinks().at(0).get());
+      dynamic_cast<spdlog::sinks::ringbuffer_sink_mt*>(instance.m_bufferLogger->sinks().at(0).get());
 }
 
 void Logger::setupLoggerParams(LogLevel level)

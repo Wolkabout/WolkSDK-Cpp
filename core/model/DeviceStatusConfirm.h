@@ -17,7 +17,7 @@
 #ifndef DEVICESTATUSCONFIRM_H
 #define DEVICESTATUSCONFIRM_H
 
-#include "PlatformResult.h"
+#include "core/model/PlatformResult.h"
 
 namespace wolkabout
 {

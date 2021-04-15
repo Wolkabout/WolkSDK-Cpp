@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "connectivity/ConnectivityService.h"
+#include "ConnectivityService.h"
 
 namespace wolkabout
 {

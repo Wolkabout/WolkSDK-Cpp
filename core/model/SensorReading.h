@@ -17,7 +17,7 @@
 #ifndef SENSORREADING_H
 #define SENSORREADING_H
 
-#include "model/Reading.h"
+#include "core/model/Reading.h"
 
 #include <string>
 #include <vector>

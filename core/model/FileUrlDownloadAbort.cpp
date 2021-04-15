@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/FileUrlDownloadAbort.h"
+#include "FileUrlDownloadAbort.h"
 
 #include <utility>
 

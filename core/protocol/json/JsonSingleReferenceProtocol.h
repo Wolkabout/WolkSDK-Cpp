@@ -16,7 +16,7 @@
 #ifndef JSONSINGLEREFERENCEPROTOCOL_H
 #define JSONSINGLEREFERENCEPROTOCOL_H
 
-#include "protocol/DataProtocol.h"
+#include "core/protocol/DataProtocol.h"
 
 #include <memory>
 #include <string>

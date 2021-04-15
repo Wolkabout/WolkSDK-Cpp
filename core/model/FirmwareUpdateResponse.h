@@ -17,7 +17,7 @@
 #ifndef FIRMWAREUPDATERESPONSE_H
 #define FIRMWAREUPDATERESPONSE_H
 
-#include "WolkOptional.h"
+#include "core/model/WolkOptional.h"
 
 namespace wolkabout
 {

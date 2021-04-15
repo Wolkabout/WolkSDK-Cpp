@@ -17,10 +17,10 @@
 #ifndef DEVICETEMPLATE_H
 #define DEVICETEMPLATE_H
 
-#include "model/ActuatorTemplate.h"
-#include "model/AlarmTemplate.h"
-#include "model/ConfigurationTemplate.h"
-#include "model/SensorTemplate.h"
+#include "core/model/ActuatorTemplate.h"
+#include "core/model/AlarmTemplate.h"
+#include "core/model/ConfigurationTemplate.h"
+#include "core/model/SensorTemplate.h"
 
 #include <functional>
 #include <map>

@@ -17,9 +17,9 @@
 #ifndef ACTUATORTEMPLATE_H
 #define ACTUATORTEMPLATE_H
 
-#include "model/ActuationReadingType.h"
-#include "model/DataType.h"
-#include "model/WolkOptional.h"
+#include "core/model/ActuationReadingType.h"
+#include "core/model/DataType.h"
+#include "core/model/WolkOptional.h"
 
 #include <string>
 

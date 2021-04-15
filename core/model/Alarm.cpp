@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/Alarm.h"
+#include "Alarm.h"
 
 #include <string>
 #include <utility>

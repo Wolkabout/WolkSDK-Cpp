@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/DetailedDevice.h"
+#include "DetailedDevice.h"
 
 #include <utility>
 

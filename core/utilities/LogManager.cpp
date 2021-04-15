@@ -4,10 +4,10 @@
 
 #include "LogManager.h"
 
-#include "utilities/FileSystemUtils.h"
-#include "utilities/Logger.h"
-#include "utilities/StringUtils.h"
-#include "utilities/Timer.h"
+#include "FileSystemUtils.h"
+#include "Logger.h"
+#include "StringUtils.h"
+#include "Timer.h"
 
 #include <algorithm>
 #include <ctime>

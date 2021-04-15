@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "model/Reading.h"
+#include "Reading.h"
 
-#include "utilities/StringUtils.h"
+#include "core/utilities/StringUtils.h"
 
 namespace wolkabout
 {

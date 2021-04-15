@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/ActuationReadingType.h"
+#include "ActuationReadingType.h"
 
 #include <stdexcept>
 #include <utility>

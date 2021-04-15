@@ -16,7 +16,7 @@
 #ifndef CONFIGURATIONSETCOMMAND_H
 #define CONFIGURATIONSETCOMMAND_H
 
-#include "model/ConfigurationItem.h"
+#include "core/model/ConfigurationItem.h"
 
 #include <string>
 #include <vector>

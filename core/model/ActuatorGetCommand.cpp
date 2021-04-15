@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/ActuatorGetCommand.h"
+#include "ActuatorGetCommand.h"
 
 #include <string>
 #include <utility>

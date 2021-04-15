@@ -17,7 +17,7 @@
 #ifndef SUBDEVICEUPDATERESPONSE_H
 #define SUBDEVICEUPDATERESPONSE_H
 
-#include "PlatformResult.h"
+#include "core/model/PlatformResult.h"
 
 #include <string>
 

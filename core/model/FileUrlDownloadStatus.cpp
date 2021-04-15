@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/FileUrlDownloadStatus.h"
+#include "FileUrlDownloadStatus.h"
 
 #include <utility>
 

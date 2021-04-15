@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "connectivity/mqtt/MqttCallback.h"
+#include "MqttCallback.h"
 
 namespace wolkabout
 {

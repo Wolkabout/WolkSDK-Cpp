@@ -17,8 +17,8 @@
 #ifndef GATEWAYUPDATEREQUEST_H
 #define GATEWAYUPDATEREQUEST_H
 
-#include "model/DetailedDevice.h"
-#include "model/DeviceTemplate.h"
+#include "core/model/DetailedDevice.h"
+#include "core/model/DeviceTemplate.h"
 
 #include <string>
 

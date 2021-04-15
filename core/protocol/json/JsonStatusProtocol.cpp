@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include "protocol/json/JsonStatusProtocol.h"
+#include "JsonStatusProtocol.h"
 
 #include "Json.h"
 #include "JsonDto.h"
-#include "model/DeviceStatus.h"
-#include "model/DeviceStatusConfirm.h"
-#include "model/Message.h"
-#include "utilities/Logger.h"
-#include "utilities/StringUtils.h"
-#include "utilities/json.hpp"
+#include "core/model/DeviceStatus.h"
+#include "core/model/DeviceStatusConfirm.h"
+#include "core/model/Message.h"
+#include "core/utilities/Logger.h"
+#include "core/utilities/StringUtils.h"
+#include "core/utilities/json.hpp"
 
 using nlohmann::json;
 

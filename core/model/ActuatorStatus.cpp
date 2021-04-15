@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "model/ActuatorStatus.h"
+#include "ActuatorStatus.h"
 
-#include "model/Reading.h"
+#include "Reading.h"
 
 #include <string>
 #include <utility>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/DeviceTemplate.h"
+#include "DeviceTemplate.h"
 
 #include <utility>
 

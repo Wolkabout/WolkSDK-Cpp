@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include "protocol/json/DownloadProtocol.h"
+#include "DownloadProtocol.h"
 
-#include "model/BinaryData.h"
-#include "model/FilePacketRequest.h"
-#include "model/Message.h"
-#include "protocol/json/Json.h"
-#include "utilities/StringUtils.h"
-#include "utilities/json.hpp"
+#include "Json.h"
+#include "core/model/BinaryData.h"
+#include "core/model/FilePacketRequest.h"
+#include "core/model/Message.h"
+#include "core/utilities/StringUtils.h"
+#include "core/utilities/json.hpp"
 
 #include <algorithm>
 

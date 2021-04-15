@@ -17,7 +17,7 @@
 #ifndef PAHOMQTTCLIENT_H
 #define PAHOMQTTCLIENT_H
 
-#include "connectivity/mqtt/MqttClient.h"
+#include "core/connectivity/mqtt/MqttClient.h"
 
 #include <atomic>
 #include <memory>

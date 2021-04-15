@@ -17,7 +17,7 @@
 #ifndef SUBDEVICEREGISTRATIONRESPONSE_H
 #define SUBDEVICEREGISTRATIONRESPONSE_H
 
-#include "PlatformResult.h"
+#include "core/model/PlatformResult.h"
 
 #include <string>
 

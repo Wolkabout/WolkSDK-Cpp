@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/SensorReading.h"
-
-#include "model/Reading.h"
+#include "SensorReading.h"
 
 #include <string>
 #include <utility>

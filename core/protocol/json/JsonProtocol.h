@@ -17,7 +17,7 @@
 #ifndef JSONPROTOCOL_H
 #define JSONPROTOCOL_H
 
-#include "protocol/DataProtocol.h"
+#include "core/protocol/DataProtocol.h"
 
 #include <memory>
 #include <string>
