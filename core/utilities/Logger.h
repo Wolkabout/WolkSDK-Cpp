@@ -27,10 +27,9 @@ namespace spdlog
 class logger;
 namespace sinks
 {
-template<typename Mutex>
-class ringbuffer_sink;
+    template <typename Mutex> class ringbuffer_sink;
 }
-}
+}    // namespace spdlog
 
 namespace wolkabout
 {

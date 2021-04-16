@@ -16,8 +16,8 @@
 
 #include "PahoMqttClient.h"
 
-#include "MqttClient.h"
 #include "MqttCallback.h"
+#include "MqttClient.h"
 #include "core/utilities/Logger.h"
 #include <mqtt/async_client.h>
 
