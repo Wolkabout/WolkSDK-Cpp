@@ -16,7 +16,7 @@
 #ifndef FILEDOWNLOADPROTOCOL_H
 #define FILEDOWNLOADPROTOCOL_H
 
-#include "protocol/Protocol.h"
+#include "core/protocol/Protocol.h"
 
 #include <memory>
 #include <string>

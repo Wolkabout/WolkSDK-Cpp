@@ -17,7 +17,7 @@
 #ifndef SUBDEVICEDELETIONRESPONSE_H
 #define SUBDEVICEDELETIONRESPONSE_H
 
-#include "PlatformResult.h"
+#include "core/model/PlatformResult.h"
 
 #include <string>
 

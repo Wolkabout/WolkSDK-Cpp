@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-#include "persistence/inmemory/InMemoryPersistence.h"
-
-#include "persistence/Persistence.h"
+#include "InMemoryPersistence.h"
 
 #include <cstddef>
 #include <mutex>

@@ -17,8 +17,8 @@
 #ifndef DATAPROTOCOL_H
 #define DATAPROTOCOL_H
 
-#include "model/ActuatorGetCommand.h"
-#include "protocol/Protocol.h"
+#include "core/model/ActuatorGetCommand.h"
+#include "core/protocol/Protocol.h"
 
 #include <memory>
 #include <string>

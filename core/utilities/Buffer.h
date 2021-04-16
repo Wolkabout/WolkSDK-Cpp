@@ -38,6 +38,8 @@ public:
 
     void swapBuffers();
 
+    void notify();
+
 private:
     std::queue<T> m_pushQueue;
     std::queue<T> m_popQueue;
@@ -93,6 +95,11 @@ template <class T> bool Buffer<T>::isEmpty() const
     std::unique_lock<std::mutex> unique_lock(m_lock);
 
     return m_pushQueue.empty();
+}
+
+template <class T> void Buffer<T>::notify()
+{
+    m_condition.notify_one();
 }
 }    // namespace wolkabout
 

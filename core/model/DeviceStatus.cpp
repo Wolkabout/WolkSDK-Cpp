@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/DeviceStatus.h"
+#include "DeviceStatus.h"
 
 #include <utility>
 

@@ -17,7 +17,7 @@
 #ifndef JSONSTATUSPROTOCOL_H
 #define JSONSTATUSPROTOCOL_H
 
-#include "protocol/StatusProtocol.h"
+#include "core/protocol/StatusProtocol.h"
 
 namespace wolkabout
 {

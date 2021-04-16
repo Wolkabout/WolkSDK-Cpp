@@ -17,7 +17,7 @@
 #ifndef ACTUATORSTATUS_H
 #define ACTUATORSTATUS_H
 
-#include "model/Reading.h"
+#include "core/model/Reading.h"
 
 #include <string>
 
@@ -34,8 +34,8 @@ public:
     };
 
     ActuatorStatus();
-    ActuatorStatus(std::string value, ActuatorStatus::State state);
-    ActuatorStatus(std::string value, std::string reference, ActuatorStatus::State state);
+    ActuatorStatus(std::string value, ActuatorStatus::State state, std::string key = "");
+    ActuatorStatus(std::string value, std::string reference, ActuatorStatus::State state, std::string key = "");
 
     virtual ~ActuatorStatus() = default;
 

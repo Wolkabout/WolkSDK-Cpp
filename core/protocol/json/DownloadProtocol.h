@@ -17,7 +17,7 @@
 #ifndef DOWNLOADPROTOCOL_H
 #define DOWNLOADPROTOCOL_H
 
-#include "protocol/FileDownloadProtocol.h"
+#include "core/protocol/FileDownloadProtocol.h"
 
 namespace wolkabout
 {

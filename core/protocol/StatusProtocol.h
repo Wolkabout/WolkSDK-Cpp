@@ -17,7 +17,7 @@
 #ifndef STATUSPROTOCOL_H
 #define STATUSPROTOCOL_H
 
-#include "protocol/Protocol.h"
+#include "core/protocol/Protocol.h"
 
 #include <memory>
 #include <string>

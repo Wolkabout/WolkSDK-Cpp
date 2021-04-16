@@ -17,8 +17,8 @@
 #ifndef MQTTCONNECTIVITYSERVICE_H
 #define MQTTCONNECTIVITYSERVICE_H
 
-#include "connectivity/ConnectivityService.h"
-#include "connectivity/mqtt/MqttClient.h"
+#include "core/connectivity/ConnectivityService.h"
+#include "core/connectivity/mqtt/MqttClient.h"
 
 #include <atomic>
 #include <memory>

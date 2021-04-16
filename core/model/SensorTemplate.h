@@ -17,9 +17,9 @@
 #ifndef SENSORTEMPLATE_H
 #define SENSORTEMPLATE_H
 
-#include "model/DataType.h"
-#include "model/ReadingType.h"
-#include "model/WolkOptional.h"
+#include "core/model/DataType.h"
+#include "core/model/ReadingType.h"
+#include "core/model/WolkOptional.h"
 
 #include <string>
 

@@ -17,7 +17,7 @@
 #ifndef SENSORREADING_H
 #define SENSORREADING_H
 
-#include "model/Reading.h"
+#include "core/model/Reading.h"
 
 #include <string>
 #include <vector>
@@ -28,8 +28,9 @@ class SensorReading : public Reading
 {
 public:
     SensorReading();
-    SensorReading(std::string value, std::string reference, unsigned long long int rtc = 0);
-    SensorReading(std::vector<std::string> values, std::string reference, unsigned long long int rtc = 0);
+    SensorReading(std::string value, std::string reference, unsigned long long int rtc = 0, std::string key = "");
+    SensorReading(std::vector<std::string> values, std::string reference, unsigned long long int rtc = 0,
+                  std::string key = "");
 
     virtual ~SensorReading() = default;
 

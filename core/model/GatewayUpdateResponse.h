@@ -17,7 +17,7 @@
 #ifndef GATEWAYUPDATERESPONSE_H
 #define GATEWAYUPDATERESPONSE_H
 
-#include "PlatformResult.h"
+#include "core/model/PlatformResult.h"
 
 namespace wolkabout
 {

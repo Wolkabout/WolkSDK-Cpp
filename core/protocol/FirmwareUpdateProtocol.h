@@ -16,7 +16,7 @@
 #ifndef FIRMWAREUPDATEPROTOCOL_H
 #define FIRMWAREUPDATEPROTOCOL_H
 
-#include "protocol/Protocol.h"
+#include "core/protocol/Protocol.h"
 
 #include <memory>
 

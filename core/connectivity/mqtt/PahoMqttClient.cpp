@@ -16,10 +16,10 @@
 
 #include "PahoMqttClient.h"
 
+#include "MqttCallback.h"
 #include "MqttClient.h"
-#include "connectivity/mqtt/MqttCallback.h"
-#include "mqtt/async_client.h"
-#include "utilities/Logger.h"
+#include "core/utilities/Logger.h"
+#include <mqtt/async_client.h>
 
 #include <atomic>
 #include <memory>

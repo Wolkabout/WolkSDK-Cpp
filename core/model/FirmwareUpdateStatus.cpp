@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/FirmwareUpdateStatus.h"
+#include "FirmwareUpdateStatus.h"
 
 namespace wolkabout
 {

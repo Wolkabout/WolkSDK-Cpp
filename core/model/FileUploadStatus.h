@@ -17,8 +17,8 @@
 #ifndef FILEUPLOADSTATUS_H
 #define FILEUPLOADSTATUS_H
 
-#include "model/FileTransferStatus.h"
-#include "model/WolkOptional.h"
+#include "core/model/FileTransferStatus.h"
+#include "core/model/WolkOptional.h"
 
 #include <string>
 

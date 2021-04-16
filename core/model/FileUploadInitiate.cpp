@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/FileUploadInitiate.h"
+#include "FileUploadInitiate.h"
 
 #include <utility>
 

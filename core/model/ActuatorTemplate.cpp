@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/ActuatorTemplate.h"
+#include "ActuatorTemplate.h"
 
 #include <utility>
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/FirmwareVersion.h"
+#include "FirmwareVersion.h"
 
 #include <utility>
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/SubdeviceRegistrationRequest.h"
+#include "SubdeviceRegistrationRequest.h"
 
 #include <utility>
 

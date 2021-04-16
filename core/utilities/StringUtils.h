@@ -17,7 +17,7 @@
 #ifndef STRINGUTILS_H
 #define STRINGUTILS_H
 
-#include "utilities/ByteUtils.h"
+#include "core/utilities/ByteUtils.h"
 
 #include <string>
 #include <vector>

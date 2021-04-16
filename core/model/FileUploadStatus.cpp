@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/FileUploadStatus.h"
+#include "FileUploadStatus.h"
 
 #include <utility>
 

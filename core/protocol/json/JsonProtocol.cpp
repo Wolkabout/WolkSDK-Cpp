@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#include "protocol/json/JsonProtocol.h"
+#include "JsonProtocol.h"
 
-#include "model/ActuatorSetCommand.h"
-#include "model/ActuatorStatus.h"
-#include "model/Alarm.h"
-#include "model/ConfigurationItem.h"
-#include "model/ConfigurationSetCommand.h"
-#include "model/Message.h"
-#include "model/SensorReading.h"
-#include "protocol/json/Json.h"
-#include "utilities/Logger.h"
-#include "utilities/StringUtils.h"
-#include "utilities/json.hpp"
+#include "Json.h"
+#include "core/model/ActuatorSetCommand.h"
+#include "core/model/ActuatorStatus.h"
+#include "core/model/Alarm.h"
+#include "core/model/ConfigurationItem.h"
+#include "core/model/ConfigurationSetCommand.h"
+#include "core/model/Message.h"
+#include "core/model/SensorReading.h"
+#include "core/utilities/Logger.h"
+#include "core/utilities/StringUtils.h"
+#include "core/utilities/json.hpp"
 
 #include <algorithm>
 
@@ -283,21 +283,20 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
                 alarms.front()->getReference();
 
         std::vector<json> entries(alarms.size());
-        std::transform(alarms.begin(), alarms.end(), entries.begin(),
-                       [&](const std::shared_ptr<Alarm>& alarm) -> json {
-                           const std::vector<std::string> readingValues = alarm->getValues();
+        std::transform(alarms.begin(), alarms.end(), entries.begin(), [&](const std::shared_ptr<Alarm>& alarm) -> json {
+            const std::vector<std::string> readingValues = alarm->getValues();
 
-                           std::string data = alarm->getValue();
+            std::string data = alarm->getValue();
 
-                           if (alarm->getRtc() == 0)
-                           {
-                               return json{{"data", data}};
-                           }
-                           else
-                           {
-                               return json{{"utc", alarm->getRtc()}, {"data", data}};
-                           }
-                       });
+            if (alarm->getRtc() == 0)
+            {
+                return json{{"data", data}};
+            }
+            else
+            {
+                return json{{"utc", alarm->getRtc()}, {"data", data}};
+            }
+        });
 
         payload = json(entries);
     }

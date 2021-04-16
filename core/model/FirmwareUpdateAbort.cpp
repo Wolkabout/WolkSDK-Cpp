@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/FirmwareUpdateAbort.h"
+#include "FirmwareUpdateAbort.h"
 
 #include <utility>
 

@@ -17,7 +17,7 @@
 #ifndef BINARYDATA_H
 #define BINARYDATA_H
 
-#include "utilities/ByteUtils.h"
+#include "core/utilities/ByteUtils.h"
 
 namespace wolkabout
 {

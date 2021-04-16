@@ -17,9 +17,8 @@
 #ifndef FILESYSTEMUTILS_H
 #define FILESYSTEMUTILS_H
 
-#include "utilities/ByteUtils.h"
+#include "core/utilities/ByteUtils.h"
 
-#include <cstddef>
 #include <string>
 #include <vector>
 

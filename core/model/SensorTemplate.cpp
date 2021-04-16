@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/SensorTemplate.h"
+#include "SensorTemplate.h"
 
 #include <utility>
 

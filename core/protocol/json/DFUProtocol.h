@@ -17,7 +17,7 @@
 #ifndef DFUPROTOCOL_H
 #define DFUPROTOCOL_H
 
-#include "protocol/FirmwareUpdateProtocol.h"
+#include "core/protocol/FirmwareUpdateProtocol.h"
 
 namespace wolkabout
 {

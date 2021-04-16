@@ -18,9 +18,18 @@
 #define LOGGER_H
 
 #include <memory>
-#include <spdlog/sinks/ringbuffer_sink.h>
-#include <spdlog/spdlog.h>
+#include <mutex>
 #include <sstream>
+#include <vector>
+
+namespace spdlog
+{
+class logger;
+namespace sinks
+{
+    template <typename Mutex> class ringbuffer_sink;
+}
+}    // namespace spdlog
 
 namespace wolkabout
 {

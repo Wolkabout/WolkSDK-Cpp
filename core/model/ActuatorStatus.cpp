@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "model/ActuatorStatus.h"
+#include "ActuatorStatus.h"
 
-#include "model/Reading.h"
+#include "Reading.h"
 
 #include <string>
 #include <utility>
@@ -25,13 +25,13 @@ namespace wolkabout
 {
 ActuatorStatus::ActuatorStatus() : Reading({""}, ""), m_state(ActuatorStatus::State::READY) {}
 
-ActuatorStatus::ActuatorStatus(std::string value, ActuatorStatus::State state)
-: Reading({std::move(value)}, ""), m_state(state)
+ActuatorStatus::ActuatorStatus(std::string value, ActuatorStatus::State state, std::string key)
+: Reading({std::move(value)}, "", 0, std::move(key)), m_state(state)
 {
 }
 
-ActuatorStatus::ActuatorStatus(std::string value, std::string reference, ActuatorStatus::State state)
-: Reading({std::move(value)}, std::move(reference)), m_state(state)
+ActuatorStatus::ActuatorStatus(std::string value, std::string reference, ActuatorStatus::State state, std::string key)
+: Reading({std::move(value)}, std::move(reference), 0, std::move(key)), m_state(state)
 {
 }
 

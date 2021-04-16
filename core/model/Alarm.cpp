@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/Alarm.h"
+#include "Alarm.h"
 
 #include <string>
 #include <utility>
@@ -23,8 +23,8 @@ namespace wolkabout
 {
 Alarm::Alarm() : Reading({""}, "") {}
 
-Alarm::Alarm(bool active, std::string reference, unsigned long long int rtc)
-: Reading({std::to_string(static_cast<int>(active))}, std::move(reference), rtc)
+Alarm::Alarm(bool active, std::string reference, unsigned long long int rtc, std::string key)
+: Reading({std::to_string(static_cast<int>(active))}, std::move(reference), rtc, key)
 {
 }
 

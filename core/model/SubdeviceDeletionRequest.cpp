@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/SubdeviceDeletionRequest.h"
+#include "SubdeviceDeletionRequest.h"
 
 namespace wolkabout
 {

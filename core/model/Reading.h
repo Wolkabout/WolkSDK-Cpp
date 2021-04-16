@@ -40,7 +40,8 @@ public:
 class Reading
 {
 public:
-    Reading(std::vector<std::string> values, std::string reference, unsigned long long int rtc = 0);
+    Reading(std::vector<std::string> values, std::string reference, unsigned long long int rtc = 0,
+            std::string deviceKey = "");
 
     virtual ~Reading() = default;
 
@@ -49,12 +50,14 @@ public:
 
     const std::string& getReference() const;
     unsigned long long int getRtc() const;
+    const std::string& getKey() const;
 
     virtual void acceptVisit(ReadingVisitor& visitor) = 0;
 
 private:
     std::vector<std::string> m_values;
     std::string m_reference;
+    std::string m_key;
     unsigned long long int m_rtc;
 };
 }    // namespace wolkabout

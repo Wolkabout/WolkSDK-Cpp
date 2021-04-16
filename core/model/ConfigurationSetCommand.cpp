@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "model/ConfigurationSetCommand.h"
+#include "ConfigurationSetCommand.h"
 
 namespace wolkabout
 {

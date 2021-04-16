@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "utilities/ByteUtils.h"
+#include "ByteUtils.h"
 
-#include "openssl/sha.h"
+#include <openssl/sha.h>
 
 namespace wolkabout
 {

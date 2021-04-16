@@ -17,8 +17,8 @@
 #ifndef CONFIGURATIONTEMPLATE_H
 #define CONFIGURATIONTEMPLATE_H
 
-#include "model/DataType.h"
-#include "model/WolkOptional.h"
+#include "core/model/DataType.h"
+#include "core/model/WolkOptional.h"
 
 #include <string>
 #include <vector>

@@ -17,7 +17,7 @@
 #ifndef ACTUATIONREADINGTYPE_H
 #define ACTUATIONREADINGTYPE_H
 
-#include "model/DataType.h"
+#include "core/model/DataType.h"
 
 #include <string>
 

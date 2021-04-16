@@ -17,7 +17,7 @@
 #ifndef JSONREGISTRATIONPROTOCOL_H
 #define JSONREGISTRATIONPROTOCOL_H
 
-#include "protocol/RegistrationProtocol.h"
+#include "core/protocol/RegistrationProtocol.h"
 
 #include <memory>
 #include <string>
