@@ -347,9 +347,10 @@ void LogManager::checkLogOverflow()
 
         for (auto& log : logs)
         {
-            logsWithAge.emplace_back(
-              std::make_pair(log, std::difftime(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
-                                                wolkabout::FileSystemUtils::getLastModified(log))));
+            logsWithAge.emplace_back(std::make_pair(
+              log, std::difftime(
+                     std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
+                     wolkabout::FileSystemUtils::getLastModified(FileSystemUtils::composePath(log, m_logDirectory)))));
         }
 
         std::sort(logsWithAge.begin(), logsWithAge.end(),
