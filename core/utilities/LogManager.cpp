@@ -198,7 +198,8 @@ std::vector<std::string> LogManager::getLogsToDelete()
                                   [&](const std::string& file) -> bool {
                                       return std::chrono::duration<double>(std::difftime(
                                                std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
-                                               FileSystemUtils::getLastModified(file))) < m_deleteAfter;
+                                               FileSystemUtils::getLastModified(
+                                                 FileSystemUtils::composePath(file, m_logDirectory)))) < m_deleteAfter;
                                   }),
                    logFiles.end());
 
@@ -236,7 +237,8 @@ std::vector<std::string> LogManager::getLogsToUpload()
                                   [&](const std::string& file) -> bool {
                                       return std::chrono::duration<double>(std::difftime(
                                                std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
-                                               FileSystemUtils::getLastModified(file))) < m_uploadAfter;
+                                               FileSystemUtils::getLastModified(
+                                                 FileSystemUtils::composePath(file, m_logDirectory)))) < m_uploadAfter;
                                   }),
                    logFiles.end());
 
@@ -292,7 +294,7 @@ void LogManager::uploadLogs()
     for (auto& log : logs)
     {
         LOG(INFO) << "Uploading '" << log << "'";
-        if (!m_logUploader->upload(log))
+        if (!m_logUploader->upload(FileSystemUtils::composePath(log, m_logDirectory)))
         {
             LOG(WARN) << "Failed to upload '" << log << "'";
         }
@@ -316,7 +318,7 @@ void LogManager::deleteOldLogs()
     for (auto& oldLog : oldLogs)
     {
         LOG(INFO) << "Deleting '" << oldLog << "'";
-        if (!wolkabout::FileSystemUtils::deleteFile(oldLog))
+        if (!wolkabout::FileSystemUtils::deleteFile(FileSystemUtils::composePath(oldLog, m_logDirectory)))
         {
             LOG(WARN) << "Failed to delete log '" << oldLog << "'";
         }
@@ -345,9 +347,10 @@ void LogManager::checkLogOverflow()
 
         for (auto& log : logs)
         {
-            logsWithAge.emplace_back(
-              std::make_pair(log, std::difftime(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
-                                                wolkabout::FileSystemUtils::getLastModified(log))));
+            logsWithAge.emplace_back(std::make_pair(
+              log, std::difftime(
+                     std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
+                     wolkabout::FileSystemUtils::getLastModified(FileSystemUtils::composePath(log, m_logDirectory)))));
         }
 
         std::sort(logsWithAge.begin(), logsWithAge.end(),
@@ -359,7 +362,7 @@ void LogManager::checkLogOverflow()
 
         LOG(INFO) << "Deleting oldest log file: " << oldLog;
 
-        if (!wolkabout::FileSystemUtils::deleteFile(oldLog))
+        if (!wolkabout::FileSystemUtils::deleteFile(FileSystemUtils::composePath(oldLog, m_logDirectory)))
         {
             LOG(ERROR) << "Failed to delete log file: " << oldLog;
         }
@@ -375,7 +378,7 @@ double LogManager::getTotalLogSize()
 
     for (auto& log : logs)
     {
-        logSize += wolkabout::FileSystemUtils::getFileSize(log);
+        logSize += wolkabout::FileSystemUtils::getFileSize(FileSystemUtils::composePath(log, m_logDirectory));
     }
     return logSize;
 }
