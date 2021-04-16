@@ -178,7 +178,7 @@ std::string FileSystemUtils::composePath(const std::string& fileName, const std:
 
 std::string FileSystemUtils::absolutePath(const std::string& path)
 {
-    char* resolvedPath = realpath(path.c_str(), NULL);
+    char* resolvedPath = realpath(path.c_str(), nullptr);
     if (resolvedPath)
     {
         std::string fullPath(resolvedPath);
@@ -191,7 +191,7 @@ std::string FileSystemUtils::absolutePath(const std::string& path)
 }
 std::time_t FileSystemUtils::getLastModified(const std::string& path)
 {
-    std::time_t lastModified;
+    std::time_t lastModified = 0;
     struct stat fileInfo;
     if (stat(path.c_str(), &fileInfo) != 0)
     {
@@ -202,7 +202,7 @@ std::time_t FileSystemUtils::getLastModified(const std::string& path)
 }
 double FileSystemUtils::getFileSize(const std::string& path)
 {
-    double size;
+    double size = 0;
     struct stat fileInfo;
     if (stat(path.c_str(), &fileInfo) != 0)
     {
