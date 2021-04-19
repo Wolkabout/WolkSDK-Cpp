@@ -144,6 +144,10 @@ void Logger::logMessage(const Log& log, spdlog::logger& logger)
     {
         return logger.error(log.getMessage());
     }
+    case LogLevel::WARN:
+    {
+        return logger.warn(log.getMessage());
+    }
     case LogLevel::INFO:
     {
         return logger.info(log.getMessage());
