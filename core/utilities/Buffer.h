@@ -17,6 +17,9 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include "core/utilities/Logger.h"
+
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
 #include <queue>
@@ -27,7 +30,7 @@ template <class T> class Buffer
 {
 public:
     Buffer() = default;
-    virtual ~Buffer() = default;
+    ~Buffer();
 
     void push(T item);
     void push_rvalue(T&& item);
@@ -44,57 +47,72 @@ private:
     std::queue<T> m_pushQueue;
     std::queue<T> m_popQueue;
 
-    mutable std::mutex m_lock;
+    mutable std::mutex m_pushLock;
+    mutable std::mutex m_popLock;
     std::condition_variable m_condition;
+    std::atomic_bool m_exitCondition{false};
 };
+
+template <class T> Buffer<T>::~Buffer()
+{
+    m_exitCondition = true;
+    m_condition.notify_one();
+}
 
 template <class T> void Buffer<T>::push(T item)
 {
-    std::unique_lock<std::mutex> unique_lock(m_lock);
-
-    m_pushQueue.push(std::move(item));
+    {
+        std::lock_guard<std::mutex> guard{m_pushLock};
+        m_pushQueue.push(std::move(item));
+    }
 
     m_condition.notify_one();
 }
 
 template <class T> void Buffer<T>::push_rvalue(T&& item)
 {
-    std::unique_lock<std::mutex> unique_lock(m_lock);
-
-    m_pushQueue.push(std::move(item));
+    {
+        std::lock_guard<std::mutex> guard{m_pushLock};
+        m_pushQueue.push(std::move(item));
+    }
 
     m_condition.notify_one();
 }
 
 template <class T> T Buffer<T>::pop()
 {
+    std::lock_guard<std::mutex> guard{m_popLock};
+
     if (m_popQueue.empty())
     {
-        return nullptr;
+        LOG(ERROR) << "Poping from empty buffer";
+        return {};
     }
 
-    T item = std::move(m_popQueue.front());
+    T item = m_popQueue.front();
     m_popQueue.pop();
+
     return item;
 }
 
 template <class T> void Buffer<T>::swapBuffers()
 {
-    std::unique_lock<std::mutex> unique_lock(m_lock);
+    std::unique_lock<std::mutex> pushGuard(m_pushLock);
 
     if (m_pushQueue.empty())
     {
-        m_condition.wait(unique_lock);
+        m_condition.wait(pushGuard, [&] { return !m_pushQueue.empty() || m_exitCondition; });
     }
 
+    std::lock_guard<std::mutex> popGuard{m_popLock};
     std::swap(m_pushQueue, m_popQueue);
 }
 
 template <class T> bool Buffer<T>::isEmpty() const
 {
-    std::unique_lock<std::mutex> unique_lock(m_lock);
+    std::lock_guard<std::mutex> guard{m_popLock};
 
-    return m_pushQueue.empty();
+    return m_popQueue.empty();
 }
 
 template <class T> void Buffer<T>::notify()
