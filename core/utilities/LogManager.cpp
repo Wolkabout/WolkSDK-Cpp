@@ -22,14 +22,14 @@ LogManager::LogManager(const std::string& logDirectory, const std::string& logEx
                        const std::chrono::hours& uploadEvery, const std::chrono::hours& uploadAfter,
                        std::shared_ptr<LogUploader> logUploader)
 : m_logDirectory(logDirectory)
-, m_deleteEvery(deleteEvery)
 , m_logExtension(logExtension)
 , m_maxSize(maxSize)
+, m_running(false)
+, m_deleteEvery(deleteEvery)
 , m_deleteAfter(deleteStaleAfter)
 , m_uploadEvery(uploadEvery)
-, m_logUploader(std::move(logUploader))
 , m_uploadAfter(uploadAfter)
-, m_running(false)
+, m_logUploader(std::move(logUploader))
 {
     if (!FileSystemUtils::isDirectoryPresent(m_logDirectory))
         throw std::logic_error("Provided log directory '" + m_logDirectory + "' does not exist!");
@@ -60,22 +60,13 @@ void LogManager::start()
     m_running = true;
 
     if (m_maxSize > 0)
-    {
-        checkLogOverflow();
         m_overflowTimer.run(std::chrono::minutes(5), [&] { checkLogOverflow(); });
-    }
 
     if (m_deleteEvery != std::chrono::hours(0))
-    {
-        deleteOldLogs();
         m_deleteTimer.run(m_deleteEvery, [&] { deleteOldLogs(); });
-    }
 
     if (m_uploadEvery != std::chrono::hours(0) && m_logUploader)
-    {
-        uploadLogs();
         m_uploadTimer.run(m_uploadEvery, [&] { uploadLogs(); });
-    }
 }
 
 void LogManager::stop()
@@ -195,7 +186,8 @@ std::vector<std::string> LogManager::getLogsToDelete()
     logFiles = getLogFileNames();
 
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool {
+                                  [&](const std::string& file) -> bool
+                                  {
                                       return std::chrono::duration<double>(std::difftime(
                                                std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
                                                FileSystemUtils::getLastModified(
@@ -226,15 +218,15 @@ std::vector<std::string> LogManager::getLogsToUpload()
 
     std::vector<std::string> remoteFiles = m_logUploader->getRemoteLogs();
 
-    logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool {
-                                      return std::find(remoteFiles.begin(), remoteFiles.end(), file) !=
-                                             remoteFiles.end();
-                                  }),
-                   logFiles.end());
+    logFiles.erase(
+      std::remove_if(logFiles.begin(), logFiles.end(),
+                     [&](const std::string& file) -> bool
+                     { return std::find(remoteFiles.begin(), remoteFiles.end(), file) != remoteFiles.end(); }),
+      logFiles.end());
 
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool {
+                                  [&](const std::string& file) -> bool
+                                  {
                                       return std::chrono::duration<double>(std::difftime(
                                                std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
                                                FileSystemUtils::getLastModified(
@@ -251,9 +243,8 @@ std::vector<std::string> LogManager::getLogFileNames()
 
     logFiles = FileSystemUtils::listFiles(m_logDirectory);
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool {
-                                      return !wolkabout::StringUtils::endsWith(file, m_logExtension);
-                                  }),
+                                  [&](const std::string& file) -> bool
+                                  { return !wolkabout::StringUtils::endsWith(file, m_logExtension); }),
                    logFiles.end());
     return logFiles;
 }
@@ -354,9 +345,8 @@ void LogManager::checkLogOverflow()
         }
 
         std::sort(logsWithAge.begin(), logsWithAge.end(),
-                  [](const std::pair<std::string, int>& left, const std::pair<std::string, int>& right) {
-                      return left.second > right.second;
-                  });
+                  [](const std::pair<std::string, int>& left, const std::pair<std::string, int>& right)
+                  { return left.second > right.second; });
 
         const std::string oldLog = logsWithAge.begin()->first;
 
