@@ -90,7 +90,8 @@ static void to_json(json& j, const std::shared_ptr<Alarm>& p)
 
 static void to_json(json& j, const ActuatorStatus& p)
 {
-    const std::string status = [&]() -> std::string {
+    const std::string status = [&]() -> std::string
+    {
         if (p.getState() == ActuatorStatus::State::READY)
         {
             return "READY";
@@ -182,12 +183,18 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(
     // times
     if (!anyDifferent)
     {
-        topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX +
-                firstRef;
+        const auto& messageKey = sensorReadings.front()->getKey();
+        if (m_isGateway && deviceKey != messageKey && !messageKey.empty())
+            topic = SENSOR_READING_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+                    DEVICE_PATH_PREFIX + messageKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX + firstRef;
+        else
+            topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+                    REFERENCE_PATH_PREFIX + firstRef;
 
         std::vector<json> entries(sensorReadings.size());
         std::transform(sensorReadings.begin(), sensorReadings.end(), entries.begin(),
-                       [&](const std::shared_ptr<SensorReading>& sensorReading) -> json {
+                       [&](const std::shared_ptr<SensorReading>& sensorReading) -> json
+                       {
                            const std::vector<std::string> readingValues = sensorReading->getValues();
 
                            std::string data;
@@ -216,7 +223,12 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(
     // If not, form a message for the generic topic that allows multiple references at the same time
     else
     {
-        topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
+        const auto& messageKey = sensorReadings.front()->getKey();
+        if (m_isGateway && deviceKey != messageKey && !messageKey.empty())
+            topic = SENSOR_READING_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
+                    DEVICE_PATH_PREFIX + messageKey;
+        else
+            topic = SENSOR_READING_TOPIC_ROOT + DEVICE_PATH_PREFIX + deviceKey;
 
         // We have to sort the entries by the UTC
         std::map<uint64_t, std::vector<std::shared_ptr<SensorReading>>> sensorReadingsByUTC;
@@ -232,7 +244,8 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(
         // Now, create a json object for each UTC
         std::vector<json> entries(sensorReadingsByUTC.size());
         std::transform(sensorReadingsByUTC.cbegin(), sensorReadingsByUTC.cend(), entries.begin(),
-                       [&](const std::pair<uint64_t, std::vector<std::shared_ptr<SensorReading>>>& pair) -> json {
+                       [&](const std::pair<uint64_t, std::vector<std::shared_ptr<SensorReading>>>& pair) -> json
+                       {
                            // Create the object, set the utc right away
                            auto entryJson = json{{"utc", pair.first}};
 
@@ -267,9 +280,9 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
 
     // Check if every reference is the same
     const auto firstRef = alarms.front()->getReference();
-    bool anyDifferent = std::any_of(alarms.cbegin(), alarms.cend(), [&](const std::shared_ptr<Alarm>& reading) {
-        return firstRef != reading->getReference();
-    });
+    bool anyDifferent =
+      std::any_of(alarms.cbegin(), alarms.cend(),
+                  [&](const std::shared_ptr<Alarm>& reading) { return firstRef != reading->getReference(); });
 
     // Create the place for topic and payload
     std::string topic;
@@ -283,20 +296,22 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
                 alarms.front()->getReference();
 
         std::vector<json> entries(alarms.size());
-        std::transform(alarms.begin(), alarms.end(), entries.begin(), [&](const std::shared_ptr<Alarm>& alarm) -> json {
-            const std::vector<std::string> readingValues = alarm->getValues();
+        std::transform(alarms.begin(), alarms.end(), entries.begin(),
+                       [&](const std::shared_ptr<Alarm>& alarm) -> json
+                       {
+                           const std::vector<std::string> readingValues = alarm->getValues();
 
-            std::string data = alarm->getValue();
+                           std::string data = alarm->getValue();
 
-            if (alarm->getRtc() == 0)
-            {
-                return json{{"data", data}};
-            }
-            else
-            {
-                return json{{"utc", alarm->getRtc()}, {"data", data}};
-            }
-        });
+                           if (alarm->getRtc() == 0)
+                           {
+                               return json{{"data", data}};
+                           }
+                           else
+                           {
+                               return json{{"utc", alarm->getRtc()}, {"data", data}};
+                           }
+                       });
 
         payload = json(entries);
     }
@@ -319,7 +334,8 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
         // Now, create a json object for each UTC
         std::vector<json> entries(alarmsByUTC.size());
         std::transform(alarmsByUTC.cbegin(), alarmsByUTC.cend(), entries.begin(),
-                       [&](const std::pair<uint64_t, std::vector<std::shared_ptr<Alarm>>>& pair) -> json {
+                       [&](const std::pair<uint64_t, std::vector<std::shared_ptr<Alarm>>>& pair) -> json
+                       {
                            // Create the object, set the utc right away
                            auto entryJson = json{{"utc", pair.first}};
 
@@ -362,12 +378,14 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(const std::string& deviceKey,
 
     for (const auto& item : configuration)
     {
-        data.emplace(item.getReference(), [&] {
-            if (item.getValues().size() == 1)
-                return item.getValues().at(0);
+        data.emplace(item.getReference(),
+                     [&]
+                     {
+                         if (item.getValues().size() == 1)
+                             return item.getValues().at(0);
 
-            return joinMultiValues(item.getValues(), MULTIVALUE_READING_DELIMITER);
-        }());
+                         return joinMultiValues(item.getValues(), MULTIVALUE_READING_DELIMITER);
+                     }());
     }
 
     const json jPayload{{"values", data}};
@@ -383,7 +401,8 @@ std::unique_ptr<ActuatorSetCommand> JsonProtocol::makeActuatorSetCommand(const M
     {
         json j = json::parse(message.getContent());
 
-        const std::string value = [&]() -> std::string {
+        const std::string value = [&]() -> std::string
+        {
             if (j.find("value") != j.end())
             {
                 return j.at("value").get<std::string>();
@@ -503,9 +522,8 @@ std::string JsonProtocol::extractDeviceKeyFromChannel(const std::string& topic) 
 std::string JsonProtocol::joinMultiValues(const std::vector<std::string>& values, const std::string& delimiter) const
 {
     return std::accumulate(values.begin(), values.end(), std::string{},
-                           [&](std::string& first, const std::string& second) {
-                               return first.empty() ? second : first + delimiter + second;
-                           });
+                           [&](std::string& first, const std::string& second)
+                           { return first.empty() ? second : first + delimiter + second; });
 }
 
 std::vector<std::string> JsonProtocol::parseMultiValues(const std::string& values, const std::string& delimiter) const
