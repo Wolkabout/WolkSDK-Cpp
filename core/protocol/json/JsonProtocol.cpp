@@ -184,7 +184,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(
     if (!anyDifferent)
     {
         const auto& messageKey = sensorReadings.front()->getKey();
-        if (m_isGateway && deviceKey != messageKey)
+        if (m_isGateway && deviceKey != messageKey && !messageKey.empty())
             topic = SENSOR_READING_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
                     DEVICE_PATH_PREFIX + messageKey + CHANNEL_DELIMITER + REFERENCE_PATH_PREFIX + firstRef;
         else
@@ -224,7 +224,7 @@ std::unique_ptr<Message> JsonProtocol::makeMessage(
     else
     {
         const auto& messageKey = sensorReadings.front()->getKey();
-        if (m_isGateway && deviceKey != messageKey)
+        if (m_isGateway && deviceKey != messageKey && !messageKey.empty())
             topic = SENSOR_READING_TOPIC_ROOT + GATEWAY_PATH_PREFIX + deviceKey + CHANNEL_DELIMITER +
                     DEVICE_PATH_PREFIX + messageKey;
         else
