@@ -327,12 +327,18 @@ void LogManager::checkLogOverflow()
 
     LOG(INFO) << "Checking for log overflow";
 
+    int retryCounter = 0;
+
     std::vector<std::string> logs = getLogFileNames();
 
     double logSize = getTotalLogSize();
 
     while (logSize > m_maxSize)
     {
+        if (retryCounter >= 3) {
+            LOG(WARN) << "Failed to correct log overflow, aborting.";
+            break;
+        }
         LOG(WARN) << "Log overflow, attempting to delete oldest log";
         std::vector<std::pair<std::string, double>> logsWithAge(logs.size());
 
@@ -355,9 +361,11 @@ void LogManager::checkLogOverflow()
         if (!wolkabout::FileSystemUtils::deleteFile(FileSystemUtils::composePath(oldLog, m_logDirectory)))
         {
             LOG(ERROR) << "Failed to delete log file: " << oldLog;
+            retryCounter++;
         }
 
         logSize = getTotalLogSize();
+        logs = getLogFileNames();
     }
 }
 
