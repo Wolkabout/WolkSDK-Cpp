@@ -186,8 +186,7 @@ std::vector<std::string> LogManager::getLogsToDelete()
     logFiles = getLogFileNames();
 
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool
-                                  {
+                                  [&](const std::string& file) -> bool {
                                       return std::chrono::duration<double>(std::difftime(
                                                std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
                                                FileSystemUtils::getLastModified(
@@ -218,15 +217,15 @@ std::vector<std::string> LogManager::getLogsToUpload()
 
     std::vector<std::string> remoteFiles = m_logUploader->getRemoteLogs();
 
-    logFiles.erase(
-      std::remove_if(logFiles.begin(), logFiles.end(),
-                     [&](const std::string& file) -> bool
-                     { return std::find(remoteFiles.begin(), remoteFiles.end(), file) != remoteFiles.end(); }),
-      logFiles.end());
+    logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
+                                  [&](const std::string& file) -> bool {
+                                      return std::find(remoteFiles.begin(), remoteFiles.end(), file) !=
+                                             remoteFiles.end();
+                                  }),
+                   logFiles.end());
 
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool
-                                  {
+                                  [&](const std::string& file) -> bool {
                                       return std::chrono::duration<double>(std::difftime(
                                                std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
                                                FileSystemUtils::getLastModified(
@@ -243,8 +242,9 @@ std::vector<std::string> LogManager::getLogFileNames()
 
     logFiles = FileSystemUtils::listFiles(m_logDirectory);
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool
-                                  { return !wolkabout::StringUtils::endsWith(file, m_logExtension); }),
+                                  [&](const std::string& file) -> bool {
+                                      return !wolkabout::StringUtils::endsWith(file, m_logExtension);
+                                  }),
                    logFiles.end());
     return logFiles;
 }
@@ -327,13 +327,18 @@ void LogManager::checkLogOverflow()
 
     LOG(INFO) << "Checking for log overflow";
 
-    std::vector<std::string> logs = getLogFileNames();
-
+    int retryCounter = 0;
     double logSize = getTotalLogSize();
 
     while (logSize > m_maxSize)
     {
-        LOG(WARN) << "Log overflow, attempting to delete oldest log";
+        if (retryCounter >= 3)
+        {
+            LOG(ERROR) << "Failed to correct log overflow, aborting.";
+            break;
+        }
+        LOG(WARN) << "Log overflow detected, attempting to delete oldest log";
+        std::vector<std::string> logs = getLogFileNames();
         std::vector<std::pair<std::string, double>> logsWithAge(logs.size());
 
         for (auto& log : logs)
@@ -345,8 +350,9 @@ void LogManager::checkLogOverflow()
         }
 
         std::sort(logsWithAge.begin(), logsWithAge.end(),
-                  [](const std::pair<std::string, int>& left, const std::pair<std::string, int>& right)
-                  { return left.second > right.second; });
+                  [](const std::pair<std::string, int>& left, const std::pair<std::string, int>& right) {
+                      return left.second > right.second;
+                  });
 
         const std::string oldLog = logsWithAge.begin()->first;
 
@@ -355,8 +361,8 @@ void LogManager::checkLogOverflow()
         if (!wolkabout::FileSystemUtils::deleteFile(FileSystemUtils::composePath(oldLog, m_logDirectory)))
         {
             LOG(ERROR) << "Failed to delete log file: " << oldLog;
+            retryCounter++;
         }
-
         logSize = getTotalLogSize();
     }
 }
