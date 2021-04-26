@@ -328,19 +328,17 @@ void LogManager::checkLogOverflow()
     LOG(INFO) << "Checking for log overflow";
 
     int retryCounter = 0;
-
-    std::vector<std::string> logs = getLogFileNames();
-
     double logSize = getTotalLogSize();
 
     while (logSize > m_maxSize)
     {
         if (retryCounter >= 3)
         {
-            LOG(WARN) << "Failed to correct log overflow, aborting.";
+            LOG(ERROR) << "Failed to correct log overflow, aborting.";
             break;
         }
-        LOG(WARN) << "Log overflow, attempting to delete oldest log";
+        LOG(WARN) << "Log overflow detected, attempting to delete oldest log";
+        std::vector<std::string> logs = getLogFileNames();
         std::vector<std::pair<std::string, double>> logsWithAge(logs.size());
 
         for (auto& log : logs)
@@ -365,9 +363,7 @@ void LogManager::checkLogOverflow()
             LOG(ERROR) << "Failed to delete log file: " << oldLog;
             retryCounter++;
         }
-
         logSize = getTotalLogSize();
-        logs = getLogFileNames();
     }
 }
 
