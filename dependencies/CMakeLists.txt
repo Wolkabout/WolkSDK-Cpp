@@ -83,12 +83,22 @@ if (BUILD_POCO)
 endif ()
 
 if (BUILD_AWS_LOG_UPLOADER)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(AWS_UNITY_BUILD "OFF")
+        set(AWS_MINIMIZE_SIZE "OFF")
+    else (CMAKE_BUILD_TYPE STREQUAL "Release")
+        set(AWS_UNITY_BUILD "ON")
+        set(AWS_MINIMIZE_SIZE "ON")
+    endif ()
+
     ExternalProject_Add(aws-sdk-cpp
             GIT_REPOSITORY "https://github.com/aws/aws-sdk-cpp"
             GIT_TAG "${AWS_SDK_VERSION}"
-            CMAKE_ARGS -DBUILD_SHARED_LIBS=ON
+            CMAKE_ARGS
+            -DBUILD_SHARED_LIBS=ON
             -DBUILD_ONLY=s3
-            -DENABLE_UNITY_BUILD=OFF
+            -DENABLE_UNITY_BUILD=${AWS_UNITY_BUILD}
+            -DMINIMIZE_SIZE=${AWS_MINIMIZE_SIZE}
             -DENABLE_TESTING=OFF
             -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
             -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
