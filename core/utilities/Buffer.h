@@ -32,6 +32,8 @@ public:
     Buffer() = default;
     ~Buffer();
 
+    void stop();
+
     void push(T item);
     void push_rvalue(T&& item);
 
@@ -54,6 +56,11 @@ private:
 };
 
 template <class T> Buffer<T>::~Buffer()
+{
+    stop();
+}
+
+template <class T> void Buffer<T>::stop()
 {
     m_exitCondition = true;
     m_condition.notify_one();
