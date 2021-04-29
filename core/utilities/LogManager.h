@@ -52,6 +52,7 @@ public:
     void setDeleteAfter(const std::chrono::hours& deleteAfter);
     const std::string& getLogExtension() const;
     void setLogExtension(const std::string& logExtension);
+    void setLogUploader(const std::shared_ptr<wolkabout::LogUploader>& logUploader);
 
 private:
     std::vector<std::string> getLogsToUpload();

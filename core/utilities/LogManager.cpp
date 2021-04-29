@@ -173,6 +173,11 @@ void LogManager::setLogExtension(const std::string& logExtension)
     }
 }
 
+void LogManager::setLogUploader(const std::shared_ptr<wolkabout::LogUploader>& logUploader)
+{
+    m_logUploader = logUploader;
+}
+
 std::vector<std::string> LogManager::getLogsToDelete()
 {
     std::vector<std::string> logFiles;

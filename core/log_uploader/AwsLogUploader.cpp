@@ -7,15 +7,14 @@
 #include "core/utilities/Logger.h"
 
 #include <algorithm>
-#include <fstream>
-#include <sys/stat.h>
-
 #include <aws/core/Aws.h>
 #include <aws/core/utils/logging/LogLevel.h>
 #include <aws/s3/S3Client.h>
 #include <aws/s3/model/ListObjectsRequest.h>
 #include <aws/s3/model/Object.h>
 #include <aws/s3/model/PutObjectRequest.h>
+#include <fstream>
+#include <sys/stat.h>
 
 namespace wolkabout
 {
