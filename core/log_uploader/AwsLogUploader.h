@@ -14,6 +14,21 @@ class AwsLogUploader : public wolkabout::LogUploader
 {
 public:
     AwsLogUploader(const std::string& bucketName, const std::string& region);
+
+    /**
+     * The default getter for the bucket name this uploader is connected to.
+     *
+     * @return The bucket name as string.
+     */
+    std::string getBucketName();
+
+    /**
+     * The default getter for the region this uploader is connected to.
+     *
+     * @return The region name as string.
+     */
+    std::string getRegion();
+
     /**
      * @brief Attempt to upload a log file to a remote server
      * @param pathToLogFile Path where the log file is located on the file system
@@ -28,8 +43,8 @@ public:
     std::vector<std::string> getRemoteLogs() override;
 
 private:
-    Aws::String m_region;
     Aws::String m_bucketName;
+    Aws::String m_region;
 };
 
 }    // namespace wolkabout

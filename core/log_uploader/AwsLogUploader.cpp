@@ -23,6 +23,16 @@ AwsLogUploader::AwsLogUploader(const std::string& bucketName, const std::string&
 {
 }
 
+std::string AwsLogUploader::getBucketName()
+{
+    return std::string(m_bucketName.c_str(), m_bucketName.size());
+}
+
+std::string AwsLogUploader::getRegion()
+{
+    return std::string(m_region.c_str(), m_region.size());
+}
+
 bool wolkabout::AwsLogUploader::upload(const std::string& pathToLogFile)
 {
     Aws::String objectName(pathToLogFile.c_str(), pathToLogFile.size());
@@ -119,5 +129,4 @@ std::vector<std::string> wolkabout::AwsLogUploader::getRemoteLogs()
 
     return remoteLogs;
 }
-
 }    // namespace wolkabout
