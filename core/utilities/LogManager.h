@@ -42,6 +42,13 @@ public:
     int getMaxSize() const;
     void setMaxSize(int maxSize);
 
+    /**
+     * Default getter for the Log Uploader of this Log Manager.
+     *
+     * @return Shared pointer to the log uploader.
+     */
+    std::shared_ptr<LogUploader> getLogUploader() const;
+
     const std::chrono::hours& getUploadEvery() const;
     void setUploadEvery(const std::chrono::hours& uploadEvery);
     const std::chrono::hours& getUploadAfter() const;
@@ -52,6 +59,7 @@ public:
     void setDeleteAfter(const std::chrono::hours& deleteAfter);
     const std::string& getLogExtension() const;
     void setLogExtension(const std::string& logExtension);
+    void setLogUploader(const std::shared_ptr<wolkabout::LogUploader>& logUploader);
 
 private:
     std::vector<std::string> getLogsToUpload();

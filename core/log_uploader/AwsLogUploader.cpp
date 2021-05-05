@@ -7,21 +7,30 @@
 #include "core/utilities/Logger.h"
 
 #include <algorithm>
-#include <fstream>
-#include <sys/stat.h>
-
 #include <aws/core/Aws.h>
 #include <aws/core/utils/logging/LogLevel.h>
 #include <aws/s3/S3Client.h>
 #include <aws/s3/model/ListObjectsRequest.h>
 #include <aws/s3/model/Object.h>
 #include <aws/s3/model/PutObjectRequest.h>
+#include <fstream>
+#include <sys/stat.h>
 
 namespace wolkabout
 {
 AwsLogUploader::AwsLogUploader(const std::string& bucketName, const std::string& region)
 : m_bucketName(Aws::String(bucketName.c_str(), bucketName.size())), m_region(Aws::String(region.c_str(), region.size()))
 {
+}
+
+std::string AwsLogUploader::getBucketName()
+{
+    return std::string(m_bucketName.c_str(), m_bucketName.size());
+}
+
+std::string AwsLogUploader::getRegion()
+{
+    return std::string(m_region.c_str(), m_region.size());
 }
 
 bool wolkabout::AwsLogUploader::upload(const std::string& pathToLogFile)
@@ -120,5 +129,4 @@ std::vector<std::string> wolkabout::AwsLogUploader::getRemoteLogs()
 
     return remoteLogs;
 }
-
 }    // namespace wolkabout

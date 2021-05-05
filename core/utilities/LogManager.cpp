@@ -112,6 +112,11 @@ void LogManager::setMaxSize(int maxSize)
     }
 }
 
+std::shared_ptr<LogUploader> LogManager::getLogUploader() const
+{
+    return m_logUploader;
+}
+
 const std::chrono::hours& LogManager::getUploadEvery() const
 {
     return m_uploadEvery;
@@ -171,6 +176,11 @@ void LogManager::setLogExtension(const std::string& logExtension)
     {
         restart();
     }
+}
+
+void LogManager::setLogUploader(const std::shared_ptr<wolkabout::LogUploader>& logUploader)
+{
+    m_logUploader = logUploader;
 }
 
 std::vector<std::string> LogManager::getLogsToDelete()
@@ -378,5 +388,4 @@ double LogManager::getTotalLogSize()
     }
     return logSize;
 }
-
 }    // namespace wolkabout
