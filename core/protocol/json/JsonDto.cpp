@@ -279,7 +279,7 @@ GatewayUpdateResponse gateway_update_response_from_json(const json& sourceJ)
 {
     auto result = platform_result_from_string(sourceJ.at("result").get<std::string>());
 
-    if (!sourceJ.at("description").is_null())
+    if (sourceJ.find("description") != sourceJ.end() && !sourceJ.at("description").is_null())
     {
         result.setDescription(sourceJ.at("description").get<std::string>());
     }
@@ -348,7 +348,7 @@ SubdeviceRegistrationResponse subdevice_registration_response_from_json(const js
 {
     auto result = platform_result_from_string(sourceJ.at("result").get<std::string>());
 
-    if (!sourceJ.at("description").is_null())
+    if (sourceJ.find("description") != sourceJ.end() && !sourceJ.at("description").is_null())
     {
         result.setDescription(sourceJ.at("description").get<std::string>());
     }
@@ -404,7 +404,7 @@ SubdeviceUpdateResponse subdevice_update_response_from_json(const json& sourceJ,
 {
     auto result = platform_result_from_string(sourceJ.at("result").get<std::string>());
 
-    if (!sourceJ.at("description").is_null())
+    if (sourceJ.find("description") != sourceJ.end() && !sourceJ.at("description").is_null())
     {
         result.setDescription(sourceJ.at("description").get<std::string>());
     }
@@ -431,8 +431,7 @@ PlatformResult platform_result_from_json(const json& sourceJ)
 {
     auto result = platform_result_from_string(sourceJ.at("result").get<std::string>());
 
-    auto it_description = sourceJ.find("description");
-    if (it_description != sourceJ.end() && !sourceJ.at("description").is_null())
+    if (sourceJ.find("description") != sourceJ.end() && !sourceJ.at("description").is_null())
     {
         result.setDescription(sourceJ.at("description").get<std::string>());
     }
