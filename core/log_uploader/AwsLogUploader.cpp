@@ -48,14 +48,6 @@ bool wolkabout::AwsLogUploader::upload(const std::string& pathToLogFile)
         return false;
     }
 
-    std::vector<std::string> remoteLogs = getRemoteLogs();
-    const auto& it = std::find(remoteLogs.cbegin(), remoteLogs.cend(), pathToLogFile);
-    if (it != remoteLogs.cend())
-    {
-        LOG(WARN) << "File '" << objectName << "' already present in bucket.";
-        return true;
-    }
-
     Aws::SDKOptions options;
     Aws::InitAPI(options);
 

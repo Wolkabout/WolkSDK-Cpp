@@ -196,7 +196,8 @@ std::vector<std::string> LogManager::getLogsToDelete()
     logFiles = getLogFileNames();
 
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool {
+                                  [&](const std::string& file) -> bool
+                                  {
                                       return std::chrono::duration<double>(std::difftime(
                                                std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
                                                FileSystemUtils::getLastModified(
@@ -227,15 +228,20 @@ std::vector<std::string> LogManager::getLogsToUpload()
 
     std::vector<std::string> remoteFiles = m_logUploader->getRemoteLogs();
 
-    logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool {
-                                      return std::find(remoteFiles.begin(), remoteFiles.end(), file) !=
-                                             remoteFiles.end();
-                                  }),
-                   logFiles.end());
+    for (auto log : remoteFiles)
+    {
+        log = wolkabout::StringUtils::removePrefix(log, m_logDirectory + "/");
+    }
+
+    logFiles.erase(
+      std::remove_if(logFiles.begin(), logFiles.end(),
+                     [&](const std::string& file) -> bool
+                     { return std::find(remoteFiles.begin(), remoteFiles.end(), file) != remoteFiles.end(); }),
+      logFiles.end());
 
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool {
+                                  [&](const std::string& file) -> bool
+                                  {
                                       return std::chrono::duration<double>(std::difftime(
                                                std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
                                                FileSystemUtils::getLastModified(
@@ -252,9 +258,8 @@ std::vector<std::string> LogManager::getLogFileNames()
 
     logFiles = FileSystemUtils::listFiles(m_logDirectory);
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
-                                  [&](const std::string& file) -> bool {
-                                      return !wolkabout::StringUtils::endsWith(file, m_logExtension);
-                                  }),
+                                  [&](const std::string& file) -> bool
+                                  { return !wolkabout::StringUtils::endsWith(file, m_logExtension); }),
                    logFiles.end());
     return logFiles;
 }
@@ -360,9 +365,8 @@ void LogManager::checkLogOverflow()
         }
 
         std::sort(logsWithAge.begin(), logsWithAge.end(),
-                  [](const std::pair<std::string, int>& left, const std::pair<std::string, int>& right) {
-                      return left.second > right.second;
-                  });
+                  [](const std::pair<std::string, int>& left, const std::pair<std::string, int>& right)
+                  { return left.second > right.second; });
 
         const std::string oldLog = logsWithAge.begin()->first;
 
