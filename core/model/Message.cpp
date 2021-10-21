@@ -21,18 +21,56 @@
 
 namespace wolkabout
 {
-Message::Message(std::string content, std::string channel)
-: m_content(std::move(content)), m_channel(std::move(channel))
+
+FeedValuesMessage::FeedValuesMessage(std::vector<Reading> readings)
+: m_messageType(MessageType::FEED_VALUES)
 {
+    for(auto reading : readings)
+    {
+        m_readings[reading.getTimestamp()].emplace_back(reading);
+    }
 }
 
-const std::string& Message::getContent() const
+const MessageType& FeedValuesMessage::getMessageType()
 {
-    return m_content;
+    return m_messageType;
+}
+const std::string FeedValuesMessage::getChannel()
+{
+    return toString(m_messageType);
 }
 
-const std::string& Message::getChannel() const
+const std::map<unsigned long long int, std::vector<Reading>>& FeedValuesMessage::getReadings() const
 {
-    return m_channel;
+    return m_readings;
+}
+PullFeedValuesMessage::PullFeedValuesMessage(): m_messageType(MessageType::PULL_FEED_VALUES) {}
+
+const MessageType& PullFeedValuesMessage::getMessageType()
+{
+    return m_messageType;
+}
+const std::string PullFeedValuesMessage::getChannel()
+{
+    return toString(m_messageType);
+}
+
+FeedRegistrationMessage::FeedRegistrationMessage(std::vector<Feed> feeds)
+: m_feeds(std::move(feeds))
+, m_messageType(MessageType::FEED_REGISTRATION)
+{}
+
+const std::vector<Feed>& FeedRegistrationMessage::getFeeds() const
+{
+    return m_feeds;
+}
+
+const MessageType& FeedRegistrationMessage::getMessageType()
+{
+    return m_messageType;
+}
+const std::string FeedRegistrationMessage::getChannel()
+{
+    return toString(m_messageType);
 }
 }    // namespace wolkabout
