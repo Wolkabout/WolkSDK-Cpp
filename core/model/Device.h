@@ -1,0 +1,8 @@
+#ifndef WOLKABOUTCORE_DEVICE_H
+#define WOLKABOUTCORE_DEVICE_H
+
+class Device
+{
+};
+
+#endif    // WOLKABOUTCORE_DEVICE_H

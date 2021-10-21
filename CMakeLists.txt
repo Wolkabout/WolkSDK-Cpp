@@ -214,9 +214,9 @@ if (BUILD_CONNECTIVITY)
 
     add_library(${PROJECT_NAME} SHARED ${MQTT_SOURCE_FILES} ${CORE_HEADER_FILES} ${CONNECTIVITY_HEADER_FILES}
         ${CONNECTIVITY_MQTT_HEADER_FILES} ${MODEL_HEADER_FILES} ${PERSISTENCE_HEADER_FILES} ${PERSISTENCE_INMEMORY_HEADER_FILES}
-        ${PROTOCOL_HEADER_FILES} ${PROTOCOL_JSON_HEADER_FILES} ${SERVICE_HEADER_FILES})
+        ${PROTOCOL_HEADER_FILES} ${PROTOCOL_JSON_HEADER_FILES} ${SERVICE_HEADER_FILES} core/protocol/Constants.h)
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity)
-    target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as)
+    target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility ${PROJECT_NAME}Types paho-mqttpp3 paho-mqtt3as)
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
     add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}Utility pahomqttc pahomqttcpp)
 
