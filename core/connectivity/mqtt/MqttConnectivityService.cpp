@@ -97,13 +97,7 @@ bool MqttConnectivityService::isConnected()
 
 bool MqttConnectivityService::publish(std::shared_ptr<Message> outboundMessage, bool persistent)
 {
-    return m_mqttClient->publish(outboundMessage->getChannel(), outboundMessage->getContent(), persistent);
+    return m_mqttClient->publish(outboundMessage->getChannel(), /*outboundMessage->getContent()*/"", persistent);
 }
 
-void MqttConnectivityService::setUncontrolledDisonnectMessage(std::shared_ptr<Message> outboundMessage, bool persistent)
-{
-    m_lastWillChannel = outboundMessage->getChannel();
-    m_lastWillPayload = outboundMessage->getContent();
-    m_lastWillRetain = persistent;
-}
 }    // namespace wolkabout

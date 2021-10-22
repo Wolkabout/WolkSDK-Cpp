@@ -43,8 +43,6 @@ public:
 
     bool publish(std::shared_ptr<Message> outboundMessage, bool persistent) override;
 
-    void setUncontrolledDisonnectMessage(std::shared_ptr<Message> outboundMessage, bool persistent) override;
-
 private:
     std::shared_ptr<MqttClient> m_mqttClient;
 

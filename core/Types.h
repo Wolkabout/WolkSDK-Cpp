@@ -26,6 +26,7 @@ enum class FeedType
 };
 
 std::string toString(FeedType type);
+FeedType feedTypeFromString(const std::string& type);
 
 enum class Unit
 {
@@ -159,6 +160,7 @@ enum class Unit
 };
 
 std::string toString(Unit unit);    // TODO Implement
+Unit unitFromString(const std::string& unit);
 
 enum class ConnectivityType
 {
