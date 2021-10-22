@@ -27,15 +27,30 @@
 
 namespace wolkabout
 {
+
 class Message
 {
 public:
+    Message(std::string content, std::string channel);
     virtual ~Message() = default;
+
+    const std::string& getContent() const;
+    const std::string& getChannel() const;
+
+private:
+    std::string m_content;
+    std::string m_channel;
+};
+
+class MessageObject
+{
+public:
+    virtual ~MessageObject() = default;
     virtual const MessageType& getMessageType() = 0;
     virtual const std::string getChannel() = 0;
 };
 
-class FeedValuesMessage: public Message
+class FeedValuesMessage: public MessageObject
 {
 private:
     std::map<unsigned long long int, std::vector<Reading>> m_readings;
@@ -48,7 +63,7 @@ public:
     const std::map<unsigned long long int, std::vector<Reading>>& getReadings() const;
 };
 
-class PullFeedValuesMessage: public Message
+class PullFeedValuesMessage: public MessageObject
 {
 private:
     MessageType m_messageType;
@@ -58,7 +73,7 @@ public:
     const std::string getChannel() override;
 };
 
-class FeedRegistrationMessage: public Message
+class FeedRegistrationMessage: public MessageObject
 {
 private:
     MessageType m_messageType;
@@ -70,7 +85,7 @@ public:
     const std::vector<Feed>& getFeeds() const;
 };
 
-class FeedRemovalMessage: public Message
+class FeedRemovalMessage: public MessageObject
 {
 private:
     MessageType m_messageType;
@@ -82,7 +97,7 @@ public:
     const std::vector<std::string>& getReferences() const;
 };
 
-class AttributeRegistrationMessage: public Message
+class AttributeRegistrationMessage: public MessageObject
 {
 private:
     MessageType m_messageType;
