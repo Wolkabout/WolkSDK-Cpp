@@ -6,7 +6,7 @@
 
 using nlohmann::json;
 
-namespace wolkabout
+namespace wolkabout 
 {
 
 static void to_json(json& j, const Feed& feed)
@@ -23,6 +23,22 @@ static void to_json(json& j, const Reading& reading)
 {
     j = json{
       {reading.getReference(), reading.getStringValue()}
+    };
+}
+
+static void to_json(json& j, const Attribute& attribute)
+{
+    j = json{
+      {"name", attribute.getName()},
+      {"dataType", toString(attribute.getDataType())},
+      {"value", attribute.getValue()}
+    };
+}
+
+static void to_json(json& j, const Parameters& param)
+{
+    j = json{
+      {param.first, param.second}
     };
 }
 
@@ -58,8 +74,36 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     for(auto const& member : values)
     {
         json forTimestamp = json(member.second);
-//        forTimestamp.emplace_back("timestamp", std::to_string(member.first));
+       forTimestamp.emplace_back( json{ {"timestamp", std::to_string(member.first)} } );
+       
+       payload += json{ {forTimestamp} };
     }
+
+    return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
+}
+
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey, PullFeedValuesMessage pullFeedValuesMessage)
+{
+    auto topic = DEVICE_TO_PLATFORM_DIRECTION + deviceKey + toString(pullFeedValuesMessage.getMessageType());
+
+    return std::unique_ptr<Message>(new Message("", topic));
+}
+
+std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage)
+{
+    auto topic = DEVICE_TO_PLATFORM_DIRECTION + deviceKey + toString(attributeRegistrationMessage.getMessageType()); 
+    
+    auto attributes = attributeRegistrationMessage.getAttributes();
+    json payload = json(attributes);
+
+    return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
+}
+
+std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, ParametersUpdateMessage parametersUpdateMessage)
+{
+    auto topic = DEVICE_TO_PLATFORM_DIRECTION + deviceKey + toString(parametersUpdateMessage.getMessageType());
+
+    json payload = json(parametersUpdateMessage.getParameters());
 
     return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
 }
