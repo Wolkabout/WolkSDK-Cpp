@@ -18,6 +18,7 @@ enum class DataType
 };
 
 std::string toString(DataType type);
+DataType dataTypeFromString(const std::string& type);
 
 enum class FeedType
 {
@@ -159,7 +160,7 @@ enum class Unit
     OUNCE_LIQUID_UK,
 };
 
-std::string toString(Unit unit);    // TODO Implement
+std::string toString(Unit unit);
 Unit unitFromString(const std::string& unit);
 
 enum class ConnectivityType
@@ -171,6 +172,7 @@ enum class ConnectivityType
 };
 
 std::string toString(ConnectivityType conn); // TODO Implement
+ConnectivityType connectivityTypeFromString(const std::string& type);
 
 enum class OutboundDataMode
 {
@@ -179,22 +181,43 @@ enum class OutboundDataMode
 };
 
 std::string toString(OutboundDataMode mode); // TODO Implement
+OutboundDataMode outboundDataModeFromString(const std::string& mode);
 
-struct Parameters
+enum class ParameterName
 {
-    ConnectivityType connectivityType;
-    OutboundDataMode outboundDataMode;
-    uint16_t outboundDataRetentionTime;
-    uint16_t maximumMessageSize;
-    bool fileTransferPlatformEnabled;
-    bool fileTransferUrlEnabled;
-    bool firmwareUpdateEnabled;
-    uint8_t firmwareUpdateCheckTime;
-    std::string firmwareVersion;
-    bool gateway;
-    std::string gatewayParent;
-    std::string externalId;
+    CONNECTIVITY_TYPE,
+    OUTBOUND_DATA_MODE,
+    OUTBOUND_DATA_RETENTION_TIME,
+    MAXIMUM_MESSAGE_SIZE,
+    FILE_TRANSFER_PLATRFORM_ENABLED,
+    FILE_TRANSFER_URL_ENABLED,
+    FIRMWARE_UPDATE_ENABLED,
+    FIRMWARE_UPDATE_CHECK_TIME,
+    FIRMWARE_VERSION,
+    GATEWAY,
+    GATEWAY_PARENT,
+    EXTERNAL_ID,
 };
+
+std::string toString(ParameterName parameterName);
+ParameterName parameterNameFromString(std::string parameterName);
+
+// struct Parameters
+// {
+//     ConnectivityType connectivityType;
+//     OutboundDataMode outboundDataMode;
+//     uint16_t outboundDataRetentionTime;
+//     uint16_t maximumMessageSize;
+//     bool fileTransferPlatformEnabled;
+//     bool fileTransferUrlEnabled;
+//     bool firmwareUpdateEnabled;
+//     uint8_t firmwareUpdateCheckTime;
+//     std::string firmwareVersion;
+//     bool gateway;
+//     std::string gatewayParent;
+//     std::string externalId;
+// };
+typedef std::pair<ParameterName, std::string> Parameters;
 
 enum class MessageType
 {
@@ -226,6 +249,7 @@ enum class MessageType
 };
 
 std::string toString(MessageType type); // TODO Implement
+MessageType messageTypeFromString(const std::string& type);
 
 struct Location
 {
