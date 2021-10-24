@@ -1,6 +1,7 @@
 #ifndef WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H
 #define WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H
 #include <string>
+
 #include "core/model/Message.h"
 
 namespace wolkabout
@@ -18,11 +19,15 @@ public:
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, FeedRegistrationMessage feedRegistrationMessage);
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, FeedRemovalMessage feedRemovalMessage);
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, FeedValuesMessage feedValuesMessage);
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, PullFeedValuesMessage pullFeedValuesMessage);
+     
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage);
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, ParametersUpdateMessage parametersUpdateMessage);
 
-    std::unique_ptr<FeedValuesMessage> parseInboundMessage(const Message& reference);
+    std::unique_ptr<MessageObject> parseInboundMessage(const Message& reference);
 
-
-};
+}; 
 
 } // !namespace wolkabout
 #endif    // WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H
+ 
