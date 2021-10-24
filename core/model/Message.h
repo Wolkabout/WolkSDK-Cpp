@@ -47,7 +47,6 @@ class MessageObject
 public:
     virtual ~MessageObject() = default;
     virtual const MessageType& getMessageType() = 0;
-    virtual const std::string getChannel() = 0;
 };
 
 class FeedValuesMessage: public MessageObject
@@ -59,7 +58,6 @@ private:
 public:
     FeedValuesMessage(std::vector<Reading> readings);
     const MessageType& getMessageType() override;
-    const std::string getChannel() override;
     const std::map<unsigned long long int, std::vector<Reading>>& getReadings() const;
 };
 
@@ -70,7 +68,6 @@ private:
 public:
     PullFeedValuesMessage();
     const MessageType& getMessageType() override;
-    const std::string getChannel() override;
 };
 
 class FeedRegistrationMessage: public MessageObject
@@ -81,7 +78,6 @@ private:
 public:
     FeedRegistrationMessage(std::vector<Feed> feeds);
     const MessageType& getMessageType() override;
-    const std::string getChannel() override;
     const std::vector<Feed>& getFeeds() const;
 };
 
@@ -93,7 +89,6 @@ private:
 public:
     FeedRemovalMessage(std::vector<std::string> feedRefsToRemove);
     const MessageType& getMessageType() override;
-    const std::string getChannel() override;
     const std::vector<std::string>& getReferences() const;
 };
 
@@ -105,10 +100,21 @@ private:
 public:
     AttributeRegistrationMessage(std::vector<Attribute> attributes);
     const MessageType& getMessageType() override;
-    const std::string getChannel() override;
     const std::vector<Attribute>& getAttributes() const;
 };
 
+class ParametersUpdateMessage: public MessageObject
+{
+private:
+    MessageType m_messageType;
+    std::vector<Parameters> m_parameterList;
+
+public:
+    ParametersUpdateMessage(std::vector<Parameters> parameterList);
+    const MessageType& getMessageType() override;
+    const std::vector<Parameters>& getParameters() const;
+
+};
 
 }    // namespace wolkabout
 
