@@ -49,10 +49,6 @@ const MessageType& FeedValuesMessage::getMessageType()
 {
     return m_messageType;
 }
-const std::string FeedValuesMessage::getChannel()
-{
-    return toString(m_messageType);
-}
 
 const std::map<unsigned long long int, std::vector<Reading>>& FeedValuesMessage::getReadings() const
 {
@@ -63,10 +59,6 @@ PullFeedValuesMessage::PullFeedValuesMessage(): m_messageType(MessageType::PULL_
 const MessageType& PullFeedValuesMessage::getMessageType()
 {
     return m_messageType;
-}
-const std::string PullFeedValuesMessage::getChannel()
-{
-    return toString(m_messageType);
 }
 
 FeedRegistrationMessage::FeedRegistrationMessage(std::vector<Feed> feeds)
@@ -83,8 +75,5 @@ const MessageType& FeedRegistrationMessage::getMessageType()
 {
     return m_messageType;
 }
-const std::string FeedRegistrationMessage::getChannel()
-{
-    return toString(m_messageType);
-}
+
 }    // namespace wolkabout
