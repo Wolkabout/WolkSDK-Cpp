@@ -171,7 +171,7 @@ enum class ConnectivityType
     GATEWAY,
 };
 
-std::string toString(ConnectivityType conn); // TODO Implement
+std::string toString(ConnectivityType conn);
 ConnectivityType connectivityTypeFromString(const std::string& type);
 
 enum class OutboundDataMode
@@ -180,7 +180,7 @@ enum class OutboundDataMode
     PULL,
 };
 
-std::string toString(OutboundDataMode mode); // TODO Implement
+std::string toString(OutboundDataMode mode);
 OutboundDataMode outboundDataModeFromString(const std::string& mode);
 
 enum class ParameterName
@@ -189,7 +189,7 @@ enum class ParameterName
     OUTBOUND_DATA_MODE,
     OUTBOUND_DATA_RETENTION_TIME,
     MAXIMUM_MESSAGE_SIZE,
-    FILE_TRANSFER_PLATRFORM_ENABLED,
+    FILE_TRANSFER_PLATFORM_ENABLED,
     FILE_TRANSFER_URL_ENABLED,
     FIRMWARE_UPDATE_ENABLED,
     FIRMWARE_UPDATE_CHECK_TIME,
@@ -248,7 +248,7 @@ enum class MessageType
     GATEWAY_DEVICE_REMOVAL,
 };
 
-std::string toString(MessageType type); // TODO Implement
+std::string toString(MessageType type);
 MessageType messageTypeFromString(const std::string& type);
 
 struct Location

@@ -28,6 +28,27 @@ std::string toString(DataType type)
     }
 }
 
+DataType dataTypeFromString(const std::string& type)
+{
+    switch (type)
+    {
+    case "BOOLEAN":
+        return DataType::BOOLEAN;
+    case "NUMERIC":
+        return DataType::NUMERIC;
+    case "STRING":
+        return DataType::STRING;
+    case "HEXADECIMAL":
+        return DataType::HEXADECIMAL;
+    case "LOCATION":
+        return DataType::LOCATION;
+    case "ENUM":
+        return DataType::ENUM;
+    case "VECTOR":
+        return DataType::VECTOR;
+    }
+}
+
 std::string toString(FeedType type)
 {
     switch (type)
@@ -322,6 +343,84 @@ Unit unitFromString(const std::string& unit)
     }
 }
 
+std::string toString(ConnectivityType conn)
+{
+    switch(conn)
+    {
+    case ConnectivityType::MQTT : return "MQTT";
+    case ConnectivityType::HTTP : return "HTTP";
+    case ConnectivityType::AMQP : return "AMQP";
+    case ConnectivityType::GATEWAY : return "GATEWAY";
+    default: return "";
+    }
+}
+ConnectivityType connectivityTypeFromString(const std::string& type)
+{
+    switch(type)
+    {
+    case "MQTT" : return ConnectivityType::MQTT;
+    case "HTTP" : return ConnectivityType::HTTP;
+    case "AMQP" : return ConnectivityType::AMQP;
+    case "GATEWAY" : return ConnectivityType::GATEWAY;
+    }
+}
+
+std::string toString(OutboundDataMode mode)
+{
+    switch (mode)
+    {
+    case OutboundDataMode::PUSH: return "PUSH";
+    case OutboundDataMode::PULL: return "PULL";
+    default: return "";
+    }
+}
+OutboundDataMode outboundDataModeFromString(const std::string& mode)
+{
+    switch (mode)
+    {
+    case "PUSH": return OutboundDataMode::PUSH;
+    case "PULL": return OutboundDataMode::PULL;
+    }
+}
+
+std::string toString(ParameterName parameterName)
+{
+    switch (parameterName)
+    {
+    case ParameterName::CONNECTIVITY_TYPE: return "CONNECTIVITY_TYPE";
+    case ParameterName::OUTBOUND_DATA_MODE: return "OUTBOUND_DATA_MODE";
+    case ParameterName::OUTBOUND_DATA_RETENTION_TIME: return "OUTBOUND_DATA_RETENTION_TIME";
+    case ParameterName::MAXIMUM_MESSAGE_SIZE: return "MAXIMUM_MESSAGE_SIZE";
+    case ParameterName::FILE_TRANSFER_PLATFORM_ENABLED: return "FILE_TRANSFER_PLATFORM_ENABLED";
+    case ParameterName::FILE_TRANSFER_URL_ENABLED: return "FILE_TRANSFER_URL_ENABLED";
+    case ParameterName::FIRMWARE_UPDATE_ENABLED: return "FIRMWARE_UPDATE_ENABLED";
+    case ParameterName::FIRMWARE_UPDATE_CHECK_TIME: return "FIRMWARE_UPDATE_CHECK_TIME";
+    case ParameterName::FIRMWARE_VERSION: return "FIRMWARE_VERSION";
+    case ParameterName::GATEWAY: return "GATEWAY";
+    case ParameterName::GATEWAY_PARENT: return "GATEWAY_PARENT";
+    case ParameterName::EXTERNAL_ID: return "EXTERNAL_ID";
+    default: return "";
+    }
+}
+ParameterName parameterNameFromString(std::string parameterName)
+{
+    switch (parameterName)
+    {
+    case "CONNECTIVITY_TYPE": return ParameterName::CONNECTIVITY_TYPE;
+    case "OUTBOUND_DATA_MODE": return ParameterName::OUTBOUND_DATA_MODE;
+    case "OUTBOUND_DATA_RETENTION_TIME": return ParameterName::OUTBOUND_DATA_RETENTION_TIME;
+    case "MAXIMUM_MESSAGE_SIZE": return ParameterName::MAXIMUM_MESSAGE_SIZE;
+    case "FILE_TRANSFER_PLATFORM_ENABLED": return ParameterName::FILE_TRANSFER_PLATFORM_ENABLED;
+    case "FILE_TRANSFER_URL_ENABLED": return ParameterName::FILE_TRANSFER_URL_ENABLED;
+    case "FIRMWARE_UPDATE_ENABLED": return ParameterName::FIRMWARE_UPDATE_ENABLED;
+    case "FIRMWARE_UPDATE_CHECK_TIME": return ParameterName::FIRMWARE_UPDATE_CHECK_TIME;
+    case "FIRMWARE_VERSION": return ParameterName::FIRMWARE_VERSION;
+    case "GATEWAY": return ParameterName::GATEWAY;
+    case "GATEWAY_PARENT": return ParameterName::GATEWAY_PARENT;
+    case "EXTERNAL_ID": return ParameterName::EXTERNAL_ID;
+    }
+}
+
 std::string toString(MessageType type)
 {
     switch(type)
@@ -376,6 +475,61 @@ std::string toString(MessageType type)
         return "gateway_device_removal";
     default:
         return "";
+    }
+}
+
+MessageType messageTypeFromString(const std::string& type)
+{
+    switch(type)
+    {
+    case "feed_values":
+        return MessageType::FEED_VALUES;
+    case "pull_feed_values":
+        return MessageType::PULL_FEED_VALUES;
+    case "feed_registration":
+        return MessageType::FEED_REGISTRATION;
+    case "feed_removal":
+        return MessageType::FEED_REMOVAL;
+    case "attribute_registration":
+        return MessageType::ATTRIBUTE_REGISTRATION;
+    case "parameters":
+        return MessageType::PARAMETER_SYNC;
+    case "pull_parameters":
+        return MessageType::PULL_PARAMETERS;
+    case "time":
+        return MessageType::TIME_SYNC;
+    case "file_upload_init":
+        return MessageType::FILE_UPLOAD_INIT;
+    case "file_upload_status":
+        return MessageType::FILE_UPLOAD_STATUS;
+    case "file_upload_abort":
+        return MessageType::FILE_UPLOAD_ABORT;
+    case "file_binary_request":
+        return MessageType::FILE_BINARY_REQUEST;
+    case "file_binary_response":
+        return MessageType::FILE_BINARY_RESPONSE;
+    case "file_url_download_init":
+        return MessageType::FILE_URL_DOWNLOAD_INIT;
+    case "file_url_download_abort":
+        return MessageType::FILE_URL_DOWNLOAD_ABORT;
+    case "file_url_download_status":
+        return MessageType::FILE_URL_DOWNLOAD_STATUS;
+    case "file_list":
+        return MessageType::FILE_LIST;
+    case "file_delete":
+        return MessageType::FILE_DELETE;
+    case "file_purge":
+        return MessageType::FILE_PURGE;
+    case "firmware_update_install":
+        return MessageType::FIRMWARE_UPDATE_INSTALL;
+    case "firmware_update_status":
+        return MessageType::FIRMWARE_UPDATE_STATUS;
+    case "firmware_update_abort":
+        return MessageType::FIRMWARE_UPDATE_ABORT;
+    case "gateway_device_registration":
+        return MessageType::GATEWAY_DEVICE_REGISTRATION;
+    case "gateway_device_removal":
+        return MessageType::GATEWAY_DEVICE_REMOVAL;
     }
 }
 
