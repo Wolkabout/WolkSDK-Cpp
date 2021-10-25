@@ -1,8 +1,9 @@
 #ifndef WOLKABOUTCORE_ATTRIBUTE_H
 #define WOLKABOUTCORE_ATTRIBUTE_H
 
-#include <string>
 #include "core/Types.h"
+
+#include <string>
 
 namespace wolkabout
 {
@@ -25,5 +26,5 @@ private:
     DataType m_dataType;
     std::string m_value;
 };
-} // !namespace wolkabout
+}    // namespace wolkabout
 #endif    // WOLKABOUTCORE_ATTRIBUTE_H

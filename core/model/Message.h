@@ -17,17 +17,17 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
+#include "Attribute.h"
+#include "Feed.h"
+#include "core/Types.h"
+
+#include <map>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include <map>
-#include "core/Types.h"
-#include "Feed.h"
-#include "Attribute.h"
 
 namespace wolkabout
 {
-
 class Message
 {
 public:
@@ -49,7 +49,7 @@ public:
     virtual const MessageType& getMessageType() = 0;
 };
 
-class FeedValuesMessage: public MessageObject
+class FeedValuesMessage : public MessageObject
 {
 private:
     std::map<unsigned long long int, std::vector<Reading>> m_readings;
@@ -61,49 +61,53 @@ public:
     const std::map<unsigned long long int, std::vector<Reading>>& getReadings() const;
 };
 
-class PullFeedValuesMessage: public MessageObject
+class PullFeedValuesMessage : public MessageObject
 {
 private:
     MessageType m_messageType;
+
 public:
     PullFeedValuesMessage();
     const MessageType& getMessageType() override;
 };
 
-class FeedRegistrationMessage: public MessageObject
+class FeedRegistrationMessage : public MessageObject
 {
 private:
     MessageType m_messageType;
     std::vector<Feed> m_feeds;
+
 public:
     FeedRegistrationMessage(std::vector<Feed> feeds);
     const MessageType& getMessageType() override;
     const std::vector<Feed>& getFeeds() const;
 };
 
-class FeedRemovalMessage: public MessageObject
+class FeedRemovalMessage : public MessageObject
 {
 private:
     MessageType m_messageType;
     std::vector<std::string> m_references;
+
 public:
     FeedRemovalMessage(std::vector<std::string> feedRefsToRemove);
     const MessageType& getMessageType() override;
     const std::vector<std::string>& getReferences() const;
 };
 
-class AttributeRegistrationMessage: public MessageObject
+class AttributeRegistrationMessage : public MessageObject
 {
 private:
     MessageType m_messageType;
     std::vector<Attribute> m_attributes;
+
 public:
     AttributeRegistrationMessage(std::vector<Attribute> attributes);
     const MessageType& getMessageType() override;
     const std::vector<Attribute>& getAttributes() const;
 };
 
-class ParametersUpdateMessage: public MessageObject
+class ParametersUpdateMessage : public MessageObject
 {
 private:
     MessageType m_messageType;
@@ -113,7 +117,16 @@ public:
     ParametersUpdateMessage(std::vector<Parameters> parameterList);
     const MessageType& getMessageType() override;
     const std::vector<Parameters>& getParameters() const;
+};
 
+class ParametersPullMessage : public MessageObject
+{
+private:
+    MessageType m_messageType;
+
+public:
+    ParametersPullMessage();
+    const MessageType& getMessageType() override;
 };
 
 }    // namespace wolkabout

@@ -5,7 +5,6 @@
 
 namespace wolkabout
 {
-
 enum class DataType
 {
     STRING,
@@ -263,6 +262,7 @@ private:
     std::string m_reference;
     std::string m_value;
     unsigned long long int m_timestamp;
+
 public:
     Reading() = default;
     Reading(std::string reference, std::string value, unsigned long long int rtcTimestamp = 0);
@@ -279,9 +279,8 @@ public:
     const Location getLocationValue() const;
     const std::vector<float> getVectorValue() const;
     const unsigned long long int& getTimestamp() const;
-
 };
 
-} // !namespace wolkabout
+}    // namespace wolkabout
 
 #endif    // WOLKABOUTCORE_TYPES_H
