@@ -1,8 +1,9 @@
 #ifndef WOLKABOUTCORE_FEED_H
 #define WOLKABOUTCORE_FEED_H
+#include "core/Types.h"
+
 #include <functional>
 #include <string>
-#include "core/Types.h"
 
 namespace wolkabout
 {
@@ -23,9 +24,8 @@ public:
     void setFeedType(FeedType feedType);
     Unit getUnit() const;
     void setUnit(Unit unit);
-
 };
 
-} // !namespace wolkabout
+}    // namespace wolkabout
 
 #endif    // WOLKABOUTCORE_FEED_H

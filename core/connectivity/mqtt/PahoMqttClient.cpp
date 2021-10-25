@@ -19,10 +19,10 @@
 #include "MqttCallback.h"
 #include "MqttClient.h"
 #include "core/utilities/Logger.h"
-#include <mqtt/async_client.h>
 
 #include <atomic>
 #include <memory>
+#include <mqtt/async_client.h>
 #include <string>
 
 namespace wolkabout

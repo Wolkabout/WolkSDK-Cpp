@@ -59,6 +59,8 @@ public:
 
     template <typename T> static std::string toString(const T& value);
 
+    static std::vector<std::string> tokenize(std::string const& str, const char delim);
+
     static const std::string EMPTY_STRING;
     static const std::string BOOL_TRUE;
     static const std::string BOOL_FALSE;

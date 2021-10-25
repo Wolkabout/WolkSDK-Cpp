@@ -33,4 +33,4 @@ void Feed::setUnit(Unit unit)
 {
     m_unit = unit;
 }
-} // !namespace wolkabout
+}    // namespace wolkabout

@@ -36,10 +36,9 @@ const std::string& Message::getChannel() const
     return m_channel;
 }
 
-FeedValuesMessage::FeedValuesMessage(std::vector<Reading> readings)
-: m_messageType(MessageType::FEED_VALUES)
+FeedValuesMessage::FeedValuesMessage(std::vector<Reading> readings) : m_messageType(MessageType::FEED_VALUES)
 {
-    for(auto reading : readings)
+    for (auto reading : readings)
     {
         m_readings[reading.getTimestamp()].emplace_back(reading);
     }
@@ -54,7 +53,7 @@ const std::map<unsigned long long int, std::vector<Reading>>& FeedValuesMessage:
 {
     return m_readings;
 }
-PullFeedValuesMessage::PullFeedValuesMessage(): m_messageType(MessageType::PULL_FEED_VALUES) {}
+PullFeedValuesMessage::PullFeedValuesMessage() : m_messageType(MessageType::PULL_FEED_VALUES) {}
 
 const MessageType& PullFeedValuesMessage::getMessageType()
 {
@@ -62,9 +61,9 @@ const MessageType& PullFeedValuesMessage::getMessageType()
 }
 
 FeedRegistrationMessage::FeedRegistrationMessage(std::vector<Feed> feeds)
-: m_feeds(std::move(feeds))
-, m_messageType(MessageType::FEED_REGISTRATION)
-{}
+: m_feeds(std::move(feeds)), m_messageType(MessageType::FEED_REGISTRATION)
+{
+}
 
 const std::vector<Feed>& FeedRegistrationMessage::getFeeds() const
 {
@@ -76,4 +75,46 @@ const MessageType& FeedRegistrationMessage::getMessageType()
     return m_messageType;
 }
 
+FeedRemovalMessage::FeedRemovalMessage(std::vector<std::string> feedRefsToRemove)
+: m_messageType(MessageType::FEED_REMOVAL), m_references(std::move(feedRefsToRemove))
+{
+}
+const MessageType& FeedRemovalMessage::getMessageType()
+{
+    return m_messageType;
+}
+const std::vector<std::string>& FeedRemovalMessage::getReferences() const
+{
+    return m_references;
+}
+AttributeRegistrationMessage::AttributeRegistrationMessage(std::vector<Attribute> attributes)
+: m_messageType(MessageType::ATTRIBUTE_REGISTRATION), m_attributes(std::move(attributes))
+{
+}
+const MessageType& AttributeRegistrationMessage::getMessageType()
+{
+    return m_messageType;
+}
+const std::vector<Attribute>& AttributeRegistrationMessage::getAttributes() const
+{
+    return m_attributes;
+}
+
+ParametersUpdateMessage::ParametersUpdateMessage(std::vector<Parameters> parameterList)
+: m_messageType(MessageType::PARAMETER_SYNC), m_parameterList(std::move(parameterList))
+{
+}
+const MessageType& ParametersUpdateMessage::getMessageType()
+{
+    return m_messageType;
+}
+const std::vector<Parameters>& ParametersUpdateMessage::getParameters() const
+{
+    return m_parameterList;
+}
+ParametersPullMessage::ParametersPullMessage() : m_messageType(MessageType::PULL_PARAMETERS) {}
+const MessageType& ParametersPullMessage::getMessageType()
+{
+    return m_messageType;
+}
 }    // namespace wolkabout

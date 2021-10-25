@@ -1,8 +1,8 @@
 #ifndef WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H
 #define WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H
-#include <string>
-
 #include "core/model/Message.h"
+
+#include <string>
 
 namespace wolkabout
 {
@@ -15,19 +15,26 @@ const std::string PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
 
 class WolkaboutDataProtocol
 {
+private:
+    std::unique_ptr<MessageObject> feedValuesFromContent(std::string content);
+    std::unique_ptr<MessageObject> parametersFromContent(std::string content);
 public:
-    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, FeedRegistrationMessage feedRegistrationMessage);
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 FeedRegistrationMessage feedRegistrationMessage);
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, FeedRemovalMessage feedRemovalMessage);
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, FeedValuesMessage feedValuesMessage);
-    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, PullFeedValuesMessage pullFeedValuesMessage);
-     
-    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage);
-    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, ParametersUpdateMessage parametersUpdateMessage);
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 PullFeedValuesMessage pullFeedValuesMessage);
+
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 AttributeRegistrationMessage attributeRegistrationMessage);
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 ParametersUpdateMessage parametersUpdateMessage);
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 ParametersPullMessage parametersPullMessage);
 
     std::unique_ptr<MessageObject> parseInboundMessage(const Message& reference);
+};
 
-}; 
-
-} // !namespace wolkabout
+}    // namespace wolkabout
 #endif    // WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H
- 
