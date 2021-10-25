@@ -89,7 +89,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     return std::unique_ptr<Message>(new Message("", topic));
 }
 
-std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage)
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage)
 {
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + deviceKey + toString(attributeRegistrationMessage.getMessageType()); 
     
@@ -99,7 +99,7 @@ std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, Attri
     return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
 }
 
-std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey, ParametersUpdateMessage parametersUpdateMessage)
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey, ParametersUpdateMessage parametersUpdateMessage)
 {
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + deviceKey + toString(parametersUpdateMessage.getMessageType());
 
