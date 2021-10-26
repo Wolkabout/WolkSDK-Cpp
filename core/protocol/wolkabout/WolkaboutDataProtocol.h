@@ -1,6 +1,7 @@
 #ifndef WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H
 #define WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H
 #include "core/model/Message.h"
+#include "core/protocol/Protocol.h"
 
 #include <string>
 
@@ -13,7 +14,7 @@ const std::string CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
 const std::string DEVICE_TO_PLATFORM_DIRECTION = "d2p/";
 const std::string PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
 
-class WolkaboutDataProtocol
+class WolkaboutDataProtocol : public Protocol
 {
 private:
     std::unique_ptr<MessageObject> feedValuesFromContent(std::string content);
@@ -34,6 +35,8 @@ public:
                                                  ParametersPullMessage parametersPullMessage);
 
     std::unique_ptr<MessageObject> parseInboundMessage(const Message& reference);
+    std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
+    std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 };
 
 }    // namespace wolkabout
