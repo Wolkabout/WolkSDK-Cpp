@@ -201,21 +201,6 @@ enum class ParameterName
 std::string toString(ParameterName parameterName);
 ParameterName parameterNameFromString(std::string parameterName);
 
-// struct Parameters
-// {
-//     ConnectivityType connectivityType;
-//     OutboundDataMode outboundDataMode;
-//     uint16_t outboundDataRetentionTime;
-//     uint16_t maximumMessageSize;
-//     bool fileTransferPlatformEnabled;
-//     bool fileTransferUrlEnabled;
-//     bool firmwareUpdateEnabled;
-//     uint8_t firmwareUpdateCheckTime;
-//     std::string firmwareVersion;
-//     bool gateway;
-//     std::string gatewayParent;
-//     std::string externalId;
-// };
 typedef std::pair<ParameterName, std::string> Parameters;
 
 enum class MessageType
