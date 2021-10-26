@@ -151,5 +151,18 @@ std::unique_ptr<MessageObject> WolkaboutDataProtocol::parametersFromContent(std:
 {
     return nullptr;
 }
+std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
+{
+    return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC)
+        , PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES)
+    };
+}
+std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+{
+    unsigned first = topic.find(CHANNEL_DELIMITER);
+    unsigned last = topic.rfind(CHANNEL_DELIMITER);
+
+    return topic.substr(first, last - first);
+}
 
 }    // namespace wolkabout
