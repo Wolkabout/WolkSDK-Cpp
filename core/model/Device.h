@@ -29,6 +29,18 @@ private:
 public:
     Device(std::string key, std::string password, std::shared_ptr<DeviceTemplate> deviceTemplate = nullptr);
     Device(std::string name, std::string key, std::string password, std::shared_ptr<DeviceTemplate> deviceTemplate = nullptr);
+    const std::string& getName() const;
+    void setName(const std::string& mName);
+    const std::string& getKey() const;
+    void setKey(const std::string& mKey);
+    const std::string& getPassword() const;
+    void setPassword(const std::string& mPassword);
+    const std::vector<Feed>& getFeeds() const;
+    void setFeeds(const std::vector<Feed>& mFeeds);
+    const std::vector<Attribute>& getAttributes() const;
+    void setAttributes(const std::vector<Attribute>& mAttributes);
+    const std::map<ParameterName, std::string>& getParameters() const;
+    void setParameters(const std::map<ParameterName, std::string>& mParameters);
 };
 } // !namespace wolkabout
 #endif    // WOLKABOUTCORE_DEVICE_H
