@@ -18,6 +18,7 @@
 #define DATAPROTOCOL_H
 
 #include "core/protocol/Protocol.h"
+#include "core/model/Message.h"
 
 #include <memory>
 #include <string>
