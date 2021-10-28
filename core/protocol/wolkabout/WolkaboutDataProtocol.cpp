@@ -1,5 +1,6 @@
 #include "WolkaboutDataProtocol.h"
 
+#include <memory>
 #include <string>
 
 #include "core/Types.h"
@@ -33,6 +34,34 @@ static void to_json(json& j, const Attribute& attribute)
 static void to_json(json& j, const Parameters& param)
 {
     j = json{{param.first, param.second}};
+}
+
+static void from_json(const json& j, std::vector<Parameters>& p)
+{
+    for (auto& el : j.items())
+    {
+        Parameters param{ parameterNameFromString(el.key()), el.value().dump() };
+        p.emplace_back(param);
+    }
+}
+
+static void from_json(const json& j, std::vector<Reading>& r)
+{
+    for(auto& el: j.items())
+    {
+        if(el.key() != "timestamp")
+        {
+            Reading reading(el.key(), el.value().dump());
+            r.emplace_back(reading);
+        }
+        else
+        {
+            for(auto addTs : r)
+            {
+                addTs.setTimestamp(el.value().dump());
+            }
+        }
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -121,36 +150,6 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     return std::unique_ptr<Message>(new Message("", topic));
 }
 
-std::unique_ptr<MessageObject> WolkaboutDataProtocol::parseInboundMessage(const Message& reference)
-{
-    auto tokens = StringUtils::tokenize(reference.getChannel(), CHANNEL_DELIMITER);
-
-    if (tokens.at(0) != PLATFORM_TO_DEVICE_DIRECTION)
-    {
-        // message not inbound
-        return nullptr;
-    }
-    auto deviceKey = tokens.at(1);
-
-    if (tokens.at(2) == "feed_values")
-    {
-        return feedValuesFromContent(reference.getContent());
-    }
-    else if (tokens.at(2) == "parameters")
-    {
-        return parametersFromContent(reference.getContent());
-    }
-
-    return nullptr;
-}
-std::unique_ptr<MessageObject> WolkaboutDataProtocol::feedValuesFromContent(std::string content)
-{
-    return nullptr;
-}
-std::unique_ptr<MessageObject> WolkaboutDataProtocol::parametersFromContent(std::string content)
-{
-    return nullptr;
-}
 std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
     return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC)
@@ -163,6 +162,34 @@ std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string
     unsigned last = topic.rfind(CHANNEL_DELIMITER);
 
     return topic.substr(first, last - first);
+}
+MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<Message> message)
+{
+    auto channel = message->getChannel();
+    unsigned last = channel.rfind(CHANNEL_DELIMITER);
+
+    return messageTypeFromString(channel.substr(last + 1));
+}
+std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
+{
+    auto content = message->getContent();
+    auto jsonContent = json::parse(content);
+    // TODO quadruple check
+    std::vector<Reading> readings = jsonContent.get<std::vector<Reading>>();
+
+    return std::make_shared<FeedValuesMessage>(readings);
+}
+std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<Message> message)
+{
+    json j = json::parse(message->getContent());
+
+    std::vector<Parameters> parameters = j.get<std::vector<Parameters>>();
+    return std::make_shared<ParametersUpdateMessage>(parameters);
+}
+std::vector<std::string> WolkaboutDataProtocol::getInboundChannels() const
+{
+    // TODO deprecate
+    return std::vector<std::string>();
 }
 
 }    // namespace wolkabout

@@ -41,7 +41,6 @@ public:
     */
    virtual std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const = 0;
 
-   virtual std::string extractDeviceKeyFromChannel(const std::string& topic) const = 0;
 };
 }    // namespace wolkabout
 
