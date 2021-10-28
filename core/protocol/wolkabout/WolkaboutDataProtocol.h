@@ -16,9 +16,6 @@ const std::string PLATFORM_TO_DEVICE_DIRECTION = "p2d/";
 
 class WolkaboutDataProtocol : public DataProtocol
 {
-private:
-    std::unique_ptr<MessageObject> feedValuesFromContent(std::string content);
-    std::unique_ptr<MessageObject> parametersFromContent(std::string content);
 public:
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  FeedRegistrationMessage feedRegistrationMessage) override;
@@ -34,9 +31,12 @@ public:
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  ParametersPullMessage parametersPullMessage) override;
 
-    std::unique_ptr<MessageObject> parseInboundMessage(const Message& reference) override;
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
+    MessageType getMessageType(std::shared_ptr<Message> message) override;
+    std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) override;
+    std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) override;
+    std::vector<std::string> getInboundChannels() const override;
 };
 
 }    // namespace wolkabout
