@@ -47,7 +47,11 @@ public:
    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                 ParametersPullMessage parametersPullMessage) = 0;
 
-   virtual std::unique_ptr<MessageObject> parseInboundMessage(const Message& reference) = 0;
+   virtual MessageType getMessageType(std::shared_ptr<Message> message) = 0;
+
+   virtual std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) = 0;
+
+   virtual std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) = 0;
 };
 }    // namespace wolkabout
 
