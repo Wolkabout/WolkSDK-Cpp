@@ -188,8 +188,10 @@ std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(
 }
 std::vector<std::string> WolkaboutDataProtocol::getInboundChannels() const
 {
-    // TODO deprecate
-    return std::vector<std::string>();
+    return {
+      PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC)
+        , PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES)
+    };
 }
 
 }    // namespace wolkabout
