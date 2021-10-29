@@ -31,7 +31,6 @@ class Message;
 class DataProtocol : public Protocol
 {
 public:
-   virtual std::string extractReferenceFromChannel(const std::string& topic) const = 0;
 
    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                 FeedRegistrationMessage feedRegistrationMessage) = 0;
