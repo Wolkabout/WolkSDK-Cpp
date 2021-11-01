@@ -256,7 +256,7 @@ public:
     void setReference(const std::string& reference);
     void setValue(const std::string& value);
     void setTimestamp(unsigned long long int& timestamp);
-    void setTimestamp(std::string& timestamp);
+    void setTimestamp(std::string timestamp);
     const std::string& getReference() const;
     // TODO move to utility methods
     const std::string& getStringValue() const;
