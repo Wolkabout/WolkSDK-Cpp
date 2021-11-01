@@ -196,7 +196,8 @@ if (BUILD_CONNECTIVITY)
     file(GLOB_RECURSE PROTOCOL_HEADER_FILES core/protocol/*.h)
     file(GLOB_RECURSE PROTOCOL_JSON_HEADER_FILES core/protocol/json/*.h core/protocol/wolkabout/*.h)
     file(GLOB_RECURSE SERVICE_HEADER_FILES core/service/*.h)
-    file(GLOB_RECURSE MQTT_SOURCE_FILES core/connectivity/*.cpp
+    file(GLOB_RECURSE MQTT_SOURCE_FILES core/Types.cpp
+            core/connectivity/*.cpp
             core/model/*.cpp
             core/persistence/*.cpp
             core/protocol/*.cpp

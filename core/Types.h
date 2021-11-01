@@ -14,6 +14,7 @@ enum class DataType
     LOCATION,
     ENUM,
     VECTOR,
+    UNKNOWN,
 };
 
 std::string toString(DataType type);
@@ -157,10 +158,11 @@ enum class Unit
     GALLON_DRY_US,
     GALLON_UK,
     OUNCE_LIQUID_UK,
+    UNKNOWN,
 };
 
 std::string toString(Unit unit);
-Unit unitFromString(const std::string& unit);
+Unit unitFromString(const std::string& type);
 
 enum class ConnectivityType
 {
@@ -168,6 +170,7 @@ enum class ConnectivityType
     HTTP,
     AMQP,
     GATEWAY,
+    UNDEFINED,
 };
 
 std::string toString(ConnectivityType conn);
@@ -177,6 +180,7 @@ enum class OutboundDataMode
 {
     PUSH,
     PULL,
+    UNKNOWN,
 };
 
 std::string toString(OutboundDataMode mode);
@@ -196,6 +200,7 @@ enum class ParameterName
     GATEWAY,
     GATEWAY_PARENT,
     EXTERNAL_ID,
+    UNKNOWN,
 };
 
 std::string toString(ParameterName parameterName);
@@ -230,6 +235,8 @@ enum class MessageType
 
     GATEWAY_DEVICE_REGISTRATION,
     GATEWAY_DEVICE_REMOVAL,
+
+    UNKNOWN,
 };
 
 std::string toString(MessageType type);
