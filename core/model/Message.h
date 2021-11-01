@@ -57,6 +57,7 @@ private:
 
 public:
     FeedValuesMessage(std::vector<Reading> readings);
+    FeedValuesMessage(const std::vector<std::shared_ptr<Reading>>& readings);
     const MessageType& getMessageType() override;
     const std::map<unsigned long long int, std::vector<Reading>>& getReadings() const;
 };

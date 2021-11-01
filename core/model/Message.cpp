@@ -44,6 +44,15 @@ FeedValuesMessage::FeedValuesMessage(std::vector<Reading> readings) : m_messageT
     }
 }
 
+FeedValuesMessage::FeedValuesMessage(const std::vector<std::shared_ptr<Reading>>& readings)
+: m_messageType(MessageType::FEED_VALUES)
+{
+    for (auto reading : readings)
+    {
+        m_readings[reading->getTimestamp()].emplace_back(*reading);
+    }
+}
+
 const MessageType& FeedValuesMessage::getMessageType()
 {
     return m_messageType;
