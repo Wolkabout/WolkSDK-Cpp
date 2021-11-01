@@ -31,23 +31,21 @@ std::string toString(DataType type)
 
 DataType dataTypeFromString(const std::string& type)
 {
-    switch (type)
-    {
-    case "BOOLEAN":
+    if(type == "BOOLEAN")
         return DataType::BOOLEAN;
-    case "NUMERIC":
+    if(type == "NUMERIC")
         return DataType::NUMERIC;
-    case "STRING":
+    if(type == "STRING")
         return DataType::STRING;
-    case "HEXADECIMAL":
+    if(type == "HEXADECIMAL")
         return DataType::HEXADECIMAL;
-    case "LOCATION":
+    if(type == "LOCATION")
         return DataType::LOCATION;
-    case "ENUM":
+    if(type == "ENUM")
         return DataType::ENUM;
-    case "VECTOR":
+    if(type == "VECTOR")
         return DataType::VECTOR;
-    }
+    return DataType::UNKNOWN;
 }
 
 std::string toString(FeedType type)
@@ -65,15 +63,12 @@ std::string toString(FeedType type)
 
 FeedType feedTypeFromString(const std::string& type)
 {
-    switch (type)
-    {
-    case "IN":
+    if(type == "IN")
         return FeedType::IN;
-    case "IN/OUT":
+    if(type == "IN/OUT")
         return FeedType::IN_OUT;
-    default:
-        return FeedType::IN;
-    }
+
+    return FeedType::IN;
 }
 
 std::string toString(Unit unit)
@@ -334,268 +329,268 @@ std::string toString(Unit unit)
         return "GALLON_UK";
     case Unit::OUNCE_LIQUID_UK:
         return "OUNCE_LIQUID_UK";
+    default:
+        return "";
     }
 }
 
-Unit unitFromString(const std::string& unit)
+Unit unitFromString(const std::string& type)
 {
-    switch (unit)
-    {
-    case "NUMERIC":
+    if(type == "NUMERIC")
         return Unit::NUMERIC;
-    case "BOOLEAN":
+    if(type == "BOOLEAN")
         return Unit::BOOLEAN;
-    case "PERCENT":
+    if(type == "PERCENT")
         return Unit::PERCENT;
-    case "DECIBEL":
+    if(type == "DECIBEL")
         return Unit::DECIBEL;
-    case "LOCATION":
+    if(type == "LOCATION")
         return Unit::LOCATION;
-    case "METRES_PER_SQUARE_SECOND":
+    if(type == "METRES_PER_SQUARE_SECOND")
         return Unit::METRES_PER_SQUARE_SECOND;
-    case "G":
+    if(type == "G")
         return Unit::G;
-    case "MOLE":
+    if(type == "MOLE")
         return Unit::MOLE;
-    case "ATOM":
+    if(type == "ATOM")
         return Unit::ATOM;
-    case "RADIAN":
+    if(type == "RADIAN")
         return Unit::RADIAN;
-    case "REVOLUTION":
+    if(type == "REVOLUTION")
         return Unit::REVOLUTION;
-    case "DEGREE_ANGLE":
+    if(type == "DEGREE_ANGLE")
         return Unit::DEGREE_ANGLE;
-    case "MINUTE_ANGLE":
+    if(type == "MINUTE_ANGLE")
         return Unit::MINUTE_ANGLE;
-    case "SECOND_ANGLE":
+    if(type == "SECOND_ANGLE")
         return Unit::SECOND_ANGLE;
-    case "CENTIRADIAN":
+    if(type == "CENTIRADIAN")
         return Unit::CENTIRADIAN;
-    case "GRADE":
+    if(type == "GRADE")
         return Unit::GRADE;
-    case "SQUARE_METRE":
+    if(type == "SQUARE_METRE")
         return Unit::SQUARE_METRE;
-    case "ARE":
+    if(type == "ARE")
         return Unit::ARE;
-    case "HECTARE":
+    if(type == "HECTARE")
         return Unit::HECTARE;
-    case "KATAL":
+    if(type == "KATAL")
         return Unit::KATAL;
-    case "BIT":
+    if(type == "BIT")
         return Unit::BIT;
-    case "BYTE":
+    if(type == "BYTE")
         return Unit::BYTE;
-    case "SECOND":
+    if(type == "SECOND")
         return Unit::SECOND;
-    case "MINUTE":
+    if(type == "MINUTE")
         return Unit::MINUTE;
-    case "HOUR":
+    if(type == "HOUR")
         return Unit::HOUR;
-    case "DAY":
+    if(type == "DAY")
         return Unit::DAY;
-    case "WEEK":
+    if(type == "WEEK")
         return Unit::WEEK;
-    case "YEAR":
+    if(type == "YEAR")
         return Unit::YEAR;
-    case "MONTH":
+    if(type == "MONTH")
         return Unit::MONTH;
-    case "DAY_SIDEREAL":
+    if(type == "DAY_SIDEREAL")
         return Unit::DAY_SIDEREAL;
-    case "YEAR_SIDEREAL":
+    if(type == "YEAR_SIDEREAL")
         return Unit::YEAR_SIDEREAL;
-    case "YEAR_CALENDAR":
+    if(type == "YEAR_CALENDAR")
         return Unit::YEAR_CALENDAR;
-    case "POISE":
+    if(type == "POISE")
         return Unit::POISE;
-    case "FARAD":
+    if(type == "FARAD")
         return Unit::FARAD;
-    case "COULOMB":
+    if(type == "COULOMB")
         return Unit::COULOMB;
-    case "E":
+    if(type == "E")
         return Unit::E;
-    case "FARADAY":
+    if(type == "FARADAY")
         return Unit::FARADAY;
-    case "FRANKLIN":
+    if(type == "FRANKLIN")
         return Unit::FRANKLIN;
-    case "SIEMENS":
+    if(type == "SIEMENS")
         return Unit::SIEMENS;
-    case "AMPERE":
+    if(type == "AMPERE")
         return Unit::AMPERE;
-    case "GILBERT":
+    if(type == "GILBERT")
         return Unit::GILBERT;
-    case "HENRY":
+    if(type == "HENRY")
         return Unit::HENRY;
-    case "VOLT":
+    if(type == "VOLT")
         return Unit::VOLT;
-    case "CENTIVOLT":
+    if(type == "CENTIVOLT")
         return Unit::CENTIVOLT;
-    case "MILLIVOLT":
+    if(type == "MILLIVOLT")
         return Unit::MILLIVOLT;
-    case "OHM":
+    if(type == "OHM")
         return Unit::OHM;
-    case "JOULE":
+    if(type == "JOULE")
         return Unit::JOULE;
-    case "ERG":
+    if(type == "ERG")
         return Unit::ERG;
-    case "ELECTRON_VOLT":
+    if(type == "ELECTRON_VOLT")
         return Unit::ELECTRON_VOLT;
-    case "NEWTON":
+    if(type == "NEWTON")
         return Unit::NEWTON;
-    case "DYNE":
+    if(type == "DYNE")
         return Unit::DYNE;
-    case "KILOGRAM_FORCE":
+    if(type == "KILOGRAM_FORCE")
         return Unit::KILOGRAM_FORCE;
-    case "POUND_FORCE":
+    if(type == "POUND_FORCE")
         return Unit::POUND_FORCE;
-    case "HERTZ":
+    if(type == "HERTZ")
         return Unit::HERTZ;
-    case "MEGAHERTZ":
+    if(type == "MEGAHERTZ")
         return Unit::MEGAHERTZ;
-    case "GIGAHERTZ":
+    if(type == "GIGAHERTZ")
         return Unit::GIGAHERTZ;
-    case "LUX":
+    if(type == "LUX")
         return Unit::LUX;
-    case "LAMBERT":
+    if(type == "LAMBERT")
         return Unit::LAMBERT;
-    case "STOKE":
+    if(type == "STOKE")
         return Unit::STOKE;
-    case "METRE":
+    if(type == "METRE")
         return Unit::METRE;
-    case "KILOMETRE":
+    if(type == "KILOMETRE")
         return Unit::KILOMETRE;
-    case "CENTIMETRE":
+    if(type == "CENTIMETRE")
         return Unit::CENTIMETRE;
-    case "MILLIMETRE":
+    if(type == "MILLIMETRE")
         return Unit::MILLIMETRE;
-    case "FOOT":
+    if(type == "FOOT")
         return Unit::FOOT;
-    case "FOOT_SURVEY_US":
+    if(type == "FOOT_SURVEY_US")
         return Unit::FOOT_SURVEY_US;
-    case "YARD":
+    if(type == "YARD")
         return Unit::YARD;
-    case "INCH":
+    if(type == "INCH")
         return Unit::INCH;
-    case "MILE":
+    if(type == "MILE")
         return Unit::MILE;
-    case "NAUTICAL_MILE":
+    if(type == "NAUTICAL_MILE")
         return Unit::NAUTICAL_MILE;
-    case "ANGSTROM":
+    if(type == "ANGSTROM")
         return Unit::ANGSTROM;
-    case "ASTRONOMICAL_UNIT":
+    if(type == "ASTRONOMICAL_UNIT")
         return Unit::ASTRONOMICAL_UNIT;
-    case "LIGHT_YEAR":
+    if(type == "LIGHT_YEAR")
         return Unit::LIGHT_YEAR;
-    case "PARSEC":
+    if(type == "PARSEC")
         return Unit::PARSEC;
-    case "POINT":
+    if(type == "POINT")
         return Unit::POINT;
-    case "PIXEL":
+    if(type == "PIXEL")
         return Unit::PIXEL;
-    case "LUMEN":
+    if(type == "LUMEN")
         return Unit::LUMEN;
-    case "CANDELA":
+    if(type == "CANDELA")
         return Unit::CANDELA;
-    case "WEBER":
+    if(type == "WEBER")
         return Unit::WEBER;
-    case "MAXWELL":
+    if(type == "MAXWELL")
         return Unit::MAXWELL;
-    case "TESLA":
+    if(type == "TESLA")
         return Unit::TESLA;
-    case "GAUSS":
+    if(type == "GAUSS")
         return Unit::GAUSS;
-    case "KILOGRAM":
+    if(type == "KILOGRAM")
         return Unit::KILOGRAM;
-    case "GRAM":
+    if(type == "GRAM")
         return Unit::GRAM;
-    case "ATOMIC_MASS":
+    if(type == "ATOMIC_MASS")
         return Unit::ATOMIC_MASS;
-    case "ELECTRON_MASS":
+    if(type == "ELECTRON_MASS")
         return Unit::ELECTRON_MASS;
-    case "POUND":
+    if(type == "POUND")
         return Unit::POUND;
-    case "OUNCE":
+    if(type == "OUNCE")
         return Unit::OUNCE;
-    case "TON_US":
+    if(type == "TON_US")
         return Unit::TON_US;
-    case "TON_UK":
+    if(type == "TON_UK")
         return Unit::TON_UK;
-    case "METRIC_TON":
+    if(type == "METRIC_TON")
         return Unit::METRIC_TON;
-    case "WATT":
+    if(type == "WATT")
         return Unit::WATT;
-    case "HORSEPOWER":
+    if(type == "HORSEPOWER")
         return Unit::HORSEPOWER;
-    case "PASCAL":
+    if(type == "PASCAL")
         return Unit::PASCAL;
-    case "HECTOPASCAL":
+    if(type == "HECTOPASCAL")
         return Unit::HECTOPASCAL;
-    case "ATMOSPHERE":
+    if(type == "ATMOSPHERE")
         return Unit::ATMOSPHERE;
-    case "BAR":
+    if(type == "BAR")
         return Unit::BAR;
-    case "MILLIBAR":
+    if(type == "MILLIBAR")
         return Unit::MILLIBAR;
-    case "MILLIMETER_OF_MERCURY":
+    if(type == "MILLIMETER_OF_MERCURY")
         return Unit::MILLIMETER_OF_MERCURY;
-    case "INCH_OF_MERCURY":
+    if(type == "INCH_OF_MERCURY")
         return Unit::INCH_OF_MERCURY;
-    case "GRAY":
+    if(type == "GRAY")
         return Unit::GRAY;
-    case "RAD":
+    if(type == "RAD")
         return Unit::RAD;
-    case "SIEVERT":
+    if(type == "SIEVERT")
         return Unit::SIEVERT;
-    case "REM":
+    if(type == "REM")
         return Unit::REM;
-    case "BECQUEREL":
+    if(type == "BECQUEREL")
         return Unit::BECQUEREL;
-    case "CURIE":
+    if(type == "CURIE")
         return Unit::CURIE;
-    case "RUTHERFORD":
+    if(type == "RUTHERFORD")
         return Unit::RUTHERFORD;
-    case "ROENTGEN":
+    if(type == "ROENTGEN")
         return Unit::ROENTGEN;
-    case "STERADIAN":
+    if(type == "STERADIAN")
         return Unit::STERADIAN;
-    case "SPHERE":
+    if(type == "SPHERE")
         return Unit::SPHERE;
-    case "KELVIN":
+    if(type == "KELVIN")
         return Unit::KELVIN;
-    case "CELSIUS":
+    if(type == "CELSIUS")
         return Unit::CELSIUS;
-    case "RANKINE":
+    if(type == "RANKINE")
         return Unit::RANKINE;
-    case "FAHRENHEIT":
+    if(type == "FAHRENHEIT")
         return Unit::FAHRENHEIT;
-    case "METRES_PER_SECOND":
+    if(type == "METRES_PER_SECOND")
         return Unit::METRES_PER_SECOND;
-    case "MILES_PER_HOUR":
+    if(type == "MILES_PER_HOUR")
         return Unit::MILES_PER_HOUR;
-    case "KILOMETRES_PER_HOUR":
+    if(type == "KILOMETRES_PER_HOUR")
         return Unit::KILOMETRES_PER_HOUR;
-    case "KNOT":
+    if(type == "KNOT")
         return Unit::KNOT;
-    case "MACH":
+    if(type == "MACH")
         return Unit::MACH;
-    case "C":
+    if(type == "C")
         return Unit::C;
-    case "CUBIC_METRE":
+    if(type == "CUBIC_METRE")
         return Unit::CUBIC_METRE;
-    case "LITRE":
+    if(type == "LITRE")
         return Unit::LITRE;
-    case "DECILITRE":
+    if(type == "DECILITRE")
         return Unit::DECILITRE;
-    case "MILLILITRE":
+    if(type == "MILLILITRE")
         return Unit::MILLILITRE;
-    case "CUBIC_INCH":
+    if(type == "CUBIC_INCH")
         return Unit::CUBIC_INCH;
-    case "GALLON_DRY_US":
+    if(type == "GALLON_DRY_US")
         return Unit::GALLON_DRY_US;
-    case "GALLON_UK":
+    if(type == "GALLON_UK")
         return Unit::GALLON_UK;
-    case "OUNCE_LIQUID_UK":
+    if(type == "OUNCE_LIQUID_UK")
         return Unit::OUNCE_LIQUID_UK;
-    }
+    return Unit::UNKNOWN;
 }
 
 std::string toString(ConnectivityType conn)
@@ -616,17 +611,15 @@ std::string toString(ConnectivityType conn)
 }
 ConnectivityType connectivityTypeFromString(const std::string& type)
 {
-    switch (type)
-    {
-    case "MQTT":
+    if(type == "MQTT")
         return ConnectivityType::MQTT;
-    case "HTTP":
+    if(type == "HTTP")
         return ConnectivityType::HTTP;
-    case "AMQP":
+    if(type == "AMQP")
         return ConnectivityType::AMQP;
-    case "GATEWAY":
+    if(type == "GATEWAY")
         return ConnectivityType::GATEWAY;
-    }
+    return ConnectivityType::UNDEFINED;
 }
 
 std::string toString(OutboundDataMode mode)
@@ -643,13 +636,11 @@ std::string toString(OutboundDataMode mode)
 }
 OutboundDataMode outboundDataModeFromString(const std::string& mode)
 {
-    switch (mode)
-    {
-    case "PUSH":
+    if(mode == "PUSH")
         return OutboundDataMode::PUSH;
-    case "PULL":
+    if(mode == "PULL")
         return OutboundDataMode::PULL;
-    }
+    return OutboundDataMode::UNKNOWN;
 }
 
 std::string toString(ParameterName parameterName)
@@ -686,33 +677,31 @@ std::string toString(ParameterName parameterName)
 }
 ParameterName parameterNameFromString(std::string parameterName)
 {
-    switch (parameterName)
-    {
-    case "CONNECTIVITY_TYPE":
+    if(parameterName == "CONNECTIVITY_TYPE")
         return ParameterName::CONNECTIVITY_TYPE;
-    case "OUTBOUND_DATA_MODE":
+    if(parameterName == "OUTBOUND_DATA_MODE")
         return ParameterName::OUTBOUND_DATA_MODE;
-    case "OUTBOUND_DATA_RETENTION_TIME":
+    if(parameterName == "OUTBOUND_DATA_RETENTION_TIME")
         return ParameterName::OUTBOUND_DATA_RETENTION_TIME;
-    case "MAXIMUM_MESSAGE_SIZE":
+    if(parameterName == "MAXIMUM_MESSAGE_SIZE")
         return ParameterName::MAXIMUM_MESSAGE_SIZE;
-    case "FILE_TRANSFER_PLATFORM_ENABLED":
+    if(parameterName == "FILE_TRANSFER_PLATFORM_ENABLED")
         return ParameterName::FILE_TRANSFER_PLATFORM_ENABLED;
-    case "FILE_TRANSFER_URL_ENABLED":
+    if(parameterName == "FILE_TRANSFER_URL_ENABLED")
         return ParameterName::FILE_TRANSFER_URL_ENABLED;
-    case "FIRMWARE_UPDATE_ENABLED":
+    if(parameterName == "FIRMWARE_UPDATE_ENABLED")
         return ParameterName::FIRMWARE_UPDATE_ENABLED;
-    case "FIRMWARE_UPDATE_CHECK_TIME":
+    if(parameterName == "FIRMWARE_UPDATE_CHECK_TIME")
         return ParameterName::FIRMWARE_UPDATE_CHECK_TIME;
-    case "FIRMWARE_VERSION":
+    if(parameterName == "FIRMWARE_VERSION")
         return ParameterName::FIRMWARE_VERSION;
-    case "GATEWAY":
+    if(parameterName == "GATEWAY")
         return ParameterName::GATEWAY;
-    case "GATEWAY_PARENT":
+    if(parameterName == "GATEWAY_PARENT")
         return ParameterName::GATEWAY_PARENT;
-    case "EXTERNAL_ID":
+    if(parameterName == "EXTERNAL_ID")
         return ParameterName::EXTERNAL_ID;
-    }
+    return  ParameterName::UNKNOWN;
 }
 
 std::string toString(MessageType type)
@@ -774,57 +763,55 @@ std::string toString(MessageType type)
 
 MessageType messageTypeFromString(const std::string& type)
 {
-    switch (type)
-    {
-    case "feed_values":
+    if(type == "feed_values")
         return MessageType::FEED_VALUES;
-    case "pull_feed_values":
+    if(type == "pull_feed_values")
         return MessageType::PULL_FEED_VALUES;
-    case "feed_registration":
+    if(type == "feed_registration")
         return MessageType::FEED_REGISTRATION;
-    case "feed_removal":
+    if(type == "feed_removal")
         return MessageType::FEED_REMOVAL;
-    case "attribute_registration":
+    if(type == "attribute_registration")
         return MessageType::ATTRIBUTE_REGISTRATION;
-    case "parameters":
+    if(type == "parameters")
         return MessageType::PARAMETER_SYNC;
-    case "pull_parameters":
+    if(type == "pull_parameters")
         return MessageType::PULL_PARAMETERS;
-    case "time":
+    if(type == "time")
         return MessageType::TIME_SYNC;
-    case "file_upload_init":
+    if(type == "file_upload_init")
         return MessageType::FILE_UPLOAD_INIT;
-    case "file_upload_status":
+    if(type == "file_upload_status")
         return MessageType::FILE_UPLOAD_STATUS;
-    case "file_upload_abort":
+    if(type == "file_upload_abort")
         return MessageType::FILE_UPLOAD_ABORT;
-    case "file_binary_request":
+    if(type == "file_binary_request")
         return MessageType::FILE_BINARY_REQUEST;
-    case "file_binary_response":
+    if(type == "file_binary_response")
         return MessageType::FILE_BINARY_RESPONSE;
-    case "file_url_download_init":
+    if(type == "file_url_download_init")
         return MessageType::FILE_URL_DOWNLOAD_INIT;
-    case "file_url_download_abort":
+    if(type == "file_url_download_abort")
         return MessageType::FILE_URL_DOWNLOAD_ABORT;
-    case "file_url_download_status":
+    if(type == "file_url_download_status")
         return MessageType::FILE_URL_DOWNLOAD_STATUS;
-    case "file_list":
+    if(type == "file_list")
         return MessageType::FILE_LIST;
-    case "file_delete":
+    if(type == "file_delete")
         return MessageType::FILE_DELETE;
-    case "file_purge":
+    if(type == "file_purge")
         return MessageType::FILE_PURGE;
-    case "firmware_update_install":
+    if(type == "firmware_update_install")
         return MessageType::FIRMWARE_UPDATE_INSTALL;
-    case "firmware_update_status":
+    if(type == "firmware_update_status")
         return MessageType::FIRMWARE_UPDATE_STATUS;
-    case "firmware_update_abort":
+    if(type == "firmware_update_abort")
         return MessageType::FIRMWARE_UPDATE_ABORT;
-    case "gateway_device_registration":
+    if(type == "gateway_device_registration")
         return MessageType::GATEWAY_DEVICE_REGISTRATION;
-    case "gateway_device_removal":
+    if(type == "gateway_device_removal")
         return MessageType::GATEWAY_DEVICE_REMOVAL;
-    }
+    return MessageType::UNKNOWN;
 }
 
 const std::string& Reading::getReference() const
@@ -919,6 +906,6 @@ const unsigned long long int& Reading::getTimestamp() const
 
 void Reading::setTimestamp(std::string timestamp)
 {
-    m_timestamp = std::strtoull(timestamp);
+    m_timestamp = std::strtoull(timestamp.c_str(), nullptr,10);
 }
 }    // namespace wolkabout
