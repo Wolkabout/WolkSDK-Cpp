@@ -917,7 +917,7 @@ const unsigned long long int& Reading::getTimestamp() const
     return m_timestamp;
 }
 
-void Reading::setTimestamp(std::string& timestamp)
+void Reading::setTimestamp(std::string timestamp)
 {
     m_timestamp = std::strtoull(timestamp);
 }
