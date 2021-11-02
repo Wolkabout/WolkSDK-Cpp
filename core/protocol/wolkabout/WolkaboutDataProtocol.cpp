@@ -22,7 +22,15 @@ static void to_json(json& j, const Feed& feed)
 
 static void to_json(json& j, const Reading& reading)
 {
-    j = json{{reading.getReference(), reading.getStringValue()}};
+    j = json{reading.getReference(), reading.getStringValue()};
+}
+
+static void to_json(json& j, const std::vector<Reading>& readings)
+{
+    for(auto reading : readings)
+    {
+        j += json{reading.getReference(), reading.getStringValue()};
+    }
 }
 
 static void to_json(json& j, const Attribute& attribute)
@@ -33,7 +41,7 @@ static void to_json(json& j, const Attribute& attribute)
 
 static void to_json(json& j, const Parameters& param)
 {
-    j = json{{param.first, param.second}};
+    j = json{param.first, param.second};
 }
 
 static void from_json(const json& j, std::vector<Parameters>& p)
@@ -98,14 +106,18 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
 
     for (auto const& member : values)
     {
-        json forTimestamp = json(member.second);
+        json forTimestamp;
+        for (auto reading : member.second)
+        {
+            forTimestamp[reading.getReference()] = reading.getStringValue();
+        }
         if (member.first != 0)
         {
-            forTimestamp.emplace_back(json{{"timestamp", std::to_string(member.first)}});
+            forTimestamp["timestamp"] = member.first;
         }
-        payload += json{{forTimestamp}};
+        payload += json(forTimestamp);
     }
-
+    auto jsonstring = json(payload).dump();
     return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
 }
 
