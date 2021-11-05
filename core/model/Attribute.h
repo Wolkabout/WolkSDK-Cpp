@@ -4,22 +4,24 @@
 #include "core/Types.h"
 
 #include <string>
+#include <utility>
 
 namespace wolkabout
 {
 class Attribute
 {
 public:
-    Attribute(const std::string& name, DataType dataType, std::string value)
-    : m_name(name), m_dataType(dataType), m_value(value)
+    Attribute(std::string name, DataType dataType, std::string value)
+    : m_name(std::move(name)), m_dataType(dataType), m_value(std::move(value))
     {
     }
+//    Attribute(const Attribute& attribute);
     const std::string& getName() const { return m_name; }
     void setName(const std::string& name) { m_name = name; }
     DataType getDataType() const { return m_dataType; }
     void setDataType(DataType dataType) { m_dataType = dataType; }
     std::string getValue() const { return m_value; }
-    void setValue(std::string value) { m_value = value; }
+    void setValue(std::string value) { m_value = std::move(value); }
 
 private:
     std::string m_name;
