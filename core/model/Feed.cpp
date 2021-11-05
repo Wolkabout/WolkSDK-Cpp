@@ -33,4 +33,8 @@ void Feed::setUnit(Unit unit)
 {
     m_unit = unit;
 }
+Feed::Feed(const std::string& mName, const std::string& mReference, FeedType mFeedType, Unit mUnit)
+: m_name(mName), m_reference(mReference), m_feedType(mFeedType), m_unit(mUnit)
+{
+}
 }    // namespace wolkabout

@@ -16,6 +16,7 @@ private:
     Unit m_unit;
 
 public:
+    Feed(const std::string& mName, const std::string& mReference, FeedType mFeedType, Unit mUnit);
     const std::string& getName() const;
     void setName(const std::string& name);
     const std::string& getReference() const;
