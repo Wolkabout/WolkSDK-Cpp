@@ -108,6 +108,14 @@ const std::vector<Attribute>& AttributeRegistrationMessage::getAttributes() cons
 {
     return m_attributes;
 }
+AttributeRegistrationMessage::AttributeRegistrationMessage(std::vector<std::shared_ptr<Attribute>> attributes)
+: m_messageType(MessageType::ATTRIBUTE_REGISTRATION)
+{
+    for (auto attribute : attributes)
+    {
+        m_attributes.push_back(*attribute);
+    }
+}
 
 ParametersUpdateMessage::ParametersUpdateMessage(std::vector<Parameters> parameterList)
 : m_messageType(MessageType::PARAMETER_SYNC), m_parameterList(std::move(parameterList))
