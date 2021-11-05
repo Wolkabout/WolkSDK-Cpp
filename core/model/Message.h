@@ -104,6 +104,7 @@ private:
 
 public:
     AttributeRegistrationMessage(std::vector<Attribute> attributes);
+    AttributeRegistrationMessage(std::vector<std::shared_ptr<Attribute>> attributes);
     const MessageType& getMessageType() override;
     const std::vector<Attribute>& getAttributes() const;
 };
