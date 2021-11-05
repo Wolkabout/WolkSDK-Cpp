@@ -81,22 +81,42 @@ std::vector<std::shared_ptr<Reading>>& InMemoryPersistence::getOrCreateReadingsB
     return m_readings.at(key);
 }
 
+bool InMemoryPersistence::putAttribute(std::shared_ptr<Attribute> attribute)
+{
+    m_attributes.push_back(attribute);
+
+    return true;
+}
+
+std::vector<std::shared_ptr<Attribute>> InMemoryPersistence::getAttributes()
+{
+    return m_attributes;
+}
+
+void InMemoryPersistence::removeAttributes()
+{
+    m_attributes.clear();
+}
+
+bool InMemoryPersistence::putParameter(Parameters parameter)
+{
+    m_parameters.insert(parameter);
+    return true;
+}
+
+std::map<ParameterName, std::string> InMemoryPersistence::getParameters()
+{
+    return m_parameters;
+}
+
+void InMemoryPersistence::removeParameters(const ParameterName parameterName)
+{
+    m_parameters.clear();
+}
+
 bool InMemoryPersistence::isEmpty()
 {
-    return getReadingsKeys().empty() /*&& m_actuatorStatuses.empty()*/ ;
-}
-bool InMemoryPersistence::putAttribute(const std::string& key, std::shared_ptr<std::vector<Attribute>> attribute)
-{
-    return false;
-}
-std::shared_ptr<std::vector<Attribute>> InMemoryPersistence::getAttribute(const std::string& key)
-{
-    return std::shared_ptr<std::vector<Attribute>>();
-}
-void InMemoryPersistence::removeAttribute(const std::string& key) {}
-std::vector<std::string> InMemoryPersistence::getAttributeKeys()
-{
-    return std::vector<std::string>();
+    return getReadingsKeys().empty() && m_attributes.empty() && m_parameters.empty();
 }
 
 }    // namespace wolkabout

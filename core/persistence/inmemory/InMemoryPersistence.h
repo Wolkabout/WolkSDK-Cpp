@@ -42,17 +42,21 @@ public:
    std::vector<std::string> getReadingsKeys() override;
 
    bool isEmpty() override;
-   bool putAttribute(const std::string& key, std::shared_ptr<std::vector<Attribute>> attribute) override;
-   std::shared_ptr<std::vector<Attribute>> getAttribute(const std::string& key) override;
-   void removeAttribute(const std::string& key) override;
-   std::vector<std::string> getAttributeKeys() override;
+
+   bool putAttribute(std::shared_ptr<Attribute> attribute) override;
+   std::vector<std::shared_ptr<Attribute>> getAttributes() override;
+   void removeAttributes() override;
+
+   bool putParameter(Parameters parameter) override;
+   std::map<ParameterName, std::string> getParameters() override;
+   void removeParameters(const ParameterName parameterName) override;
 
    private:
    std::vector<std::shared_ptr<Reading>>& getOrCreateReadingsByKey(const std::string& key);
 
    std::map<std::string, std::vector<std::shared_ptr<Reading>>> m_readings;
 
-   std::map<std::string, std::vector<std::shared_ptr<Attribute>>> m_attributes;
+   std::vector<std::shared_ptr<Attribute>> m_attributes;
 
    std::map<ParameterName, std::string> m_parameters;
 };

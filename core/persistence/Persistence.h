@@ -21,6 +21,7 @@
 #include "core/model/Feed.h"
 #include "core/Types.h"
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -89,35 +90,28 @@ public:
     /**
      * @brief Inserts the device attribute.
      *
-     * @param key  with which attribute should be associated.
      * @param attribute  to be inserted
      * @return {@code true} if successful, or {@code false} if
      * element can not be inserted
      */
-    virtual bool putAttribute(const std::string& key,
-                                  std::shared_ptr<std::vector<Attribute>> attribute) = 0;
+    virtual bool putAttribute(std::shared_ptr<Attribute> attribute) = 0;
 
     /**
      * @brief Retrieves device attributes contained in this storage.
      *
-     * @return Device attribute as {@code std::shared_ptr<std::vector<Attribute>>}, or {@code nullptr}
+     * @return Device attribute as {@code std::vector<std::shared_ptr<Attribute>>}, or {@code nullptr}
      * if this storage does not contain persisted device attributes
      */
-    virtual std::shared_ptr<std::vector<Attribute>> getAttribute(const std::string& key) = 0;
+    virtual std::vector<std::shared_ptr<Attribute>> getAttributes() = 0;
 
     /**
-     * @brief Removes device attribute from this storage, associated with given {@code key}.
+     * @brief Removes device attributes from this storage.
      */
-    virtual void removeAttribute(const std::string& key) = 0;
+    virtual void removeAttributes() = 0;
 
-    /**
-     * Returns {@code std::vector<std::string>} of attribute keys
-     * contained in this storage.
-     *
-     * @return {@code std::vector<std::string>} containing keys, or empty {@code
-     * std::vector<std::string>} if no attributes are present.
-     */
-    virtual std::vector<std::string> getAttributeKeys() = 0;
+    virtual bool putParameter(Parameters parameter) = 0;
+    virtual std::map<ParameterName, std::string> getParameters() = 0;
+    virtual void removeParameters(const ParameterName parameterName) = 0;
 
     /**
      * Returns {@code true} if this storage contains no wolkabout::Readings,
