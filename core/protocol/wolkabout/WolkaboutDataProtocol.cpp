@@ -41,7 +41,7 @@ static void to_json(json& j, const Attribute& attribute)
 
 static void to_json(json& j, const Parameters& param)
 {
-    j = json{param.first, param.second};
+    j[toString(param.first)] = param.second;
 }
 
 static void from_json(const json& j, std::vector<Parameters>& p)
@@ -148,7 +148,12 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
                  toString(parametersUpdateMessage.getMessageType());
 
-    json payload = json(parametersUpdateMessage.getParameters());
+    json payload;
+
+    for(auto parameter : parametersUpdateMessage.getParameters())
+    {
+        payload[toString(parameter.first)] = parameter.second;
+    }
 
     return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
 }
