@@ -155,16 +155,34 @@ find_package(Threads REQUIRED)
 set(INSTALL_TARGETS)
 
 # Utilities
-file(GLOB_RECURSE UTILITY_HEADER_FILES core/utilities/*.h core/utilities/*.hpp core/Version.h)
-file(GLOB_RECURSE UTILITY_SOURCE_FILES core/utilities/*.cpp)
+set(UTILITY_SOURCE_FILES core/utilities/ByteUtils.cpp
+        core/utilities/CommandBuffer.cpp
+        core/utilities/FileSystemUtils.cpp
+        core/utilities/Logger.cpp
+        core/utilities/LogManager.cpp
+        core/utilities/StringUtils.cpp
+        core/utilities/Timer.cpp)
+set(UTILITY_HEADER_FILES core/utilities/Buffer.h
+        core/utilities/ByteUtils.h
+        core/utilities/CommandBuffer.h
+        core/utilities/FileSystemUtils.h
+        core/utilities/json.hpp
+        core/utilities/Logger.h
+        core/utilities/LogManager.h
+        core/utilities/LogUploader.h
+        core/utilities/Service.h
+        core/utilities/StringUtils.h
+        core/utilities/Timer.h
+        core/Version.h)
 
 # path for interface files
-file(COPY ${UTILITY_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/util/core/utilities)
+file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/utilities PATTERN *.cpp EXCLUDE)
+file(COPY core/Version.h DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/)
 
 add_library(${PROJECT_NAME}Utility SHARED ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
-target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
-target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/util)
 target_link_libraries(${PROJECT_NAME}Utility PUBLIC crypto)
+target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
 add_dependencies(${PROJECT_NAME}Utility spdlog)
 
@@ -172,15 +190,15 @@ list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
 
 # Build the AwsLogUploader
 if (BUILD_AWS_LOG_UPLOADER)
-    file(GLOB ALU_SOURCE_FILES core/log_uploader/*.cpp)
-    file(GLOB ALU_HEADER_FILES core/log_uploader/*.h)
+    set(ALU_SOURCE_FILES core/log_uploader/AwsLogUploader.cpp)
+    set(ALU_HEADER_FILES core/log_uploader/AwsLogUploader.h)
 
-    file(COPY ${ALU_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/log/core/log_uploader)
+    file(COPY core/log_uploader/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/log_uploader PATTERN *.cpp EXCLUDE)
 
     add_library(${PROJECT_NAME}Aws SHARED ${ALU_SOURCE_FILES} ${ALU_HEADER_FILES})
-    target_include_directories(${PROJECT_NAME}Aws PRIVATE ${PROJECT_SOURCE_DIR})
-    target_include_directories(${PROJECT_NAME}Aws PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/log)
     target_link_libraries(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-cpp-sdk-core aws-cpp-sdk-s3)
+    target_include_directories(${PROJECT_NAME}Aws PRIVATE ${PROJECT_SOURCE_DIR})
+    target_include_directories(${PROJECT_NAME}Aws PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
     set_target_properties(${PROJECT_NAME}Aws PROPERTIES INSTALL_RPATH "$ORIGIN")
     add_dependencies(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-sdk-cpp)
 
@@ -189,38 +207,50 @@ endif ()
 
 # Build the MQTT logic if Paho is enabled
 if (BUILD_CONNECTIVITY)
-    file(GLOB CORE_HEADER_FILES core/*.h)
-    file(GLOB CONNECTIVITY_HEADER_FILES core/connectivity/*.h)
-    file(GLOB CONNECTIVITY_MQTT_HEADER_FILES core/connectivity/mqtt/*.h)
-    file(GLOB_RECURSE MODEL_HEADER_FILES core/model/*.h)
-    file(GLOB_RECURSE PERSISTENCE_HEADER_FILES core/persistence/*.h)
-    file(GLOB_RECURSE PERSISTENCE_INMEMORY_HEADER_FILES core/persistence/inmemory/*.h)
-    file(GLOB_RECURSE PROTOCOL_HEADER_FILES core/protocol/*.h)
-    file(GLOB_RECURSE PROTOCOL_JSON_HEADER_FILES core/protocol/json/*.h core/protocol/wolkabout/*.h)
-    file(GLOB_RECURSE SERVICE_HEADER_FILES core/service/*.h)
-    file(GLOB_RECURSE MQTT_SOURCE_FILES core/Types.cpp
-            core/connectivity/*.cpp
-            core/model/*.cpp
-            core/persistence/*.cpp
-            core/protocol/*.cpp
-            core/service/*.cpp
-            core/protocol/wolkabout/*.cpp)
+    set(LIB_SOURCE_FILES
+            core/connectivity/mqtt/MqttCallback.cpp
+            core/connectivity/mqtt/MqttClient.cpp
+            core/connectivity/mqtt/MqttConnectivityService.cpp
+            core/connectivity/mqtt/PahoMqttClient.cpp
+            core/connectivity/ConnectivityService.cpp
+            core/model/Attribute.cpp
+            core/model/Device.cpp
+            core/model/Feed.cpp
+            core/model/Message.cpp
+            core/persistence/inmemory/InMemoryPersistence.cpp
+            core/protocol/wolkabout/WolkaboutDataProtocol.cpp
+            core/Types.cpp)
+    set(LIB_HEADER_FILES core/connectivity/mqtt/MqttCallback.h
+            core/connectivity/mqtt/MqttClient.h
+            core/connectivity/mqtt/MqttConnectivityService.h
+            core/connectivity/mqtt/PahoMqttClient.h
+            core/connectivity/ConnectivityService.h
+            core/model/Attribute.h
+            core/model/Device.h
+            core/model/Feed.h
+            core/model/Message.h
+            core/persistence/inmemory/InMemoryPersistence.h
+            core/persistence/Persistence.h
+            core/protocol/wolkabout/WolkaboutDataProtocol.h
+            core/protocol/DataProtocol.h
+            core/protocol/Protocol.h
+            core/service/BinaryDataListener.h
+            core/service/FirmwareInstaller.h
+            core/service/FirmwareUpdateCommandListener.h
+            core/InboundMessageHandler.h
+            core/Types.h)
 
-    file(COPY ${CORE_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core)
-    file(COPY ${CONNECTIVITY_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/connectivity)
-    file(COPY ${CONNECTIVITY_MQTT_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/connectivity/mqtt)
-    file(COPY ${MODEL_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/model)
-    file(COPY ${PERSISTENCE_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/persistence)
-    file(COPY ${PERSISTENCE_INMEMORY_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/persistence/inmemory)
-    file(COPY ${PROTOCOL_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/protocol)
-    file(COPY ${PROTOCOL_JSON_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/protocol/json)
-    file(COPY ${SERVICE_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/service)
+    file(COPY core/InboundMessageHandler.h DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core)
+    file(COPY core/Types.h DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core)
+    file(COPY core/connectivity/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/connectivity PATTERN *.cpp EXCLUDE)
+    file(COPY core/model/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/model PATTERN *.cpp EXCLUDE)
+    file(COPY core/persistence/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/persistence PATTERN *.cpp EXCLUDE)
+    file(COPY core/protocol/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/protocol PATTERN *.cpp EXCLUDE)
+    file(COPY core/service/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/service PATTERN *.cpp EXCLUDE)
 
-    add_library(${PROJECT_NAME} SHARED ${MQTT_SOURCE_FILES} ${CORE_HEADER_FILES} ${CONNECTIVITY_HEADER_FILES}
-            ${CONNECTIVITY_MQTT_HEADER_FILES} ${MODEL_HEADER_FILES} ${PERSISTENCE_HEADER_FILES} ${PERSISTENCE_INMEMORY_HEADER_FILES}
-            ${PROTOCOL_HEADER_FILES} ${PROTOCOL_JSON_HEADER_FILES} ${SERVICE_HEADER_FILES})
+    add_library(${PROJECT_NAME} SHARED ${LIB_SOURCE_FILES} ${LIB_HEADER_FILES})
     target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as)
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
     add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}Utility pahomqttc pahomqttcpp)
@@ -229,18 +259,10 @@ if (BUILD_CONNECTIVITY)
 endif ()
 
 # Create the install rule
+install(DIRECTORY ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include/core/)
 install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-if (BUILD_CONNECTIVITY)
-    install(FILES ${CORE_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk)
-    install(FILES ${CONNECTIVITY_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/connectivity)
-    install(FILES ${MODEL_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/model)
-    install(FILES ${PERSISTENCE_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/persistence)
-    install(FILES ${PROTOCOL_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/protocol)
-    install(FILES ${SERVICE_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/service)
-endif ()
-install(FILES ${UTILITY_HEADER_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wolksdk/utilities)
 
 # Prepare the format rule
-file(GLOB_RECURSE HEADER_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.h" "${CMAKE_CURRENT_LIST_DIR}/core/*.hpp")
-file(GLOB_RECURSE SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/core/*.cpp")
+file(GLOB_RECURSE HEADER_FILES ${UTILITY_HEADER_FILES} ${ALU_HEADER_FILES} ${LIB_HEADER_FILES})
+file(GLOB_RECURSE SOURCE_FILES ${UTILITY_SOURCE_FILES} ${ALU_SOURCE_FILES} ${LIB_SOURCE_FILES})
 add_subdirectory(cmake)
