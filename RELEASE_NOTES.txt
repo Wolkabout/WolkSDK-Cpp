@@ -1,0 +1,12 @@
+ _       __      ____   _____ ____  __ __      ______
+| |     / /___  / / /__/ ___// __ \/ //_/     / ____/___  ____
+| | /| / / __ \/ / //_/\__ \/ / / / ,< ______/ /   / __ \/ __ \
+| |/ |/ / /_/ / / ,<  ___/ / /_/ / /| /_____/ /___/ /_/ / /_/ /
+|__/|__/\____/_/_/|_|/____/_____/_/ |_|     \____/ .___/ .___/
+                                                /_/   /_/
+========================================================================================================================
+
+**Version 3.0.0-prerelease**
+    - [REWORK] - Updated the WolkSDK-Cpp to be ready for Wolkabout IoT Platform 22.GA - The Digital Twin Update
+    - [IMPROVEMENTS] - Fixed the CMakeLists.txt file for private header file finding to use project files in private
+    - [IMPROVEMENTS] - Added the pre-commit hook that will check if the code is formatted before committing.

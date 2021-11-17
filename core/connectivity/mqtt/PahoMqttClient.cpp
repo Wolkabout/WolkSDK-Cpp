@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-#include "PahoMqttClient.h"
+#include "core/connectivity/mqtt/PahoMqttClient.h"
 
-#include "MqttCallback.h"
-#include "MqttClient.h"
+#include "core/connectivity/mqtt/MqttCallback.h"
 #include "core/utilities/Logger.h"
 
 #include <atomic>
-#include <memory>
 #include <mqtt/async_client.h>
 #include <string>
 
 namespace wolkabout
 {
-const unsigned short PahoMqttClient::MQTT_CONNECTION_COMPLETITION_TIMEOUT_MSEC = 2000;
-const unsigned short PahoMqttClient::MQTT_ACTION_COMPLETITION_TIMEOUT_MSEC = 2000;
-const unsigned short PahoMqttClient::MQTT_KEEP_ALIVE_SEC = 60;
-const unsigned short PahoMqttClient::MQTT_QOS = 2;
+const std::uint16_t PahoMqttClient::MQTT_CONNECTION_COMPLETION_TIMEOUT_MSEC = 2000;
+const std::uint16_t PahoMqttClient::MQTT_ACTION_COMPLETION_TIMEOUT_MSEC = 2000;
+const std::uint16_t PahoMqttClient::MQTT_KEEP_ALIVE_SEC = 60;
+const std::uint16_t PahoMqttClient::MQTT_QOS = 2;
 
 PahoMqttClient::PahoMqttClient() : m_isConnected(false)
 {
@@ -98,7 +96,7 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
     {
         LOG(DEBUG) << "Connecting to: " << host;
         mqtt::token_ptr token = m_client->connect(connectOptions);
-        token->wait_for(std::chrono::milliseconds(MQTT_CONNECTION_COMPLETITION_TIMEOUT_MSEC));
+        token->wait_for(std::chrono::milliseconds(MQTT_CONNECTION_COMPLETION_TIMEOUT_MSEC));
 
         if (!token->is_complete() || !m_isConnected)
         {
@@ -151,7 +149,7 @@ bool PahoMqttClient::subscribe(const std::string& topic)
         LOG(DEBUG) << "Subscribing to: " << topic;
 
         mqtt::token_ptr token = m_client->subscribe(topic, MQTT_QOS);
-        token->wait_for(std::chrono::milliseconds(MQTT_ACTION_COMPLETITION_TIMEOUT_MSEC));
+        token->wait_for(std::chrono::milliseconds(MQTT_ACTION_COMPLETION_TIMEOUT_MSEC));
 
         if (!token->is_complete())
         {
@@ -188,7 +186,7 @@ bool PahoMqttClient::publish(const std::string& topic, const std::string& messag
         pubmsg->set_retained(retained);
 
         mqtt::token_ptr token = m_client->publish(pubmsg);
-        token->wait_for(std::chrono::milliseconds(MQTT_ACTION_COMPLETITION_TIMEOUT_MSEC));
+        token->wait_for(std::chrono::milliseconds(MQTT_ACTION_COMPLETION_TIMEOUT_MSEC));
 
         if (!token->is_complete() || !m_isConnected)
         {
@@ -205,6 +203,4 @@ bool PahoMqttClient::publish(const std::string& topic, const std::string& messag
     LOG(TRACE) << "Publishing successful";
     return true;
 }
-
-PahoMqttClient::~PahoMqttClient() = default;
 }    // namespace wolkabout

@@ -1,4 +1,4 @@
-# Copyright 2020 WolkAbout Technology s.r.o.
+# Copyright 2021 WolkAbout Technology s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -162,6 +162,7 @@ file(GLOB_RECURSE UTILITY_SOURCE_FILES core/utilities/*.cpp)
 file(COPY ${UTILITY_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/util/core/utilities)
 
 add_library(${PROJECT_NAME}Utility SHARED ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
+target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/util)
 target_link_libraries(${PROJECT_NAME}Utility PUBLIC crypto)
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
@@ -177,13 +178,14 @@ if (BUILD_AWS_LOG_UPLOADER)
     file(COPY ${ALU_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/log/core/log_uploader)
 
     add_library(${PROJECT_NAME}Aws SHARED ${ALU_SOURCE_FILES} ${ALU_HEADER_FILES})
+    target_include_directories(${PROJECT_NAME}Aws PRIVATE ${PROJECT_SOURCE_DIR})
     target_include_directories(${PROJECT_NAME}Aws PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/log)
     target_link_libraries(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-cpp-sdk-core aws-cpp-sdk-s3)
     set_target_properties(${PROJECT_NAME}Aws PROPERTIES INSTALL_RPATH "$ORIGIN")
     add_dependencies(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-sdk-cpp)
 
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Aws)
-endif()
+endif ()
 
 # Build the MQTT logic if Paho is enabled
 if (BUILD_CONNECTIVITY)
@@ -215,8 +217,9 @@ if (BUILD_CONNECTIVITY)
     file(COPY ${SERVICE_HEADER_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity/core/service)
 
     add_library(${PROJECT_NAME} SHARED ${MQTT_SOURCE_FILES} ${CORE_HEADER_FILES} ${CONNECTIVITY_HEADER_FILES}
-        ${CONNECTIVITY_MQTT_HEADER_FILES} ${MODEL_HEADER_FILES} ${PERSISTENCE_HEADER_FILES} ${PERSISTENCE_INMEMORY_HEADER_FILES}
-        ${PROTOCOL_HEADER_FILES} ${PROTOCOL_JSON_HEADER_FILES} ${SERVICE_HEADER_FILES})
+            ${CONNECTIVITY_MQTT_HEADER_FILES} ${MODEL_HEADER_FILES} ${PERSISTENCE_HEADER_FILES} ${PERSISTENCE_INMEMORY_HEADER_FILES}
+            ${PROTOCOL_HEADER_FILES} ${PROTOCOL_JSON_HEADER_FILES} ${SERVICE_HEADER_FILES})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR})
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/interface/connectivity)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as)
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")

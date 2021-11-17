@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,11 @@ class Message
 {
 public:
     Message(std::string content, std::string channel);
+
     virtual ~Message() = default;
 
     const std::string& getContent() const;
+
     const std::string& getChannel() const;
 
 private:
@@ -46,89 +48,89 @@ class MessageObject
 {
 public:
     virtual ~MessageObject() = default;
-    virtual const MessageType& getMessageType() = 0;
+
+    virtual MessageType getMessageType() = 0;
 };
 
 class FeedValuesMessage : public MessageObject
 {
-private:
-    std::map<unsigned long long int, std::vector<Reading>> m_readings;
-    MessageType m_messageType;
-
 public:
-    FeedValuesMessage(std::vector<Reading> readings);
-    FeedValuesMessage(const std::vector<std::shared_ptr<Reading>>& readings);
-    const MessageType& getMessageType() override;
-    const std::map<unsigned long long int, std::vector<Reading>>& getReadings() const;
+    explicit FeedValuesMessage(const std::vector<Reading>& readings);
+
+    explicit FeedValuesMessage(const std::vector<std::shared_ptr<Reading>>& readings);
+
+    MessageType getMessageType() override;
+
+    const std::map<std::uint64_t, std::vector<Reading>>& getReadings() const;
+
+private:
+    std::map<std::uint64_t, std::vector<Reading>> m_readings;
 };
 
 class PullFeedValuesMessage : public MessageObject
 {
-private:
-    MessageType m_messageType;
-
 public:
-    PullFeedValuesMessage();
-    const MessageType& getMessageType() override;
+    MessageType getMessageType() override;
 };
 
 class FeedRegistrationMessage : public MessageObject
 {
-private:
-    MessageType m_messageType;
-    std::vector<Feed> m_feeds;
-
 public:
-    FeedRegistrationMessage(std::vector<Feed> feeds);
-    const MessageType& getMessageType() override;
+    explicit FeedRegistrationMessage(std::vector<Feed> feeds);
+
+    MessageType getMessageType() override;
+
     const std::vector<Feed>& getFeeds() const;
+
+private:
+    std::vector<Feed> m_feeds;
 };
 
 class FeedRemovalMessage : public MessageObject
 {
-private:
-    MessageType m_messageType;
-    std::vector<std::string> m_references;
-
 public:
-    FeedRemovalMessage(std::vector<std::string> feedRefsToRemove);
-    const MessageType& getMessageType() override;
+    explicit FeedRemovalMessage(std::vector<std::string> feedRefsToRemove);
+
+    MessageType getMessageType() override;
+
     const std::vector<std::string>& getReferences() const;
+
+private:
+    std::vector<std::string> m_references;
 };
 
 class AttributeRegistrationMessage : public MessageObject
 {
-private:
-    MessageType m_messageType;
-    std::vector<Attribute> m_attributes;
-
 public:
-    AttributeRegistrationMessage(std::vector<Attribute> attributes);
-    AttributeRegistrationMessage(std::vector<std::shared_ptr<Attribute>> attributes);
-    const MessageType& getMessageType() override;
+    explicit AttributeRegistrationMessage(std::vector<Attribute> attributes);
+
+    explicit AttributeRegistrationMessage(const std::vector<std::shared_ptr<Attribute>>& attributes);
+
+    MessageType getMessageType() override;
+
     const std::vector<Attribute>& getAttributes() const;
+
+private:
+    std::vector<Attribute> m_attributes;
 };
 
 class ParametersUpdateMessage : public MessageObject
 {
-private:
-    MessageType m_messageType;
-    std::vector<Parameters> m_parameterList;
-
 public:
-    ParametersUpdateMessage(std::vector<Parameters> parameterList);
-    const MessageType& getMessageType() override;
+    explicit ParametersUpdateMessage(std::vector<Parameters> parameterList);
+
+    MessageType getMessageType() override;
+
     const std::vector<Parameters>& getParameters() const;
+
+private:
+    std::vector<Parameters> m_parameterList;
 };
 
 class ParametersPullMessage : public MessageObject
 {
-private:
-    MessageType m_messageType;
-
 public:
-    ParametersPullMessage();
-    const MessageType& getMessageType() override;
+    MessageType getMessageType() override;
 };
 
 }    // namespace wolkabout
