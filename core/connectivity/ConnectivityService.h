@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public:
 
     virtual bool isConnected() = 0;
 
-    virtual bool publish(std::shared_ptr<Message> outboundMessage, bool persistent = false) = 0;
+    virtual bool publish(std::shared_ptr<Message> outboundMessage, bool persistent) = 0;
 
     void setListener(std::weak_ptr<ConnectivityServiceListener> listener);
 

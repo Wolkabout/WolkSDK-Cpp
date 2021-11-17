@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-#include "ConnectivityService.h"
+#include "core/connectivity/ConnectivityService.h"
+
+#include <utility>
 
 namespace wolkabout
 {
 void ConnectivityService::setListener(std::weak_ptr<ConnectivityServiceListener> listener)
 {
-    m_listener = listener;
+    m_listener = std::move(listener);
 }
 }    // namespace wolkabout

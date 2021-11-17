@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 #ifndef PERSISTENCE_H
 #define PERSISTENCE_H
 
+#include "core/Types.h"
 #include "core/model/Attribute.h"
 #include "core/model/Feed.h"
-#include "core/Types.h"
 
 #include <map>
 #include <memory>
@@ -66,8 +66,7 @@ public:
      * less than {@code count} wolkabout::Readings if this storage does not
      * have requested number of elements
      */
-    virtual std::vector<std::shared_ptr<Reading>> getReadings(const std::string& key,
-                                                                          std::uint_fast64_t count) = 0;
+    virtual std::vector<std::shared_ptr<Reading>> getReadings(const std::string& key, std::uint_fast64_t count) = 0;
 
     /**
      * @brief Removes first {@code count} wolkabout::Readings of this
@@ -110,7 +109,9 @@ public:
     virtual void removeAttributes() = 0;
 
     virtual bool putParameter(Parameters parameter) = 0;
+
     virtual std::map<ParameterName, std::string> getParameters() = 0;
+
     virtual void removeParameters(const ParameterName parameterName) = 0;
 
     /**

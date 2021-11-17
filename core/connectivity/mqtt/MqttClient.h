@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ public:
     using OnConnectionLostCallback = std::function<void()>;
 
     MqttClient();
+
     virtual ~MqttClient() = default;
 
     virtual bool connect(const std::string& username, const std::string& password, const std::string& address,
@@ -41,17 +42,18 @@ public:
     virtual bool subscribe(const std::string& topic) = 0;
 
     virtual bool publish(const std::string& topic, const std::string& message, bool retained = false) = 0;
+
     void onMessageReceived(OnMessageReceivedCallback callback);
 
     void onConnectionLost(OnConnectionLostCallback callback);
 
-    void setLastWill(const std::string& topic, const std::string& message, bool retained = false);
     std::string getLastWillTopic() const;
     std::string getLastWillMessage() const;
     bool getLastWillRetain() const;
+    void setLastWill(const std::string& topic, const std::string& message, bool retained = false);
 
-    void setTrustStore(const std::string& trustStore);
     std::string getTrustStore() const;
+    void setTrustStore(const std::string& trustStore);
 
 protected:
     OnMessageReceivedCallback m_onMessageReceived;
@@ -60,7 +62,6 @@ protected:
 
 private:
     std::string m_trustStore;
-
     std::string m_lastWillTopic;
     std::string m_lastWillMessage;
     bool m_lastWillRetain;

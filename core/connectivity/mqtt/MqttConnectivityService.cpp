@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "MqttConnectivityService.h"
+#include "core/connectivity/mqtt/MqttConnectivityService.h"
 
 #include "core/model/Message.h"
 
@@ -22,7 +22,8 @@ namespace wolkabout
 {
 MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,
                                                  std::string password, std::string host, std::string trustStore)
-: MqttConnectivityService(mqttClient, key, password, host, trustStore, key)
+: MqttConnectivityService(std::move(mqttClient), std::move(key), std::move(password), std::move(host),
+                          std::move(trustStore), std::move(key))
 {
 }
 
@@ -35,12 +36,9 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
 , m_host(std::move(host))
 , m_trustStore(std::move(trustStore))
 , m_clientId(std::move(clientId))
-, m_lastWillChannel("")
-, m_lastWillPayload("")
 , m_lastWillRetain(false)
-, m_connected(false)
 {
-    m_mqttClient->onMessageReceived([this](std::string topic, std::string message) -> void {
+    m_mqttClient->onMessageReceived([this](const std::string& topic, const std::string& message) -> void {
         if (auto handler = m_listener.lock())
         {
             handler->messageReceived(topic, message);
@@ -99,5 +97,4 @@ bool MqttConnectivityService::publish(std::shared_ptr<Message> outboundMessage, 
 {
     return m_mqttClient->publish(outboundMessage->getChannel(), outboundMessage->getContent(), persistent);
 }
-
 }    // namespace wolkabout
