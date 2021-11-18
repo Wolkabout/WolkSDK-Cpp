@@ -847,7 +847,7 @@ const std::string& Reading::getStringValue() const
 {
     return m_value;
 }
-Reading::Reading(std::string reference, std::string value, unsigned long long int rtcTimestamp)
+Reading::Reading(std::string reference, std::string value, std::uint64_t rtcTimestamp)
 : m_reference(reference), m_value(value), m_timestamp(rtcTimestamp)
 {
 }
@@ -857,7 +857,7 @@ Reading::Reading(const Reading& reading)
 {
 }
 
-void Reading::setTimestamp(unsigned long long int& timestamp) {}
+void Reading::setTimestamp(std::uint64_t& timestamp) {}
 
 const float Reading::getNumericValue() const
 {
@@ -916,7 +916,7 @@ const std::vector<float> Reading::getVectorValue() const
 
     return vectorVal;
 }
-const unsigned long long int& Reading::getTimestamp() const
+const std::uint64_t& Reading::getTimestamp() const
 {
     return m_timestamp;
 }

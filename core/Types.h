@@ -270,16 +270,16 @@ class Reading
 private:
     std::string m_reference;
     std::string m_value;
-    unsigned long long int m_timestamp;
+    std::uint64_t m_timestamp;
 
 public:
     Reading() = default;
-    Reading(std::string reference, std::string value, unsigned long long int rtcTimestamp = 0);
+    Reading(std::string reference, std::string value, std::uint64_t rtcTimestamp = 0);
     Reading(const Reading& reading);
 
     void setReference(const std::string& reference);
     void setValue(const std::string& value);
-    void setTimestamp(unsigned long long int& timestamp);
+    void setTimestamp(std::uint64_t& timestamp);
     void setTimestamp(std::string timestamp);
     const std::string& getReference() const;
     // TODO move to utility methods
@@ -289,7 +289,7 @@ public:
     const int getHexValue() const;
     const Location getLocationValue() const;
     const std::vector<float> getVectorValue() const;
-    const unsigned long long int& getTimestamp() const;
+    const std::uint64_t& getTimestamp() const;
 };
 
 }    // namespace wolkabout
