@@ -16,11 +16,9 @@
 
 #include "core/connectivity/mqtt/PahoMqttClient.h"
 
-#include "core/connectivity/mqtt/MqttCallback.h"
 #include "core/utilities/Logger.h"
 
 #include <atomic>
-#include <mqtt/async_client.h>
 #include <string>
 
 namespace wolkabout
