@@ -146,8 +146,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}     -Wall -Wextra -pedantic             
                                             -Wvariadic-macros                                                          \
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
 
-include_directories(SYSTEM "${CMAKE_PREFIX_PATH}/include")
-link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+link_directories(${CMAKE_PREFIX_PATH}/lib)
+include_directories(SYSTEM ${CMAKE_PREFIX_PATH}/include)
 
 find_package(Threads REQUIRED)
 
@@ -259,7 +259,9 @@ if (BUILD_CONNECTIVITY)
 endif ()
 
 # Create the install rule
-install(DIRECTORY ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include/core/)
+install(DIRECTORY ${CMAKE_LIBRARY_INCLUDE_DIRECTORY} DESTINATION ${CMAKE_INSTALL_PREFIX}/include PATTERN *.h)
+install(DIRECTORY ${CMAKE_PREFIX_PATH}/include DESTINATION ${CMAKE_INSTALL_PREFIX} PATTERN *.h)
+install(DIRECTORY ${CMAKE_PREFIX_PATH}/lib/ DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # Prepare the format rule
