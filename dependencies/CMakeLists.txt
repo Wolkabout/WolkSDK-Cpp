@@ -1,8 +1,8 @@
 include(ExternalProject)
 
 set(SPDLOG_VERSION "1.7.0")
-set(PAHO_MQTT_C_VERSION "1.3.1")
-set(PAHO_MQTT_CPP_VERSION "1.1")
+set(PAHO_MQTT_C_VERSION "1.3.8")
+set(PAHO_MQTT_CPP_VERSION "1.2.0")
 set(GTEST_VERSION "1.10.0")
 set(POCO_VERSION "1.9.4")
 set(AWS_SDK_VERSION "1.8.173")
