@@ -217,6 +217,7 @@ if (BUILD_CONNECTIVITY)
             core/model/Message.cpp
             core/persistence/inmemory/InMemoryPersistence.cpp
             core/protocol/wolkabout/WolkaboutDataProtocol.cpp
+            core/protocol/wolkabout/WolkaboutFileManagementProtocol.cpp
             core/Types.cpp)
     set(LIB_HEADER_FILES core/connectivity/mqtt/MqttCallback.h
             core/connectivity/mqtt/MqttClient.h
@@ -230,6 +231,7 @@ if (BUILD_CONNECTIVITY)
             core/persistence/inmemory/InMemoryPersistence.h
             core/persistence/Persistence.h
             core/protocol/wolkabout/WolkaboutDataProtocol.h
+            core/protocol/wolkabout/WolkaboutFileManagementProtocol.h
             core/protocol/DataProtocol.h
             core/protocol/Protocol.h
             core/service/BinaryDataListener.h
