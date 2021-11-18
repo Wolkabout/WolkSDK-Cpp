@@ -17,22 +17,17 @@
 #ifndef PAHOMQTTCLIENT_H
 #define PAHOMQTTCLIENT_H
 
+#include "core/connectivity/mqtt/MqttCallback.h"
 #include "core/connectivity/mqtt/MqttClient.h"
 
 #include <atomic>
 #include <memory>
+#include <mqtt/async_client.h>
 #include <mutex>
 #include <string>
 
-namespace mqtt
-{
-class async_client;
-}
-
 namespace wolkabout
 {
-class MqttCallback;
-
 class PahoMqttClient : public MqttClient
 {
 public:
