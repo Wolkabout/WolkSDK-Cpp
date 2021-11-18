@@ -29,7 +29,7 @@ namespace wolkabout
 class MqttConnectivityService : public ConnectivityService
 {
 public:
-    MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
+    MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, const std::string& key, std::string password,
                             std::string host, std::string trustStore = "");
 
     MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
