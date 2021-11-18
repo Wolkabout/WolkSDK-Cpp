@@ -125,10 +125,6 @@ if (NOT DEFINED CMAKE_PREFIX_PATH)
     set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/build")
 endif ()
 
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-
-add_subdirectory(dependencies)
-
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}     -Wall -Wextra -pedantic                                                    \
                                             -pedantic-errors -Wcast-align                                              \
@@ -146,7 +142,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}     -Wall -Wextra -pedantic             
                                             -Wvariadic-macros                                                          \
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
 
+add_subdirectory(dependencies)
 link_directories(${CMAKE_PREFIX_PATH}/lib)
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 include_directories(SYSTEM ${CMAKE_PREFIX_PATH}/include)
 
 find_package(Threads REQUIRED)
@@ -180,7 +178,7 @@ file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/ut
 file(COPY core/Version.h DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/)
 
 add_library(${PROJECT_NAME}Utility SHARED ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
-target_link_libraries(${PROJECT_NAME}Utility PUBLIC crypto)
+target_link_libraries(${PROJECT_NAME}Utility crypto)
 target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
@@ -249,11 +247,11 @@ if (BUILD_CONNECTIVITY)
     file(COPY core/service/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/service PATTERN *.cpp EXCLUDE)
 
     add_library(${PROJECT_NAME} SHARED ${LIB_SOURCE_FILES} ${LIB_HEADER_FILES})
+    target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3)
     target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR})
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
-    target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as)
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
-    add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}Utility pahomqttc pahomqttcpp)
+    add_dependencies(${PROJECT_NAME} pahomqttcpp)
 
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
 endif ()
