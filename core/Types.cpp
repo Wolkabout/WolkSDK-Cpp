@@ -831,22 +831,70 @@ MessageType messageTypeFromString(const std::string& type)
     return MessageType::UNKNOWN;
 }
 
+std::string toString(wolkabout::FileUploadStatus status)
+{
+    switch (status)
+    {
+    case FileUploadStatus::AWAITING_DEVICE:
+        return "AWAITING_DEVICE";
+    case FileUploadStatus::FILE_TRANSFER:
+        return "FILE_TRANSFER";
+    case FileUploadStatus::FILE_READY:
+        return "FILE_READY";
+    case FileUploadStatus::ERROR:
+        return "ERROR";
+    case FileUploadStatus::ABORTED:
+        return "ABORTED";
+    case FileUploadStatus::UNKNOWN:
+        return "UNKNOWN";
+    default:
+        return "";
+    }
+}
+
+std::string toString(wolkabout::FileUploadError error)
+{
+    switch (error)
+    {
+    case FileUploadError::UNKNOWN:
+        return "UNKNOWN";
+    case FileUploadError::TRANSFER_PROTOCOL_DISABLED:
+        return "TRANSFER_PROTOCOL_DISABLED";
+    case FileUploadError::UNSUPPORTED_FILE_SIZE:
+        return "UNSUPPORTED_FILE_SIZE";
+    case FileUploadError::MALFORMED_URL:
+        return "MALFORMED_URL";
+    case FileUploadError::FILE_HASH_MISMATCH:
+        return "FILE_HASH_MISMATCH";
+    case FileUploadError::FILE_SYSTEM_ERROR:
+        return "FILE_SYSTEM_ERROR";
+    case FileUploadError::RETRY_COUNT_EXCEEDED:
+        return "RETRY_COUNT_EXCEEDED";
+    default:
+        return "";
+    }
+}
+
 const std::string& Reading::getReference() const
 {
     return m_reference;
 }
+
 void Reading::setReference(const std::string& reference)
 {
     m_reference = reference;
 }
+
 void Reading::setValue(const std::string& value)
 {
     m_value = value;
 }
+
 const std::string& Reading::getStringValue() const
 {
     return m_value;
 }
+
 Reading::Reading(std::string reference, std::string value, std::uint64_t rtcTimestamp)
 : m_reference(reference), m_value(value), m_timestamp(rtcTimestamp)
 {
@@ -859,17 +907,17 @@ Reading::Reading(const Reading& reading)
 
 void Reading::setTimestamp(std::uint64_t& timestamp) {}
 
-const float Reading::getNumericValue() const
+float Reading::getNumericValue() const
 {
     return std::stof(m_value);
 }
 
-const bool Reading::getBoolValue() const
+bool Reading::getBoolValue() const
 {
     return (m_value == "true");
 }
 
-const int Reading::getHexValue() const
+int Reading::getHexValue() const
 {
     std::istringstream iss(m_value);
     int result = 0;
@@ -880,9 +928,9 @@ const int Reading::getHexValue() const
     return 0;
 }
 
-const Location Reading::getLocationValue() const
+Location Reading::getLocationValue() const
 {
-    Location location;
+    auto location = Location{};
     if ((std::count(m_value.begin(), m_value.end(), DELIMITER) != 1))
     {
         location.x = 0;
@@ -900,7 +948,7 @@ const Location Reading::getLocationValue() const
     return location;
 }
 
-const std::vector<float> Reading::getVectorValue() const
+std::vector<float> Reading::getVectorValue() const
 {
     std::vector<float> vectorVal{};
     auto valueCopy = m_value;

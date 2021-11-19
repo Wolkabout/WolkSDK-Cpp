@@ -15,6 +15,7 @@
  */
 
 #include "core/protocol/wolkabout/WolkaboutFileManagementProtocol.h"
+#include "core/protocol/wolkabout/WolkaboutProtocol.h"
 
 namespace wolkabout
 {
@@ -26,7 +27,9 @@ std::vector<std::string> WolkaboutFileManagementProtocol::getInboundChannels() c
 std::vector<std::string> WolkaboutFileManagementProtocol::getInboundChannelsForDevice(
   const std::string& deviceKey) const
 {
-    return {};
+    return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER + "file_upload_initiate",
+            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER + "file_upload_abort",
+            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER + "file_binary_response"};
 }
 
 std::string WolkaboutFileManagementProtocol::extractDeviceKeyFromChannel(const std::string& topic) const

@@ -259,6 +259,32 @@ enum class MessageType
 std::string toString(MessageType type);
 MessageType messageTypeFromString(const std::string& type);
 
+enum class FileUploadStatus
+{
+    AWAITING_DEVICE,
+    FILE_TRANSFER,
+    FILE_READY,
+    ERROR,
+    ABORTED,
+    UNKNOWN
+};
+
+std::string toString(wolkabout::FileUploadStatus status);
+
+enum class FileUploadError
+{
+    NONE = -1,
+    UNKNOWN,
+    TRANSFER_PROTOCOL_DISABLED,
+    UNSUPPORTED_FILE_SIZE,
+    MALFORMED_URL,
+    FILE_HASH_MISMATCH,
+    FILE_SYSTEM_ERROR,
+    RETRY_COUNT_EXCEEDED
+};
+
+std::string toString(wolkabout::FileUploadError error);
+
 struct Location
 {
     float x;
@@ -284,11 +310,11 @@ public:
     const std::string& getReference() const;
     // TODO move to utility methods
     const std::string& getStringValue() const;
-    const float getNumericValue() const;
-    const bool getBoolValue() const;
-    const int getHexValue() const;
-    const Location getLocationValue() const;
-    const std::vector<float> getVectorValue() const;
+    float getNumericValue() const;
+    bool getBoolValue() const;
+    int getHexValue() const;
+    Location getLocationValue() const;
+    std::vector<float> getVectorValue() const;
     const std::uint64_t& getTimestamp() const;
 };
 
