@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#include "Message.h"
+#include "core/model/Message.h"
+#include "core/utilities/ByteUtils.h"
 
 #include <string>
 #include <utility>
@@ -135,5 +136,117 @@ const std::vector<Parameters>& ParametersUpdateMessage::getParameters() const
 MessageType ParametersPullMessage::getMessageType()
 {
     return MessageType::PULL_PARAMETERS;
+}
+
+FileUploadInitiateMessage::FileUploadInitiateMessage(std::string name, std::uint64_t size, std::string hash)
+: m_name(std::move(name)), m_size(size), m_hash(std::move(hash))
+{
+}
+
+const std::string& FileUploadInitiateMessage::getName() const
+{
+    return m_name;
+}
+
+uint64_t FileUploadInitiateMessage::getSize() const
+{
+    return m_size;
+}
+
+const std::string& FileUploadInitiateMessage::getHash() const
+{
+    return m_hash;
+}
+
+MessageType FileUploadInitiateMessage::getMessageType()
+{
+    return MessageType::FILE_URL_DOWNLOAD_INIT;
+}
+
+FileUploadStatusMessage::FileUploadStatusMessage(std::string name, FileUploadStatus status, FileUploadError error)
+: m_name(std::move(name)), m_status(status), m_error(error)
+{
+}
+
+const std::string& FileUploadStatusMessage::getName() const
+{
+    return m_name;
+}
+
+FileUploadStatus FileUploadStatusMessage::getStatus() const
+{
+    return m_status;
+}
+
+FileUploadError FileUploadStatusMessage::getError() const
+{
+    return m_error;
+}
+
+MessageType FileUploadStatusMessage::getMessageType()
+{
+    return MessageType::FILE_UPLOAD_STATUS;
+}
+
+FileUploadAbortMessage::FileUploadAbortMessage(std::string name) : m_name(std::move(name)) {}
+
+const std::string& FileUploadAbortMessage::getName() const
+{
+    return m_name;
+}
+
+MessageType FileUploadAbortMessage::getMessageType()
+{
+    return MessageType::FILE_UPLOAD_ABORT;
+}
+
+FileBinaryRequest::FileBinaryRequest(std::string name, std::uint64_t chunkIndex)
+: m_name(std::move(name)), m_chunkIndex(chunkIndex)
+{
+}
+
+const std::string& FileBinaryRequest::getName() const
+{
+    return m_name;
+}
+
+std::uint64_t FileBinaryRequest::getChunkIndex() const
+{
+    return m_chunkIndex;
+}
+
+MessageType FileBinaryRequest::getMessageType()
+{
+    return MessageType::FILE_BINARY_REQUEST;
+}
+
+FileBinaryResponse::FileBinaryResponse(const std::string& payload)
+{
+    if (payload.length() > 64)
+    {
+        m_previousHash = payload.substr(0, 64);
+        m_data = ByteUtils::toByteArray(payload.substr(64, payload.length() - 128));
+        m_currentHash = payload.substr(payload.length() - 64);
+    }
+}
+
+const std::string& FileBinaryResponse::getPreviousHash() const
+{
+    return m_previousHash;
+}
+
+const std::vector<std::uint8_t>& FileBinaryResponse::getData() const
+{
+    return m_data;
+}
+
+const std::string& FileBinaryResponse::getCurrentHash() const
+{
+    return m_currentHash;
+}
+
+MessageType FileBinaryResponse::getMessageType()
+{
+    return MessageType::FILE_BINARY_RESPONSE;
 }
 }    // namespace wolkabout

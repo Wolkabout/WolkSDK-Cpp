@@ -133,6 +133,91 @@ public:
     MessageType getMessageType() override;
 };
 
+class FileUploadInitiateMessage : public MessageObject
+{
+public:
+    explicit FileUploadInitiateMessage(std::string name, std::uint64_t size, std::string hash);
+
+    const std::string& getName() const;
+
+    std::uint64_t getSize() const;
+
+    const std::string& getHash() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_name;
+    std::uint64_t m_size;
+    std::string m_hash;
+};
+
+class FileUploadStatusMessage : public MessageObject
+{
+public:
+    explicit FileUploadStatusMessage(std::string name, FileUploadStatus status, FileUploadError error);
+
+    const std::string& getName() const;
+
+    FileUploadStatus getStatus() const;
+
+    FileUploadError getError() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_name;
+    FileUploadStatus m_status;
+    FileUploadError m_error;
+};
+
+class FileUploadAbortMessage : public MessageObject
+{
+public:
+    explicit FileUploadAbortMessage(std::string name);
+
+    const std::string& getName() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_name;
+};
+
+class FileBinaryRequest : public MessageObject
+{
+public:
+    explicit FileBinaryRequest(std::string name, std::uint64_t chunkIndex);
+
+    const std::string& getName() const;
+
+    std::uint64_t getChunkIndex() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_name;
+    std::uint64_t m_chunkIndex;
+};
+
+class FileBinaryResponse : public MessageObject
+{
+public:
+    explicit FileBinaryResponse(const std::string& payload);
+
+    const std::string& getPreviousHash() const;
+
+    const std::vector<std::uint8_t>& getData() const;
+
+    const std::string& getCurrentHash() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_previousHash;
+    std::vector<std::uint8_t> m_data;
+    std::string m_currentHash;
+};
 }    // namespace wolkabout
 
 #endif

@@ -15,6 +15,7 @@
  */
 
 #include "core/protocol/wolkabout/WolkaboutDataProtocol.h"
+#include "core/protocol/wolkabout/WolkaboutProtocol.h"
 
 #include "core/Types.h"
 #include "core/model/Feed.h"
