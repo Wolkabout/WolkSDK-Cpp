@@ -200,27 +200,27 @@ MessageType FileUploadAbortMessage::getMessageType()
     return MessageType::FILE_UPLOAD_ABORT;
 }
 
-FileBinaryRequest::FileBinaryRequest(std::string name, std::uint64_t chunkIndex)
+FileBinaryRequestMessage::FileBinaryRequestMessage(std::string name, std::uint64_t chunkIndex)
 : m_name(std::move(name)), m_chunkIndex(chunkIndex)
 {
 }
 
-const std::string& FileBinaryRequest::getName() const
+const std::string& FileBinaryRequestMessage::getName() const
 {
     return m_name;
 }
 
-std::uint64_t FileBinaryRequest::getChunkIndex() const
+std::uint64_t FileBinaryRequestMessage::getChunkIndex() const
 {
     return m_chunkIndex;
 }
 
-MessageType FileBinaryRequest::getMessageType()
+MessageType FileBinaryRequestMessage::getMessageType()
 {
     return MessageType::FILE_BINARY_REQUEST;
 }
 
-FileBinaryResponse::FileBinaryResponse(const std::string& payload)
+FileBinaryResponseMessage::FileBinaryResponseMessage(const std::string& payload)
 {
     if (payload.length() > 64)
     {
@@ -230,23 +230,112 @@ FileBinaryResponse::FileBinaryResponse(const std::string& payload)
     }
 }
 
-const std::string& FileBinaryResponse::getPreviousHash() const
+const std::string& FileBinaryResponseMessage::getPreviousHash() const
 {
     return m_previousHash;
 }
 
-const std::vector<std::uint8_t>& FileBinaryResponse::getData() const
+const std::vector<std::uint8_t>& FileBinaryResponseMessage::getData() const
 {
     return m_data;
 }
 
-const std::string& FileBinaryResponse::getCurrentHash() const
+const std::string& FileBinaryResponseMessage::getCurrentHash() const
 {
     return m_currentHash;
 }
 
-MessageType FileBinaryResponse::getMessageType()
+MessageType FileBinaryResponseMessage::getMessageType()
 {
     return MessageType::FILE_BINARY_RESPONSE;
+}
+
+FileUrlDownloadInitMessage::FileUrlDownloadInitMessage(std::string path) : m_path(std::move(path)) {}
+
+const std::string& FileUrlDownloadInitMessage::getPath() const
+{
+    return m_path;
+}
+
+MessageType FileUrlDownloadInitMessage::getMessageType()
+{
+    return MessageType::FILE_URL_DOWNLOAD_INIT;
+}
+
+FileUrlDownloadAbortMessage::FileUrlDownloadAbortMessage(std::string path) : m_path(std::move(path)) {}
+
+const std::string& FileUrlDownloadAbortMessage::getPath() const
+{
+    return m_path;
+}
+
+MessageType FileUrlDownloadAbortMessage::getMessageType()
+{
+    return MessageType::FILE_URL_DOWNLOAD_ABORT;
+}
+
+FileUrlDownloadStatusMessage::FileUrlDownloadStatusMessage(std::string fileUrl, std::string fileName, FileUploadStatus status,
+                                             FileUploadError error)
+: m_fileUrl(std::move(fileUrl)), m_fileName(std::move(fileName)), m_status(status), m_error(error)
+{
+}
+
+const std::string& FileUrlDownloadStatusMessage::getFileUrl() const
+{
+    return m_fileUrl;
+}
+
+const std::string& FileUrlDownloadStatusMessage::getFileName() const
+{
+    return m_fileName;
+}
+
+FileUploadStatus FileUrlDownloadStatusMessage::getStatus() const
+{
+    return m_status;
+}
+
+FileUploadError FileUrlDownloadStatusMessage::getError() const
+{
+    return m_error;
+}
+
+MessageType FileUrlDownloadStatusMessage::getMessageType()
+{
+    return MessageType::FILE_URL_DOWNLOAD_STATUS;
+}
+
+MessageType FileListRequestMessage::getMessageType()
+{
+    return MessageType::FILE_LIST_REQUEST;
+}
+
+FileListResponseMessage::FileListResponseMessage(std::vector<FileInformation> files) : m_files(std::move(files)) {}
+
+const std::vector<FileInformation>& FileListResponseMessage::getFiles() const
+{
+    return m_files;
+}
+
+MessageType FileListResponseMessage::getMessageType()
+{
+    return MessageType::FILE_LIST_RESPONSE;
+}
+
+FileDeleteMessage::FileDeleteMessage(std::vector<std::string> files) : m_files(std::move(files)) {}
+
+const std::vector<std::string>& FileDeleteMessage::getFiles() const
+{
+    return m_files;
+}
+
+MessageType FileDeleteMessage::getMessageType()
+{
+    return MessageType::FILE_DELETE;
+}
+
+MessageType FilePurgeMessage::getMessageType()
+{
+    return MessageType::FILE_PURGE;
 }
 }    // namespace wolkabout

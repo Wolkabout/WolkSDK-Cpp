@@ -17,6 +17,8 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+#include "core/model/Message.h"
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -40,6 +42,8 @@ public:
      * @return
      */
     virtual std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const = 0;
+
+    virtual MessageType getMessageType(std::shared_ptr<Message> message) = 0;
 
     virtual std::string extractDeviceKeyFromChannel(const std::string& topic) const = 0;
 };

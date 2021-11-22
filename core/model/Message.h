@@ -155,7 +155,8 @@ private:
 class FileUploadStatusMessage : public MessageObject
 {
 public:
-    explicit FileUploadStatusMessage(std::string name, FileUploadStatus status, FileUploadError error);
+    explicit FileUploadStatusMessage(std::string name, FileUploadStatus status,
+                                     FileUploadError error = FileUploadError::NONE);
 
     const std::string& getName() const;
 
@@ -184,10 +185,10 @@ private:
     std::string m_name;
 };
 
-class FileBinaryRequest : public MessageObject
+class FileBinaryRequestMessage : public MessageObject
 {
 public:
-    explicit FileBinaryRequest(std::string name, std::uint64_t chunkIndex);
+    explicit FileBinaryRequestMessage(std::string name, std::uint64_t chunkIndex);
 
     const std::string& getName() const;
 
@@ -200,10 +201,10 @@ private:
     std::uint64_t m_chunkIndex;
 };
 
-class FileBinaryResponse : public MessageObject
+class FileBinaryResponseMessage : public MessageObject
 {
 public:
-    explicit FileBinaryResponse(const std::string& payload);
+    explicit FileBinaryResponseMessage(const std::string& payload);
 
     const std::string& getPreviousHash() const;
 
@@ -217,6 +218,93 @@ private:
     std::string m_previousHash;
     std::vector<std::uint8_t> m_data;
     std::string m_currentHash;
+};
+
+class FileUrlDownloadInitMessage : public MessageObject
+{
+public:
+    explicit FileUrlDownloadInitMessage(std::string path);
+
+    const std::string& getPath() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_path;
+};
+
+class FileUrlDownloadAbortMessage : public MessageObject
+{
+public:
+    explicit FileUrlDownloadAbortMessage(std::string path);
+
+    const std::string& getPath() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_path;
+};
+
+class FileUrlDownloadStatusMessage : public MessageObject
+{
+public:
+    explicit FileUrlDownloadStatusMessage(std::string fileUrl, std::string fileName, FileUploadStatus status,
+                                          FileUploadError error = FileUploadError::NONE);
+
+    const std::string& getFileUrl() const;
+
+    const std::string& getFileName() const;
+
+    FileUploadStatus getStatus() const;
+
+    FileUploadError getError() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_fileUrl;
+    std::string m_fileName;
+    FileUploadStatus m_status;
+    FileUploadError m_error;
+};
+
+class FileListRequestMessage : public MessageObject
+{
+public:
+    MessageType getMessageType() override;
+};
+
+class FileListResponseMessage : public MessageObject
+{
+public:
+    explicit FileListResponseMessage(std::vector<FileInformation> files);
+
+    const std::vector<FileInformation>& getFiles() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::vector<FileInformation> m_files;
+};
+
+class FileDeleteMessage : public MessageObject
+{
+public:
+    explicit FileDeleteMessage(std::vector<std::string> files);
+
+    const std::vector<std::string>& getFiles() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::vector<std::string> m_files;
+};
+
+class FilePurgeMessage : public MessageObject
+{
+public:
+    MessageType getMessageType() override;
 };
 }    // namespace wolkabout
 
