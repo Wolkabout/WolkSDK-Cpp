@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCONNECTOR_WOLKABOUTFILEMANAGEMENTPROTOCOL_H
 #define WOLKABOUTCONNECTOR_WOLKABOUTFILEMANAGEMENTPROTOCOL_H
 
-#include "core/protocol/Protocol.h"
+#include "core/protocol/FileManagementProtocol.h"
 
 namespace wolkabout
 {
-class WolkaboutFileManagementProtocol : public Protocol
+class WolkaboutFileManagementProtocol : public FileManagementProtocol
 {
 public:
     std::vector<std::string> getInboundChannels() const override;
@@ -29,6 +29,36 @@ public:
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
+
+    MessageType getMessageType(std::shared_ptr<Message> message) override;
+
+    std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const FileUploadStatusMessage& message) override;
+
+    std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const FileBinaryRequestMessage& message) override;
+
+    std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const FileUrlDownloadStatusMessage& message) override;
+
+    std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const FileListResponseMessage& message) override;
+
+    std::shared_ptr<FileUploadInitiateMessage> parseFileUploadInit(std::shared_ptr<Message> message) override;
+
+    std::shared_ptr<FileUploadAbortMessage> parseFileUploadAbort(std::shared_ptr<Message> message) override;
+
+    std::shared_ptr<FileBinaryResponseMessage> parseFileBinaryResponse(std::shared_ptr<Message> message) override;
+
+    std::shared_ptr<FileUrlDownloadInitMessage> parseFileUrlDownloadInit(std::shared_ptr<Message> message) override;
+
+    std::shared_ptr<FileUrlDownloadAbortMessage> parseFileUrlDownloadAbort(std::shared_ptr<Message> message) override;
+
+    std::shared_ptr<FileListRequestMessage> parseFileListRequest(std::shared_ptr<Message> message) override;
+
+    std::shared_ptr<FileDeleteMessage> parseFileDelete(std::shared_ptr<Message> message) override;
+
+    std::shared_ptr<FilePurgeMessage> parseFilePurge(std::shared_ptr<Message> message) override;
 };
 }    // namespace wolkabout
 

@@ -243,7 +243,8 @@ enum class MessageType
     FILE_URL_DOWNLOAD_INIT,
     FILE_URL_DOWNLOAD_ABORT,
     FILE_URL_DOWNLOAD_STATUS,
-    FILE_LIST,
+    FILE_LIST_REQUEST,
+    FILE_LIST_RESPONSE,
     FILE_DELETE,
     FILE_PURGE,
     FIRMWARE_UPDATE_INSTALL,
@@ -284,6 +285,13 @@ enum class FileUploadError
 };
 
 std::string toString(wolkabout::FileUploadError error);
+
+struct FileInformation
+{
+    std::string name;
+    std::uint64_t size;
+    std::string hash;
+};
 
 struct Location
 {

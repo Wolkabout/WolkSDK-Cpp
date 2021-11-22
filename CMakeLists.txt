@@ -233,6 +233,7 @@ if (BUILD_CONNECTIVITY)
             core/protocol/wolkabout/WolkaboutDataProtocol.h
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.h
             core/protocol/DataProtocol.h
+            core/protocol/FileManagementProtocol.h
             core/protocol/Protocol.h
             core/service/BinaryDataListener.h
             core/service/FirmwareInstaller.h

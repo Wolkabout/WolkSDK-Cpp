@@ -742,7 +742,7 @@ std::string toString(MessageType type)
     case MessageType::TIME_SYNC:
         return "time";
     case MessageType::FILE_UPLOAD_INIT:
-        return "file_upload_init";
+        return "file_upload_initiate";
     case MessageType::FILE_UPLOAD_STATUS:
         return "file_upload_status";
     case MessageType::FILE_UPLOAD_ABORT:
@@ -752,12 +752,13 @@ std::string toString(MessageType type)
     case MessageType::FILE_BINARY_RESPONSE:
         return "file_binary_response";
     case MessageType::FILE_URL_DOWNLOAD_INIT:
-        return "file_url_download_init";
+        return "file_url_download_initiate";
     case MessageType::FILE_URL_DOWNLOAD_ABORT:
         return "file_url_download_abort";
     case MessageType::FILE_URL_DOWNLOAD_STATUS:
         return "file_url_download_status";
-    case MessageType::FILE_LIST:
+    case MessageType::FILE_LIST_REQUEST:
+    case MessageType::FILE_LIST_RESPONSE:
         return "file_list";
     case MessageType::FILE_DELETE:
         return "file_delete";
@@ -796,7 +797,7 @@ MessageType messageTypeFromString(const std::string& type)
         return MessageType::PULL_PARAMETERS;
     if (type == "time")
         return MessageType::TIME_SYNC;
-    if (type == "file_upload_init")
+    if (type == "file_upload_initiate")
         return MessageType::FILE_UPLOAD_INIT;
     if (type == "file_upload_status")
         return MessageType::FILE_UPLOAD_STATUS;
@@ -806,14 +807,14 @@ MessageType messageTypeFromString(const std::string& type)
         return MessageType::FILE_BINARY_REQUEST;
     if (type == "file_binary_response")
         return MessageType::FILE_BINARY_RESPONSE;
-    if (type == "file_url_download_init")
+    if (type == "file_url_download_initiate")
         return MessageType::FILE_URL_DOWNLOAD_INIT;
     if (type == "file_url_download_abort")
         return MessageType::FILE_URL_DOWNLOAD_ABORT;
     if (type == "file_url_download_status")
         return MessageType::FILE_URL_DOWNLOAD_STATUS;
     if (type == "file_list")
-        return MessageType::FILE_LIST;
+        return MessageType::FILE_LIST_REQUEST;
     if (type == "file_delete")
         return MessageType::FILE_DELETE;
     if (type == "file_purge")
