@@ -19,6 +19,7 @@
 
 #include "core/Types.h"
 #include "core/model/Feed.h"
+#include "core/utilities/Logger.h"
 #include "core/utilities/json.hpp"
 
 #include <memory>
@@ -43,7 +44,7 @@ static void to_json(json& j, const Reading& reading)
 
 static void to_json(json& j, const std::vector<Reading>& readings)
 {
-    for (auto reading : readings)
+    for (const auto& reading : readings)
     {
         j += json{reading.getReference(), reading.getStringValue()};
     }
@@ -66,25 +67,6 @@ static void from_json(const json& j, std::vector<Parameters>& p)
     {
         Parameters param{parameterNameFromString(el.key()), el.value().dump()};
         p.emplace_back(param);
-    }
-}
-
-static void from_json(const json& j, std::vector<Reading>& r)
-{
-    for (auto& el : j.items())
-    {
-        if (el.key() != "timestamp")
-        {
-            Reading reading(el.key(), el.value().dump());
-            r.emplace_back(reading);
-        }
-        else
-        {
-            for (auto addTs : r)
-            {
-                addTs.setTimestamp(el.value().dump());
-            }
-        }
     }
 }
 
@@ -195,27 +177,99 @@ std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(cons
 
 std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
 {
-    unsigned first = topic.find(CHANNEL_DELIMITER);
-    unsigned last = topic.rfind(CHANNEL_DELIMITER);
-
-    return topic.substr(first, last - first);
+    auto first = topic.find(CHANNEL_DELIMITER);
+    auto last = topic.rfind(CHANNEL_DELIMITER);
+    return topic.substr(first + 1, last - first - 1);
 }
+
 MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<Message> message)
 {
     auto channel = message->getChannel();
-    unsigned last = channel.rfind(CHANNEL_DELIMITER);
-
+    auto last = channel.rfind(CHANNEL_DELIMITER);
     return messageTypeFromString(channel.substr(last + 1));
 }
 
 std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
 {
-    auto content = message->getContent();
-    auto jsonContent = json::parse(content);
-    // TODO quadruple check
-    std::vector<Reading> readings = jsonContent.get<std::vector<Reading>>();
+    try
+    {
+        // Check that the payload is a valid JSON array
+        auto content = message->getContent();
+        auto jsonContent = json::parse(content);
+        if (!jsonContent.is_array())
+        {
+            LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> The received JSON payload is not a JSON array.";
+            return nullptr;
+        }
 
-    return std::make_shared<FeedValuesMessage>(readings);
+        // Now parse every array entry
+        auto readings = std::vector<Reading>{};
+        for (const auto& arrayItem : jsonContent.items())
+        {
+            // Take the array value
+            const auto entry = arrayItem.value();
+            if (!entry.is_object())
+            {
+                LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> The received JSON payload has array members that "
+                              "are not objects.";
+                return nullptr;
+            }
+
+            // Look for the timestamp
+            const auto timestampIt = entry.find(TIMESTAMP_KEY);
+            if (timestampIt == entry.cend())
+            {
+                LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> The received JSON payload contains entries that "
+                              "are missing the timestamp.";
+                return nullptr;
+            }
+            // Parse the timestamp into a usable value
+            const auto timestamp = timestampIt->get<std::uint64_t>();
+
+            // Look for any feed values and make a reading for each one of them
+            for (const auto& readingItem : entry.items())
+            {
+                // Skip it if it is the timestamp
+                const auto& reference = readingItem.key();
+                if (reference == TIMESTAMP_KEY)
+                    continue;
+
+                // Check the type of the value
+                const auto& readingValue = readingItem.value();
+                switch (readingValue.type())
+                {
+                case nlohmann::detail::value_t::boolean:
+                    readings.emplace_back(Reading{reference, readingValue.get<bool>() ? "true" : "false", timestamp});
+                    break;
+                case nlohmann::detail::value_t::string:
+                    readings.emplace_back(Reading{reference, readingValue.get<std::string>(), timestamp});
+                    break;
+                case nlohmann::detail::value_t::number_unsigned:
+                    readings.emplace_back(
+                      Reading{reference, std::to_string(readingValue.get<std::uint64_t>()), timestamp});
+                    break;
+                case nlohmann::detail::value_t::number_integer:
+                    readings.emplace_back(
+                      Reading{reference, std::to_string(readingValue.get<std::int64_t>()), timestamp});
+                    break;
+                case nlohmann::detail::value_t::number_float:
+                    readings.emplace_back(
+                      Reading{reference, std::to_string(readingValue.get<std::float_t>()), timestamp});
+                    break;
+                default:
+                    LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> The received JSON payload contains an "
+                                  "invalid feed value.";
+                    return nullptr;
+                }
+            }
+        }
+        return std::make_shared<FeedValuesMessage>(readings);
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<Message> message)
