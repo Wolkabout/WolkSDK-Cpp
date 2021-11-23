@@ -17,6 +17,9 @@
 #ifndef WOLKABOUTCORE_WOLKABOUTPROTOCOL_H
 #define WOLKABOUTCORE_WOLKABOUTPROTOCOL_H
 
+#include "core/Types.h"
+#include "core/model/Message.h"
+
 namespace wolkabout
 {
 const std::string CHANNEL_DELIMITER = "/";
@@ -27,6 +30,14 @@ const std::string DEVICE_TO_PLATFORM_DIRECTION = "d2p";
 const std::string PLATFORM_TO_DEVICE_DIRECTION = "p2d";
 
 const std::string TIMESTAMP_KEY = "timestamp";
-}
+
+class WolkaboutProtocol
+{
+public:
+    static MessageType getMessageType(const std::shared_ptr<Message>& message);
+
+    static std::string extractDeviceKeyFromChannel(const std::string& topic);
+};
+}    // namespace wolkabout
 
 #endif    // WOLKABOUTCORE_WOLKABOUTPROTOCOL_H

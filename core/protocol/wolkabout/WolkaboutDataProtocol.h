@@ -27,6 +27,14 @@ namespace wolkabout
 class WolkaboutDataProtocol : public DataProtocol
 {
 public:
+    std::vector<std::string> getInboundChannels() const override;
+
+    std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
+
+    std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
+
+    MessageType getMessageType(std::shared_ptr<Message> message) override;
+
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  FeedRegistrationMessage feedRegistrationMessage) override;
 
@@ -48,17 +56,9 @@ public:
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  ParametersPullMessage parametersPullMessage) override;
 
-    std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
-
-    std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
-
-    MessageType getMessageType(std::shared_ptr<Message> message) override;
-
     std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) override;
 
     std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) override;
-
-    std::vector<std::string> getInboundChannels() const override;
 };
 }    // namespace wolkabout
 #endif    // WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H

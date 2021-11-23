@@ -218,6 +218,8 @@ if (BUILD_CONNECTIVITY)
             core/persistence/inmemory/InMemoryPersistence.cpp
             core/protocol/wolkabout/WolkaboutDataProtocol.cpp
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.cpp
+            core/protocol/wolkabout/WolkaboutFirmwareUpdateProtocol.cpp
+            core/protocol/wolkabout/WolkaboutProtocol.cpp
             core/Types.cpp)
     set(LIB_HEADER_FILES core/connectivity/mqtt/MqttCallback.h
             core/connectivity/mqtt/MqttClient.h
@@ -232,8 +234,10 @@ if (BUILD_CONNECTIVITY)
             core/persistence/Persistence.h
             core/protocol/wolkabout/WolkaboutDataProtocol.h
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.h
+            core/protocol/wolkabout/WolkaboutFirmwareUpdateProtocol.h
             core/protocol/DataProtocol.h
             core/protocol/FileManagementProtocol.h
+            core/protocol/FirmwareUpdateProtocol.h
             core/protocol/Protocol.h
             core/service/BinaryDataListener.h
             core/service/FirmwareInstaller.h
