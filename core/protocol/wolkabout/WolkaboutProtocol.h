@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 #define WOLKABOUTCORE_WOLKABOUTPROTOCOL_H
 
 #include "core/Types.h"
-#include "core/model/Message.h"
+#include "core/model/MqttMessage.h"
 
 namespace wolkabout
 {
@@ -34,7 +34,7 @@ const std::string TIMESTAMP_KEY = "timestamp";
 class WolkaboutProtocol
 {
 public:
-    static MessageType getMessageType(const std::shared_ptr<Message>& message);
+    static MessageType getMessageType(const std::shared_ptr<MqttMessage>& message);
 
     static std::string extractDeviceKeyFromChannel(const std::string& topic);
 };

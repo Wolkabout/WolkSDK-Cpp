@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
 #ifndef WOLKABOUTCORE_FIRMWAREUPDATEPROTOCOL_H
 #define WOLKABOUTCORE_FIRMWAREUPDATEPROTOCOL_H
 
+#include "core/model/messages/FirmwareUpdateAbortMessage.h"
+#include "core/model/messages/FirmwareUpdateInstallMessage.h"
+#include "core/model/messages/FirmwareUpdateStatusMessage.h"
 #include "core/protocol/Protocol.h"
 
 namespace wolkabout
@@ -24,14 +27,14 @@ namespace wolkabout
 class FirmwareUpdateProtocol : public Protocol
 {
 public:
-    virtual std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         const FirmwareUpdateStatusMessage& message) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             const FirmwareUpdateStatusMessage& message) = 0;
 
     virtual std::shared_ptr<FirmwareUpdateInstallMessage> parseFirmwareUpdateInstall(
-      const std::shared_ptr<Message>& message) = 0;
+      const std::shared_ptr<MqttMessage>& message) = 0;
 
     virtual std::shared_ptr<FirmwareUpdateAbortMessage> parseFirmwareUpdateAbort(
-      const std::shared_ptr<Message>& message) = 0;
+      const std::shared_ptr<MqttMessage>& message) = 0;
 };
 }    // namespace wolkabout
 

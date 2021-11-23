@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2021 Wolkabout s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-#ifndef BINARYDATALISTENER_H
-#define BINARYDATALISTENER_H
+#ifndef WOLKABOUTCORE_FILELISTRESPONSEMESSAGE_H
+#define WOLKABOUTCORE_FILELISTRESPONSEMESSAGE_H
+
+#include "core/model/messages/MessageObject.h"
 
 namespace wolkabout
 {
-class BinaryData;
-
-class BinaryDataListener
+class FileListResponseMessage : public MessageObject
 {
 public:
-    virtual ~BinaryDataListener() = default;
+    explicit FileListResponseMessage(std::vector<FileInformation> files);
 
-    virtual void handleBinaryData(const BinaryData& binaryData) = 0;
+    const std::vector<FileInformation>& getFiles() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::vector<FileInformation> m_files;
 };
 }    // namespace wolkabout
 
-#endif    // BINARYDATALISTENER_H
+#endif    // WOLKABOUTCORE_FILELISTRESPONSEMESSAGE_H

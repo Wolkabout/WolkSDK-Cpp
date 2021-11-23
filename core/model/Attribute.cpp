@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 #include "core/model/Attribute.h"
 
+#include <utility>
+
 namespace wolkabout
 {
 Attribute::Attribute(std::string name, DataType dataType, std::string value)
@@ -28,28 +30,13 @@ const std::string& Attribute::getName() const
     return m_name;
 }
 
-void Attribute::setName(const std::string& name)
-{
-    m_name = name;
-}
-
 DataType Attribute::getDataType() const
 {
     return m_dataType;
 }
 
-void Attribute::setDataType(DataType dataType)
-{
-    m_dataType = dataType;
-}
-
 std::string Attribute::getValue() const
 {
     return m_value;
-}
-
-void Attribute::setValue(std::string value)
-{
-    m_value = std::move(value);
 }
 }    // namespace wolkabout

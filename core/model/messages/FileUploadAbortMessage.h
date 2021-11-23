@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2021 Wolkabout s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-#ifndef FIRMWAREINSTALLER_H
-#define FIRMWAREINSTALLER_H
+#ifndef WOLKABOUTCORE_FILEUPLOADABORTMESSAGE_H
+#define WOLKABOUTCORE_FILEUPLOADABORTMESSAGE_H
 
-#include <string>
+#include "core/model/messages/MessageObject.h"
 
 namespace wolkabout
 {
-class FirmwareInstaller
+class FileUploadAbortMessage : public MessageObject
 {
 public:
-    virtual ~FirmwareInstaller() = default;
+    explicit FileUploadAbortMessage(std::string name);
 
-    /**
-     * @brief install Install the firmware from provided file
-     * @param firmwareFile Firmware file to install
-     * @return false if fails, on success does not return
-     */
-    virtual bool install(const std::string& firmwareFile) = 0;
+    const std::string& getName() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_name;
 };
 }    // namespace wolkabout
 
-#endif    // FIRMWAREINSTALLER_H
+#endif    // WOLKABOUTCORE_FILEUPLOADABORTMESSAGE_H

@@ -17,7 +17,13 @@
 #ifndef DATAPROTOCOL_H
 #define DATAPROTOCOL_H
 
-#include "core/model/Message.h"
+#include "core/model/messages/AttributeRegistrationMessage.h"
+#include "core/model/messages/FeedRegistrationMessage.h"
+#include "core/model/messages/FeedRemovalMessage.h"
+#include "core/model/messages/FeedValuesMessage.h"
+#include "core/model/messages/ParametersPullMessage.h"
+#include "core/model/messages/ParametersUpdateMessage.h"
+#include "core/model/messages/PullFeedValuesMessage.h"
 #include "core/protocol/Protocol.h"
 
 #include <memory>
@@ -26,35 +32,33 @@
 
 namespace wolkabout
 {
-class Message;
-
 class DataProtocol : public Protocol
 {
 public:
-    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         FeedRegistrationMessage feedRegistrationMessage) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             FeedRegistrationMessage feedRegistrationMessage) = 0;
 
-    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         FeedRemovalMessage feedRemovalMessage) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             FeedRemovalMessage feedRemovalMessage) = 0;
 
-    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         FeedValuesMessage feedValuesMessage) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             FeedValuesMessage feedValuesMessage) = 0;
 
-    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         PullFeedValuesMessage pullFeedValuesMessage) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             PullFeedValuesMessage pullFeedValuesMessage) = 0;
 
-    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         AttributeRegistrationMessage attributeRegistrationMessage) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(
+      const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage) = 0;
 
-    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         ParametersUpdateMessage parametersUpdateMessage) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             ParametersUpdateMessage parametersUpdateMessage) = 0;
 
-    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         ParametersPullMessage parametersPullMessage) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             ParametersPullMessage parametersPullMessage) = 0;
 
-    virtual std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<MqttMessage> message) = 0;
 
-    virtual std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<MqttMessage> message) = 0;
 };
 }    // namespace wolkabout
 

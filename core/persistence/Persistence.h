@@ -20,6 +20,7 @@
 #include "core/Types.h"
 #include "core/model/Attribute.h"
 #include "core/model/Feed.h"
+#include "core/model/Reading.h"
 
 #include <map>
 #include <memory>
@@ -112,7 +113,7 @@ public:
 
     virtual std::map<ParameterName, std::string> getParameters() = 0;
 
-    virtual void removeParameters(const ParameterName parameterName) = 0;
+    virtual void removeParameters(ParameterName parameterName) = 0;
 
     /**
      * Returns {@code true} if this storage contains no wolkabout::Readings,
