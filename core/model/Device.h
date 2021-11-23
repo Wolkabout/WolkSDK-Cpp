@@ -22,22 +22,16 @@
 #include "core/model/Feed.h"
 
 #include <map>
-#include <memory>
-#include <string>
 #include <vector>
 
 namespace wolkabout
 {
-class DeviceTemplate;
-
 class Device
 {
 public:
-    Device(std::string key, std::string password, OutboundDataMode type,
-           std::shared_ptr<DeviceTemplate> deviceTemplate = nullptr);
+    Device(std::string key, std::string password, OutboundDataMode type);
 
-    Device(std::string name, std::string key, std::string password, OutboundDataMode type,
-           std::shared_ptr<DeviceTemplate> deviceTemplate = nullptr);
+    Device(std::string name, std::string key, std::string password, OutboundDataMode type);
 
     const std::string& getName() const;
 
@@ -45,11 +39,9 @@ public:
 
     const std::string& getKey() const;
 
-    void setKey(const std::string& key);
-
     const std::string& getPassword() const;
 
-    void setPassword(const std::string& password);
+    OutboundDataMode getType() const;
 
     const std::vector<Feed>& getFeeds() const;
 
@@ -62,10 +54,6 @@ public:
     const std::map<ParameterName, std::string>& getParameters() const;
 
     void setParameters(const std::map<ParameterName, std::string>& parameters);
-
-    OutboundDataMode getType() const;
-
-    void setType(OutboundDataMode type);
 
 private:
     std::string m_name;

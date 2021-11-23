@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-#ifndef FIRMWAREUPDATECOMMANDLISTENER_H
-#define FIRMWAREUPDATECOMMANDLISTENER_H
+#include "core/model/MqttMessage.h"
+
+#include <utility>
 
 namespace wolkabout
 {
-class FirmwareUpdateCommand;
-
-class FirmwareUpdateCommandListener
+MqttMessage::MqttMessage(std::string content, std::string channel)
+: m_content(std::move(content)), m_channel(std::move(channel))
 {
-public:
-    virtual ~FirmwareUpdateCommandListener() = default;
+}
 
-    virtual void handleFirmwareUpdateCommand(const FirmwareUpdateCommand& firmwareUpdateCommand) = 0;
-};
+const std::string& MqttMessage::getContent() const
+{
+    return m_content;
+}
+
+const std::string& MqttMessage::getChannel() const
+{
+    return m_channel;
+}
 }    // namespace wolkabout
-
-#endif    // FIRMWAREUPDATECOMMANDLISTENER_H

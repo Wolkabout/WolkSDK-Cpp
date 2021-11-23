@@ -610,35 +610,6 @@ Unit unitFromString(const std::string& type)
     return Unit::UNKNOWN;
 }
 
-std::string toString(ConnectivityType conn)
-{
-    switch (conn)
-    {
-    case ConnectivityType::MQTT:
-        return "MQTT";
-    case ConnectivityType::HTTP:
-        return "HTTP";
-    case ConnectivityType::AMQP:
-        return "AMQP";
-    case ConnectivityType::GATEWAY:
-        return "GATEWAY";
-    default:
-        return "";
-    }
-}
-ConnectivityType connectivityTypeFromString(const std::string& type)
-{
-    if (type == "MQTT")
-        return ConnectivityType::MQTT;
-    if (type == "HTTP")
-        return ConnectivityType::HTTP;
-    if (type == "AMQP")
-        return ConnectivityType::AMQP;
-    if (type == "GATEWAY")
-        return ConnectivityType::GATEWAY;
-    return ConnectivityType::UNDEFINED;
-}
-
 std::string toString(OutboundDataMode mode)
 {
     switch (mode)
@@ -876,7 +847,7 @@ std::string toString(wolkabout::FileUploadError error)
     }
 }
 
-std::string wolkabout::toString(wolkabout::FirmwareUpdateStatus status)
+std::string toString(wolkabout::FirmwareUpdateStatus status)
 {
     switch (status)
     {
@@ -897,7 +868,7 @@ std::string wolkabout::toString(wolkabout::FirmwareUpdateStatus status)
     }
 }
 
-std::string wolkabout::toString(wolkabout::FirmwareUpdateError error)
+std::string toString(wolkabout::FirmwareUpdateError error)
 {
     switch (error)
     {
@@ -910,104 +881,5 @@ std::string wolkabout::toString(wolkabout::FirmwareUpdateError error)
     default:
         return "";
     }
-}
-
-const std::string& Reading::getReference() const
-{
-    return m_reference;
-}
-
-void Reading::setReference(const std::string& reference)
-{
-    m_reference = reference;
-}
-
-void Reading::setValue(const std::string& value)
-{
-    m_value = value;
-}
-
-const std::string& Reading::getStringValue() const
-{
-    return m_value;
-}
-
-Reading::Reading(std::string reference, std::string value, std::uint64_t rtcTimestamp)
-: m_reference(reference), m_value(value), m_timestamp(rtcTimestamp)
-{
-}
-
-Reading::Reading(const Reading& reading)
-: m_reference(reading.getReference()), m_value(reading.getStringValue()), m_timestamp(reading.getTimestamp())
-{
-}
-
-void Reading::setTimestamp(std::uint64_t& timestamp) {}
-
-float Reading::getNumericValue() const
-{
-    return std::stof(m_value);
-}
-
-bool Reading::getBoolValue() const
-{
-    return (m_value == "true");
-}
-
-int Reading::getHexValue() const
-{
-    std::istringstream iss(m_value);
-    int result = 0;
-    if ((iss >> std::hex >> result))
-    {
-        return result;
-    }
-    return 0;
-}
-
-Location Reading::getLocationValue() const
-{
-    auto location = Location{};
-    if ((std::count(m_value.begin(), m_value.end(), DELIMITER) != 1))
-    {
-        location.x = 0;
-        location.y = 0;
-    }
-    else
-    {
-        auto delimiterPosition = m_value.find(DELIMITER);
-        auto xValue = m_value.substr(0, delimiterPosition);
-        auto yValue = m_value.substr(delimiterPosition);
-        location.x = std::stof(xValue);
-        location.y = std::stof(yValue);
-    }
-
-    return location;
-}
-
-std::vector<float> Reading::getVectorValue() const
-{
-    std::vector<float> vectorVal{};
-    auto valueCopy = m_value;
-    size_t pos;
-
-    while ((pos = valueCopy.find(DELIMITER)) != std::string::npos)
-    {
-        auto token = valueCopy.substr(0, pos);
-        vectorVal.emplace_back(std::stof(token));
-
-        valueCopy.erase(0, pos + 1);
-    }
-
-    return vectorVal;
-}
-const std::uint64_t& Reading::getTimestamp() const
-{
-    return m_timestamp;
-}
-
-void Reading::setTimestamp(std::string timestamp)
-{
-    m_timestamp = std::strtoull(timestamp.c_str(), nullptr, 10);
 }
 }    // namespace wolkabout

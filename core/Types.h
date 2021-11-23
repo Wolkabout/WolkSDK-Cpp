@@ -181,18 +181,6 @@ enum class Unit
 std::string toString(Unit unit);
 Unit unitFromString(const std::string& type);
 
-enum class ConnectivityType
-{
-    MQTT,
-    HTTP,
-    AMQP,
-    GATEWAY,
-    UNDEFINED,
-};
-
-std::string toString(ConnectivityType conn);
-ConnectivityType connectivityTypeFromString(const std::string& type);
-
 enum class OutboundDataMode
 {
     PUSH,
@@ -317,37 +305,9 @@ struct FileInformation
 
 struct Location
 {
-    float x;
-    float y;
+    float latitude;
+    float longitude;
 };
-
-class Reading
-{
-private:
-    std::string m_reference;
-    std::string m_value;
-    std::uint64_t m_timestamp;
-
-public:
-    Reading() = default;
-    Reading(std::string reference, std::string value, std::uint64_t rtcTimestamp = 0);
-    Reading(const Reading& reading);
-
-    void setReference(const std::string& reference);
-    void setValue(const std::string& value);
-    void setTimestamp(std::uint64_t& timestamp);
-    void setTimestamp(std::string timestamp);
-    const std::string& getReference() const;
-    // TODO move to utility methods
-    const std::string& getStringValue() const;
-    float getNumericValue() const;
-    bool getBoolValue() const;
-    int getHexValue() const;
-    Location getLocationValue() const;
-    std::vector<float> getVectorValue() const;
-    const std::uint64_t& getTimestamp() const;
-};
-
 }    // namespace wolkabout
 
 #endif    // WOLKABOUTCORE_TYPES_H

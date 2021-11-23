@@ -17,10 +17,10 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include "core/model/Message.h"
+#include "core/Types.h"
+#include "core/model/MqttMessage.h"
 
 #include <memory>
-#include <string>
 #include <vector>
 
 namespace wolkabout
@@ -30,20 +30,11 @@ class Protocol
 public:
     virtual ~Protocol() = default;
 
-    /**
-     * @brief Get generic inbound channels
-     * @return
-     */
     virtual std::vector<std::string> getInboundChannels() const = 0;
 
-    /**
-     * @brief Get inbound channels for provided device key
-     * @param deviceKey
-     * @return
-     */
     virtual std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const = 0;
 
-    virtual MessageType getMessageType(std::shared_ptr<Message> message) = 0;
+    virtual MessageType getMessageType(std::shared_ptr<MqttMessage> message) = 0;
 
     virtual std::string extractDeviceKeyFromChannel(const std::string& topic) const = 0;
 };

@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 #include "core/protocol/wolkabout/WolkaboutFirmwareUpdateProtocol.h"
+
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
 #include "core/utilities/json.hpp"
@@ -35,7 +36,7 @@ std::vector<std::string> WolkaboutFirmwareUpdateProtocol::getInboundChannelsForD
               toString(MessageType::FIRMWARE_UPDATE_ABORT)};
 }
 
-MessageType WolkaboutFirmwareUpdateProtocol::getMessageType(std::shared_ptr<Message> message)
+MessageType WolkaboutFirmwareUpdateProtocol::getMessageType(std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
@@ -47,7 +48,7 @@ std::string WolkaboutFirmwareUpdateProtocol::extractDeviceKeyFromChannel(const s
     return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
 }
 
-std::shared_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
+std::shared_ptr<MqttMessage> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
   const std::string& deviceKey, const FirmwareUpdateStatusMessage& message)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -75,11 +76,11 @@ std::shared_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
     auto payload = nlohmann::json({{"status", statusString}});
     if (message.getStatus() == FirmwareUpdateStatus::ERROR)
         payload["error"] = errorString;
-    return std::make_shared<Message>(payload.dump(), topic);
+    return std::make_shared<MqttMessage>(payload.dump(), topic);
 }
 
 std::shared_ptr<FirmwareUpdateInstallMessage> WolkaboutFirmwareUpdateProtocol::parseFirmwareUpdateInstall(
-  const std::shared_ptr<Message>& message)
+  const std::shared_ptr<MqttMessage>& message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FirmwareUpdateInstall' message";
@@ -97,7 +98,7 @@ std::shared_ptr<FirmwareUpdateInstallMessage> WolkaboutFirmwareUpdateProtocol::p
 }
 
 std::shared_ptr<FirmwareUpdateAbortMessage> WolkaboutFirmwareUpdateProtocol::parseFirmwareUpdateAbort(
-  const std::shared_ptr<Message>& message)
+  const std::shared_ptr<MqttMessage>& message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FirmwareUpdateAbort' message";

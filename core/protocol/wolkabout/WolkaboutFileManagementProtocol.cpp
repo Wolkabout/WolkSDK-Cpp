@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 #include "core/protocol/wolkabout/WolkaboutFileManagementProtocol.h"
+
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
 #include "core/utilities/json.hpp"
@@ -53,14 +54,14 @@ std::string WolkaboutFileManagementProtocol::extractDeviceKeyFromChannel(const s
     return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
 }
 
-MessageType WolkaboutFileManagementProtocol::getMessageType(std::shared_ptr<Message> message)
+MessageType WolkaboutFileManagementProtocol::getMessageType(std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
-std::shared_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                              const FileUploadStatusMessage& message)
+std::unique_ptr<MqttMessage> WolkaboutFileManagementProtocol::makeOutboundMessage(
+  const std::string& deviceKey, const FileUploadStatusMessage& message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to generate outbound 'FileUploadStatus' message";
@@ -92,11 +93,11 @@ std::shared_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
     auto payload = nlohmann::json{{"name", message.getName()}, {"status", statusString}};
     if (message.getStatus() == FileUploadStatus::ERROR)
         payload["error"] = errorString;
-    return std::make_shared<Message>(payload.dump(), topic);
+    return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
 }
 
-std::shared_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                              const FileBinaryRequestMessage& message)
+std::unique_ptr<MqttMessage> WolkaboutFileManagementProtocol::makeOutboundMessage(
+  const std::string& deviceKey, const FileBinaryRequestMessage& message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to generate outbound 'FileBinaryRequest' message";
@@ -114,10 +115,10 @@ std::shared_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
 
     // Parse the message into a JSON
     auto payload = nlohmann::json{{"name", message.getName()}, {"chunkIndex", message.getChunkIndex()}};
-    return std::make_shared<Message>(payload.dump(), topic);
+    return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
 }
 
-std::shared_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
+std::unique_ptr<MqttMessage> WolkaboutFileManagementProtocol::makeOutboundMessage(
   const std::string& deviceKey, const FileUrlDownloadStatusMessage& message)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -156,11 +157,11 @@ std::shared_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
       nlohmann::json{{"fileName", message.getFileName()}, {"fileUrl", message.getFileUrl()}, {"status", statusString}};
     if (message.getStatus() == FileUploadStatus::ERROR)
         payload["error"] = errorString;
-    return std::make_shared<Message>(payload.dump(), topic);
+    return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
 }
 
-std::shared_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                              const FileListResponseMessage& message)
+std::unique_ptr<MqttMessage> WolkaboutFileManagementProtocol::makeOutboundMessage(
+  const std::string& deviceKey, const FileListResponseMessage& message)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -172,11 +173,11 @@ std::shared_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
     auto payload = nlohmann::json::array();
     for (const auto& file : message.getFiles())
         payload.push_back(nlohmann::json{{"name", file.name}, {"size", file.size}, {"hash", file.hash}});
-    return std::make_shared<Message>(payload.dump(), topic);
+    return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
 }
 
 std::shared_ptr<FileUploadInitiateMessage> WolkaboutFileManagementProtocol::parseFileUploadInit(
-  std::shared_ptr<Message> message)
+  std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FileUploadInitiate' message";
@@ -225,7 +226,7 @@ std::shared_ptr<FileUploadInitiateMessage> WolkaboutFileManagementProtocol::pars
 }
 
 std::shared_ptr<FileUploadAbortMessage> WolkaboutFileManagementProtocol::parseFileUploadAbort(
-  std::shared_ptr<Message> message)
+  std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FileUploadAbort' message";
@@ -243,7 +244,7 @@ std::shared_ptr<FileUploadAbortMessage> WolkaboutFileManagementProtocol::parseFi
 }
 
 std::shared_ptr<FileBinaryResponseMessage> WolkaboutFileManagementProtocol::parseFileBinaryResponse(
-  std::shared_ptr<Message> message)
+  std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FileBinaryResponse' message";
@@ -261,7 +262,7 @@ std::shared_ptr<FileBinaryResponseMessage> WolkaboutFileManagementProtocol::pars
     return {};
 }
 std::shared_ptr<FileUrlDownloadInitMessage> WolkaboutFileManagementProtocol::parseFileUrlDownloadInit(
-  std::shared_ptr<Message> message)
+  std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FileUrlDownloadInit' message";
@@ -279,7 +280,7 @@ std::shared_ptr<FileUrlDownloadInitMessage> WolkaboutFileManagementProtocol::par
 }
 
 std::shared_ptr<FileUrlDownloadAbortMessage> WolkaboutFileManagementProtocol::parseFileUrlDownloadAbort(
-  std::shared_ptr<Message> message)
+  std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FileUrlDownloadAbort' message";
@@ -297,7 +298,7 @@ std::shared_ptr<FileUrlDownloadAbortMessage> WolkaboutFileManagementProtocol::pa
 }
 
 std::shared_ptr<FileListRequestMessage> WolkaboutFileManagementProtocol::parseFileListRequest(
-  std::shared_ptr<Message> message)
+  std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FileListRequest' message";
@@ -314,7 +315,8 @@ std::shared_ptr<FileListRequestMessage> WolkaboutFileManagementProtocol::parseFi
     return std::make_shared<FileListRequestMessage>();
 }
 
-std::shared_ptr<FileDeleteMessage> WolkaboutFileManagementProtocol::parseFileDelete(std::shared_ptr<Message> message)
+std::shared_ptr<FileDeleteMessage> WolkaboutFileManagementProtocol::parseFileDelete(
+  std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FileDelete' message";
@@ -356,7 +358,7 @@ std::shared_ptr<FileDeleteMessage> WolkaboutFileManagementProtocol::parseFileDel
     return std::make_shared<FileDeleteMessage>(files);
 }
 
-std::shared_ptr<FilePurgeMessage> WolkaboutFileManagementProtocol::parseFilePurge(std::shared_ptr<Message> message)
+std::shared_ptr<FilePurgeMessage> WolkaboutFileManagementProtocol::parseFilePurge(std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'FilePurge' message";

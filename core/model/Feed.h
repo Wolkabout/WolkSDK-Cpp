@@ -19,9 +19,6 @@
 
 #include "core/Types.h"
 
-#include <functional>
-#include <string>
-
 namespace wolkabout
 {
 class Feed
@@ -31,19 +28,11 @@ public:
 
     const std::string& getName() const;
 
-    void setName(const std::string& name);
-
     const std::string& getReference() const;
-
-    void setReference(const std::string& reference);
 
     FeedType getFeedType() const;
 
-    void setFeedType(FeedType feedType);
-
     Unit getUnit() const;
-
-    void setUnit(Unit unit);
 
 private:
     std::string m_name;

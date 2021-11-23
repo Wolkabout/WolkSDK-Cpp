@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 namespace wolkabout
 {
-MessageType WolkaboutProtocol::getMessageType(const std::shared_ptr<Message>& message)
+MessageType WolkaboutProtocol::getMessageType(const std::shared_ptr<MqttMessage>& message)
 {
     // Take the topic, and extract its last part
     const auto& topic = message->getChannel();

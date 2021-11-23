@@ -20,6 +20,12 @@ OPTION(BUILD_CONNECTIVITY "Build the library with Paho MQTT and allow MQTT conne
 OPTION(BUILD_POCO "Build the library with Poco." ON)
 OPTION(BUILD_GTEST "Build the library with GTest." ON)
 OPTION(BUILD_AWS_LOG_UPLOADER "Build the library with AwsLogUploader." ON)
+OPTION(BUILD_TESTS "Build the unit tests" ON)
+
+# Check the GTEST and TESTS option
+if (NOT ${BUILD_GTEST} AND ${BUILD_TESTS})
+    message(FATAL_ERROR "The library can not build TESTS without GTEST.")
+endif ()
 
 # Options for Poco
 if (${BUILD_POCO})
@@ -151,6 +157,8 @@ find_package(Threads REQUIRED)
 
 # WolkAbout C++ SDK, in their separated packages
 set(INSTALL_TARGETS)
+set(TESTS_HEADER_FILES)
+set(TESTS_SOURCE_FILES)
 
 # Utilities
 set(UTILITY_SOURCE_FILES core/utilities/ByteUtils.cpp
@@ -214,7 +222,30 @@ if (BUILD_CONNECTIVITY)
             core/model/Attribute.cpp
             core/model/Device.cpp
             core/model/Feed.cpp
-            core/model/Message.cpp
+            core/model/MqttMessage.cpp
+            core/model/Reading.cpp
+            core/model/messages/AttributeRegistrationMessage.cpp
+            core/model/messages/FeedRegistrationMessage.cpp
+            core/model/messages/FeedRemovalMessage.cpp
+            core/model/messages/FeedValuesMessage.cpp
+            core/model/messages/FileBinaryRequestMessage.cpp
+            core/model/messages/FileBinaryResponseMessage.cpp
+            core/model/messages/FileDeleteMessage.cpp
+            core/model/messages/FileListRequestMessage.cpp
+            core/model/messages/FileListResponseMessage.cpp
+            core/model/messages/FilePurgeMessage.cpp
+            core/model/messages/FileUploadAbortMessage.cpp
+            core/model/messages/FileUploadInitiateMessage.cpp
+            core/model/messages/FileUploadStatusMessage.cpp
+            core/model/messages/FileUrlDownloadAbortMessage.cpp
+            core/model/messages/FileUrlDownloadInitMessage.cpp
+            core/model/messages/FileUrlDownloadStatusMessage.cpp
+            core/model/messages/FirmwareUpdateAbortMessage.cpp
+            core/model/messages/FirmwareUpdateInstallMessage.cpp
+            core/model/messages/FirmwareUpdateStatusMessage.cpp
+            core/model/messages/ParametersPullMessage.cpp
+            core/model/messages/ParametersUpdateMessage.cpp
+            core/model/messages/PullFeedValuesMessage.cpp
             core/persistence/inmemory/InMemoryPersistence.cpp
             core/protocol/wolkabout/WolkaboutDataProtocol.cpp
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.cpp
@@ -229,7 +260,31 @@ if (BUILD_CONNECTIVITY)
             core/model/Attribute.h
             core/model/Device.h
             core/model/Feed.h
-            core/model/Message.h
+            core/model/MqttMessage.h
+            core/model/Reading.h
+            core/model/messages/AttributeRegistrationMessage.h
+            core/model/messages/FeedRegistrationMessage.h
+            core/model/messages/FeedRemovalMessage.h
+            core/model/messages/FeedValuesMessage.h
+            core/model/messages/FileBinaryRequestMessage.h
+            core/model/messages/FileBinaryResponseMessage.h
+            core/model/messages/FileDeleteMessage.h
+            core/model/messages/FileListRequestMessage.h
+            core/model/messages/FileListResponseMessage.h
+            core/model/messages/FilePurgeMessage.h
+            core/model/messages/FileUploadAbortMessage.h
+            core/model/messages/FileUploadInitiateMessage.h
+            core/model/messages/FileUploadStatusMessage.h
+            core/model/messages/FileUrlDownloadAbortMessage.h
+            core/model/messages/FileUrlDownloadInitMessage.h
+            core/model/messages/FileUrlDownloadStatusMessage.h
+            core/model/messages/FirmwareUpdateAbortMessage.h
+            core/model/messages/FirmwareUpdateInstallMessage.h
+            core/model/messages/FirmwareUpdateStatusMessage.h
+            core/model/messages/MessageObject.h
+            core/model/messages/ParametersPullMessage.h
+            core/model/messages/ParametersUpdateMessage.h
+            core/model/messages/PullFeedValuesMessage.h
             core/persistence/inmemory/InMemoryPersistence.h
             core/persistence/Persistence.h
             core/protocol/wolkabout/WolkaboutDataProtocol.h
@@ -239,9 +294,6 @@ if (BUILD_CONNECTIVITY)
             core/protocol/FileManagementProtocol.h
             core/protocol/FirmwareUpdateProtocol.h
             core/protocol/Protocol.h
-            core/service/BinaryDataListener.h
-            core/service/FirmwareInstaller.h
-            core/service/FirmwareUpdateCommandListener.h
             core/InboundMessageHandler.h
             core/Types.h)
 
@@ -251,7 +303,6 @@ if (BUILD_CONNECTIVITY)
     file(COPY core/model/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/model PATTERN *.cpp EXCLUDE)
     file(COPY core/persistence/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/persistence PATTERN *.cpp EXCLUDE)
     file(COPY core/protocol/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/protocol PATTERN *.cpp EXCLUDE)
-    file(COPY core/service/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/service PATTERN *.cpp EXCLUDE)
 
     add_library(${PROJECT_NAME} SHARED ${LIB_SOURCE_FILES} ${LIB_HEADER_FILES})
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3)
@@ -260,7 +311,19 @@ if (BUILD_CONNECTIVITY)
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
     add_dependencies(${PROJECT_NAME} pahomqttcpp)
 
+    set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
+            tests/WolkaboutDataProtocolTests.cpp)
+
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
+endif ()
+
+if (${BUILD_TESTS})
+    add_executable(${PROJECT_NAME}Tests ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES})
+    target_link_libraries(${PROJECT_NAME}Tests ${INSTALL_TARGETS} gtest gmock gtest_main)
+    target_include_directories(${PROJECT_NAME}Tests PRIVATE ${PROJECT_SOURCE_DIR})
+    target_include_directories(${PROJECT_NAME}Tests PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
+    set_target_properties(${PROJECT_NAME}Tests PROPERTIES INSTALL_RPATH "$ORIGIN/../lib")
+    add_dependencies(${PROJECT_NAME}Tests libgtest)
 endif ()
 
 # Create the install rule

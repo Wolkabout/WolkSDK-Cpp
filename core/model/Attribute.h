@@ -19,9 +19,6 @@
 
 #include "core/Types.h"
 
-#include <string>
-#include <utility>
-
 namespace wolkabout
 {
 class Attribute
@@ -31,15 +28,9 @@ public:
 
     const std::string& getName() const;
 
-    void setName(const std::string& name);
-
     DataType getDataType() const;
 
-    void setDataType(DataType dataType);
-
     std::string getValue() const;
-
-    void setValue(std::string value);
 
 private:
     std::string m_name;

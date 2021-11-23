@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,18 +28,18 @@ public:
 
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
-    MessageType getMessageType(std::shared_ptr<Message> message) override;
+    MessageType getMessageType(std::shared_ptr<MqttMessage> message) override;
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
-    std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                 const FirmwareUpdateStatusMessage& message) override;
+    std::shared_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                     const FirmwareUpdateStatusMessage& message) override;
 
     std::shared_ptr<FirmwareUpdateInstallMessage> parseFirmwareUpdateInstall(
-      const std::shared_ptr<Message>& message) override;
+      const std::shared_ptr<MqttMessage>& message) override;
 
     std::shared_ptr<FirmwareUpdateAbortMessage> parseFirmwareUpdateAbort(
-      const std::shared_ptr<Message>& message) override;
+      const std::shared_ptr<MqttMessage>& message) override;
 };
 }    // namespace wolkabout
 

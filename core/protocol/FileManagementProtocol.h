@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2021 WolkAbout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,19 @@
 #ifndef WOLKABOUTCORE_FILEMANAGEMENTPROTOCOL_H
 #define WOLKABOUTCORE_FILEMANAGEMENTPROTOCOL_H
 
+#include "core/model/messages/FileBinaryRequestMessage.h"
+#include "core/model/messages/FileBinaryResponseMessage.h"
+#include "core/model/messages/FileDeleteMessage.h"
+#include "core/model/messages/FileListRequestMessage.h"
+#include "core/model/messages/FileListResponseMessage.h"
+#include "core/model/messages/FilePurgeMessage.h"
+#include "core/model/messages/FileUploadAbortMessage.h"
+#include "core/model/messages/FileUploadInitiateMessage.h"
+#include "core/model/messages/FileUploadStatusMessage.h"
+#include "core/model/messages/FileUrlDownloadAbortMessage.h"
+#include "core/model/messages/FileUrlDownloadInitMessage.h"
+#include "core/model/messages/FileUrlDownloadStatusMessage.h"
 #include "core/protocol/Protocol.h"
-#include "core/Types.h"
 
 namespace wolkabout
 {
@@ -29,33 +40,36 @@ namespace wolkabout
 class FileManagementProtocol : public Protocol
 {
 public:
-    virtual std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         const FileUploadStatusMessage& message) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             const FileUploadStatusMessage& message) = 0;
 
-    virtual std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         const FileBinaryRequestMessage& message) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             const FileBinaryRequestMessage& message) = 0;
 
-    virtual std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         const FileUrlDownloadStatusMessage& message) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             const FileUrlDownloadStatusMessage& message) = 0;
 
-    virtual std::shared_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                         const FileListResponseMessage& message) = 0;
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+                                                             const FileListResponseMessage& message) = 0;
 
-    virtual std::shared_ptr<FileUploadInitiateMessage> parseFileUploadInit(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<FileUploadInitiateMessage> parseFileUploadInit(std::shared_ptr<MqttMessage> message) = 0;
 
-    virtual std::shared_ptr<FileUploadAbortMessage> parseFileUploadAbort(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<FileUploadAbortMessage> parseFileUploadAbort(std::shared_ptr<MqttMessage> message) = 0;
 
-    virtual std::shared_ptr<FileBinaryResponseMessage> parseFileBinaryResponse(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<FileBinaryResponseMessage> parseFileBinaryResponse(
+      std::shared_ptr<MqttMessage> message) = 0;
 
-    virtual std::shared_ptr<FileUrlDownloadInitMessage> parseFileUrlDownloadInit(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<FileUrlDownloadInitMessage> parseFileUrlDownloadInit(
+      std::shared_ptr<MqttMessage> message) = 0;
 
-    virtual std::shared_ptr<FileUrlDownloadAbortMessage> parseFileUrlDownloadAbort(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<FileUrlDownloadAbortMessage> parseFileUrlDownloadAbort(
+      std::shared_ptr<MqttMessage> message) = 0;
 
-    virtual std::shared_ptr<FileListRequestMessage> parseFileListRequest(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<FileListRequestMessage> parseFileListRequest(std::shared_ptr<MqttMessage> message) = 0;
 
-    virtual std::shared_ptr<FileDeleteMessage> parseFileDelete(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<FileDeleteMessage> parseFileDelete(std::shared_ptr<MqttMessage> message) = 0;
 
-    virtual std::shared_ptr<FilePurgeMessage> parseFilePurge(std::shared_ptr<Message> message) = 0;
+    virtual std::shared_ptr<FilePurgeMessage> parseFilePurge(std::shared_ptr<MqttMessage> message) = 0;
 };
 }    // namespace wolkabout
 

@@ -16,7 +16,7 @@
 
 #include "core/connectivity/mqtt/MqttConnectivityService.h"
 
-#include "core/model/Message.h"
+#include "core/model/MqttMessage.h"
 
 namespace wolkabout
 {
@@ -92,7 +92,7 @@ bool MqttConnectivityService::isConnected()
     return m_mqttClient->isConnected();
 }
 
-bool MqttConnectivityService::publish(std::shared_ptr<Message> outboundMessage, bool persistent)
+bool MqttConnectivityService::publish(std::shared_ptr<MqttMessage> outboundMessage, bool persistent)
 {
     return m_mqttClient->publish(outboundMessage->getChannel(), outboundMessage->getContent(), persistent);
 }

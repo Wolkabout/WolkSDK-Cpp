@@ -15,10 +15,11 @@
  */
 
 #include "core/protocol/wolkabout/WolkaboutDataProtocol.h"
-#include "core/protocol/wolkabout/WolkaboutProtocol.h"
 
 #include "core/Types.h"
 #include "core/model/Feed.h"
+#include "core/model/Reading.h"
+#include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
 #include "core/utilities/json.hpp"
 
@@ -61,6 +62,61 @@ static void to_json(json& j, const Parameters& param)
     j[toString(param.first)] = param.second;
 }
 
+static void from_json(const json& j, std::vector<Reading>& r)
+{
+    for (const auto& time : j.items())
+    {
+        // Collect all the readings for this time
+        auto timestamp = std::uint64_t{0};
+        auto readings = std::vector<Reading>{};
+
+        // Read the values from the readings map
+        for (const auto& reading : time.value().items())
+        {
+            if (reading.key() == "timestamp")
+                timestamp = reading.value().get<std::uint64_t>();
+            else
+            {
+                // Inspect the type of the value
+                const auto& readingValue = reading.value();
+                const auto type = readingValue.type();
+                switch (readingValue.type())
+                {
+                case nlohmann::detail::value_t::boolean:
+                    readings.emplace_back(
+                      Reading{reading.key(), readingValue.get<bool>() ? "true" : "false", timestamp});
+                    break;
+                case nlohmann::detail::value_t::string:
+                    readings.emplace_back(Reading{reading.key(), readingValue.get<std::string>(), timestamp});
+                    break;
+                case nlohmann::detail::value_t::number_unsigned:
+                    readings.emplace_back(
+                      Reading{reading.key(), std::to_string(readingValue.get<std::uint64_t>()), timestamp});
+                    break;
+                case nlohmann::detail::value_t::number_integer:
+                    readings.emplace_back(
+                      Reading{reading.key(), std::to_string(readingValue.get<std::int64_t>()), timestamp});
+                    break;
+                case nlohmann::detail::value_t::number_float:
+                    readings.emplace_back(
+                      Reading{reading.key(), std::to_string(readingValue.get<std::float_t>()), timestamp});
+                    break;
+                default:
+                    throw std::runtime_error("Failed to parse 'FeedValuesMessage' -> The received JSON payload "
+                                             "contains an invalid feed value.");
+                }
+            }
+        }
+
+        // Set the timestamp for all readings and put them into the vector
+        for (auto& reading : readings)
+        {
+            reading.setTimestamp(timestamp);
+            r.emplace_back(reading);
+        }
+    }
+}
+
 static void from_json(const json& j, std::vector<Parameters>& p)
 {
     for (auto& el : j.items())
@@ -92,14 +148,14 @@ std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string
     return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
 }
 
-MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<Message> message)
+MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<MqttMessage> message)
 {
     LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
-std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                    FeedRegistrationMessage feedRegistrationMessage)
+std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+                                                                        FeedRegistrationMessage feedRegistrationMessage)
 {
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
                  toString(feedRegistrationMessage.getMessageType());
@@ -107,11 +163,11 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     auto feeds = feedRegistrationMessage.getFeeds();
     json payload = json(feeds);
 
-    return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
+    return std::unique_ptr<MqttMessage>(new MqttMessage(json(payload).dump(), topic));
 }
 
-std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                    FeedRemovalMessage feedRemovalMessage)
+std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+                                                                        FeedRemovalMessage feedRemovalMessage)
 {
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
                  toString(feedRemovalMessage.getMessageType());
@@ -119,11 +175,11 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     auto feeds = feedRemovalMessage.getReferences();
     json payload = json(feeds);
 
-    return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
+    return std::unique_ptr<MqttMessage>(new MqttMessage(json(payload).dump(), topic));
 }
 
-std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                    FeedValuesMessage feedValuesMessage)
+std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+                                                                        FeedValuesMessage feedValuesMessage)
 {
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
                  toString(feedValuesMessage.getMessageType());
@@ -146,19 +202,19 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
         payload += json(forTimestamp);
     }
     auto jsonstring = json(payload).dump();
-    return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
+    return std::unique_ptr<MqttMessage>(new MqttMessage(json(payload).dump(), topic));
 }
 
-std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                    PullFeedValuesMessage pullFeedValuesMessage)
+std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+                                                                        PullFeedValuesMessage pullFeedValuesMessage)
 {
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
                  toString(pullFeedValuesMessage.getMessageType());
 
-    return std::unique_ptr<Message>(new Message("", topic));
+    return std::unique_ptr<MqttMessage>(new MqttMessage("", topic));
 }
 
-std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
+std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(
   const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage)
 {
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
@@ -167,11 +223,11 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
     auto attributes = attributeRegistrationMessage.getAttributes();
     json payload = json(attributes);
 
-    return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
+    return std::unique_ptr<MqttMessage>(new MqttMessage(json(payload).dump(), topic));
 }
 
-std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                    ParametersUpdateMessage parametersUpdateMessage)
+std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+                                                                        ParametersUpdateMessage parametersUpdateMessage)
 {
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
                  toString(parametersUpdateMessage.getMessageType());
@@ -183,106 +239,49 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
         payload[toString(parameter.first)] = parameter.second;
     }
 
-    return std::unique_ptr<Message>(new Message(json(payload).dump(), topic));
+    return std::unique_ptr<MqttMessage>(new MqttMessage(json(payload).dump(), topic));
 }
 
-std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                    ParametersPullMessage parametersPullMessage)
+std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+                                                                        ParametersPullMessage parametersPullMessage)
 {
     auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
                  toString(parametersPullMessage.getMessageType());
 
-    return std::unique_ptr<Message>(new Message("", topic));
+    return std::unique_ptr<MqttMessage>(new MqttMessage("", topic));
 }
 
-std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
+std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<MqttMessage> message)
 {
+    LOG(TRACE) << METHOD_INFO;
+
     try
     {
-        // Check that the payload is a valid JSON array
-        auto content = message->getContent();
-        auto jsonContent = json::parse(content);
-        if (!jsonContent.is_array())
-        {
-            LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> The received JSON payload is not a JSON array.";
-            return nullptr;
-        }
-
-        // Now parse every array entry
-        auto readings = std::vector<Reading>{};
-        for (const auto& arrayItem : jsonContent.items())
-        {
-            // Take the array value
-            const auto entry = arrayItem.value();
-            if (!entry.is_object())
-            {
-                LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> The received JSON payload has array members that "
-                              "are not objects.";
-                return nullptr;
-            }
-
-            // Look for the timestamp
-            const auto timestampIt = entry.find(TIMESTAMP_KEY);
-            if (timestampIt == entry.cend())
-            {
-                LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> The received JSON payload contains entries that "
-                              "are missing the timestamp.";
-                return nullptr;
-            }
-            // Parse the timestamp into a usable value
-            const auto timestamp = timestampIt->get<std::uint64_t>();
-
-            // Look for any feed values and make a reading for each one of them
-            for (const auto& readingItem : entry.items())
-            {
-                // Skip it if it is the timestamp
-                const auto& reference = readingItem.key();
-                if (reference == TIMESTAMP_KEY)
-                    continue;
-
-                // Check the type of the value
-                const auto& readingValue = readingItem.value();
-                switch (readingValue.type())
-                {
-                case nlohmann::detail::value_t::boolean:
-                    readings.emplace_back(Reading{reference, readingValue.get<bool>() ? "true" : "false", timestamp});
-                    break;
-                case nlohmann::detail::value_t::string:
-                    readings.emplace_back(Reading{reference, readingValue.get<std::string>(), timestamp});
-                    break;
-                case nlohmann::detail::value_t::number_unsigned:
-                    readings.emplace_back(
-                      Reading{reference, std::to_string(readingValue.get<std::uint64_t>()), timestamp});
-                    break;
-                case nlohmann::detail::value_t::number_integer:
-                    readings.emplace_back(
-                      Reading{reference, std::to_string(readingValue.get<std::int64_t>()), timestamp});
-                    break;
-                case nlohmann::detail::value_t::number_float:
-                    readings.emplace_back(
-                      Reading{reference, std::to_string(readingValue.get<std::float_t>()), timestamp});
-                    break;
-                default:
-                    LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> The received JSON payload contains an "
-                                  "invalid feed value.";
-                    return nullptr;
-                }
-            }
-        }
+        auto j = json::parse(message->getContent());
+        auto readings = j.get<std::vector<Reading>>();
         return std::make_shared<FeedValuesMessage>(readings);
     }
     catch (const std::exception& exception)
     {
-        LOG(ERROR) << "Failed to parse 'FeedValuesMessage' -> '" << exception.what() << "'.";
+        LOG(ERROR) << "Failed to parse 'FeedValues' message -> '" << exception.what() << "'.";
         return nullptr;
     }
 }
 
-std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<Message> message)
+std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<MqttMessage> message)
 {
-    json j = json::parse(message->getContent());
+    LOG(TRACE) << METHOD_INFO;
 
-    std::vector<Parameters> parameters = j.get<std::vector<Parameters>>();
-    return std::make_shared<ParametersUpdateMessage>(parameters);
+    try
+    {
+        auto j = json::parse(message->getContent());
+        auto parameters = j.get<std::vector<Parameters>>();
+        return std::make_shared<ParametersUpdateMessage>(parameters);
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to parse 'Parameters' message -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 }    // namespace wolkabout
