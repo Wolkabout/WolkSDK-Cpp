@@ -274,8 +274,8 @@ MessageType FileUrlDownloadAbortMessage::getMessageType()
     return MessageType::FILE_URL_DOWNLOAD_ABORT;
 }
 
-FileUrlDownloadStatusMessage::FileUrlDownloadStatusMessage(std::string fileUrl, std::string fileName, FileUploadStatus status,
-                                             FileUploadError error)
+FileUrlDownloadStatusMessage::FileUrlDownloadStatusMessage(std::string fileUrl, std::string fileName,
+                                                           FileUploadStatus status, FileUploadError error)
 : m_fileUrl(std::move(fileUrl)), m_fileName(std::move(fileName)), m_status(status), m_error(error)
 {
 }
@@ -337,5 +337,42 @@ MessageType FileDeleteMessage::getMessageType()
 MessageType FilePurgeMessage::getMessageType()
 {
     return MessageType::FILE_PURGE;
+}
+
+FirmwareUpdateInstallMessage::FirmwareUpdateInstallMessage(std::string file) : m_file(std::move(file)) {}
+
+const std::string& FirmwareUpdateInstallMessage::getFile() const
+{
+    return m_file;
+}
+
+MessageType FirmwareUpdateInstallMessage::getMessageType()
+{
+    return MessageType::FIRMWARE_UPDATE_INSTALL;
+}
+
+FirmwareUpdateStatusMessage::FirmwareUpdateStatusMessage(FirmwareUpdateStatus status, FirmwareUpdateError error)
+: m_status(status), m_error(error)
+{
+}
+
+FirmwareUpdateStatus FirmwareUpdateStatusMessage::getStatus() const
+{
+    return m_status;
+}
+
+FirmwareUpdateError FirmwareUpdateStatusMessage::getError() const
+{
+    return m_error;
+}
+
+MessageType FirmwareUpdateStatusMessage::getMessageType()
+{
+    return MessageType::FIRMWARE_UPDATE_STATUS;
+}
+
+MessageType FirmwareUpdateAbortMessage::getMessageType()
+{
+    return MessageType::FIRMWARE_UPDATE_ABORT;
 }
 }    // namespace wolkabout

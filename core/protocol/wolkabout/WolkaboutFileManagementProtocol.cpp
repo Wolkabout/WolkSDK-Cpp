@@ -49,19 +49,14 @@ std::vector<std::string> WolkaboutFileManagementProtocol::getInboundChannelsForD
 
 std::string WolkaboutFileManagementProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
 {
-    const auto firstDivider = topic.find(CHANNEL_DELIMITER);
-    const auto lastDivider = topic.rfind(CHANNEL_DELIMITER);
-    return topic.substr(firstDivider + 1, lastDivider - firstDivider - 1);
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
 }
 
 MessageType WolkaboutFileManagementProtocol::getMessageType(std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
-
-    // Take the topic, and extract its last part
-    const auto& topic = message->getChannel();
-    const auto section = topic.substr(topic.rfind(CHANNEL_DELIMITER) + 1);
-    return messageTypeFromString(section);
+    return WolkaboutProtocol::getMessageType(message);
 }
 
 std::shared_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(const std::string& deviceKey,

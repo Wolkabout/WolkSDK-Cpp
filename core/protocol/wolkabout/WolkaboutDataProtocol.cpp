@@ -70,6 +70,34 @@ static void from_json(const json& j, std::vector<Parameters>& p)
     }
 }
 
+std::vector<std::string> WolkaboutDataProtocol::getInboundChannels() const
+{
+    return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
+              toString(MessageType::PARAMETER_SYNC),
+            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
+              toString(MessageType::FEED_VALUES)};
+}
+
+std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
+{
+    return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
+              toString(MessageType::PARAMETER_SYNC),
+            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
+              toString(MessageType::FEED_VALUES)};
+}
+
+std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+{
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+}
+
+MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<Message> message)
+{
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getMessageType(message);
+}
+
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
                                                                     FeedRegistrationMessage feedRegistrationMessage)
 {
@@ -167,28 +195,6 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     return std::unique_ptr<Message>(new Message("", topic));
 }
 
-std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
-{
-    return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::PARAMETER_SYNC),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FEED_VALUES)};
-}
-
-std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
-{
-    auto first = topic.find(CHANNEL_DELIMITER);
-    auto last = topic.rfind(CHANNEL_DELIMITER);
-    return topic.substr(first + 1, last - first - 1);
-}
-
-MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<Message> message)
-{
-    auto channel = message->getChannel();
-    auto last = channel.rfind(CHANNEL_DELIMITER);
-    return messageTypeFromString(channel.substr(last + 1));
-}
-
 std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
 {
     try
@@ -278,13 +284,5 @@ std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(
 
     std::vector<Parameters> parameters = j.get<std::vector<Parameters>>();
     return std::make_shared<ParametersUpdateMessage>(parameters);
-}
-
-std::vector<std::string> WolkaboutDataProtocol::getInboundChannels() const
-{
-    return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
-              toString(MessageType::PARAMETER_SYNC),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + CHANNEL_SINGLE_LEVEL_WILDCARD + CHANNEL_DELIMITER +
-              toString(MessageType::FEED_VALUES)};
 }
 }    // namespace wolkabout

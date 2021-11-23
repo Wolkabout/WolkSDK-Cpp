@@ -286,6 +286,28 @@ enum class FileUploadError
 
 std::string toString(wolkabout::FileUploadError error);
 
+enum class FirmwareUpdateStatus
+{
+    AWAITING_DEVICE,
+    INSTALLING,
+    SUCCESS,
+    ERROR,
+    ABORTED,
+    UNKNOWN
+};
+
+std::string toString(wolkabout::FirmwareUpdateStatus status);
+
+enum class FirmwareUpdateError
+{
+    NONE = -1,
+    UNKNOWN,
+    UNKNOWN_FILE,
+    INSTALLATION_FAILED
+};
+
+std::string toString(wolkabout::FirmwareUpdateError error);
+
 struct FileInformation
 {
     std::string name;

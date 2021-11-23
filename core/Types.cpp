@@ -876,6 +876,42 @@ std::string toString(wolkabout::FileUploadError error)
     }
 }
 
+std::string wolkabout::toString(wolkabout::FirmwareUpdateStatus status)
+{
+    switch (status)
+    {
+    case FirmwareUpdateStatus::AWAITING_DEVICE:
+        return "AWAITING_DEVICE";
+    case FirmwareUpdateStatus::INSTALLING:
+        return "INSTALLING";
+    case FirmwareUpdateStatus::SUCCESS:
+        return "SUCCESS";
+    case FirmwareUpdateStatus::ERROR:
+        return "ERROR";
+    case FirmwareUpdateStatus::ABORTED:
+        return "ABORTED";
+    case FirmwareUpdateStatus::UNKNOWN:
+        return "UNKNOWN";
+    default:
+        return "";
+    }
+}
+
+std::string wolkabout::toString(wolkabout::FirmwareUpdateError error)
+{
+    switch (error)
+    {
+    case FirmwareUpdateError::UNKNOWN:
+        return "UNKNOWN";
+    case FirmwareUpdateError::UNKNOWN_FILE:
+        return "UNKNOWN_FILE";
+    case FirmwareUpdateError::INSTALLATION_FAILED:
+        return "INSTALLATION_FAILED";
+    default:
+        return "";
+    }
+}
+
 const std::string& Reading::getReference() const
 {
     return m_reference;

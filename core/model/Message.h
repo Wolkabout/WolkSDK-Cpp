@@ -306,6 +306,41 @@ class FilePurgeMessage : public MessageObject
 public:
     MessageType getMessageType() override;
 };
+
+class FirmwareUpdateInstallMessage : public MessageObject
+{
+public:
+    explicit FirmwareUpdateInstallMessage(std::string file);
+
+    const std::string& getFile() const;
+
+    MessageType getMessageType() override;
+
+private:
+    std::string m_file;
+};
+
+class FirmwareUpdateStatusMessage : public MessageObject
+{
+public:
+    explicit FirmwareUpdateStatusMessage(FirmwareUpdateStatus status, FirmwareUpdateError error);
+
+    FirmwareUpdateStatus getStatus() const;
+
+    FirmwareUpdateError getError() const;
+
+    MessageType getMessageType() override;
+
+private:
+    FirmwareUpdateStatus m_status;
+    FirmwareUpdateError m_error;
+};
+
+class FirmwareUpdateAbortMessage : public MessageObject
+{
+public:
+    MessageType getMessageType() override;
+};
 }    // namespace wolkabout
 
 #endif
