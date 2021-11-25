@@ -61,6 +61,9 @@ public:
     std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
                                                      ParametersPullMessage parametersPullMessage) override;
 
+    std::unique_ptr<MqttMessage> makeOutboundMessage(
+      const std::string& deviceKey, SynchronizeParametersMessage synchronizeParametersMessage) override;
+
     std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<MqttMessage> message) override;
 
     std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<MqttMessage> message) override;

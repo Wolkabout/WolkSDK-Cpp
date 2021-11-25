@@ -54,6 +54,7 @@ public:
     static const std::string PERCENT;
     static const std::string DECIBEL;
     static const std::string LOCATION;
+    static const std::string TEXT;
     static const std::string METRES_PER_SQUARE_SECOND;
     static const std::string G;
     static const std::string MOLE;
@@ -213,7 +214,7 @@ enum class ParameterName
 std::string toString(ParameterName parameterName);
 ParameterName parameterNameFromString(std::string parameterName);
 
-typedef std::pair<ParameterName, std::string> Parameters;
+using Parameter = std::pair<ParameterName, std::string>;
 
 enum class MessageType
 {
@@ -224,6 +225,7 @@ enum class MessageType
     ATTRIBUTE_REGISTRATION,
     PARAMETER_SYNC,
     PULL_PARAMETERS,
+    SYNCHRONIZE_PARAMETERS,
     TIME_SYNC,
     FILE_UPLOAD_INIT,
     FILE_UPLOAD_STATUS,

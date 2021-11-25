@@ -17,6 +17,7 @@
 #include "core/model/Reading.h"
 
 #include <algorithm>
+#include <regex>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -86,6 +87,14 @@ const std::string& Reading::getStringValue() const
     return m_values.front();
 }
 
+bool Reading::isUInt() const
+{
+    // Check if the reading is not a single-value reading.
+    if (isMulti())
+        throw std::logic_error("Reading is single-value.");
+    return std::regex_match(m_values.front(), std::regex(UNSIGNED_REGEX));
+}
+
 std::uint64_t Reading::getUIntValue() const
 {
     // Check if the reading is not a multi-value reading.
@@ -94,12 +103,28 @@ std::uint64_t Reading::getUIntValue() const
     return std::stoull(m_values.front());
 }
 
+bool Reading::isInt() const
+{
+    // Check if the reading is not a single-value reading.
+    if (isMulti())
+        throw std::logic_error("Reading is single-value.");
+    return std::regex_match(m_values.front(), std::regex(INTEGER_REGEX));
+}
+
 std::int64_t Reading::getIntValue() const
 {
     // Check if the reading is not a multi-value reading.
     if (isMulti())
         throw std::logic_error("Reading is multi-value.");
     return std::stoll(m_values.front());
+}
+
+bool Reading::isFloatOrDouble() const
+{
+    // Check if the reading is not a single-value reading.
+    if (isMulti())
+        throw std::logic_error("Reading is single-value.");
+    return std::regex_match(m_values.front(), std::regex(FLOAT_REGEX));
 }
 
 std::float_t Reading::getFloatValue() const
@@ -116,6 +141,14 @@ std::double_t Reading::getDoubleValue() const
     if (isMulti())
         throw std::logic_error("Reading is multi-value.");
     return std::stod(m_values.front());
+}
+
+bool Reading::isBoolean() const
+{
+    // Check if the reading is not a single-value reading.
+    if (isMulti())
+        throw std::logic_error("Reading is single-value.");
+    return std::regex_match(m_values.front(), std::regex(BOOLEAN_REGEX, std::regex_constants::icase));
 }
 
 bool Reading::getBoolValue() const
@@ -178,7 +211,7 @@ Location Reading::getLocationValue() const
 std::vector<std::string> Reading::getStringValues() const
 {
     // Check if the reading is not a single-value reading.
-    if (isMulti())
+    if (!isMulti())
         throw std::logic_error("Reading is single-value.");
 
     return m_values;
@@ -187,7 +220,7 @@ std::vector<std::string> Reading::getStringValues() const
 std::vector<std::uint64_t> Reading::getUIntValues() const
 {
     // Check if the reading is not a single-value reading.
-    if (isMulti())
+    if (!isMulti())
         throw std::logic_error("Reading is single-value.");
 
     // Make place for the values
@@ -200,7 +233,7 @@ std::vector<std::uint64_t> Reading::getUIntValues() const
 std::vector<std::int64_t> Reading::getIntValues() const
 {
     // Check if the reading is not a single-value reading.
-    if (isMulti())
+    if (!isMulti())
         throw std::logic_error("Reading is single-value.");
 
     // Make place for the values
@@ -213,7 +246,7 @@ std::vector<std::int64_t> Reading::getIntValues() const
 std::vector<std::float_t> Reading::getFloatValues() const
 {
     // Check if the reading is not a single-value reading.
-    if (isMulti())
+    if (!isMulti())
         throw std::logic_error("Reading is single-value.");
 
     // Make place for the values
@@ -226,7 +259,7 @@ std::vector<std::float_t> Reading::getFloatValues() const
 std::vector<std::double_t> Reading::getDoubleValues() const
 {
     // Check if the reading is not a single-value reading.
-    if (isMulti())
+    if (!isMulti())
         throw std::logic_error("Reading is single-value.");
 
     // Make place for the values

@@ -24,6 +24,7 @@
 #include "core/model/messages/ParametersPullMessage.h"
 #include "core/model/messages/ParametersUpdateMessage.h"
 #include "core/model/messages/PullFeedValuesMessage.h"
+#include "core/model/messages/SynchronizeParametersMessage.h"
 #include "core/protocol/Protocol.h"
 
 #include <memory>
@@ -109,6 +110,16 @@ public:
      */
     virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
                                                              ParametersPullMessage parametersPullMessage) = 0;
+
+    /**
+     * This method is a serialization method to create send-able MQTT message from a SynchronizeParametersMessage.
+     *
+     * @param deviceKey The device key for which the SynchronizeParametersMessage is regarding.
+     * @param synchronizeParametersMessage The request message for which parameters need to be synchronized.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(
+      const std::string& deviceKey, SynchronizeParametersMessage synchronizeParametersMessage) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FeedValuesMessage.

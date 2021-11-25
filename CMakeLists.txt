@@ -148,6 +148,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}     -Wall -Wextra -pedantic             
                                             -Wvariadic-macros                                                          \
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
 
+if (${BUILD_TESTS})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -g")
+endif ()
+
 add_subdirectory(dependencies)
 link_directories(${CMAKE_PREFIX_PATH}/lib)
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
@@ -246,6 +250,7 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/ParametersPullMessage.cpp
             core/model/messages/ParametersUpdateMessage.cpp
             core/model/messages/PullFeedValuesMessage.cpp
+            core/model/messages/SynchronizeParametersMessage.cpp
             core/persistence/inmemory/InMemoryPersistence.cpp
             core/protocol/wolkabout/WolkaboutDataProtocol.cpp
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.cpp
@@ -285,6 +290,7 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/ParametersPullMessage.h
             core/model/messages/ParametersUpdateMessage.h
             core/model/messages/PullFeedValuesMessage.h
+            core/model/messages/SynchronizeParametersMessage.h
             core/persistence/inmemory/InMemoryPersistence.h
             core/persistence/Persistence.h
             core/protocol/wolkabout/WolkaboutDataProtocol.h

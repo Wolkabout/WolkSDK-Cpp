@@ -24,14 +24,14 @@ namespace wolkabout
 class ParametersUpdateMessage : public MessageObject
 {
 public:
-    explicit ParametersUpdateMessage(std::vector<Parameters> parameterList);
+    explicit ParametersUpdateMessage(std::vector<Parameter> parameterList);
 
     MessageType getMessageType() override;
 
-    const std::vector<Parameters>& getParameters() const;
+    const std::vector<Parameter>& getParameters() const;
 
 private:
-    std::vector<Parameters> m_parameterList;
+    std::vector<Parameter> m_parameterList;
 };
 }    // namespace wolkabout
 

@@ -50,7 +50,7 @@ public:
 
     void removeAttributes() override;
 
-    bool putParameter(Parameters parameter) override;
+    bool putParameter(Parameter parameter) override;
 
     std::map<ParameterName, std::string> getParameters() override;
 
