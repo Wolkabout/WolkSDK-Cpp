@@ -109,7 +109,7 @@ public:
      */
     virtual void removeAttributes() = 0;
 
-    virtual bool putParameter(Parameters parameter) = 0;
+    virtual bool putParameter(Parameter parameter) = 0;
 
     virtual std::map<ParameterName, std::string> getParameters() = 0;
 

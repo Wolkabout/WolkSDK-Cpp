@@ -93,6 +93,7 @@ const std::string Unit::BOOLEAN = "BOOLEAN";
 const std::string Unit::PERCENT = "PERCENT";
 const std::string Unit::DECIBEL = "DECIBEL";
 const std::string Unit::LOCATION = "LOCATION";
+const std::string Unit::TEXT = "TEXT";
 const std::string Unit::METRES_PER_SQUARE_SECOND = "METRES_PER_SQUARE_SECOND";
 const std::string Unit::G = "G";
 const std::string Unit::MOLE = "MOLE";
@@ -317,6 +318,8 @@ std::string toString(MessageType type)
         return "parameters";
     case MessageType::PULL_PARAMETERS:
         return "pull_parameters";
+    case MessageType::SYNCHRONIZE_PARAMETERS:
+        return "synchronize_parameters";
     case MessageType::TIME_SYNC:
         return "time";
     case MessageType::FILE_UPLOAD_INIT:
@@ -373,6 +376,8 @@ MessageType messageTypeFromString(const std::string& type)
         return MessageType::PARAMETER_SYNC;
     if (type == "pull_parameters")
         return MessageType::PULL_PARAMETERS;
+    if (type == "synchronize_parameters")
+        return MessageType::SYNCHRONIZE_PARAMETERS;
     if (type == "time")
         return MessageType::TIME_SYNC;
     if (type == "file_upload_initiate")

@@ -48,7 +48,7 @@ std::string WolkaboutFirmwareUpdateProtocol::extractDeviceKeyFromChannel(const s
     return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
 }
 
-std::shared_ptr<MqttMessage> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
+std::unique_ptr<MqttMessage> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
   const std::string& deviceKey, const FirmwareUpdateStatusMessage& message)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -76,7 +76,7 @@ std::shared_ptr<MqttMessage> WolkaboutFirmwareUpdateProtocol::makeOutboundMessag
     auto payload = nlohmann::json({{"status", statusString}});
     if (message.getStatus() == FirmwareUpdateStatus::ERROR)
         payload["error"] = errorString;
-    return std::make_shared<MqttMessage>(payload.dump(), topic);
+    return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
 }
 
 std::shared_ptr<FirmwareUpdateInstallMessage> WolkaboutFirmwareUpdateProtocol::parseFirmwareUpdateInstall(

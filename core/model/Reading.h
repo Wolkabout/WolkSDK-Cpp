@@ -26,6 +26,12 @@ namespace wolkabout
 // This is the divider that is used to put the latitude and longitude of a location together.
 const std::string LOCATION_DIVIDER = ",";
 
+// This is a collection of regex's that can be used to quickly determine if a value can be parsed into any of the types.
+const std::string UNSIGNED_REGEX = "\\d+";
+const std::string INTEGER_REGEX = "-?\\d+";
+const std::string FLOAT_REGEX = "-?\\d+.\\d+";
+const std::string BOOLEAN_REGEX = "(true|false)";
+
 /**
  * This class represents a single Reading. A reading is a value for a feed at a certain time.
  * Reference is used to notify for which feed the reading is defined, the value(s) are the values that are active for
@@ -157,6 +163,15 @@ public:
     const std::string& getStringValue() const;
 
     /**
+     * This is a getter to ask if the single value this reading holds can be parsed into an unsigned integer.
+     *
+     * @throw std::logic_error If the reading is multi-value.
+     *
+     * @return Whether the value can be parsed into an unsigned integer.
+     */
+    bool isUInt() const;
+
+    /**
      * This is the default getter for the single value this reading holds as an unsigned integer.
      *
      * @throw std::logic_error If the reading is multi-value.
@@ -168,6 +183,15 @@ public:
     std::uint64_t getUIntValue() const;
 
     /**
+     * This is a getter to ask if the single value this reading holds can be parsed into an integer.
+     *
+     * @throw std::logic_error If the reading is multi-value.
+     *
+     * @return Whether the value can be parsed into an integer.
+     */
+    bool isInt() const;
+
+    /**
      * This is the default getter for the single value this reading holds as an integer.
      *
      * @throw std::logic_error If the reading is multi-value.
@@ -177,6 +201,15 @@ public:
      * @return The single value of the reading as an integer.
      */
     std::int64_t getIntValue() const;
+
+    /**
+     * This is a getter to ask if the single value this reading holds can be parsed into a float/double.
+     *
+     * @throw std::logic_error If the reading is multi-value.
+     *
+     * @return Whether the value can be parsed into a float/double.
+     */
+    bool isFloatOrDouble() const;
 
     /**
      * This is the default getter for the single value this reading holds as a float.
@@ -199,6 +232,15 @@ public:
      * @return The single value of the reading as a double.
      */
     std::double_t getDoubleValue() const;
+
+    /**
+     * This is a getter to ask if the single value this reading holds can be parsed into a boolean.
+     *
+     * @throw std::logic_error If the reading is multi-value.
+     *
+     * @return Whether the value can be parsed into a boolean.
+     */
+    bool isBoolean() const;
 
     /**
      * This is the default getter for the single value this reading holds as a boolean.

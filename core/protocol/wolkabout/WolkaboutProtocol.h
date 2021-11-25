@@ -29,6 +29,8 @@ const std::string CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
 const std::string DEVICE_TO_PLATFORM_DIRECTION = "d2p";
 const std::string PLATFORM_TO_DEVICE_DIRECTION = "p2d";
 
+const std::string TIMESTAMP_KEY = "timestamp";
+
 /**
  * This static class contains some generic methods that should be shared in between all Wolkabout protocol
  * implementations.

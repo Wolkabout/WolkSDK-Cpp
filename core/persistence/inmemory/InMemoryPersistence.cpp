@@ -89,7 +89,7 @@ void InMemoryPersistence::removeAttributes()
     m_attributes.clear();
 }
 
-bool InMemoryPersistence::putParameter(Parameters parameter)
+bool InMemoryPersistence::putParameter(Parameter parameter)
 {
     m_parameters.insert(parameter);
     return true;

@@ -32,7 +32,7 @@ public:
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
-    std::shared_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+    std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
                                                      const FirmwareUpdateStatusMessage& message) override;
 
     std::shared_ptr<FirmwareUpdateInstallMessage> parseFirmwareUpdateInstall(

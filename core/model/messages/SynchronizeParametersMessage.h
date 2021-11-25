@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-#include "core/model/messages/ParametersUpdateMessage.h"
+#ifndef WOLKABOUTCORE_SYNCHRONIZEPARAMETERSMESSAGE_H
+#define WOLKABOUTCORE_SYNCHRONIZEPARAMETERSMESSAGE_H
+
+#include "core/model/messages/MessageObject.h"
 
 namespace wolkabout
 {
-ParametersUpdateMessage::ParametersUpdateMessage(std::vector<Parameter> parameterList)
-: m_parameterList(std::move(parameterList))
+class SynchronizeParametersMessage : public MessageObject
 {
-}
+public:
+    explicit SynchronizeParametersMessage(std::vector<ParameterName> parameters);
 
-MessageType ParametersUpdateMessage::getMessageType()
-{
-    return MessageType::PARAMETER_SYNC;
-}
+    const std::vector<ParameterName>& getParameters() const;
 
-const std::vector<Parameter>& ParametersUpdateMessage::getParameters() const
-{
-    return m_parameterList;
-}
+    MessageType getMessageType() override;
+
+private:
+    std::vector<ParameterName> m_parameters;
+};
 }    // namespace wolkabout
+
+#endif    // WOLKABOUTCORE_SYNCHRONIZEPARAMETERSMESSAGE_H
