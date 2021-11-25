@@ -21,6 +21,11 @@
 
 namespace wolkabout
 {
+/**
+ * This is an interface for all messages that are found in this protocol.
+ * This way messages can announce their types before being downcast into a specific type.
+ * The type is usually determined by a protocol parser, and the messages is later passed through to an message handler.
+ */
 class MessageObject
 {
 public:

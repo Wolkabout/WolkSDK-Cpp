@@ -32,32 +32,98 @@
 
 namespace wolkabout
 {
+/**
+ * This is an interface defining a DataProtocol, used to transfer basic device data.
+ * This protocol defines the serializers/deserializers for a bunch of messages that are necessary to accomplish
+ * the basic device data communication.
+ */
 class DataProtocol : public Protocol
 {
 public:
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a FeedRegistrationMessage.
+     *
+     * @param deviceKey The device key for which the FeedRegistrationMessage is regarding.
+     * @param feedRegistrationMessage The message containing information about feeds that need to be registered.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
     virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
                                                              FeedRegistrationMessage feedRegistrationMessage) = 0;
 
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a FeedRemovalMessage.
+     *
+     * @param deviceKey The device key for which the FeedRemovalMessage is regarding.
+     * @param feedRemovalMessage The message containing information about feeds that need to be removed.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
     virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
                                                              FeedRemovalMessage feedRemovalMessage) = 0;
 
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a FeedValuesMessage.
+     *
+     * @param deviceKey The device key for which the FeedValuesMessage is regarding.
+     * @param feedValuesMessage The message containing information about new feed values the device is sending.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
     virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
                                                              FeedValuesMessage feedValuesMessage) = 0;
 
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a PullFeedValuesMessage.
+     *
+     * @param deviceKey The device key for which the PullFeedValuesMessage is regarding.
+     * @param pullFeedValuesMessage The request message for new feed values from the platform.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
     virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
                                                              PullFeedValuesMessage pullFeedValuesMessage) = 0;
 
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a AttributeRegistrationMessage.
+     *
+     * @param deviceKey The device key for which the AttributeRegistrationMessage is regarding.
+     * @param attributeRegistrationMessage The request message about new/updated attributes the device is sending.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
     virtual std::unique_ptr<MqttMessage> makeOutboundMessage(
       const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage) = 0;
 
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a ParametersUpdateMessage.
+     *
+     * @param deviceKey The device key for which the ParametersUpdateMessage is regarding.
+     * @param parametersUpdateMessage The request message about updated parameters the device is sending.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
     virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
                                                              ParametersUpdateMessage parametersUpdateMessage) = 0;
 
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a ParametersPullMessage.
+     *
+     * @param deviceKey The device key for which the ParametersPullMessage is regarding.
+     * @param pullFeedValuesMessage The request message for new parameter values from the platform.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
     virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
                                                              ParametersPullMessage parametersPullMessage) = 0;
 
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a FeedValuesMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid FeedValuesMessage.
+     * @return A parsed FeedValuesMessage. `nullptr` if an error has occurred.
+     */
     virtual std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<MqttMessage> message) = 0;
 
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a ParametersUpdateMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid ParametersUpdateMessage.
+     * @return A parsed ParametersUpdateMessage. `nullptr` if an error has occurred.
+     */
     virtual std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<MqttMessage> message) = 0;
 };
 }    // namespace wolkabout

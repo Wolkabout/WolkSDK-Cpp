@@ -20,23 +20,45 @@
 #include "core/Types.h"
 #include "core/model/MqttMessage.h"
 
+#include <memory>
+
 namespace wolkabout
 {
 const std::string CHANNEL_DELIMITER = "/";
-const std::string CHANNEL_MULTI_LEVEL_WILDCARD = "#";
 const std::string CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
-
 const std::string DEVICE_TO_PLATFORM_DIRECTION = "d2p";
 const std::string PLATFORM_TO_DEVICE_DIRECTION = "p2d";
 
-const std::string TIMESTAMP_KEY = "timestamp";
-
+/**
+ * This static class contains some generic methods that should be shared in between all Wolkabout protocol
+ * implementations.
+ */
 class WolkaboutProtocol
 {
 public:
+    /**
+     * This is a generic Wolkabout implementation for the `getMessageType` interface method of the Protocol interface.
+     * This is done by extracting the last part of the topic, which must correspond to a unique MessageType - this is
+     * currently set by the Wolkabout protocol.
+     *
+     * @param message The message for which the MessageType needs to be determined.
+     * @return The determined message type for the received message.
+     */
     static MessageType getMessageType(const std::shared_ptr<MqttMessage>& message);
 
+    /**
+     * This is a generic Wolkabout implementation for the `extractDeviceKeyFromChannel` interface method of the Protocol
+     * interface. This is done by extracting the second part of the topic, which comes after the message direction
+     * (usually `p2d`), and is always a device key - this is currently set by the Wolkabout protocol.
+     *
+     * @param topic The message topic from which a device key needs to be extracted.
+     * @return The determined device key for the message topic.
+     */
     static std::string extractDeviceKeyFromChannel(const std::string& topic);
+
+private:
+    WolkaboutProtocol() = default;
+    virtual ~WolkaboutProtocol() = 0;
 };
 }    // namespace wolkabout
 

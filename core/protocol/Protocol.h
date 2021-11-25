@@ -25,17 +25,57 @@
 
 namespace wolkabout
 {
+/**
+ * This is an interface for all protocol interfaces.
+ * This defines some basic functionality that is required to use an MQTT connection,
+ * such as to define which MQTT topics need to be listened to,
+ * and how can a received message be forwarded to an appropriate handler.
+ */
 class Protocol
 {
 public:
+    /**
+     * Default virtual destructor.
+     */
     virtual ~Protocol() = default;
 
+    /**
+     * This method can be overridden to describe the full list of MQTT topics that need to be subscribed to.
+     * This list should not contain any topics that have a specific device key in them (for that, use
+     * `getInboundChannelsForDevice`).
+     *
+     * @return The list of MQTT topics the protocol implementation requires subscription to.
+     */
     virtual std::vector<std::string> getInboundChannels() const = 0;
 
+    /**
+     * This method can be overridden to describe the full list of MQTT topics that need to be subscribed to.
+     * This list should only contain topics that have a specific device key in them, and not any independent of device
+     * keys (for that, use `getInboundChannels`).
+     *
+     * @param deviceKey The device key of a newly initiated device.
+     * @return The list of MQTT topics the protocol implementation requires subscription to.
+     */
     virtual std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const = 0;
 
+    /**
+     * This method can be overridden to define the routine used to figure out the type of the received message.
+     * The entire message gets passed through, so both the MQTT topic and the content of the message can be used to
+     * determine that.
+     *
+     * @param message The received MQTT message.
+     * @return The type of the message determined by the protocol.
+     */
     virtual MessageType getMessageType(std::shared_ptr<MqttMessage> message) = 0;
 
+    /**
+     * This method can be overridden to define the routine used to figure out the target device for the message.
+     * Only the topic of the message is passed through as an argument, so the device key must be extracted from the
+     * topic.
+     *
+     * @param topic The topic of a received message.
+     * @return The device key extracted from the message topic.
+     */
     virtual std::string extractDeviceKeyFromChannel(const std::string& topic) const = 0;
 };
 }    // namespace wolkabout

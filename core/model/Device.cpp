@@ -18,12 +18,7 @@
 
 namespace wolkabout
 {
-wolkabout::Device::Device(std::string key, std::string password, OutboundDataMode type)
-: m_key(std::move(key)), m_password(std::move(password)), m_type(type)
-{
-}
-
-wolkabout::Device::Device(std::string name, std::string key, std::string password, OutboundDataMode type)
+wolkabout::Device::Device(std::string key, std::string password, OutboundDataMode type, std::string name)
 : m_name(std::move(name)), m_key(std::move(key)), m_password(std::move(password)), m_type(type)
 {
 }

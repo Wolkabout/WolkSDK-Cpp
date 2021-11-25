@@ -34,7 +34,7 @@ static void to_json(json& j, const Feed& feed)
 {
     j = json{{"name", feed.getName()},
              {"type", toString(feed.getFeedType())},
-             {"unitGuid", toString(feed.getUnit())},
+             {"unitGuid", feed.getUnit()},
              {"reference", feed.getReference()}};
 }
 
@@ -100,6 +100,13 @@ static void from_json(const json& j, std::vector<Reading>& r)
                 case nlohmann::detail::value_t::number_float:
                     readings.emplace_back(
                       Reading{reading.key(), std::to_string(readingValue.get<std::float_t>()), timestamp});
+                    break;
+                case nlohmann::detail::value_t::array:
+                    // Go through each element and push it into a vector
+                    auto values = std::vector<std::string>{};
+                    for (const auto& value : readingValue.items())
+                        values.emplace_back(value.value().dump());
+                    readings.emplace_back(Reading{reading.key(), values, timestamp});
                     break;
                 default:
                     throw std::runtime_error("Failed to parse 'FeedValuesMessage' -> The received JSON payload "

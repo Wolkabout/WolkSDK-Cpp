@@ -21,24 +21,57 @@
 
 namespace wolkabout
 {
+/**
+ * This class represents a feed model that should be used to register feeds for devices.
+ * This intakes all the necessary information, such as the name under which it will be presented, reference by which it
+ * will be linked with data, the FeedType defining who can send the data, and unit which gives the feed a reading type.
+ */
 class Feed
 {
 public:
-    Feed(std::string name, std::string reference, FeedType feedType, Unit unit);
+    /**
+     * Default constructor for this model class.
+     *
+     * @param name The name of the feed on the platform.
+     * @param reference The reference for data.
+     * @param feedType The type defining the ways data can be directed.
+     * @param unit The unit defining the reading type.
+     */
+    Feed(std::string name, std::string reference, FeedType feedType, std::string unit);
 
+    /**
+     * Default getter for the name of the feed.
+     *
+     * @return The name of the feed as a string.
+     */
     const std::string& getName() const;
 
+    /**
+     * Default getter for the reference of the feed.
+     *
+     * @return The reference of the feed as a string.
+     */
     const std::string& getReference() const;
 
+    /**
+     * Default getter for the type of the feed.
+     *
+     * @return The feed type of the feed as an enum value.
+     */
     FeedType getFeedType() const;
 
-    Unit getUnit() const;
+    /**
+     * Default getter for the unit of the feed.
+     *
+     * @return The unit type of the feed as a string.
+     */
+    std::string getUnit() const;
 
 private:
     std::string m_name;
     std::string m_reference;
     FeedType m_feedType;
-    Unit m_unit;
+    std::string m_unit;
 };
 }    // namespace wolkabout
 

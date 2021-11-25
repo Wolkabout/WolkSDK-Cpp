@@ -24,6 +24,11 @@
 
 namespace wolkabout
 {
+/**
+ * This is the current implementation of the Data Protocol section of the Wolkabout protocol.
+ * The implementation uses `nlohmann::json`, the `<DIRECTION>/<DEVICE_KEY>/<MESSAGE_TYPE>` paradigm,
+ * and only feeds, attributes and parameters.
+ */
 class WolkaboutDataProtocol : public DataProtocol
 {
 public:
