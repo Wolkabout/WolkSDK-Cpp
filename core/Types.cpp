@@ -88,527 +88,134 @@ FeedType feedTypeFromString(const std::string& type)
     return FeedType::IN;
 }
 
-std::string toString(Unit unit)
-{
-    switch (unit)
-    {
-    case Unit::NUMERIC:
-        return "NUMERIC";
-    case Unit::BOOLEAN:
-        return "BOOLEAN";
-    case Unit::PERCENT:
-        return "PERCENT";
-    case Unit::DECIBEL:
-        return "DECIBEL";
-    case Unit::LOCATION:
-        return "LOCATION";
-    case Unit::METRES_PER_SQUARE_SECOND:
-        return "METRES_PER_SQUARE_SECOND";
-    case Unit::G:
-        return "G";
-    case Unit::MOLE:
-        return "MOLE";
-    case Unit::ATOM:
-        return "ATOM";
-    case Unit::RADIAN:
-        return "RADIAN";
-    case Unit::REVOLUTION:
-        return "REVOLUTION";
-    case Unit::DEGREE_ANGLE:
-        return "DEGREE_ANGLE";
-    case Unit::MINUTE_ANGLE:
-        return "MINUTE_ANGLE";
-    case Unit::SECOND_ANGLE:
-        return "SECOND_ANGLE";
-    case Unit::CENTIRADIAN:
-        return "CENTIRADIAN";
-    case Unit::GRADE:
-        return "GRADE";
-    case Unit::SQUARE_METRE:
-        return "SQUARE_METRE";
-    case Unit::ARE:
-        return "ARE";
-    case Unit::HECTARE:
-        return "HECTARE";
-    case Unit::KATAL:
-        return "KATAL";
-    case Unit::BIT:
-        return "BIT";
-    case Unit::BYTE:
-        return "BYTE";
-    case Unit::SECOND:
-        return "SECOND";
-    case Unit::MINUTE:
-        return "MINUTE";
-    case Unit::HOUR:
-        return "HOUR";
-    case Unit::DAY:
-        return "DAY";
-    case Unit::WEEK:
-        return "WEEK";
-    case Unit::YEAR:
-        return "YEAR";
-    case Unit::MONTH:
-        return "MONTH";
-    case Unit::DAY_SIDEREAL:
-        return "DAY_SIDEREAL";
-    case Unit::YEAR_SIDEREAL:
-        return "YEAR_SIDEREAL";
-    case Unit::YEAR_CALENDAR:
-        return "YEAR_CALENDAR";
-    case Unit::POISE:
-        return "POISE";
-    case Unit::FARAD:
-        return "FARAD";
-    case Unit::COULOMB:
-        return "COULOMB";
-    case Unit::E:
-        return "E";
-    case Unit::FARADAY:
-        return "FARADAY";
-    case Unit::FRANKLIN:
-        return "FRANKLIN";
-    case Unit::SIEMENS:
-        return "SIEMENS";
-    case Unit::AMPERE:
-        return "AMPERE";
-    case Unit::GILBERT:
-        return "GILBERT";
-    case Unit::HENRY:
-        return "HENRY";
-    case Unit::VOLT:
-        return "VOLT";
-    case Unit::CENTIVOLT:
-        return "CENTIVOLT";
-    case Unit::MILLIVOLT:
-        return "MILLIVOLT";
-    case Unit::OHM:
-        return "OHM";
-    case Unit::JOULE:
-        return "JOULE";
-    case Unit::ERG:
-        return "ERG";
-    case Unit::ELECTRON_VOLT:
-        return "ELECTRON_VOLT";
-    case Unit::NEWTON:
-        return "NEWTON";
-    case Unit::DYNE:
-        return "DYNE";
-    case Unit::KILOGRAM_FORCE:
-        return "KILOGRAM_FORCE";
-    case Unit::POUND_FORCE:
-        return "POUND_FORCE";
-    case Unit::HERTZ:
-        return "HERTZ";
-    case Unit::MEGAHERTZ:
-        return "MEGAHERTZ";
-    case Unit::GIGAHERTZ:
-        return "GIGAHERTZ";
-    case Unit::LUX:
-        return "LUX";
-    case Unit::LAMBERT:
-        return "LAMBERT";
-    case Unit::STOKE:
-        return "STOKE";
-    case Unit::METRE:
-        return "METRE";
-    case Unit::KILOMETRE:
-        return "KILOMETRE";
-    case Unit::CENTIMETRE:
-        return "CENTIMETRE";
-    case Unit::MILLIMETRE:
-        return "MILLIMETRE";
-    case Unit::FOOT:
-        return "FOOT";
-    case Unit::FOOT_SURVEY_US:
-        return "FOOT_SURVEY_US";
-    case Unit::YARD:
-        return "YARD";
-    case Unit::INCH:
-        return "INCH";
-    case Unit::MILE:
-        return "MILE";
-    case Unit::NAUTICAL_MILE:
-        return "NAUTICAL_MILE";
-    case Unit::ANGSTROM:
-        return "ANGSTROM";
-    case Unit::ASTRONOMICAL_UNIT:
-        return "ASTRONOMICAL_UNIT";
-    case Unit::LIGHT_YEAR:
-        return "LIGHT_YEAR";
-    case Unit::PARSEC:
-        return "PARSEC";
-    case Unit::POINT:
-        return "POINT";
-    case Unit::PIXEL:
-        return "PIXEL";
-    case Unit::LUMEN:
-        return "LUMEN";
-    case Unit::CANDELA:
-        return "CANDELA";
-    case Unit::WEBER:
-        return "WEBER";
-    case Unit::MAXWELL:
-        return "MAXWELL";
-    case Unit::TESLA:
-        return "TESLA";
-    case Unit::GAUSS:
-        return "GAUSS";
-    case Unit::KILOGRAM:
-        return "KILOGRAM";
-    case Unit::GRAM:
-        return "GRAM";
-    case Unit::ATOMIC_MASS:
-        return "ATOMIC_MASS";
-    case Unit::ELECTRON_MASS:
-        return "ELECTRON_MASS";
-    case Unit::POUND:
-        return "POUND";
-    case Unit::OUNCE:
-        return "OUNCE";
-    case Unit::TON_US:
-        return "TON_US";
-    case Unit::TON_UK:
-        return "TON_UK";
-    case Unit::METRIC_TON:
-        return "METRIC_TON";
-    case Unit::WATT:
-        return "WATT";
-    case Unit::HORSEPOWER:
-        return "HORSEPOWER";
-    case Unit::PASCAL:
-        return "PASCAL";
-    case Unit::HECTOPASCAL:
-        return "HECTOPASCAL";
-    case Unit::ATMOSPHERE:
-        return "ATMOSPHERE";
-    case Unit::BAR:
-        return "BAR";
-    case Unit::MILLIBAR:
-        return "MILLIBAR";
-    case Unit::MILLIMETER_OF_MERCURY:
-        return "MILLIMETER_OF_MERCURY";
-    case Unit::INCH_OF_MERCURY:
-        return "INCH_OF_MERCURY";
-    case Unit::GRAY:
-        return "GRAY";
-    case Unit::RAD:
-        return "RAD";
-    case Unit::SIEVERT:
-        return "SIEVERT";
-    case Unit::REM:
-        return "REM";
-    case Unit::BECQUEREL:
-        return "BECQUEREL";
-    case Unit::CURIE:
-        return "CURIE";
-    case Unit::RUTHERFORD:
-        return "RUTHERFORD";
-    case Unit::ROENTGEN:
-        return "ROENTGEN";
-    case Unit::STERADIAN:
-        return "STERADIAN";
-    case Unit::SPHERE:
-        return "SPHERE";
-    case Unit::KELVIN:
-        return "KELVIN";
-    case Unit::CELSIUS:
-        return "CELSIUS";
-    case Unit::RANKINE:
-        return "RANKINE";
-    case Unit::FAHRENHEIT:
-        return "FAHRENHEIT";
-    case Unit::METRES_PER_SECOND:
-        return "METRES_PER_SECOND";
-    case Unit::MILES_PER_HOUR:
-        return "MILES_PER_HOUR";
-    case Unit::KILOMETRES_PER_HOUR:
-        return "KILOMETRES_PER_HOUR";
-    case Unit::KNOT:
-        return "KNOT";
-    case Unit::MACH:
-        return "MACH";
-    case Unit::C:
-        return "C";
-    case Unit::CUBIC_METRE:
-        return "CUBIC_METRE";
-    case Unit::LITRE:
-        return "LITRE";
-    case Unit::DECILITRE:
-        return "DECILITRE";
-    case Unit::MILLILITRE:
-        return "MILLILITRE";
-    case Unit::CUBIC_INCH:
-        return "CUBIC_INCH";
-    case Unit::GALLON_DRY_US:
-        return "GALLON_DRY_US";
-    case Unit::GALLON_UK:
-        return "GALLON_UK";
-    case Unit::OUNCE_LIQUID_UK:
-        return "OUNCE_LIQUID_UK";
-    default:
-        return "";
-    }
-}
-
-Unit unitFromString(const std::string& type)
-{
-    if (type == "NUMERIC")
-        return Unit::NUMERIC;
-    if (type == "BOOLEAN")
-        return Unit::BOOLEAN;
-    if (type == "PERCENT")
-        return Unit::PERCENT;
-    if (type == "DECIBEL")
-        return Unit::DECIBEL;
-    if (type == "LOCATION")
-        return Unit::LOCATION;
-    if (type == "METRES_PER_SQUARE_SECOND")
-        return Unit::METRES_PER_SQUARE_SECOND;
-    if (type == "G")
-        return Unit::G;
-    if (type == "MOLE")
-        return Unit::MOLE;
-    if (type == "ATOM")
-        return Unit::ATOM;
-    if (type == "RADIAN")
-        return Unit::RADIAN;
-    if (type == "REVOLUTION")
-        return Unit::REVOLUTION;
-    if (type == "DEGREE_ANGLE")
-        return Unit::DEGREE_ANGLE;
-    if (type == "MINUTE_ANGLE")
-        return Unit::MINUTE_ANGLE;
-    if (type == "SECOND_ANGLE")
-        return Unit::SECOND_ANGLE;
-    if (type == "CENTIRADIAN")
-        return Unit::CENTIRADIAN;
-    if (type == "GRADE")
-        return Unit::GRADE;
-    if (type == "SQUARE_METRE")
-        return Unit::SQUARE_METRE;
-    if (type == "ARE")
-        return Unit::ARE;
-    if (type == "HECTARE")
-        return Unit::HECTARE;
-    if (type == "KATAL")
-        return Unit::KATAL;
-    if (type == "BIT")
-        return Unit::BIT;
-    if (type == "BYTE")
-        return Unit::BYTE;
-    if (type == "SECOND")
-        return Unit::SECOND;
-    if (type == "MINUTE")
-        return Unit::MINUTE;
-    if (type == "HOUR")
-        return Unit::HOUR;
-    if (type == "DAY")
-        return Unit::DAY;
-    if (type == "WEEK")
-        return Unit::WEEK;
-    if (type == "YEAR")
-        return Unit::YEAR;
-    if (type == "MONTH")
-        return Unit::MONTH;
-    if (type == "DAY_SIDEREAL")
-        return Unit::DAY_SIDEREAL;
-    if (type == "YEAR_SIDEREAL")
-        return Unit::YEAR_SIDEREAL;
-    if (type == "YEAR_CALENDAR")
-        return Unit::YEAR_CALENDAR;
-    if (type == "POISE")
-        return Unit::POISE;
-    if (type == "FARAD")
-        return Unit::FARAD;
-    if (type == "COULOMB")
-        return Unit::COULOMB;
-    if (type == "E")
-        return Unit::E;
-    if (type == "FARADAY")
-        return Unit::FARADAY;
-    if (type == "FRANKLIN")
-        return Unit::FRANKLIN;
-    if (type == "SIEMENS")
-        return Unit::SIEMENS;
-    if (type == "AMPERE")
-        return Unit::AMPERE;
-    if (type == "GILBERT")
-        return Unit::GILBERT;
-    if (type == "HENRY")
-        return Unit::HENRY;
-    if (type == "VOLT")
-        return Unit::VOLT;
-    if (type == "CENTIVOLT")
-        return Unit::CENTIVOLT;
-    if (type == "MILLIVOLT")
-        return Unit::MILLIVOLT;
-    if (type == "OHM")
-        return Unit::OHM;
-    if (type == "JOULE")
-        return Unit::JOULE;
-    if (type == "ERG")
-        return Unit::ERG;
-    if (type == "ELECTRON_VOLT")
-        return Unit::ELECTRON_VOLT;
-    if (type == "NEWTON")
-        return Unit::NEWTON;
-    if (type == "DYNE")
-        return Unit::DYNE;
-    if (type == "KILOGRAM_FORCE")
-        return Unit::KILOGRAM_FORCE;
-    if (type == "POUND_FORCE")
-        return Unit::POUND_FORCE;
-    if (type == "HERTZ")
-        return Unit::HERTZ;
-    if (type == "MEGAHERTZ")
-        return Unit::MEGAHERTZ;
-    if (type == "GIGAHERTZ")
-        return Unit::GIGAHERTZ;
-    if (type == "LUX")
-        return Unit::LUX;
-    if (type == "LAMBERT")
-        return Unit::LAMBERT;
-    if (type == "STOKE")
-        return Unit::STOKE;
-    if (type == "METRE")
-        return Unit::METRE;
-    if (type == "KILOMETRE")
-        return Unit::KILOMETRE;
-    if (type == "CENTIMETRE")
-        return Unit::CENTIMETRE;
-    if (type == "MILLIMETRE")
-        return Unit::MILLIMETRE;
-    if (type == "FOOT")
-        return Unit::FOOT;
-    if (type == "FOOT_SURVEY_US")
-        return Unit::FOOT_SURVEY_US;
-    if (type == "YARD")
-        return Unit::YARD;
-    if (type == "INCH")
-        return Unit::INCH;
-    if (type == "MILE")
-        return Unit::MILE;
-    if (type == "NAUTICAL_MILE")
-        return Unit::NAUTICAL_MILE;
-    if (type == "ANGSTROM")
-        return Unit::ANGSTROM;
-    if (type == "ASTRONOMICAL_UNIT")
-        return Unit::ASTRONOMICAL_UNIT;
-    if (type == "LIGHT_YEAR")
-        return Unit::LIGHT_YEAR;
-    if (type == "PARSEC")
-        return Unit::PARSEC;
-    if (type == "POINT")
-        return Unit::POINT;
-    if (type == "PIXEL")
-        return Unit::PIXEL;
-    if (type == "LUMEN")
-        return Unit::LUMEN;
-    if (type == "CANDELA")
-        return Unit::CANDELA;
-    if (type == "WEBER")
-        return Unit::WEBER;
-    if (type == "MAXWELL")
-        return Unit::MAXWELL;
-    if (type == "TESLA")
-        return Unit::TESLA;
-    if (type == "GAUSS")
-        return Unit::GAUSS;
-    if (type == "KILOGRAM")
-        return Unit::KILOGRAM;
-    if (type == "GRAM")
-        return Unit::GRAM;
-    if (type == "ATOMIC_MASS")
-        return Unit::ATOMIC_MASS;
-    if (type == "ELECTRON_MASS")
-        return Unit::ELECTRON_MASS;
-    if (type == "POUND")
-        return Unit::POUND;
-    if (type == "OUNCE")
-        return Unit::OUNCE;
-    if (type == "TON_US")
-        return Unit::TON_US;
-    if (type == "TON_UK")
-        return Unit::TON_UK;
-    if (type == "METRIC_TON")
-        return Unit::METRIC_TON;
-    if (type == "WATT")
-        return Unit::WATT;
-    if (type == "HORSEPOWER")
-        return Unit::HORSEPOWER;
-    if (type == "PASCAL")
-        return Unit::PASCAL;
-    if (type == "HECTOPASCAL")
-        return Unit::HECTOPASCAL;
-    if (type == "ATMOSPHERE")
-        return Unit::ATMOSPHERE;
-    if (type == "BAR")
-        return Unit::BAR;
-    if (type == "MILLIBAR")
-        return Unit::MILLIBAR;
-    if (type == "MILLIMETER_OF_MERCURY")
-        return Unit::MILLIMETER_OF_MERCURY;
-    if (type == "INCH_OF_MERCURY")
-        return Unit::INCH_OF_MERCURY;
-    if (type == "GRAY")
-        return Unit::GRAY;
-    if (type == "RAD")
-        return Unit::RAD;
-    if (type == "SIEVERT")
-        return Unit::SIEVERT;
-    if (type == "REM")
-        return Unit::REM;
-    if (type == "BECQUEREL")
-        return Unit::BECQUEREL;
-    if (type == "CURIE")
-        return Unit::CURIE;
-    if (type == "RUTHERFORD")
-        return Unit::RUTHERFORD;
-    if (type == "ROENTGEN")
-        return Unit::ROENTGEN;
-    if (type == "STERADIAN")
-        return Unit::STERADIAN;
-    if (type == "SPHERE")
-        return Unit::SPHERE;
-    if (type == "KELVIN")
-        return Unit::KELVIN;
-    if (type == "CELSIUS")
-        return Unit::CELSIUS;
-    if (type == "RANKINE")
-        return Unit::RANKINE;
-    if (type == "FAHRENHEIT")
-        return Unit::FAHRENHEIT;
-    if (type == "METRES_PER_SECOND")
-        return Unit::METRES_PER_SECOND;
-    if (type == "MILES_PER_HOUR")
-        return Unit::MILES_PER_HOUR;
-    if (type == "KILOMETRES_PER_HOUR")
-        return Unit::KILOMETRES_PER_HOUR;
-    if (type == "KNOT")
-        return Unit::KNOT;
-    if (type == "MACH")
-        return Unit::MACH;
-    if (type == "C")
-        return Unit::C;
-    if (type == "CUBIC_METRE")
-        return Unit::CUBIC_METRE;
-    if (type == "LITRE")
-        return Unit::LITRE;
-    if (type == "DECILITRE")
-        return Unit::DECILITRE;
-    if (type == "MILLILITRE")
-        return Unit::MILLILITRE;
-    if (type == "CUBIC_INCH")
-        return Unit::CUBIC_INCH;
-    if (type == "GALLON_DRY_US")
-        return Unit::GALLON_DRY_US;
-    if (type == "GALLON_UK")
-        return Unit::GALLON_UK;
-    if (type == "OUNCE_LIQUID_UK")
-        return Unit::OUNCE_LIQUID_UK;
-    return Unit::UNKNOWN;
-}
+const std::string Unit::NUMERIC = "NUMERIC";
+const std::string Unit::BOOLEAN = "BOOLEAN";
+const std::string Unit::PERCENT = "PERCENT";
+const std::string Unit::DECIBEL = "DECIBEL";
+const std::string Unit::LOCATION = "LOCATION";
+const std::string Unit::METRES_PER_SQUARE_SECOND = "METRES_PER_SQUARE_SECOND";
+const std::string Unit::G = "G";
+const std::string Unit::MOLE = "MOLE";
+const std::string Unit::ATOM = "ATOM";
+const std::string Unit::RADIAN = "RADIAN";
+const std::string Unit::REVOLUTION = "REVOLUTION";
+const std::string Unit::DEGREE_ANGLE = "DEGREE_ANGLE";
+const std::string Unit::MINUTE_ANGLE = "MINUTE_ANGLE";
+const std::string Unit::SECOND_ANGLE = "SECOND_ANGLE";
+const std::string Unit::CENTIRADIAN = "CENTIRADIAN";
+const std::string Unit::GRADE = "GRADE";
+const std::string Unit::SQUARE_METRE = "SQUARE_METRE";
+const std::string Unit::ARE = "ARE";
+const std::string Unit::HECTARE = "HECTARE";
+const std::string Unit::KATAL = "KATAL";
+const std::string Unit::BIT = "BIT";
+const std::string Unit::BYTE = "BYTE";
+const std::string Unit::SECOND = "SECOND";
+const std::string Unit::MINUTE = "MINUTE";
+const std::string Unit::HOUR = "HOUR";
+const std::string Unit::DAY = "DAY";
+const std::string Unit::WEEK = "WEEK";
+const std::string Unit::YEAR = "YEAR";
+const std::string Unit::MONTH = "MONTH";
+const std::string Unit::DAY_SIDEREAL = "DAY_SIDEREAL";
+const std::string Unit::YEAR_SIDEREAL = "YEAR_SIDEREAL";
+const std::string Unit::YEAR_CALENDAR = "YEAR_CALENDAR";
+const std::string Unit::POISE = "POISE";
+const std::string Unit::FARAD = "FARAD";
+const std::string Unit::COULOMB = "COULOMB";
+const std::string Unit::E = "E";
+const std::string Unit::FARADAY = "FARADAY";
+const std::string Unit::FRANKLIN = "FRANKLIN";
+const std::string Unit::SIEMENS = "SIEMENS";
+const std::string Unit::AMPERE = "AMPERE";
+const std::string Unit::GILBERT = "GILBERT";
+const std::string Unit::HENRY = "HENRY";
+const std::string Unit::VOLT = "VOLT";
+const std::string Unit::CENTIVOLT = "CENTIVOLT";
+const std::string Unit::MILLIVOLT = "MILLIVOLT";
+const std::string Unit::OHM = "OHM";
+const std::string Unit::JOULE = "JOULE";
+const std::string Unit::ERG = "ERG";
+const std::string Unit::ELECTRON_VOLT = "ELECTRON_VOLT";
+const std::string Unit::NEWTON = "NEWTON";
+const std::string Unit::DYNE = "DYNE";
+const std::string Unit::KILOGRAM_FORCE = "KILOGRAM_FORCE";
+const std::string Unit::POUND_FORCE = "POUND_FORCE";
+const std::string Unit::HERTZ = "HERTZ";
+const std::string Unit::MEGAHERTZ = "MEGAHERTZ";
+const std::string Unit::GIGAHERTZ = "GIGAHERTZ";
+const std::string Unit::LUX = "LUX";
+const std::string Unit::LAMBERT = "LAMBERT";
+const std::string Unit::STOKE = "STOKE";
+const std::string Unit::METRE = "METRE";
+const std::string Unit::KILOMETRE = "KILOMETRE";
+const std::string Unit::CENTIMETRE = "CENTIMETRE";
+const std::string Unit::MILLIMETRE = "MILLIMETRE";
+const std::string Unit::FOOT = "FOOT";
+const std::string Unit::FOOT_SURVEY_US = "FOOT_SURVEY_US";
+const std::string Unit::YARD = "YARD";
+const std::string Unit::INCH = "INCH";
+const std::string Unit::MILE = "MILE";
+const std::string Unit::NAUTICAL_MILE = "NAUTICAL_MILE";
+const std::string Unit::ANGSTROM = "ANGSTROM";
+const std::string Unit::ASTRONOMICAL_UNIT = "ASTRONOMICAL_UNIT";
+const std::string Unit::LIGHT_YEAR = "LIGHT_YEAR";
+const std::string Unit::PARSEC = "PARSEC";
+const std::string Unit::POINT = "POINT";
+const std::string Unit::PIXEL = "PIXEL";
+const std::string Unit::LUMEN = "LUMEN";
+const std::string Unit::CANDELA = "CANDELA";
+const std::string Unit::WEBER = "WEBER";
+const std::string Unit::MAXWELL = "MAXWELL";
+const std::string Unit::TESLA = "TESLA";
+const std::string Unit::GAUSS = "GAUSS";
+const std::string Unit::KILOGRAM = "KILOGRAM";
+const std::string Unit::GRAM = "GRAM";
+const std::string Unit::ATOMIC_MASS = "ATOMIC_MASS";
+const std::string Unit::ELECTRON_MASS = "ELECTRON_MASS";
+const std::string Unit::POUND = "POUND";
+const std::string Unit::OUNCE = "OUNCE";
+const std::string Unit::TON_US = "TON_US";
+const std::string Unit::TON_UK = "TON_UK";
+const std::string Unit::METRIC_TON = "METRIC_TON";
+const std::string Unit::WATT = "WATT";
+const std::string Unit::HORSEPOWER = "HORSEPOWER";
+const std::string Unit::PASCAL = "PASCAL";
+const std::string Unit::HECTOPASCAL = "HECTOPASCAL";
+const std::string Unit::ATMOSPHERE = "ATMOSPHERE";
+const std::string Unit::BAR = "BAR";
+const std::string Unit::MILLIBAR = "MILLIBAR";
+const std::string Unit::MILLIMETER_OF_MERCURY = "MILLIMETER_OF_MERCURY";
+const std::string Unit::INCH_OF_MERCURY = "INCH_OF_MERCURY";
+const std::string Unit::GRAY = "GRAY";
+const std::string Unit::RAD = "RAD";
+const std::string Unit::SIEVERT = "SIEVERT";
+const std::string Unit::REM = "REM";
+const std::string Unit::BECQUEREL = "BECQUEREL";
+const std::string Unit::CURIE = "CURIE";
+const std::string Unit::RUTHERFORD = "RUTHERFORD";
+const std::string Unit::ROENTGEN = "ROENTGEN";
+const std::string Unit::STERADIAN = "STERADIAN";
+const std::string Unit::SPHERE = "SPHERE";
+const std::string Unit::KELVIN = "KELVIN";
+const std::string Unit::CELSIUS = "CELSIUS";
+const std::string Unit::RANKINE = "RANKINE";
+const std::string Unit::FAHRENHEIT = "FAHRENHEIT";
+const std::string Unit::METRES_PER_SECOND = "METRES_PER_SECOND";
+const std::string Unit::MILES_PER_HOUR = "MILES_PER_HOUR";
+const std::string Unit::KILOMETRES_PER_HOUR = "KILOMETRES_PER_HOUR";
+const std::string Unit::KNOT = "KNOT";
+const std::string Unit::MACH = "MACH";
+const std::string Unit::C = "C";
+const std::string Unit::CUBIC_METRE = "CUBIC_METRE";
+const std::string Unit::LITRE = "LITRE";
+const std::string Unit::DECILITRE = "DECILITRE";
+const std::string Unit::MILLILITRE = "MILLILITRE";
+const std::string Unit::CUBIC_INCH = "CUBIC_INCH";
+const std::string Unit::GALLON_DRY_US = "GALLON_DRY_US";
+const std::string Unit::GALLON_UK = "GALLON_UK";
+const std::string Unit::OUNCE_LIQUID_UK = "OUNCE_LIQUID_UK";
+const std::string Unit::UNKNOWN = "UNKNOWN";
 
 std::string toString(OutboundDataMode mode)
 {

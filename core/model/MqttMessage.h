@@ -21,15 +21,39 @@
 
 namespace wolkabout
 {
+/**
+ * This class represents a raw message that is inbound/outbound over MQTT.
+ * The message is composed of the topic that the message was sent over or received over,
+ * and the message content that was received/sent out.
+ */
 class MqttMessage
 {
 public:
+    /**
+     * Default constructor for this message class.
+     *
+     * @param content The content that was received/sent in this message.
+     * @param channel The MQTT topic used to receive/send the message.
+     */
     MqttMessage(std::string content, std::string channel);
 
+    /**
+     * Default virtual destructor.
+     */
     virtual ~MqttMessage() = default;
 
+    /**
+     * Default getter for the content of the message.
+     *
+     * @return The content of the message as a string.
+     */
     const std::string& getContent() const;
 
+    /**
+     * Default getter for the MQTT topic of the message.
+     *
+     * @return The MQTT topic of the message as a string.
+     */
     const std::string& getChannel() const;
 
 private:

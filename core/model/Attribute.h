@@ -21,15 +21,41 @@
 
 namespace wolkabout
 {
+/**
+ * This class represents an attribute model that should be used to register/update attributes for devices.
+ * This intakes all the necessary information to register an attribute for a device.
+ */
 class Attribute
 {
 public:
+    /**
+     * Default constructor for this model class.
+     *
+     * @param name The name of the attribute.
+     * @param dataType The data type of the attribute.
+     * @param value The value currently assigned to the attribute.
+     */
     Attribute(std::string name, DataType dataType, std::string value);
 
+    /**
+     * Default getter for the name of the attribute.
+     *
+     * @return The name of the attribute as a string.
+     */
     const std::string& getName() const;
 
+    /**
+     * Default getter for the data type of the attribute.
+     *
+     * @return The data type of the attribute as an enum value.
+     */
     DataType getDataType() const;
 
+    /**
+     * Default getter for the current value of the attribute.
+     *
+     * @return The value of the attribute as a string.
+     */
     std::string getValue() const;
 
 private:

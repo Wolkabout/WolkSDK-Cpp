@@ -26,33 +26,101 @@
 
 namespace wolkabout
 {
+/**
+ * This class represents a device model that should be used to communicate with the platform.
+ * This gives context, allows the connection to be established, and gives context to the data being sent out.
+ */
 class Device
 {
 public:
-    Device(std::string key, std::string password, OutboundDataMode type);
+    /**
+     * Default constructor for this model class.
+     *
+     * @param key The device key, handed out by the platform when the device was created.
+     * @param password The device password, also handed out by the platform.
+     * @param type The type of the device, set by the user when the device was created.
+     * @param name The name of the device set on the platform. Optional.
+     */
+    Device(std::string key, std::string password, OutboundDataMode type, std::string name = "");
 
-    Device(std::string name, std::string key, std::string password, OutboundDataMode type);
-
+    /**
+     * Default getter for the name of the device.
+     *
+     * @return The name of the device as a string.
+     */
     const std::string& getName() const;
 
+    /**
+     * Default setter for the name of the device.
+     *
+     * @param name The new name of the device as a string.
+     */
     void setName(const std::string& name);
 
+    /**
+     * Default getter for the device key.
+     *
+     * @return The device key as a string.
+     */
     const std::string& getKey() const;
 
+    /**
+     * Default getter for the device password.
+     *
+     * @return The device password as a string.
+     */
     const std::string& getPassword() const;
 
+    /**
+     * Default getter for the outbound data mode of the device.
+     *
+     * @return The mode as an enum value.
+     */
     OutboundDataMode getType() const;
 
+    /**
+     * Default getter for the list of feeds of the device.
+     *
+     * @return The list of feeds as a vector of Feed objects.
+     */
     const std::vector<Feed>& getFeeds() const;
 
+    /**
+     * Default setter for the list of feeds of the device.
+     * This will completely override the list of currently set device feeds.
+     *
+     * @param feeds The new list of feeds as a vector of Feed objects.
+     */
     void setFeeds(const std::vector<Feed>& feeds);
 
+    /**
+     * Default getter for the list of attributes of the device.
+     *
+     * @return The list of attributes as a vector of Attribute objects.
+     */
     const std::vector<Attribute>& getAttributes() const;
 
+    /**
+     * Default setter for the list of attributes of the device.
+     * This will completely override the list of currently set device attributes.
+     *
+     * @param attributes The new list of attributes as a vector of Attribute objects.
+     */
     void setAttributes(const std::vector<Attribute>& attributes);
 
+    /**
+     * Default getter for the list of parameters of the device.
+     *
+     * @return The map of parameters and their values, with ParameterName enum values as keys.
+     */
     const std::map<ParameterName, std::string>& getParameters() const;
 
+    /**
+     * Default setter for the list of parameters of the device.
+     * This will completely override the list of currently set device parameters.
+     *
+     * @param parameters The new map of parameters and their values, with ParameterName enum values as keys.
+     */
     void setParameters(const std::map<ParameterName, std::string>& parameters);
 
 private:

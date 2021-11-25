@@ -46,140 +46,142 @@ enum class FeedType
 std::string toString(FeedType type);
 FeedType feedTypeFromString(const std::string& type);
 
-enum class Unit
+class Unit
 {
-    NUMERIC,
-    BOOLEAN,
-    PERCENT,
-    DECIBEL,
-    LOCATION,
-    METRES_PER_SQUARE_SECOND,
-    G,
-    MOLE,
-    ATOM,
-    RADIAN,
-    REVOLUTION,
-    DEGREE_ANGLE,
-    MINUTE_ANGLE,
-    SECOND_ANGLE,
-    CENTIRADIAN,
-    GRADE,
-    SQUARE_METRE,
-    ARE,
-    HECTARE,
-    KATAL,
-    BIT,
-    BYTE,
-    SECOND,
-    MINUTE,
-    HOUR,
-    DAY,
-    WEEK,
-    YEAR,
-    MONTH,
-    DAY_SIDEREAL,
-    YEAR_SIDEREAL,
-    YEAR_CALENDAR,
-    POISE,
-    FARAD,
-    COULOMB,
-    E,
-    FARADAY,
-    FRANKLIN,
-    SIEMENS,
-    AMPERE,
-    GILBERT,
-    HENRY,
-    VOLT,
-    CENTIVOLT,
-    MILLIVOLT,
-    OHM,
-    JOULE,
-    ERG,
-    ELECTRON_VOLT,
-    NEWTON,
-    DYNE,
-    KILOGRAM_FORCE,
-    POUND_FORCE,
-    HERTZ,
-    MEGAHERTZ,
-    GIGAHERTZ,
-    LUX,
-    LAMBERT,
-    STOKE,
-    METRE,
-    KILOMETRE,
-    CENTIMETRE,
-    MILLIMETRE,
-    FOOT,
-    FOOT_SURVEY_US,
-    YARD,
-    INCH,
-    MILE,
-    NAUTICAL_MILE,
-    ANGSTROM,
-    ASTRONOMICAL_UNIT,
-    LIGHT_YEAR,
-    PARSEC,
-    POINT,
-    PIXEL,
-    LUMEN,
-    CANDELA,
-    WEBER,
-    MAXWELL,
-    TESLA,
-    GAUSS,
-    KILOGRAM,
-    GRAM,
-    ATOMIC_MASS,
-    ELECTRON_MASS,
-    POUND,
-    OUNCE,
-    TON_US,
-    TON_UK,
-    METRIC_TON,
-    WATT,
-    HORSEPOWER,
-    PASCAL,
-    HECTOPASCAL,
-    ATMOSPHERE,
-    BAR,
-    MILLIBAR,
-    MILLIMETER_OF_MERCURY,
-    INCH_OF_MERCURY,
-    GRAY,
-    RAD,
-    SIEVERT,
-    REM,
-    BECQUEREL,
-    CURIE,
-    RUTHERFORD,
-    ROENTGEN,
-    STERADIAN,
-    SPHERE,
-    KELVIN,
-    CELSIUS,
-    RANKINE,
-    FAHRENHEIT,
-    METRES_PER_SECOND,
-    MILES_PER_HOUR,
-    KILOMETRES_PER_HOUR,
-    KNOT,
-    MACH,
-    C,
-    CUBIC_METRE,
-    LITRE,
-    DECILITRE,
-    MILLILITRE,
-    CUBIC_INCH,
-    GALLON_DRY_US,
-    GALLON_UK,
-    OUNCE_LIQUID_UK,
-    UNKNOWN,
-};
+public:
+    static const std::string NUMERIC;
+    static const std::string BOOLEAN;
+    static const std::string PERCENT;
+    static const std::string DECIBEL;
+    static const std::string LOCATION;
+    static const std::string METRES_PER_SQUARE_SECOND;
+    static const std::string G;
+    static const std::string MOLE;
+    static const std::string ATOM;
+    static const std::string RADIAN;
+    static const std::string REVOLUTION;
+    static const std::string DEGREE_ANGLE;
+    static const std::string MINUTE_ANGLE;
+    static const std::string SECOND_ANGLE;
+    static const std::string CENTIRADIAN;
+    static const std::string GRADE;
+    static const std::string SQUARE_METRE;
+    static const std::string ARE;
+    static const std::string HECTARE;
+    static const std::string KATAL;
+    static const std::string BIT;
+    static const std::string BYTE;
+    static const std::string SECOND;
+    static const std::string MINUTE;
+    static const std::string HOUR;
+    static const std::string DAY;
+    static const std::string WEEK;
+    static const std::string YEAR;
+    static const std::string MONTH;
+    static const std::string DAY_SIDEREAL;
+    static const std::string YEAR_SIDEREAL;
+    static const std::string YEAR_CALENDAR;
+    static const std::string POISE;
+    static const std::string FARAD;
+    static const std::string COULOMB;
+    static const std::string E;
+    static const std::string FARADAY;
+    static const std::string FRANKLIN;
+    static const std::string SIEMENS;
+    static const std::string AMPERE;
+    static const std::string GILBERT;
+    static const std::string HENRY;
+    static const std::string VOLT;
+    static const std::string CENTIVOLT;
+    static const std::string MILLIVOLT;
+    static const std::string OHM;
+    static const std::string JOULE;
+    static const std::string ERG;
+    static const std::string ELECTRON_VOLT;
+    static const std::string NEWTON;
+    static const std::string DYNE;
+    static const std::string KILOGRAM_FORCE;
+    static const std::string POUND_FORCE;
+    static const std::string HERTZ;
+    static const std::string MEGAHERTZ;
+    static const std::string GIGAHERTZ;
+    static const std::string LUX;
+    static const std::string LAMBERT;
+    static const std::string STOKE;
+    static const std::string METRE;
+    static const std::string KILOMETRE;
+    static const std::string CENTIMETRE;
+    static const std::string MILLIMETRE;
+    static const std::string FOOT;
+    static const std::string FOOT_SURVEY_US;
+    static const std::string YARD;
+    static const std::string INCH;
+    static const std::string MILE;
+    static const std::string NAUTICAL_MILE;
+    static const std::string ANGSTROM;
+    static const std::string ASTRONOMICAL_UNIT;
+    static const std::string LIGHT_YEAR;
+    static const std::string PARSEC;
+    static const std::string POINT;
+    static const std::string PIXEL;
+    static const std::string LUMEN;
+    static const std::string CANDELA;
+    static const std::string WEBER;
+    static const std::string MAXWELL;
+    static const std::string TESLA;
+    static const std::string GAUSS;
+    static const std::string KILOGRAM;
+    static const std::string GRAM;
+    static const std::string ATOMIC_MASS;
+    static const std::string ELECTRON_MASS;
+    static const std::string POUND;
+    static const std::string OUNCE;
+    static const std::string TON_US;
+    static const std::string TON_UK;
+    static const std::string METRIC_TON;
+    static const std::string WATT;
+    static const std::string HORSEPOWER;
+    static const std::string PASCAL;
+    static const std::string HECTOPASCAL;
+    static const std::string ATMOSPHERE;
+    static const std::string BAR;
+    static const std::string MILLIBAR;
+    static const std::string MILLIMETER_OF_MERCURY;
+    static const std::string INCH_OF_MERCURY;
+    static const std::string GRAY;
+    static const std::string RAD;
+    static const std::string SIEVERT;
+    static const std::string REM;
+    static const std::string BECQUEREL;
+    static const std::string CURIE;
+    static const std::string RUTHERFORD;
+    static const std::string ROENTGEN;
+    static const std::string STERADIAN;
+    static const std::string SPHERE;
+    static const std::string KELVIN;
+    static const std::string CELSIUS;
+    static const std::string RANKINE;
+    static const std::string FAHRENHEIT;
+    static const std::string METRES_PER_SECOND;
+    static const std::string MILES_PER_HOUR;
+    static const std::string KILOMETRES_PER_HOUR;
+    static const std::string KNOT;
+    static const std::string MACH;
+    static const std::string C;
+    static const std::string CUBIC_METRE;
+    static const std::string LITRE;
+    static const std::string DECILITRE;
+    static const std::string MILLILITRE;
+    static const std::string CUBIC_INCH;
+    static const std::string GALLON_DRY_US;
+    static const std::string GALLON_UK;
+    static const std::string OUNCE_LIQUID_UK;
+    static const std::string UNKNOWN;
 
-std::string toString(Unit unit);
-Unit unitFromString(const std::string& type);
+private:
+    Unit() = default;
+    virtual ~Unit() = 0;
+};
 
 enum class OutboundDataMode
 {
