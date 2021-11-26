@@ -323,6 +323,7 @@ if (BUILD_CONNECTIVITY)
 
     set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
             tests/WolkaboutDataProtocolTests.cpp
+            tests/WolkaboutFileManagementProtocolTests.cpp
             tests/WolkaboutFirmwareUpdateProtocolTests.cpp)
 
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
@@ -335,6 +336,8 @@ if (${BUILD_TESTS})
     target_include_directories(${PROJECT_NAME}Tests PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
     set_target_properties(${PROJECT_NAME}Tests PROPERTIES INSTALL_RPATH "$ORIGIN/../lib")
     add_dependencies(${PROJECT_NAME}Tests libgtest)
+
+    add_custom_target(tests ${PROJECT_NAME}Tests)
 endif ()
 
 # Create the install rule
