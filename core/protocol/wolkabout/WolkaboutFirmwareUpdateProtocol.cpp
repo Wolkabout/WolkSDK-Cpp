@@ -20,6 +20,8 @@
 #include "core/utilities/Logger.h"
 #include "core/utilities/json.hpp"
 
+using nlohmann::json;
+
 namespace wolkabout
 {
 std::vector<std::string> WolkaboutFirmwareUpdateProtocol::getInboundChannels() const
@@ -105,7 +107,7 @@ std::shared_ptr<FirmwareUpdateAbortMessage> WolkaboutFirmwareUpdateProtocol::par
 
     // Check that the message is a FirmwareUpdateAbort message.
     auto type = getMessageType(message);
-    if (type != MessageType::FIRMWARE_UPDATE_INSTALL)
+    if (type != MessageType::FIRMWARE_UPDATE_ABORT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FirmwareUpdateAbort' message.";
         return nullptr;

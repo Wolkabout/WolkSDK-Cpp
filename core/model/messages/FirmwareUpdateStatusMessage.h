@@ -24,7 +24,8 @@ namespace wolkabout
 class FirmwareUpdateStatusMessage : public MessageObject
 {
 public:
-    explicit FirmwareUpdateStatusMessage(FirmwareUpdateStatus status, FirmwareUpdateError error);
+    explicit FirmwareUpdateStatusMessage(FirmwareUpdateStatus status,
+                                         FirmwareUpdateError error = FirmwareUpdateError::NONE);
 
     FirmwareUpdateStatus getStatus() const;
 
