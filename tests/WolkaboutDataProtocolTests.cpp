@@ -382,8 +382,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeSynchronizeParametersInvalidParamete
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesNotArray)
 {
     // Make the invalid payload
-    auto topic = PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + DEVICE_KEY + CHANNEL_DELIMITER +
-                 toString(MessageType::FEED_VALUES);
+    auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::object({{"1", "2"}, {"3", "4"}});
     auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
     LogMessage(*message);
@@ -395,8 +394,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesNotArray)
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberNotObject)
 {
     // Make the invalid payload
-    auto topic = PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + DEVICE_KEY + CHANNEL_DELIMITER +
-                 toString(MessageType::FEED_VALUES);
+    auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({1, 2, 3});
     auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
     LogMessage(*message);
@@ -408,8 +406,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberNotObject)
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberNoTimestamp)
 {
     // Make the invalid payload
-    auto topic = PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + DEVICE_KEY + CHANNEL_DELIMITER +
-                 toString(MessageType::FEED_VALUES);
+    auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{"1", "2"}}});
     auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
     LogMessage(*message);
@@ -421,8 +418,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberNoTimestamp)
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberTimestampNotUnsignedInteger)
 {
     // Make the invalid payload
-    auto topic = PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + DEVICE_KEY + CHANNEL_DELIMITER +
-                 toString(MessageType::FEED_VALUES);
+    auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{"timestamp", "2"}}});
     auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
     LogMessage(*message);
@@ -434,8 +430,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberTimestampNotU
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberValueIsAnObject)
 {
     // Make the invalid payload
-    auto topic = PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + DEVICE_KEY + CHANNEL_DELIMITER +
-                 toString(MessageType::FEED_VALUES);
+    auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{"timestamp", 123}, {"test", json{{"1", "2"}}}}});
     auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
     LogMessage(*message);
@@ -447,8 +442,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberValueIsAnObje
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberValueArrayContainsInvalidType)
 {
     // Define the single feed value that is incoming
-    auto topic = PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + DEVICE_KEY + CHANNEL_DELIMITER +
-                 toString(MessageType::FEED_VALUES);
+    auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{TEMPERATURE, json::array({"abc", "bcd"})}, {TIMESTAMP, 1623159800000}}});
     auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
     LogMessage(*message);
@@ -460,8 +454,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberValueArrayCon
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesSingle)
 {
     // Define the single feed value that is incoming
-    auto topic = PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + DEVICE_KEY + CHANNEL_DELIMITER +
-                 toString(MessageType::FEED_VALUES);
+    auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{TEMPERATURE, 20}, {TIMESTAMP, 1623159800000}}});
     auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
     LogMessage(*message);
@@ -486,8 +479,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesSingle)
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesMultiple)
 {
     // Define the single feed value that is incoming
-    auto topic = PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + DEVICE_KEY + CHANNEL_DELIMITER +
-                 toString(MessageType::FEED_VALUES);
+    auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{TRANSLATION, 2}, {TIMESTAMP, 1623160000000}},
                                 {{ROTATION, 90}, {TRANSLATION, 2}, {TIMESTAMP, 1623161000000}},
                                 {{ROTATION, -90}, {TIMESTAMP, 1623162000000}},
@@ -512,8 +504,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesMultiple)
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesVector)
 {
     // Define the single feed value that is incoming
-    auto topic = PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + DEVICE_KEY + CHANNEL_DELIMITER +
-                 toString(MessageType::FEED_VALUES);
+    auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{TEMPERATURE, json::array({1, 2, 3})}, {TIMESTAMP, 1623159800000}}});
     auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
     LogMessage(*message);
