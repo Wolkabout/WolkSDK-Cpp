@@ -40,6 +40,6 @@ const std::string& FileUploadInitiateMessage::getHash() const
 
 MessageType FileUploadInitiateMessage::getMessageType()
 {
-    return MessageType::FILE_URL_DOWNLOAD_INIT;
+    return MessageType::FILE_UPLOAD_INIT;
 }
 }    // namespace wolkabout
