@@ -20,6 +20,8 @@
 #include "core/utilities/Logger.h"
 #include "core/utilities/json.hpp"
 
+using nlohmann::json;
+
 namespace wolkabout
 {
 std::vector<std::string> WolkaboutFileManagementProtocol::getInboundChannels() const
@@ -90,7 +92,7 @@ std::unique_ptr<MqttMessage> WolkaboutFileManagementProtocol::makeOutboundMessag
                        toString(MessageType::FILE_UPLOAD_STATUS);
 
     // Parse the message into a JSON
-    auto payload = nlohmann::json{{"name", message.getName()}, {"status", statusString}};
+    auto payload = json{{"name", message.getName()}, {"status", statusString}};
     if (message.getStatus() == FileUploadStatus::ERROR)
         payload["error"] = errorString;
     return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
@@ -114,7 +116,7 @@ std::unique_ptr<MqttMessage> WolkaboutFileManagementProtocol::makeOutboundMessag
                        toString(MessageType::FILE_BINARY_REQUEST);
 
     // Parse the message into a JSON
-    auto payload = nlohmann::json{{"name", message.getName()}, {"chunkIndex", message.getChunkIndex()}};
+    auto payload = json{{"name", message.getName()}, {"chunkIndex", message.getChunkIndex()}};
     return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
 }
 
@@ -154,7 +156,7 @@ std::unique_ptr<MqttMessage> WolkaboutFileManagementProtocol::makeOutboundMessag
 
     // Create the JSON payload
     auto payload =
-      nlohmann::json{{"fileName", message.getFileName()}, {"fileUrl", message.getFileUrl()}, {"status", statusString}};
+      json{{"fileName", message.getFileName()}, {"fileUrl", message.getFileUrl()}, {"status", statusString}};
     if (message.getStatus() == FileUploadStatus::ERROR)
         payload["error"] = errorString;
     return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
@@ -170,9 +172,9 @@ std::unique_ptr<MqttMessage> WolkaboutFileManagementProtocol::makeOutboundMessag
                        toString(MessageType::FILE_LIST_REQUEST);
 
     // Create the JSON payload
-    auto payload = nlohmann::json::array();
+    auto payload = json::array();
     for (const auto& file : message.getFiles())
-        payload.push_back(nlohmann::json{{"name", file.name}, {"size", file.size}, {"hash", file.hash}});
+        payload.push_back(json{{"name", file.name}, {"size", file.size}, {"hash", file.hash}});
     return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
 }
 
@@ -191,7 +193,7 @@ std::shared_ptr<FileUploadInitiateMessage> WolkaboutFileManagementProtocol::pars
     }
 
     // Load the JSON contents of the message
-    auto payload = nlohmann::json::parse(message->getContent());
+    auto payload = json::parse(message->getContent());
 
     // Check that the payload is an object, and contains required fields
     if (!payload.is_object())
@@ -330,7 +332,7 @@ std::shared_ptr<FileDeleteMessage> WolkaboutFileManagementProtocol::parseFileDel
     }
 
     // Load the JSON contents of the message
-    auto payload = nlohmann::json::parse(message->getContent());
+    auto payload = json::parse(message->getContent());
 
     // Check that the payload is an array of strings
     if (!payload.is_array())
