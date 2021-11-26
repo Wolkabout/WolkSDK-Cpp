@@ -15,7 +15,7 @@ jobs:
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-20.04
-    timeout-minutes: 30
+    timeout-minutes: 5
 
     steps:
       # setting time zone
@@ -38,14 +38,6 @@ jobs:
         # and build directories, but this is only available with CMake 3.13 and higher.
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
         run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_POCO=OFF -DBUILD_AWS_LOG_UPLOADER=OFF
-      - name: Clang format version
-        shell: bash
-        run: clang-format-10 --version
-
-      - name: Code Format Check
-        working-directory: ${{runner.workspace}}/out
-        shell: bash
-        run: make format-error
       - name: Build
         working-directory: ${{runner.workspace}}/out
         shell: bash
