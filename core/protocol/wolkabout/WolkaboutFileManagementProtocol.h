@@ -30,36 +30,35 @@ public:
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
-    MessageType getMessageType(std::shared_ptr<MqttMessage> message) override;
+    MessageType getMessageType(std::shared_ptr<Message> message) override;
 
-    std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                     const FileUploadStatusMessage& message) override;
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const FileUploadStatusMessage& message) override;
 
-    std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                     const FileBinaryRequestMessage& message) override;
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const FileBinaryRequestMessage& message) override;
 
-    std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                     const FileUrlDownloadStatusMessage& message) override;
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const FileUrlDownloadStatusMessage& message) override;
 
-    std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                     const FileListResponseMessage& message) override;
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const FileListResponseMessage& message) override;
 
-    std::shared_ptr<FileUploadInitiateMessage> parseFileUploadInit(std::shared_ptr<MqttMessage> message) override;
+    std::unique_ptr<FileUploadInitiateMessage> parseFileUploadInit(std::shared_ptr<Message> message) override;
 
-    std::shared_ptr<FileUploadAbortMessage> parseFileUploadAbort(std::shared_ptr<MqttMessage> message) override;
+    std::unique_ptr<FileUploadAbortMessage> parseFileUploadAbort(std::shared_ptr<Message> message) override;
 
-    std::shared_ptr<FileBinaryResponseMessage> parseFileBinaryResponse(std::shared_ptr<MqttMessage> message) override;
+    std::unique_ptr<FileBinaryResponseMessage> parseFileBinaryResponse(std::shared_ptr<Message> message) override;
 
-    std::shared_ptr<FileUrlDownloadInitMessage> parseFileUrlDownloadInit(std::shared_ptr<MqttMessage> message) override;
+    std::unique_ptr<FileUrlDownloadInitMessage> parseFileUrlDownloadInit(std::shared_ptr<Message> message) override;
 
-    std::shared_ptr<FileUrlDownloadAbortMessage> parseFileUrlDownloadAbort(
-      std::shared_ptr<MqttMessage> message) override;
+    std::unique_ptr<FileUrlDownloadAbortMessage> parseFileUrlDownloadAbort(std::shared_ptr<Message> message) override;
 
-    std::shared_ptr<FileListRequestMessage> parseFileListRequest(std::shared_ptr<MqttMessage> message) override;
+    std::unique_ptr<FileListRequestMessage> parseFileListRequest(std::shared_ptr<Message> message) override;
 
-    std::shared_ptr<FileDeleteMessage> parseFileDelete(std::shared_ptr<MqttMessage> message) override;
+    std::unique_ptr<FileDeleteMessage> parseFileDelete(std::shared_ptr<Message> message) override;
 
-    std::shared_ptr<FilePurgeMessage> parseFilePurge(std::shared_ptr<MqttMessage> message) override;
+    std::unique_ptr<FilePurgeMessage> parseFilePurge(std::shared_ptr<Message> message) override;
 };
 }    // namespace wolkabout
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2021 Wolkabout s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-#include "core/model/MqttMessage.h"
+#ifndef WOLKABOUTCORE_MESSAGEMODEL_H
+#define WOLKABOUTCORE_MESSAGEMODEL_H
 
-#include <utility>
+#include "core/Types.h"
 
 namespace wolkabout
 {
-MqttMessage::MqttMessage(std::string content, std::string channel)
-: m_content(std::move(content)), m_channel(std::move(channel))
+/**
+ * This is an interface for all messages that are found in this protocol.
+ * This way messages can announce their types before being downcast into a specific type.
+ * The type is usually determined by a protocol parser, and the messages is later passed through to an message handler.
+ */
+class MessageModel
 {
-}
+public:
+    virtual ~MessageModel() = default;
 
-const std::string& MqttMessage::getContent() const
-{
-    return m_content;
-}
-
-const std::string& MqttMessage::getChannel() const
-{
-    return m_channel;
-}
+    virtual MessageType getMessageType() = 0;
+};
 }    // namespace wolkabout
+
+#endif    // WOLKABOUTCORE_MESSAGEMODEL_H

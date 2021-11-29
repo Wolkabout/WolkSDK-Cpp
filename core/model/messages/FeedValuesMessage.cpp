@@ -26,14 +26,6 @@ FeedValuesMessage::FeedValuesMessage(const std::vector<Reading>& readings)
     }
 }
 
-FeedValuesMessage::FeedValuesMessage(const std::vector<std::shared_ptr<Reading>>& readings)
-{
-    for (const auto& reading : readings)
-    {
-        m_readings[reading->getTimestamp()].emplace_back(*reading);
-    }
-}
-
 MessageType FeedValuesMessage::getMessageType()
 {
     return MessageType::FEED_VALUES;

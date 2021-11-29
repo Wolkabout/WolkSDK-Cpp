@@ -40,8 +40,8 @@ public:
      * @param message The message containing information about the FirmwareUpdate process.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                             const FirmwareUpdateStatusMessage& message) = 0;
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const FirmwareUpdateStatusMessage& message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FirmwareUpdateInstallMessage.
@@ -49,8 +49,8 @@ public:
      * @param message The received MQTT message that is potentially a valid FirmwareUpdateInstallMessage.
      * @return A parsed FirmwareUpdateInstallMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FirmwareUpdateInstallMessage> parseFirmwareUpdateInstall(
-      const std::shared_ptr<MqttMessage>& message) = 0;
+    virtual std::unique_ptr<FirmwareUpdateInstallMessage> parseFirmwareUpdateInstall(
+      const std::shared_ptr<Message>& message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FirmwareUpdateAbortMessage.
@@ -58,8 +58,8 @@ public:
      * @param message The received MQTT message that is potentially a valid FirmwareUpdateAbortMessage.
      * @return A parsed FirmwareUpdateAbortMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FirmwareUpdateAbortMessage> parseFirmwareUpdateAbort(
-      const std::shared_ptr<MqttMessage>& message) = 0;
+    virtual std::unique_ptr<FirmwareUpdateAbortMessage> parseFirmwareUpdateAbort(
+      const std::shared_ptr<Message>& message) = 0;
 };
 }    // namespace wolkabout
 

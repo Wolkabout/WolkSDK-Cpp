@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILEDELETEMESSAGE_H
 #define WOLKABOUTCORE_FILEDELETEMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FileDeleteMessage : public MessageObject
+class FileDeleteMessage : public MessageModel
 {
 public:
     explicit FileDeleteMessage(std::vector<std::string> files);

@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_PARAMETERSUPDATEMESSAGE_H
 #define WOLKABOUTCORE_PARAMETERSUPDATEMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class ParametersUpdateMessage : public MessageObject
+class ParametersUpdateMessage : public MessageModel
 {
 public:
     explicit ParametersUpdateMessage(std::vector<Parameter> parameterList);

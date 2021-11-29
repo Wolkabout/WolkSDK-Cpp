@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FIRMWAREUPDATEABORTMESSAGE_H
 #define WOLKABOUTCORE_FIRMWAREUPDATEABORTMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FirmwareUpdateAbortMessage : public MessageObject
+class FirmwareUpdateAbortMessage : public MessageModel
 {
 public:
     MessageType getMessageType() override;

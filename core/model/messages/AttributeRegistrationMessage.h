@@ -18,19 +18,17 @@
 #define WOLKABOUTCORE_ATTRIBUTEREGISTRATIONMESSAGE_H
 
 #include "core/model/Attribute.h"
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 #include <memory>
 #include <vector>
 
 namespace wolkabout
 {
-class AttributeRegistrationMessage : public MessageObject
+class AttributeRegistrationMessage : public MessageModel
 {
 public:
     explicit AttributeRegistrationMessage(std::vector<Attribute> attributes);
-
-    explicit AttributeRegistrationMessage(const std::vector<std::shared_ptr<Attribute>>& attributes);
 
     MessageType getMessageType() override;
 

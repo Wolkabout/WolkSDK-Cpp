@@ -23,14 +23,6 @@ AttributeRegistrationMessage::AttributeRegistrationMessage(std::vector<Attribute
 {
 }
 
-AttributeRegistrationMessage::AttributeRegistrationMessage(const std::vector<std::shared_ptr<Attribute>>& attributes)
-{
-    for (const auto& attribute : attributes)
-    {
-        m_attributes.push_back(*attribute);
-    }
-}
-
 MessageType AttributeRegistrationMessage::getMessageType()
 {
     return MessageType::ATTRIBUTE_REGISTRATION;

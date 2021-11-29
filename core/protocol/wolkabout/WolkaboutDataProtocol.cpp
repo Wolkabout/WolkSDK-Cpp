@@ -163,13 +163,13 @@ std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string
     return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
 }
 
-MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<MqttMessage> message)
+MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
-std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
                                                                         FeedRegistrationMessage feedRegistrationMessage)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -183,7 +183,7 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const st
         // Create the content
         auto feeds = feedRegistrationMessage.getFeeds();
         auto payload = json(feeds);
-        return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }
     catch (const std::exception& exception)
     {
@@ -192,7 +192,7 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const st
     }
 }
 
-std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
                                                                         FeedRemovalMessage feedRemovalMessage)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -211,10 +211,10 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const st
     // Create the content
     auto feeds = feedRemovalMessage.getReferences();
     auto payload = json(feeds);
-    return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
+    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
 }
 
-std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
                                                                         FeedValuesMessage feedValuesMessage)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -255,7 +255,7 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const st
                 time[key] = reading.getUIntValue();
             else if (reading.isInt())
                 time[key] = reading.getIntValue();
-            else if (reading.isFloatOrDouble())
+            else if (reading.isDouble())
                 time[key] = reading.getDoubleValue();
             else
                 time[key] = reading.getStringValue();
@@ -264,10 +264,10 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const st
         // And add it into the array
         payload += time;
     }
-    return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
+    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
 }
 
-std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
                                                                         PullFeedValuesMessage pullFeedValuesMessage)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -275,10 +275,10 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const st
     // Create the topic
     const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
                        toString(pullFeedValuesMessage.getMessageType());
-    return std::unique_ptr<MqttMessage>(new MqttMessage({}, topic));
+    return std::unique_ptr<Message>(new Message({}, topic));
 }
 
-std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
   const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -292,7 +292,7 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(
         // Create the payload
         auto attributes = attributeRegistrationMessage.getAttributes();
         auto payload = json(attributes);
-        return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }
     catch (const std::exception& exception)
     {
@@ -301,7 +301,7 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(
     }
 }
 
-std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
                                                                         ParametersUpdateMessage parametersUpdateMessage)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -337,15 +337,15 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const st
             payload[parameterName] = reading.getUIntValue();
         else if (reading.isInt())
             payload[parameterName] = reading.getIntValue();
-        else if (reading.isFloatOrDouble())
+        else if (reading.isDouble())
             payload[parameterName] = reading.getDoubleValue();
         else
             payload[parameterName] = reading.getStringValue();
     }
-    return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
+    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
 }
 
-std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
                                                                         ParametersPullMessage parametersPullMessage)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -353,10 +353,10 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(const st
     // Create the topic
     const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
                        toString(parametersPullMessage.getMessageType());
-    return std::unique_ptr<MqttMessage>(new MqttMessage{"", topic});
+    return std::unique_ptr<Message>(new Message{"", topic});
 }
 
-std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
   const std::string& deviceKey, SynchronizeParametersMessage synchronizeParametersMessage)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -379,10 +379,10 @@ std::unique_ptr<MqttMessage> WolkaboutDataProtocol::makeOutboundMessage(
         }
         payload += parameterString;
     }
-    return std::unique_ptr<MqttMessage>(new MqttMessage{payload.dump(), topic});
+    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
 }
 
-std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<MqttMessage> message)
+std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -399,7 +399,7 @@ std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::s
     }
 }
 
-std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<MqttMessage> message)
+std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
 

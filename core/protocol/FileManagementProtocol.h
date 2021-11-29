@@ -49,8 +49,8 @@ public:
      * @param message The message containing information about a currently ongoing file upload process.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                             const FileUploadStatusMessage& message) = 0;
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const FileUploadStatusMessage& message) = 0;
 
     /**
      * This method is a serialization method to create a send-able MQTT message from a FileBinaryRequestMessage.
@@ -60,8 +60,8 @@ public:
      * transferred.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                             const FileBinaryRequestMessage& message) = 0;
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const FileBinaryRequestMessage& message) = 0;
 
     /**
      * This method is a serialization method to create a send-able MQTT message from a FileUrlDownloadStatusMessage.
@@ -70,8 +70,8 @@ public:
      * @param message The message containing information about a currently ongoing file download process.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                             const FileUrlDownloadStatusMessage& message) = 0;
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const FileUrlDownloadStatusMessage& message) = 0;
 
     /**
      * This method is a serialization method to create a send-able MQTT message from a FileListResponseMessage.
@@ -80,8 +80,8 @@ public:
      * @param message The message containing information about a current list of files the device currently holds.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                             const FileListResponseMessage& message) = 0;
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const FileListResponseMessage& message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FileUploadInitiateMessage.
@@ -89,7 +89,7 @@ public:
      * @param message The received MQTT message that is potentially a valid FileUploadInitiateMessage.
      * @return A parsed FileUploadInitiateMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FileUploadInitiateMessage> parseFileUploadInit(std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::unique_ptr<FileUploadInitiateMessage> parseFileUploadInit(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FileUploadAbortMessage.
@@ -97,7 +97,7 @@ public:
      * @param message The received MQTT message that is potentially a valid FileUploadAbortMessage.
      * @return A parsed FileUploadAbortMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FileUploadAbortMessage> parseFileUploadAbort(std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::unique_ptr<FileUploadAbortMessage> parseFileUploadAbort(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FileBinaryResponseMessage.
@@ -105,8 +105,7 @@ public:
      * @param message The received MQTT message that is potentially a valid FileBinaryResponseMessage.
      * @return A parsed FileBinaryResponseMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FileBinaryResponseMessage> parseFileBinaryResponse(
-      std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::unique_ptr<FileBinaryResponseMessage> parseFileBinaryResponse(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FileUrlDownloadInitMessage.
@@ -114,8 +113,7 @@ public:
      * @param message The received MQTT message that is potentially a valid FileUrlDownloadInitMessage.
      * @return A parsed FileUrlDownloadInitMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FileUrlDownloadInitMessage> parseFileUrlDownloadInit(
-      std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::unique_ptr<FileUrlDownloadInitMessage> parseFileUrlDownloadInit(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FileUrlDownloadAbortMessage.
@@ -123,8 +121,8 @@ public:
      * @param message The received MQTT message that is potentially a valid FileUrlDownloadAbortMessage.
      * @return A parsed FileUrlDownloadAbortMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FileUrlDownloadAbortMessage> parseFileUrlDownloadAbort(
-      std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::unique_ptr<FileUrlDownloadAbortMessage> parseFileUrlDownloadAbort(
+      std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FileListRequestMessage.
@@ -132,7 +130,7 @@ public:
      * @param message The received MQTT message that is potentially a valid FileListRequestMessage.
      * @return A parsed FileListRequestMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FileListRequestMessage> parseFileListRequest(std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::unique_ptr<FileListRequestMessage> parseFileListRequest(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FileDeleteMessage.
@@ -140,7 +138,7 @@ public:
      * @param message The received MQTT message that is potentially a valid FileDeleteMessage.
      * @return A parsed FileDeleteMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FileDeleteMessage> parseFileDelete(std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::unique_ptr<FileDeleteMessage> parseFileDelete(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FilePurgeMessage.
@@ -148,7 +146,7 @@ public:
      * @param message The received MQTT message that is potentially a valid FilePurgeMessage.
      * @return A parsed FilePurgeMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FilePurgeMessage> parseFilePurge(std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::unique_ptr<FilePurgeMessage> parseFilePurge(std::shared_ptr<Message> message) = 0;
 };
 }    // namespace wolkabout
 

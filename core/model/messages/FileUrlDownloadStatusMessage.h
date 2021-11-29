@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILEURLDOWNLOADSTATUSMESSAGE_H
 #define WOLKABOUTCORE_FILEURLDOWNLOADSTATUSMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FileUrlDownloadStatusMessage : public MessageObject
+class FileUrlDownloadStatusMessage : public MessageModel
 {
 public:
     explicit FileUrlDownloadStatusMessage(std::string fileUrl, std::string fileName, FileUploadStatus status,

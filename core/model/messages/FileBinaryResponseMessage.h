@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILEBINARYRESPONSEMESSAGE_H
 #define WOLKABOUTCORE_FILEBINARYRESPONSEMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FileBinaryResponseMessage : public MessageObject
+class FileBinaryResponseMessage : public MessageModel
 {
 public:
     explicit FileBinaryResponseMessage(const std::string& payload);

@@ -18,13 +18,13 @@
 #define WOLKABOUTCORE_FEEDREGISTRATIONMESSAGE_H
 
 #include "core/model/Feed.h"
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 #include <vector>
 
 namespace wolkabout
 {
-class FeedRegistrationMessage : public MessageObject
+class FeedRegistrationMessage : public MessageModel
 {
 public:
     explicit FeedRegistrationMessage(std::vector<Feed> feeds);

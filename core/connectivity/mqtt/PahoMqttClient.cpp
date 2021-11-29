@@ -19,6 +19,7 @@
 #include "core/utilities/Logger.h"
 
 #include <atomic>
+#include <mqtt/async_client.h>
 #include <string>
 
 namespace wolkabout
@@ -31,11 +32,13 @@ const std::uint16_t PahoMqttClient::MQTT_QOS = 2;
 PahoMqttClient::PahoMqttClient() : m_isConnected(false)
 {
     m_callback.reset(new MqttCallback(
-      [&] {
+      [&]
+      {
           LOG(DEBUG) << "Connected";
           m_isConnected = true;
       },
-      [&] {
+      [&]
+      {
           LOG(DEBUG) << "Connection lost";
           m_isConnected = false;
           if (m_onConnectionLost)
@@ -43,7 +46,8 @@ PahoMqttClient::PahoMqttClient() : m_isConnected(false)
               m_onConnectionLost();
           }
       },
-      [&](mqtt::const_message_ptr msg) {
+      [&](mqtt::const_message_ptr msg)
+      {
           if (m_onMessageReceived)
           {
               m_onMessageReceived(msg->get_topic(), msg->get_payload_str());

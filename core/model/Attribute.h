@@ -56,7 +56,7 @@ public:
      *
      * @return The value of the attribute as a string.
      */
-    std::string getValue() const;
+    const std::string& getValue() const;
 
 private:
     std::string m_name;

@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILEBINARYREQUESTMESSAGE_H
 #define WOLKABOUTCORE_FILEBINARYREQUESTMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FileBinaryRequestMessage : public MessageObject
+class FileBinaryRequestMessage : public MessageModel
 {
 public:
     explicit FileBinaryRequestMessage(std::string name, std::uint64_t chunkIndex);

@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FIRMWAREUPDATEINSTALLMESSAGE_H
 #define WOLKABOUTCORE_FIRMWAREUPDATEINSTALLMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FirmwareUpdateInstallMessage : public MessageObject
+class FirmwareUpdateInstallMessage : public MessageModel
 {
 public:
     explicit FirmwareUpdateInstallMessage(std::string file);

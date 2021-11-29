@@ -18,7 +18,7 @@
 #define WOLKABOUTCORE_FEEDVALUESMESSAGE_H
 
 #include "core/model/Reading.h"
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 #include <map>
 #include <memory>
@@ -26,12 +26,10 @@
 
 namespace wolkabout
 {
-class FeedValuesMessage : public MessageObject
+class FeedValuesMessage : public MessageModel
 {
 public:
     explicit FeedValuesMessage(const std::vector<Reading>& readings);
-
-    explicit FeedValuesMessage(const std::vector<std::shared_ptr<Reading>>& readings);
 
     MessageType getMessageType() override;
 

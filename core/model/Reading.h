@@ -23,15 +23,6 @@
 
 namespace wolkabout
 {
-// This is the divider that is used to put the latitude and longitude of a location together.
-const std::string LOCATION_DIVIDER = ",";
-
-// This is a collection of regex's that can be used to quickly determine if a value can be parsed into any of the types.
-const std::string UNSIGNED_REGEX = "\\d+";
-const std::string INTEGER_REGEX = "-?\\d+";
-const std::string FLOAT_REGEX = "-?\\d+.\\d+";
-const std::string BOOLEAN_REGEX = "(true|false)";
-
 /**
  * This class represents a single Reading. A reading is a value for a feed at a certain time.
  * Reference is used to notify for which feed the reading is defined, the value(s) are the values that are active for
@@ -43,13 +34,53 @@ class Reading
 public:
     /**
      * This is the default single value constructor for a reading.
-     * This assumes your feed is using a single value string value.
+     * This assumes your feed is using a single value string feed.
      *
      * @param reference The reference of the feed for this reading.
      * @param value The value of this reading.
      * @param rtcTimestamp The time at which this reading occurred. Optional.
      */
     Reading(std::string reference, std::string value, std::uint64_t rtcTimestamp = 0);
+
+    /**
+     * This is the default single value constructor for a reading.
+     * This assumes your feed is using a single value numeric feed.
+     *
+     * @param reference The reference of the feed for this reading.
+     * @param value The value of this reading.
+     * @param rtcTimestamp The time at which this reading occurred. Optional.
+     */
+    Reading(std::string reference, std::uint64_t value, std::uint64_t rtcTimestamp = 0);
+
+    /**
+     * This is the default single value constructor for a reading.
+     * This assumes your feed is using a single value numeric feed.
+     *
+     * @param reference The reference of the feed for this reading.
+     * @param value The value of this reading.
+     * @param rtcTimestamp The time at which this reading occurred. Optional.
+     */
+    Reading(std::string reference, std::int64_t value, std::uint64_t rtcTimestamp = 0);
+
+    /**
+     * This is the default single value constructor for a reading.
+     * This assumes your feed is using a single value numeric feed.
+     *
+     * @param reference The reference of the feed for this reading.
+     * @param value The value of this reading.
+     * @param rtcTimestamp The time at which this reading occurred. Optional.
+     */
+    Reading(std::string reference, std::double_t value, std::uint64_t rtcTimestamp = 0);
+
+    /**
+     * This is the default single value constructor for a reading.
+     * This assumes your feed is using a single value boolean feed.
+     *
+     * @param reference The reference of the feed for this reading.
+     * @param value The value of this reading.
+     * @param rtcTimestamp The time at which this reading occurred. Optional.
+     */
+    Reading(std::string reference, bool value, std::uint64_t rtcTimestamp = 0);
 
     /**
      * This is the reading constructor that intakes the Location.
@@ -93,16 +124,6 @@ public:
     Reading(std::string reference, const std::vector<std::int64_t>& values, std::uint64_t rtcTimestamp = 0);
 
     /**
-     * This is the reading constructor that intakes multiple numeric values that are floats.
-     * This is for feeds that are defined as vectors.
-     *
-     * @param reference The reference of the feed for this reading.
-     * @param values The list of numeric values for this feed.
-     * @param rtcTimestamp The time at which this reading occurred. Optional.
-     */
-    Reading(std::string reference, const std::vector<std::float_t>& values, std::uint64_t rtcTimestamp = 0);
-
-    /**
      * This is the reading constructor that intakes multiple numeric values that are doubles.
      * This is for feeds that are defined as vectors.
      *
@@ -111,13 +132,6 @@ public:
      * @param rtcTimestamp The time at which this reading occurred. Optional.
      */
     Reading(std::string reference, const std::vector<std::double_t>& values, std::uint64_t rtcTimestamp = 0);
-
-    /**
-     * Default copy constructor for the Reading class.
-     *
-     * @param reading The original instance from which values will be copied.
-     */
-    Reading(const Reading& reading) = default;
 
     /**
      * Default getter for the reference. The reference is for the feed this reading is regarding.
@@ -134,18 +148,16 @@ public:
      *  - getStringValue()
      *  - getUIntValue() - If the value can be parsed as an unsigned integer.
      *  - getIntValue() - If the value can be parsed as an integer.
-     *  - getFloatValue() - If the value can be parsed as a float.
      *  - getDoubleValue() - If the value can be parsed as a double.
      *  - getBooleanValue() - If the value can be parsed as a boolean ("true", "false")
      *  - getHexValue() - If the value can be parsed as a hexadecimal value
      *  - getLocation() - If the value can be parsed as a location. Location strings are "<LATITUDE>,<LONGITUDE>", where
-     * <LATITUDE> is a float between -90 and 90, and <LONGITUDE> is a float between -180 and 180
+     * <LATITUDE> is a double between -90 and 90, and <LONGITUDE> is a double between -180 and 180
      *          If the reading is multi value (when this getter returns true), then the next getter are potentially
      * available, and will not throw an exception when invoked:
      *  - getStringValues()
      *  - getUIntValues() - If each value is an unsigned integer.
      *  - getIntValues() - If each value is an integer.
-     *  - getFloatValues() - If each value is a float.
      *  - getDoubleValues() - If each value is a double.
      *
      * @return Whether the reading is single or multi-valued. `true` = multi-value, `false` = single-value.
@@ -156,16 +168,12 @@ public:
      * This is the default getter for the single value this reading holds as a string. This string may be interpreted
      * into other types, such as Numeric, Boolean, Hexadecimal, Location or Enum.
      *
-     * @throw std::logic_error If the reading is multi-value.
-     *
      * @return The single value of the reading as a string.
      */
     const std::string& getStringValue() const;
 
     /**
      * This is a getter to ask if the single value this reading holds can be parsed into an unsigned integer.
-     *
-     * @throw std::logic_error If the reading is multi-value.
      *
      * @return Whether the value can be parsed into an unsigned integer.
      */
@@ -174,7 +182,6 @@ public:
     /**
      * This is the default getter for the single value this reading holds as an unsigned integer.
      *
-     * @throw std::logic_error If the reading is multi-value.
      * @throw std::invalid_argument If the value can not be read as an unsigned integer.
      * @throw std::out_of_range If the value is out of range for an unsigned integer.
      *
@@ -185,8 +192,6 @@ public:
     /**
      * This is a getter to ask if the single value this reading holds can be parsed into an integer.
      *
-     * @throw std::logic_error If the reading is multi-value.
-     *
      * @return Whether the value can be parsed into an integer.
      */
     bool isInt() const;
@@ -194,7 +199,6 @@ public:
     /**
      * This is the default getter for the single value this reading holds as an integer.
      *
-     * @throw std::logic_error If the reading is multi-value.
      * @throw std::invalid_argument If the value can not be read as an integer.
      * @throw std::out_of_range If the value is out of range for an integer.
      *
@@ -203,29 +207,15 @@ public:
     std::int64_t getIntValue() const;
 
     /**
-     * This is a getter to ask if the single value this reading holds can be parsed into a float/double.
+     * This is a getter to ask if the single value this reading holds can be parsed into a double.
      *
-     * @throw std::logic_error If the reading is multi-value.
-     *
-     * @return Whether the value can be parsed into a float/double.
+     * @return Whether the value can be parsed into a double.
      */
-    bool isFloatOrDouble() const;
-
-    /**
-     * This is the default getter for the single value this reading holds as a float.
-     *
-     * @throw std::logic_error If the reading is multi-value.
-     * @throw std::invalid_argument If the value can not be read as a float.
-     * @throw std::out_of_range If the value is out of range for a float.
-     *
-     * @return The single value of the reading as a float.
-     */
-    std::float_t getFloatValue() const;
+    bool isDouble() const;
 
     /**
      * This is the default getter for the single value this reading holds as a double.
      *
-     * @throw std::logic_error If the reading is multi-value.
      * @throw std::invalid_argument If the value can not be read as a double.
      * @throw std::out_of_range If the value is out of range for a double.
      *
@@ -236,8 +226,6 @@ public:
     /**
      * This is a getter to ask if the single value this reading holds can be parsed into a boolean.
      *
-     * @throw std::logic_error If the reading is multi-value.
-     *
      * @return Whether the value can be parsed into a boolean.
      */
     bool isBoolean() const;
@@ -245,7 +233,6 @@ public:
     /**
      * This is the default getter for the single value this reading holds as a boolean.
      *
-     * @throw std::logic_error If the reading is multi-value.
      * @throw std::out_of_range If the value is neither true nor false.
      *
      * @return The single value of the reading as a boolean.
@@ -255,7 +242,6 @@ public:
     /**
      * This is the default getter for the single value this reading holds as an integer, but interpreted as hex.
      *
-     * @throw std::logic_error If the reading is multi-value.
      * @throw std::invalid_argument If the value is not a hexadecimal value.
      *
      * @return The single value of the reading read as hexadecimal.
@@ -265,9 +251,8 @@ public:
     /**
      * This is the default getter for the location value this reading holds.
      *
-     * @throw std::logic_error If the reading is multi-value.
      * @throw std::invalid_argument If the value does not follow the format: "<LATITUDE>,<LONGITUDE>" where <LATITUDE>
-     * is a float between -90 and 90, and <LONGITUDE> is a float between -180 and 180.
+     * is a double between -90 and 90, and <LONGITUDE> is a double between -180 and 180.
      *
      * @return The location value of th reading.
      */
@@ -276,8 +261,6 @@ public:
     /**
      * This is the default getter for the vector of string values this reading holds.
      *
-     * @throw std::logic_error If the reading is single-value.
-     *
      * @return Vector containing raw string values.
      */
     std::vector<std::string> getStringValues() const;
@@ -285,7 +268,6 @@ public:
     /**
      * This is the default getter for the vector of unsigned integer values this reading holds.
      *
-     * @throw std::logic_error If the reading is single-value.
      * @throw std::invalid_argument If any of the values inside the vector can not be parsed as an unsigned integer.
      * @throw std::out_of_range If any of the values inside the vector are not in range to be an unsigned integer.
      *
@@ -296,7 +278,6 @@ public:
     /**
      * This is the default getter for the vector of integer values this reading holds.
      *
-     * @throw std::logic_error If the reading is single-value.
      * @throw std::invalid_argument If any of the values inside the vector can not be parsed as an integer.
      * @throw std::out_of_range If any of the values inside the vector are not in range to be an integer.
      *
@@ -305,20 +286,8 @@ public:
     std::vector<std::int64_t> getIntValues() const;
 
     /**
-     * This is the default getter for the vector of float values this reading holds.
-     *
-     * @throw std::logic_error If the reading is single-value.
-     * @throw std::invalid_argument If any of the values inside the vector can not be parsed as a float.
-     * @throw std::out_of_range If any of the values inside the vector are not in range to be a float.
-     *
-     * @return Vector containing multiple float values.
-     */
-    std::vector<std::float_t> getFloatValues() const;
-
-    /**
      * This is the default getter for the vector of double values this reading holds.
      *
-     * @throw std::logic_error If the reading is single-value.
      * @throw std::invalid_argument If any of the values inside the vector can not be parsed as a double.
      * @throw std::out_of_range If any of the values inside the vector are not in range to be a double.
      *

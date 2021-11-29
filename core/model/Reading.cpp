@@ -24,8 +24,37 @@
 
 namespace wolkabout
 {
+// This is the divider that is used to put the latitude and longitude of a location together.
+const std::string LOCATION_DIVIDER = ",";
+
+// This is a collection of regex's that can be used to quickly determine if a value can be parsed into any of the types.
+const std::string UNSIGNED_REGEX = "\\d+";
+const std::string INTEGER_REGEX = "-?\\d+";
+const std::string DOUBLE_REGEX = "-?\\d+.\\d+";
+const std::string BOOLEAN_REGEX = "(true|false)";
+
 Reading::Reading(std::string reference, std::string value, std::uint64_t rtcTimestamp)
 : m_reference(std::move(reference)), m_values({std::move(value)}), m_timestamp(rtcTimestamp)
+{
+}
+
+Reading::Reading(std::string reference, std::uint64_t value, std::uint64_t rtcTimestamp)
+: m_reference(std::move(reference)), m_values({std::to_string(value)}), m_timestamp(rtcTimestamp)
+{
+}
+
+Reading::Reading(std::string reference, std::int64_t value, std::uint64_t rtcTimestamp)
+: m_reference(std::move(reference)), m_values({std::to_string(value)}), m_timestamp(rtcTimestamp)
+{
+}
+
+Reading::Reading(std::string reference, std::double_t value, std::uint64_t rtcTimestamp)
+: m_reference(std::move(reference)), m_values({std::to_string(value)}), m_timestamp(rtcTimestamp)
+{
+}
+
+Reading::Reading(std::string reference, bool value, std::uint64_t rtcTimestamp)
+: m_reference(std::move(reference)), m_values({value ? "true" : "false"}), m_timestamp(rtcTimestamp)
 {
 }
 
@@ -55,13 +84,6 @@ Reading::Reading(std::string reference, const std::vector<std::int64_t>& values,
         m_values.emplace_back(std::to_string(value));
 }
 
-Reading::Reading(std::string reference, const std::vector<std::float_t>& values, std::uint64_t rtcTimestamp)
-: m_reference(std::move(reference)), m_timestamp(rtcTimestamp)
-{
-    for (const auto& value : values)
-        m_values.emplace_back(std::to_string(value));
-}
-
 Reading::Reading(std::string reference, const std::vector<std::double_t>& values, std::uint64_t rtcTimestamp)
 : m_reference(std::move(reference)), m_timestamp(rtcTimestamp)
 {
@@ -81,82 +103,46 @@ bool Reading::isMulti() const
 
 const std::string& Reading::getStringValue() const
 {
-    // Check if the reading is not a multi-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is multi-value.");
     return m_values.front();
 }
 
 bool Reading::isUInt() const
 {
-    // Check if the reading is not a single-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is single-value.");
     return std::regex_match(m_values.front(), std::regex(UNSIGNED_REGEX));
 }
 
 std::uint64_t Reading::getUIntValue() const
 {
-    // Check if the reading is not a multi-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is multi-value.");
     return std::stoull(m_values.front());
 }
 
 bool Reading::isInt() const
 {
-    // Check if the reading is not a single-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is single-value.");
     return std::regex_match(m_values.front(), std::regex(INTEGER_REGEX));
 }
 
 std::int64_t Reading::getIntValue() const
 {
-    // Check if the reading is not a multi-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is multi-value.");
     return std::stoll(m_values.front());
 }
 
-bool Reading::isFloatOrDouble() const
+bool Reading::isDouble() const
 {
-    // Check if the reading is not a single-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is single-value.");
-    return std::regex_match(m_values.front(), std::regex(FLOAT_REGEX));
-}
-
-std::float_t Reading::getFloatValue() const
-{
-    // Check if the reading is not a multi-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is multi-value.");
-    return std::stof(m_values.front());
+    return std::regex_match(m_values.front(), std::regex(DOUBLE_REGEX));
 }
 
 std::double_t Reading::getDoubleValue() const
 {
-    // Check if the reading is not a multi-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is multi-value.");
     return std::stod(m_values.front());
 }
 
 bool Reading::isBoolean() const
 {
-    // Check if the reading is not a single-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is single-value.");
     return std::regex_match(m_values.front(), std::regex(BOOLEAN_REGEX, std::regex_constants::icase));
 }
 
 bool Reading::getBoolValue() const
 {
-    // Check if the reading is not a multi-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is multi-value.");
-
     // Make the string lower case
     auto value = m_values.front();
     std::transform(value.cbegin(), value.cend(), value.begin(), ::tolower);
@@ -172,10 +158,6 @@ bool Reading::getBoolValue() const
 
 std::uint64_t Reading::getHexValue() const
 {
-    // Check if the reading is not a multi-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is multi-value.");
-
     // Set up the string stream
     auto input = std::istringstream(m_values.front());
 
@@ -190,10 +172,6 @@ std::uint64_t Reading::getHexValue() const
 
 Location Reading::getLocationValue() const
 {
-    // Check if the reading is not a multi-value reading.
-    if (isMulti())
-        throw std::logic_error("Reading is multi-value.");
-
     // Check that the string looks like how it should
     const auto& front = m_values.front();
     if (front.find(LOCATION_DIVIDER) == std::string::npos ||
@@ -240,19 +218,6 @@ std::vector<std::int64_t> Reading::getIntValues() const
     auto values = std::vector<std::int64_t>{};
     for (const auto& value : m_values)
         values.emplace_back(std::stoll(value));
-    return values;
-}
-
-std::vector<std::float_t> Reading::getFloatValues() const
-{
-    // Check if the reading is not a single-value reading.
-    if (!isMulti())
-        throw std::logic_error("Reading is single-value.");
-
-    // Make place for the values
-    auto values = std::vector<std::float_t>{};
-    for (const auto& value : m_values)
-        values.emplace_back(std::stof(value));
     return values;
 }
 

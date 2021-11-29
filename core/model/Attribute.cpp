@@ -35,7 +35,7 @@ DataType Attribute::getDataType() const
     return m_dataType;
 }
 
-std::string Attribute::getValue() const
+const std::string& Attribute::getValue() const
 {
     return m_value;
 }

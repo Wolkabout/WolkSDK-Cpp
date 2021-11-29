@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_SYNCHRONIZEPARAMETERSMESSAGE_H
 #define WOLKABOUTCORE_SYNCHRONIZEPARAMETERSMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class SynchronizeParametersMessage : public MessageObject
+class SynchronizeParametersMessage : public MessageModel
 {
 public:
     explicit SynchronizeParametersMessage(std::vector<ParameterName> parameters);

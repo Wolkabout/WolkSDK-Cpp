@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILEPURGEMESSAGE_H
 #define WOLKABOUTCORE_FILEPURGEMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FilePurgeMessage : public MessageObject
+class FilePurgeMessage : public MessageModel
 {
 public:
     MessageType getMessageType() override;

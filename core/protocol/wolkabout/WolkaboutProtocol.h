@@ -18,7 +18,7 @@
 #define WOLKABOUTCORE_WOLKABOUTPROTOCOL_H
 
 #include "core/Types.h"
-#include "core/model/MqttMessage.h"
+#include "core/model/Message.h"
 
 #include <memory>
 
@@ -46,7 +46,7 @@ public:
      * @param message The message for which the MessageType needs to be determined.
      * @return The determined message type for the received message.
      */
-    static MessageType getMessageType(const std::shared_ptr<MqttMessage>& message);
+    static MessageType getMessageType(const std::shared_ptr<Message>& message);
 
     /**
      * This is a generic Wolkabout implementation for the `extractDeviceKeyFromChannel` interface method of the Protocol

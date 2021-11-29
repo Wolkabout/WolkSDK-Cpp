@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILELISTREQUESTMESSAGE_H
 #define WOLKABOUTCORE_FILELISTREQUESTMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FileListRequestMessage : public MessageObject
+class FileListRequestMessage : public MessageModel
 {
 public:
     MessageType getMessageType() override;

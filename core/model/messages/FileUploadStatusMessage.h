@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILEUPLOADSTATUSMESSAGE_H
 #define WOLKABOUTCORE_FILEUPLOADSTATUSMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FileUploadStatusMessage : public MessageObject
+class FileUploadStatusMessage : public MessageModel
 {
 public:
     explicit FileUploadStatusMessage(std::string name, FileUploadStatus status,

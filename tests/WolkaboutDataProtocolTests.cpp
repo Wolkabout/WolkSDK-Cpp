@@ -38,7 +38,7 @@ public:
 
     static void SetUpTestCase() { Logger::init(LogLevel::TRACE, Logger::Type::CONSOLE); }
 
-    static void LogMessage(const wolkabout::MqttMessage& message)
+    static void LogMessage(const wolkabout::Message& message)
     {
         LOG(TRACE) << "Topic: '" << message.getChannel() << "' | Payload: '" << message.getContent() << "'";
     }
@@ -82,7 +82,7 @@ TEST_F(WolkaboutDataProtocolTests, ExtractDeviceKeyFromChannel)
 TEST_F(WolkaboutDataProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(protocol->getMessageType(std::make_shared<MqttMessage>("", "p2d/" + DEVICE_KEY + "/parameters")),
+    EXPECT_EQ(protocol->getMessageType(std::make_shared<wolkabout::Message>("", "p2d/" + DEVICE_KEY + "/parameters")),
               MessageType::PARAMETER_SYNC);
 }
 
@@ -93,7 +93,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeFeedRegistrationSingle)
     auto registration = FeedRegistrationMessage{{feed}};
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, registration));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -121,7 +121,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeFeedRemovalSingle)
     auto removal = FeedRemovalMessage({"T"});
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, removal));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -149,7 +149,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeFeedValuesSingle)
     auto values = FeedValuesMessage({reading});
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, values));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -164,16 +164,16 @@ TEST_F(WolkaboutDataProtocolTests, SerializeFeedValuesSingle)
 TEST_F(WolkaboutDataProtocolTests, SerializeFeedValuesMultiple)
 {
     // Make a single reading that will be sent out
-    auto boolReading = Reading("B", "true", 1);
-    auto uintReading = Reading("U", std::to_string(123), 1);
-    auto intReading = Reading("I", std::to_string(-100), 1);
-    auto floatReading = Reading("F", std::to_string(1.14f), 2);
-    auto doubleReading = Reading("D", std::to_string(20.23), 2);
-    auto stringReading = Reading("S", "SOME_STATUS_CODE", 2);
+    auto boolReading = Reading("B", true, 1);
+    auto uintReading = Reading("U", std::uint64_t(123), 1);
+    auto intReading = Reading("I", std::int64_t(-100), 1);
+    auto floatReading = Reading("F", 1.14f, 2);
+    auto doubleReading = Reading("D", 20.23, 2);
+    auto stringReading = Reading("S", std::string("SOME_STATUS_CODE"), 2);
     auto values = FeedValuesMessage({boolReading, uintReading, intReading, floatReading, doubleReading, stringReading});
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, values));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -211,7 +211,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializePullFeedValues)
     auto pull = PullFeedValuesMessage();
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, pull));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -230,7 +230,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeAttributeRegistrationMessageSingle)
     auto registration = AttributeRegistrationMessage({attribute});
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, registration));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -259,7 +259,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeParametersUpdateSingle)
     auto update = ParametersUpdateMessage({parameter});
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, update));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -284,7 +284,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeParametersUpdateMultiple)
       {boolParameter, uintParameter, intParameter, floatParameter, doubleParameter, stringParameter});
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, update));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -322,7 +322,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeParametersPullValues)
     auto pull = ParametersPullMessage();
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, pull));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -340,7 +340,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeSynchronizeParametersSingle)
     auto synchronize = SynchronizeParametersMessage({ParameterName::FIRMWARE_VERSION});
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, synchronize));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -358,7 +358,7 @@ TEST_F(WolkaboutDataProtocolTests, SerializeSynchronizeParametersEmpty)
     auto synchronize = SynchronizeParametersMessage({});
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, synchronize));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -384,7 +384,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesNotArray)
     // Make the invalid payload
     auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::object({{"1", "2"}, {"3", "4"}});
-    auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -396,7 +396,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberNotObject)
     // Make the invalid payload
     auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({1, 2, 3});
-    auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -408,7 +408,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberNoTimestamp)
     // Make the invalid payload
     auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{"1", "2"}}});
-    auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -420,7 +420,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberTimestampNotU
     // Make the invalid payload
     auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{"timestamp", "2"}}});
-    auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -432,7 +432,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberValueIsAnObje
     // Make the invalid payload
     auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{"timestamp", 123}, {"test", json{{"1", "2"}}}}});
-    auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -444,7 +444,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesArrayMemberValueArrayCon
     // Define the single feed value that is incoming
     auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{TEMPERATURE, json::array({"abc", "bcd"})}, {TIMESTAMP, 1623159800000}}});
-    auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -456,7 +456,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesSingle)
     // Define the single feed value that is incoming
     auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{TEMPERATURE, 20}, {TIMESTAMP, 1623159800000}}});
-    auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Parse the message
@@ -484,7 +484,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesMultiple)
                                 {{ROTATION, 90}, {TRANSLATION, 2}, {TIMESTAMP, 1623161000000}},
                                 {{ROTATION, -90}, {TIMESTAMP, 1623162000000}},
                                 {{TRANSLATION, 4}, {TIMESTAMP, 1623163000000}}});
-    auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Parse the message
@@ -506,7 +506,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesVector)
     // Define the single feed value that is incoming
     auto topic = "p2d/" + DEVICE_KEY + "/feed_values";
     auto payload = json::array({json{{TEMPERATURE, json::array({1, 2, 3})}, {TIMESTAMP, 1623159800000}}});
-    auto message = std::make_shared<wolkabout::MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Parse the message
@@ -535,7 +535,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeParametersNotAnObject)
     // Create an invalid message
     auto topic = "p2d/" + DEVICE_KEY + "/parameters";
     auto payload = json::array({"FIRMWARE_UPDATE_CHECK_TIME", 21600});
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that nothing will be return
@@ -547,7 +547,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeParametersInvalidParameterName)
     // Create an invalid message
     auto topic = "p2d/" + DEVICE_KEY + "/parameters";
     auto payload = json{{"TEST_PARAMETER", 21600}};
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that nothing will be return
@@ -559,7 +559,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeParametersInvalidParameterValue)
     // Create an invalid message
     auto topic = "p2d/" + DEVICE_KEY + "/parameters";
     auto payload = json{{"FIRMWARE_UPDATE_CHECK_TIME", json{}}};
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that nothing will be return
@@ -571,7 +571,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeParametersSingle)
     // Define the single parameters that is incoming
     auto topic = "p2d/" + DEVICE_KEY + "/parameters";
     auto payload = json{{"FIRMWARE_UPDATE_CHECK_TIME", 21600}};
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Parse the message

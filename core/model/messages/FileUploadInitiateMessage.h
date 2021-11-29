@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILEUPLOADINITIATEMESSAGE_H
 #define WOLKABOUTCORE_FILEUPLOADINITIATEMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FileUploadInitiateMessage : public MessageObject
+class FileUploadInitiateMessage : public MessageModel
 {
 public:
     explicit FileUploadInitiateMessage(std::string name, std::uint64_t size, std::string hash);
