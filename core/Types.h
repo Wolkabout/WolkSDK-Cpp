@@ -185,11 +185,7 @@ enum class OutboundDataMode
 {
     PUSH,
     PULL,
-    UNKNOWN,
 };
-
-std::string toString(OutboundDataMode mode);
-OutboundDataMode outboundDataModeFromString(const std::string& mode);
 
 enum class ParameterName
 {
