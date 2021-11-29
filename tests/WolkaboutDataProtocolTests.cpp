@@ -245,10 +245,11 @@ TEST_F(WolkaboutDataProtocolTests, SerializeAttributeRegistrationMessageSingle)
 TEST_F(WolkaboutDataProtocolTests, SerializeAttributeRegistrationInvalidDataType)
 {
     // Make a single attribute with an invalid DataType value
-    auto attribute = Attribute{"InvalidAttribute", static_cast<DataType>(1234), "InvalidValue"};
+    auto attribute = Attribute{"InvalidAttribute", DataType::STRING, "InvalidValue"};
     auto registration = AttributeRegistrationMessage({attribute});
 
     // Expect that the return is a nullptr
+    registration.m_attributes.front().m_dataType = static_cast<DataType>(1234);
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, registration), nullptr);
 }
 
