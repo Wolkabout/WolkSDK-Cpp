@@ -38,7 +38,7 @@ public:
 
     static void SetUpTestCase() { Logger::init(LogLevel::TRACE, Logger::Type::CONSOLE); }
 
-    static void LogMessage(const wolkabout::MqttMessage& message)
+    static void LogMessage(const wolkabout::Message& message)
     {
         LOG(TRACE) << "Topic: '" << message.getChannel() << "' | Payload: '" << message.getContent() << "'";
     }
@@ -76,9 +76,9 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, ExtractDeviceKeyFromChannel)
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(
-      protocol->getMessageType(std::make_shared<MqttMessage>("", "p2d/" + DEVICE_KEY + "/firmware_update_install")),
-      MessageType::FIRMWARE_UPDATE_INSTALL);
+    EXPECT_EQ(protocol->getMessageType(
+                std::make_shared<wolkabout::Message>("", "p2d/" + DEVICE_KEY + "/firmware_update_install")),
+              MessageType::FIRMWARE_UPDATE_INSTALL);
 }
 
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, SerializeFirmwareUpdateStatusInvalidStatus)
@@ -107,7 +107,7 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, SerializeFirmwareUpdateSingleNonErr
     auto status = FirmwareUpdateStatusMessage{FirmwareUpdateStatus::SUCCESS, FirmwareUpdateError::UNKNOWN};
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, status));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -126,7 +126,7 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, SerializeFirmwareUpdateSingleError)
     auto status = FirmwareUpdateStatusMessage{FirmwareUpdateStatus::ERROR, FirmwareUpdateError::INSTALLATION_FAILED};
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, status));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -143,7 +143,7 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, DeserializeFirmwareInstallNotFirmwa
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/firmware_update_not_install";
     auto payload = "what? me? no?";
-    auto message = std::make_shared<MqttMessage>(payload, topic);
+    auto message = std::make_shared<wolkabout::Message>(payload, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -155,7 +155,7 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, DeserializeFirmwareInstallSingle)
     // Make a message
     auto topic = "p2d/" + DEVICE_KEY + "/firmware_update_install";
     auto payload = "firmware_file.bin";
-    auto message = std::make_shared<MqttMessage>(payload, topic);
+    auto message = std::make_shared<wolkabout::Message>(payload, topic);
     LogMessage(*message);
 
     // Make place for the parsed message
@@ -171,7 +171,7 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, DeserializeFirmwareAbortNotFirmware
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/firmware_update_not_abort";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -182,7 +182,7 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, DeserializeFirmwareAbortSingle)
 {
     // Make a message
     auto topic = "p2d/" + DEVICE_KEY + "/firmware_update_abort";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Make place for the parsed message

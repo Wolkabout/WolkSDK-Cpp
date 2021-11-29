@@ -28,18 +28,18 @@ public:
 
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
-    MessageType getMessageType(std::shared_ptr<MqttMessage> message) override;
+    MessageType getMessageType(std::shared_ptr<Message> message) override;
 
     std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
 
-    std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
-                                                     const FirmwareUpdateStatusMessage& message) override;
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const FirmwareUpdateStatusMessage& message) override;
 
-    std::shared_ptr<FirmwareUpdateInstallMessage> parseFirmwareUpdateInstall(
-      const std::shared_ptr<MqttMessage>& message) override;
+    std::unique_ptr<FirmwareUpdateInstallMessage> parseFirmwareUpdateInstall(
+      const std::shared_ptr<Message>& message) override;
 
-    std::shared_ptr<FirmwareUpdateAbortMessage> parseFirmwareUpdateAbort(
-      const std::shared_ptr<MqttMessage>& message) override;
+    std::unique_ptr<FirmwareUpdateAbortMessage> parseFirmwareUpdateAbort(
+      const std::shared_ptr<Message>& message) override;
 };
 }    // namespace wolkabout
 

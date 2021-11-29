@@ -17,13 +17,13 @@
 #ifndef WOLKABOUTCORE_FEEDREMOVALMESSAGE_H
 #define WOLKABOUTCORE_FEEDREMOVALMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 #include <vector>
 
 namespace wolkabout
 {
-class FeedRemovalMessage : public MessageObject
+class FeedRemovalMessage : public MessageModel
 {
 public:
     explicit FeedRemovalMessage(std::vector<std::string> feedRefsToRemove);

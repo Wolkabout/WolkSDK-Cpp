@@ -230,7 +230,7 @@ if (BUILD_CONNECTIVITY)
             core/model/Attribute.cpp
             core/model/Device.cpp
             core/model/Feed.cpp
-            core/model/MqttMessage.cpp
+            core/model/Message.cpp
             core/model/Reading.cpp
             core/model/messages/AttributeRegistrationMessage.cpp
             core/model/messages/FeedRegistrationMessage.cpp
@@ -269,7 +269,7 @@ if (BUILD_CONNECTIVITY)
             core/model/Attribute.h
             core/model/Device.h
             core/model/Feed.h
-            core/model/MqttMessage.h
+            core/model/Message.h
             core/model/Reading.h
             core/model/messages/AttributeRegistrationMessage.h
             core/model/messages/FeedRegistrationMessage.h
@@ -290,7 +290,7 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/FirmwareUpdateAbortMessage.h
             core/model/messages/FirmwareUpdateInstallMessage.h
             core/model/messages/FirmwareUpdateStatusMessage.h
-            core/model/messages/MessageObject.h
+            core/model/messages/MessageModel.h
             core/model/messages/ParametersPullMessage.h
             core/model/messages/ParametersUpdateMessage.h
             core/model/messages/PullFeedValuesMessage.h

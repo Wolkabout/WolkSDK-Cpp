@@ -18,7 +18,7 @@
 
 namespace wolkabout
 {
-MessageType WolkaboutProtocol::getMessageType(const std::shared_ptr<MqttMessage>& message)
+MessageType WolkaboutProtocol::getMessageType(const std::shared_ptr<Message>& message)
 {
     // Take the topic, and extract its last part
     const auto& topic = message->getChannel();

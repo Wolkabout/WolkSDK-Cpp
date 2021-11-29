@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILELISTRESPONSEMESSAGE_H
 #define WOLKABOUTCORE_FILELISTRESPONSEMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FileListResponseMessage : public MessageObject
+class FileListResponseMessage : public MessageModel
 {
 public:
     explicit FileListResponseMessage(std::vector<FileInformation> files);

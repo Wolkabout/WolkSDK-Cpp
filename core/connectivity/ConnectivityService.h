@@ -36,7 +36,7 @@ public:
     virtual std::vector<std::string> getChannels() const = 0;
 };
 
-class MqttMessage;
+class Message;
 class ConnectivityService
 {
 public:
@@ -48,7 +48,7 @@ public:
 
     virtual bool isConnected() = 0;
 
-    virtual bool publish(std::shared_ptr<MqttMessage> outboundMessage, bool persistent) = 0;
+    virtual bool publish(std::shared_ptr<Message> outboundMessage) = 0;
 
     void setListener(std::weak_ptr<ConnectivityServiceListener> listener);
 

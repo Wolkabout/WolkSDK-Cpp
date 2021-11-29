@@ -24,7 +24,7 @@
 
 namespace wolkabout
 {
-class MqttMessage;
+class Message;
 class Protocol;
 
 class MessageListener
@@ -32,7 +32,7 @@ class MessageListener
 public:
     virtual ~MessageListener() = default;
 
-    virtual void messageReceived(std::shared_ptr<MqttMessage> message) = 0;
+    virtual void messageReceived(std::shared_ptr<Message> message) = 0;
 
     virtual const Protocol& getProtocol() = 0;
 };

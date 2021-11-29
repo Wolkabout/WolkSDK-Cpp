@@ -38,7 +38,7 @@ public:
 
     static void SetUpTestCase() { Logger::init(LogLevel::TRACE, Logger::Type::CONSOLE); }
 
-    static void LogMessage(const wolkabout::MqttMessage& message)
+    static void LogMessage(const wolkabout::Message& message)
     {
         LOG(TRACE) << "Topic: '" << message.getChannel() << "' | Payload: '" << message.getContent() << "'";
     }
@@ -90,7 +90,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, GetMessageType)
 {
     // Test with a simple example
     EXPECT_EQ(
-      protocol->getMessageType(std::make_shared<MqttMessage>("", "p2d/" + DEVICE_KEY + "/file_upload_initiate")),
+      protocol->getMessageType(std::make_shared<wolkabout::Message>("", "p2d/" + DEVICE_KEY + "/file_upload_initiate")),
       MessageType::FILE_UPLOAD_INIT);
 }
 
@@ -127,7 +127,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusSingleNonE
     auto status = FileUploadStatusMessage{TEST_FILE, FileUploadStatus::FILE_READY};
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, status));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -146,7 +146,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusSingleErro
       FileUploadStatusMessage{TEST_FILE, FileUploadStatus::ERROR, FileUploadError::TRANSFER_PROTOCOL_DISABLED};
 
     // Make place for the payload
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, status));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -173,7 +173,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileBinaryRequestSingle)
     auto request = FileBinaryRequestMessage{TEST_FILE, 3};
 
     // Make place for the parsed message
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, request));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -228,7 +228,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusSingl
     auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileUploadStatus::FILE_READY};
 
     // Make place for the parsed message
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, status));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -248,7 +248,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusSingl
                                                FileUploadError::TRANSFER_PROTOCOL_DISABLED};
 
     // Make place for the parsed message
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, status));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -268,7 +268,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileListResponseSingle)
     auto fileList = FileListResponseMessage{{fileInformation}};
 
     // Make place for the parsed message
-    auto message = std::unique_ptr<MqttMessage>{};
+    auto message = std::unique_ptr<wolkabout::Message>{};
     ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, fileList));
     ASSERT_NE(message, nullptr);
     LogMessage(*message);
@@ -284,7 +284,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitInvalidTop
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_not_initiate";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -296,7 +296,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitNotObject)
     // Make a message where the payload is not an object
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_initiate";
     auto payload = json::array();
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -308,7 +308,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitInvalidNam
     // Make a message where the name is missing
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_initiate";
     auto payload = json{};
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -316,7 +316,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitInvalidNam
 
     // Make a message where the name is not a string
     payload = json{{"name", 123}};
-    message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -328,7 +328,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitInvalidSiz
     // Make a message where the size is missing
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_initiate";
     auto payload = json{{"name", TEST_FILE}};
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -336,7 +336,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitInvalidSiz
 
     // Make a message where the size is not an unsigned integer
     payload = json{{"name", TEST_FILE}, {"size", "123"}};
-    message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -348,7 +348,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitInvalidHas
     // Make a message where the hash is missing
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_initiate";
     auto payload = json{{"name", TEST_FILE}, {"size", 123}};
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -356,7 +356,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitInvalidHas
 
     // Make a message where the hash is not a string
     payload = json{{"name", TEST_FILE}, {"size", 123}, {"hash", 123}};
-    message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -368,7 +368,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitSingle)
     // Make a message
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_initiate";
     auto payload = json{{"name", TEST_FILE}, {"size", 123}, {"hash", "123"}};
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Make place for the parsed message
@@ -387,7 +387,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadAbortInvalidTo
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_not_abort";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -398,7 +398,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadAbortSingle)
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_abort";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Make place for the parsed message
@@ -414,7 +414,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileBinaryResponseInvali
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_binary_not_response";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -425,7 +425,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileBinaryResponseSingle
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_binary_response";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Make place for the parsed message
@@ -444,7 +444,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUrlDownloadInitInval
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_url_download_not_initiate";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -455,7 +455,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUrlDownloadInitSingl
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_url_download_initiate";
-    auto message = std::make_shared<MqttMessage>(TEST_URL, topic);
+    auto message = std::make_shared<wolkabout::Message>(TEST_URL, topic);
     LogMessage(*message);
 
     // Make place for the parsed message
@@ -472,7 +472,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUrlDownloadAbortInva
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_url_download_not_abort";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -483,7 +483,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUrlDownloadAbortSing
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_url_download_abort";
-    auto message = std::make_shared<MqttMessage>(TEST_URL, topic);
+    auto message = std::make_shared<wolkabout::Message>(TEST_URL, topic);
     LogMessage(*message);
 
     // Make place for the parsed message
@@ -500,7 +500,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileListRequestInvalidTo
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_not_list";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -511,7 +511,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileListRequestSingle)
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_list";
-    auto message = std::make_shared<MqttMessage>(TEST_URL, topic);
+    auto message = std::make_shared<wolkabout::Message>(TEST_URL, topic);
     LogMessage(*message);
 
     // Make place for the parsed message
@@ -527,7 +527,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileDeleteInvalidTopic)
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_not_delete";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -539,7 +539,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileDeleteNotArray)
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_delete";
     auto payload = json{};
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -551,7 +551,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileDeleteArrayContainsN
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_delete";
     auto payload = json::array({1, 2, 3});
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -563,7 +563,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileDeleteSingle)
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_delete";
     auto payload = json::array({TEST_FILE});
-    auto message = std::make_shared<MqttMessage>(payload.dump(), topic);
+    auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
     // Make place for the parsed message
@@ -581,7 +581,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFilePurgeInvalidTopic)
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_not_purge";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Expect that deserialization returns a nullptr
@@ -592,7 +592,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFilePurgeSingle)
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_purge";
-    auto message = std::make_shared<MqttMessage>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
     LogMessage(*message);
 
     // Make place for the parsed message

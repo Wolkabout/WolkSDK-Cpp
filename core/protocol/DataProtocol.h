@@ -48,7 +48,7 @@ public:
      * @param feedRegistrationMessage The message containing information about feeds that need to be registered.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                              FeedRegistrationMessage feedRegistrationMessage) = 0;
 
     /**
@@ -58,7 +58,7 @@ public:
      * @param feedRemovalMessage The message containing information about feeds that need to be removed.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                              FeedRemovalMessage feedRemovalMessage) = 0;
 
     /**
@@ -68,7 +68,7 @@ public:
      * @param feedValuesMessage The message containing information about new feed values the device is sending.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                              FeedValuesMessage feedValuesMessage) = 0;
 
     /**
@@ -78,7 +78,7 @@ public:
      * @param pullFeedValuesMessage The request message for new feed values from the platform.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                              PullFeedValuesMessage pullFeedValuesMessage) = 0;
 
     /**
@@ -88,7 +88,7 @@ public:
      * @param attributeRegistrationMessage The request message about new/updated attributes the device is sending.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(
+    virtual std::unique_ptr<Message> makeOutboundMessage(
       const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage) = 0;
 
     /**
@@ -98,7 +98,7 @@ public:
      * @param parametersUpdateMessage The request message about updated parameters the device is sending.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                              ParametersUpdateMessage parametersUpdateMessage) = 0;
 
     /**
@@ -108,7 +108,7 @@ public:
      * @param pullFeedValuesMessage The request message for new parameter values from the platform.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(const std::string& deviceKey,
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                              ParametersPullMessage parametersPullMessage) = 0;
 
     /**
@@ -118,7 +118,7 @@ public:
      * @param synchronizeParametersMessage The request message for which parameters need to be synchronized.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<MqttMessage> makeOutboundMessage(
+    virtual std::unique_ptr<Message> makeOutboundMessage(
       const std::string& deviceKey, SynchronizeParametersMessage synchronizeParametersMessage) = 0;
 
     /**
@@ -127,7 +127,7 @@ public:
      * @param message The received MQTT message that is potentially a valid FeedValuesMessage.
      * @return A parsed FeedValuesMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a ParametersUpdateMessage.
@@ -135,7 +135,7 @@ public:
      * @param message The received MQTT message that is potentially a valid ParametersUpdateMessage.
      * @return A parsed ParametersUpdateMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<MqttMessage> message) = 0;
+    virtual std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) = 0;
 };
 }    // namespace wolkabout
 

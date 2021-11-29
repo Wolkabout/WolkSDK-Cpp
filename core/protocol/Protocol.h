@@ -18,7 +18,7 @@
 #define PROTOCOL_H
 
 #include "core/Types.h"
-#include "core/model/MqttMessage.h"
+#include "core/model/Message.h"
 
 #include <memory>
 #include <vector>
@@ -66,7 +66,7 @@ public:
      * @param message The received MQTT message.
      * @return The type of the message determined by the protocol.
      */
-    virtual MessageType getMessageType(std::shared_ptr<MqttMessage> message) = 0;
+    virtual MessageType getMessageType(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method can be overridden to define the routine used to figure out the target device for the message.

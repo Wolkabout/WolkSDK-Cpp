@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FIRMWAREUPDATESTATUSMESSAGE_H
 #define WOLKABOUTCORE_FIRMWAREUPDATESTATUSMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FirmwareUpdateStatusMessage : public MessageObject
+class FirmwareUpdateStatusMessage : public MessageModel
 {
 public:
     explicit FirmwareUpdateStatusMessage(FirmwareUpdateStatus status,

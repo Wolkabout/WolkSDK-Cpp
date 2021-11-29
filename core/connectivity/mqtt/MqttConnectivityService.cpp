@@ -16,13 +16,14 @@
 
 #include "core/connectivity/mqtt/MqttConnectivityService.h"
 
-#include "core/model/MqttMessage.h"
+#include "core/model/Message.h"
 
 namespace wolkabout
 {
-MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, const std::string& key,
+MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,
                                                  std::string password, std::string host, std::string trustStore)
-: MqttConnectivityService(std::move(mqttClient), key, std::move(password), std::move(host), std::move(trustStore), key)
+: MqttConnectivityService(std::move(mqttClient), std::move(key), std::move(password), std::move(host),
+                          std::move(trustStore), key)
 {
 }
 
@@ -37,19 +38,23 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
 , m_clientId(std::move(clientId))
 , m_lastWillRetain(false)
 {
-    m_mqttClient->onMessageReceived([this](const std::string& topic, const std::string& message) -> void {
-        if (auto handler = m_listener.lock())
-        {
-            handler->messageReceived(topic, message);
-        }
-    });
+    m_mqttClient->onMessageReceived(
+      [this](const std::string& topic, const std::string& message) -> void
+      {
+          if (auto handler = m_listener.lock())
+          {
+              handler->messageReceived(topic, message);
+          }
+      });
 
-    m_mqttClient->onConnectionLost([this]() -> void {
-        if (auto handler = m_listener.lock())
-        {
-            handler->connectionLost();
-        }
-    });
+    m_mqttClient->onConnectionLost(
+      [this]() -> void
+      {
+          if (auto handler = m_listener.lock())
+          {
+              handler->connectionLost();
+          }
+      });
 
     if (!m_trustStore.empty())
     {
@@ -92,8 +97,8 @@ bool MqttConnectivityService::isConnected()
     return m_mqttClient->isConnected();
 }
 
-bool MqttConnectivityService::publish(std::shared_ptr<MqttMessage> outboundMessage, bool persistent)
+bool MqttConnectivityService::publish(std::shared_ptr<Message> outboundMessage)
 {
-    return m_mqttClient->publish(outboundMessage->getChannel(), outboundMessage->getContent(), persistent);
+    return m_mqttClient->publish(outboundMessage->getChannel(), outboundMessage->getContent());
 }
 }    // namespace wolkabout

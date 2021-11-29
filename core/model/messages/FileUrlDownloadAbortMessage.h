@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_FILEURLDOWNLOADABORTMESSAGE_H
 #define WOLKABOUTCORE_FILEURLDOWNLOADABORTMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class FileUrlDownloadAbortMessage : public MessageObject
+class FileUrlDownloadAbortMessage : public MessageModel
 {
 public:
     explicit FileUrlDownloadAbortMessage(std::string path);

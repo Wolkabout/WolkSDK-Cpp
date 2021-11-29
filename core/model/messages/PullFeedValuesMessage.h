@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_PULLFEEDVALUESMESSAGE_H
 #define WOLKABOUTCORE_PULLFEEDVALUESMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class PullFeedValuesMessage : public MessageObject
+class PullFeedValuesMessage : public MessageModel
 {
 public:
     MessageType getMessageType() override;

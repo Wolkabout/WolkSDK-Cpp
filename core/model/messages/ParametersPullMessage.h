@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCORE_PARAMETERSPULLMESSAGE_H
 #define WOLKABOUTCORE_PARAMETERSPULLMESSAGE_H
 
-#include "core/model/messages/MessageObject.h"
+#include "core/model/messages/MessageModel.h"
 
 namespace wolkabout
 {
-class ParametersPullMessage : public MessageObject
+class ParametersPullMessage : public MessageModel
 {
 public:
     MessageType getMessageType() override;
