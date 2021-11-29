@@ -16,6 +16,7 @@
 
 #include "core/model/Attribute.h"
 
+#include <stdexcept>
 #include <utility>
 
 namespace wolkabout
@@ -23,6 +24,8 @@ namespace wolkabout
 Attribute::Attribute(std::string name, DataType dataType, std::string value)
 : m_name(std::move(name)), m_dataType(dataType), m_value(std::move(value))
 {
+    if (m_dataType < DataType::STRING || m_dataType > DataType::VECTOR)
+        throw std::runtime_error("Failed to create Attribute with invalid DataType value.");
 }
 
 const std::string& Attribute::getName() const

@@ -431,13 +431,10 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileBinaryResponseSingle
     // Make place for the parsed message
     auto parsedMessage = std::shared_ptr<FileBinaryResponseMessage>{};
     ASSERT_NO_FATAL_FAILURE(parsedMessage = protocol->parseFileBinaryResponse(message));
-    ASSERT_EQ(parsedMessage, nullptr);    // And remove this afterwards
-
-    // TODO fix this up
-    //    ASSERT_NE(parsedMessage, nullptr);
+    ASSERT_NE(parsedMessage, nullptr);
 
     // Check that the message values are valid
-    //    EXPECT_EQ(parsedMessage->getMessageType(), MessageType::FILE_BINARY_RESPONSE);
+    EXPECT_EQ(parsedMessage->getMessageType(), MessageType::FILE_BINARY_RESPONSE);
 }
 
 TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUrlDownloadInitInvalidTopic)

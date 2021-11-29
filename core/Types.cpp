@@ -46,25 +46,6 @@ std::string toString(DataType type)
     }
 }
 
-DataType dataTypeFromString(const std::string& type)
-{
-    if (type == "BOOLEAN")
-        return DataType::BOOLEAN;
-    if (type == "NUMERIC")
-        return DataType::NUMERIC;
-    if (type == "STRING")
-        return DataType::STRING;
-    if (type == "HEXADECIMAL")
-        return DataType::HEXADECIMAL;
-    if (type == "LOCATION")
-        return DataType::LOCATION;
-    if (type == "ENUM")
-        return DataType::ENUM;
-    if (type == "VECTOR")
-        return DataType::VECTOR;
-    return DataType::UNKNOWN;
-}
-
 std::string toString(FeedType type)
 {
     switch (type)
@@ -76,16 +57,6 @@ std::string toString(FeedType type)
     default:
         return "";
     }
-}
-
-FeedType feedTypeFromString(const std::string& type)
-{
-    if (type == "IN")
-        return FeedType::IN;
-    if (type == "IN/OUT")
-        return FeedType::IN_OUT;
-
-    return FeedType::IN;
 }
 
 const std::string Unit::NUMERIC = "NUMERIC";

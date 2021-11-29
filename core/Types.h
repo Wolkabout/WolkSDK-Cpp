@@ -30,12 +30,10 @@ enum class DataType
     HEXADECIMAL,
     LOCATION,
     ENUM,
-    VECTOR,
-    UNKNOWN,
+    VECTOR
 };
 
 std::string toString(DataType type);
-DataType dataTypeFromString(const std::string& type);
 
 enum class FeedType
 {
@@ -44,7 +42,6 @@ enum class FeedType
 };
 
 std::string toString(FeedType type);
-FeedType feedTypeFromString(const std::string& type);
 
 class Unit
 {
