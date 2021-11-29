@@ -16,6 +16,7 @@
 
 #include "core/model/Feed.h"
 
+#include <stdexcept>
 #include <utility>
 
 namespace wolkabout
@@ -23,6 +24,8 @@ namespace wolkabout
 Feed::Feed(std::string name, std::string reference, FeedType feedType, std::string unit)
 : m_name(std::move(name)), m_reference(std::move(reference)), m_feedType(feedType), m_unit(std::move(unit))
 {
+    if (m_feedType < FeedType::IN || m_feedType > FeedType::IN_OUT)
+        throw std::runtime_error("Failed to created Feed with an invalid FeedType value.");
 }
 
 const std::string& Feed::getName() const

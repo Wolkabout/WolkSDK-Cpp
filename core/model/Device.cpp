@@ -18,57 +18,59 @@
 
 namespace wolkabout
 {
-wolkabout::Device::Device(std::string key, std::string password, OutboundDataMode type, std::string name)
+Device::Device(std::string key, std::string password, OutboundDataMode type, std::string name)
 : m_name(std::move(name)), m_key(std::move(key)), m_password(std::move(password)), m_type(type)
 {
+    if (m_type < OutboundDataMode::PUSH || m_type > OutboundDataMode::PULL)
+        throw std::runtime_error("Failed to create Device with an invalid OutboundDataMode value.");
 }
 
-const std::string& wolkabout::Device::getName() const
+const std::string& Device::getName() const
 {
     return m_name;
 }
 
-void wolkabout::Device::setName(const std::string& name)
+void Device::setName(const std::string& name)
 {
     m_name = name;
 }
 
-const std::string& wolkabout::Device::getKey() const
+const std::string& Device::getKey() const
 {
     return m_key;
 }
 
-const std::string& wolkabout::Device::getPassword() const
+const std::string& Device::getPassword() const
 {
     return m_password;
 }
 
-const std::vector<Feed>& wolkabout::Device::getFeeds() const
+const std::vector<Feed>& Device::getFeeds() const
 {
     return m_feeds;
 }
 
-void wolkabout::Device::setFeeds(const std::vector<Feed>& feeds)
+void Device::setFeeds(const std::vector<Feed>& feeds)
 {
     m_feeds = feeds;
 }
 
-const std::vector<Attribute>& wolkabout::Device::getAttributes() const
+const std::vector<Attribute>& Device::getAttributes() const
 {
     return m_attributes;
 }
 
-void wolkabout::Device::setAttributes(const std::vector<Attribute>& attributes)
+void Device::setAttributes(const std::vector<Attribute>& attributes)
 {
     m_attributes = attributes;
 }
 
-const std::map<ParameterName, std::string>& wolkabout::Device::getParameters() const
+const std::map<ParameterName, std::string>& Device::getParameters() const
 {
     return m_parameters;
 }
 
-void wolkabout::Device::setParameters(const std::map<ParameterName, std::string>& parameters)
+void Device::setParameters(const std::map<ParameterName, std::string>& parameters)
 {
     m_parameters = parameters;
 }

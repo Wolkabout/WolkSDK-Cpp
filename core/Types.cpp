@@ -189,27 +189,6 @@ const std::string Unit::GALLON_UK = "GALLON_UK";
 const std::string Unit::OUNCE_LIQUID_UK = "OUNCE_LIQUID_UK";
 const std::string Unit::UNKNOWN = "UNKNOWN";
 
-std::string toString(OutboundDataMode mode)
-{
-    switch (mode)
-    {
-    case OutboundDataMode::PUSH:
-        return "PUSH";
-    case OutboundDataMode::PULL:
-        return "PULL";
-    default:
-        return "";
-    }
-}
-OutboundDataMode outboundDataModeFromString(const std::string& mode)
-{
-    if (mode == "PUSH")
-        return OutboundDataMode::PUSH;
-    if (mode == "PULL")
-        return OutboundDataMode::PULL;
-    return OutboundDataMode::UNKNOWN;
-}
-
 std::string toString(ParameterName parameterName)
 {
     switch (parameterName)

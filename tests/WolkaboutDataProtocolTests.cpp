@@ -108,10 +108,11 @@ TEST_F(WolkaboutDataProtocolTests, SerializeFeedRegistrationSingle)
 TEST_F(WolkaboutDataProtocolTests, SerializeFeedRegistrationInvalidFeedType)
 {
     // Make a single feed that needs to be registered
-    auto feed = Feed{"Invalid Feed", "INVALID", static_cast<FeedType>(1234), Unit::NUMERIC};
+    auto feed = Feed{"Invalid Feed", "INVALID", FeedType::IN_OUT, Unit::NUMERIC};
     auto registration = FeedRegistrationMessage{{feed}};
 
     // Expect that the return from the call is a `nullptr`
+    registration.m_feeds.front().m_feedType = static_cast<FeedType>(1234);
     ASSERT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, registration), nullptr);
 }
 
