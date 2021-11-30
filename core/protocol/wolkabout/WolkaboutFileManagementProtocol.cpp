@@ -237,7 +237,8 @@ std::unique_ptr<FileUploadAbortMessage> WolkaboutFileManagementProtocol::parseFi
     }
 
     // Take the payload and return it as the file name
-    return std::unique_ptr<FileUploadAbortMessage>(new FileUploadAbortMessage(message->getContent()));
+    return std::unique_ptr<FileUploadAbortMessage>(
+      new FileUploadAbortMessage(WolkaboutProtocol::removeQuotes(message->getContent())));
 }
 
 std::unique_ptr<FileBinaryResponseMessage> WolkaboutFileManagementProtocol::parseFileBinaryResponse(
@@ -272,7 +273,8 @@ std::unique_ptr<FileUrlDownloadInitMessage> WolkaboutFileManagementProtocol::par
     }
 
     // Take the payload as the file path
-    return std::unique_ptr<FileUrlDownloadInitMessage>(new FileUrlDownloadInitMessage(message->getContent()));
+    return std::unique_ptr<FileUrlDownloadInitMessage>(
+      new FileUrlDownloadInitMessage(WolkaboutProtocol::removeQuotes(message->getContent())));
 }
 
 std::unique_ptr<FileUrlDownloadAbortMessage> WolkaboutFileManagementProtocol::parseFileUrlDownloadAbort(
@@ -290,7 +292,8 @@ std::unique_ptr<FileUrlDownloadAbortMessage> WolkaboutFileManagementProtocol::pa
     }
 
     // Take the payload as the file path
-    return std::unique_ptr<FileUrlDownloadAbortMessage>(new FileUrlDownloadAbortMessage(message->getContent()));
+    return std::unique_ptr<FileUrlDownloadAbortMessage>(
+      new FileUrlDownloadAbortMessage(WolkaboutProtocol::removeQuotes(message->getContent())));
 }
 
 std::unique_ptr<FileListRequestMessage> WolkaboutFileManagementProtocol::parseFileListRequest(

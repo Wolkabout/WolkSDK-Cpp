@@ -18,6 +18,20 @@
 
 namespace wolkabout
 {
+const std::string ESCAPED_QUOTES = "\"";
+
+std::string WolkaboutProtocol::removeQuotes(std::string value)
+{
+    // Make place for the iterator in the string
+    auto index = value.find(ESCAPED_QUOTES);
+    while (index != std::string::npos)
+    {
+        value.replace(index, ESCAPED_QUOTES.size(), "");
+        index = value.find(ESCAPED_QUOTES);
+    }
+    return value;
+}
+
 MessageType WolkaboutProtocol::getMessageType(const std::shared_ptr<Message>& message)
 {
     // Take the topic, and extract its last part
