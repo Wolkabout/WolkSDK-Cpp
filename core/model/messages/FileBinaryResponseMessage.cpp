@@ -24,9 +24,9 @@ FileBinaryResponseMessage::FileBinaryResponseMessage(const std::string& payload)
 {
     if (payload.length() > 64)
     {
-        m_previousHash = payload.substr(0, 64);
-        m_data = ByteUtils::toByteArray(payload.substr(64, payload.length() - 128));
-        m_currentHash = payload.substr(payload.length() - 64);
+        m_previousHash = payload.substr(0, 32);
+        m_data = ByteUtils::toByteArray(payload.substr(32, payload.length() - 64));
+        m_currentHash = payload.substr(payload.length() - 32);
     }
 }
 
