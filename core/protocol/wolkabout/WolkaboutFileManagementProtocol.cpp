@@ -127,11 +127,6 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
     const auto errorPrefix = "Failed to generate outbound 'FileUrlDownloadStatus' message";
 
     // Verify that the message is valid
-    if (message.getFileName().empty())
-    {
-        LOG(ERROR) << errorPrefix << " -> The file name is empty.";
-        return nullptr;
-    }
     if (message.getFileUrl().empty())
     {
         LOG(ERROR) << errorPrefix << " -> The file url is empty.";
