@@ -39,6 +39,14 @@ class WolkaboutProtocol
 {
 public:
     /**
+     * This is a helper method that will remove any escaped quotes from a string.
+     *
+     * @param value Original value.
+     * @return Original value but without escaped quotes.
+     */
+    static std::string removeQuotes(std::string value);
+
+    /**
      * This is a generic Wolkabout implementation for the `getMessageType` interface method of the Protocol interface.
      * This is done by extracting the last part of the topic, which must correspond to a unique MessageType - this is
      * currently set by the Wolkabout protocol.
