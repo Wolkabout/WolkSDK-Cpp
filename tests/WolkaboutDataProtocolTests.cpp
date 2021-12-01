@@ -560,7 +560,7 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeParametersInvalidParameterValue)
 {
     // Create an invalid message
     auto topic = "p2d/" + DEVICE_KEY + "/parameters";
-    auto payload = json{{"FIRMWARE_UPDATE_CHECK_TIME", json{}}};
+    auto payload = json{{"FIRMWARE_UPDATE_CHECK_TIME", json{{"someValue", 123}}}};
     auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
