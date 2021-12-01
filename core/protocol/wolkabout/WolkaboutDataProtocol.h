@@ -41,28 +41,28 @@ public:
     MessageType getMessageType(std::shared_ptr<Message> message) override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                     FeedRegistrationMessage feedRegistrationMessage) override;
+                                                 FeedRegistrationMessage feedRegistrationMessage) override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                     FeedRemovalMessage feedRemovalMessage) override;
+                                                 FeedRemovalMessage feedRemovalMessage) override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                     FeedValuesMessage feedValuesMessage) override;
+                                                 FeedValuesMessage feedValuesMessage) override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                     PullFeedValuesMessage pullFeedValuesMessage) override;
-
-    std::unique_ptr<Message> makeOutboundMessage(
-      const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage) override;
+                                                 PullFeedValuesMessage pullFeedValuesMessage) override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                     ParametersUpdateMessage parametersUpdateMessage) override;
+                                                 AttributeRegistrationMessage attributeRegistrationMessage) override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                     ParametersPullMessage parametersPullMessage) override;
+                                                 ParametersUpdateMessage parametersUpdateMessage) override;
 
-    std::unique_ptr<Message> makeOutboundMessage(
-      const std::string& deviceKey, SynchronizeParametersMessage synchronizeParametersMessage) override;
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 ParametersPullMessage parametersPullMessage) override;
+
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 SynchronizeParametersMessage synchronizeParametersMessage) override;
 
     std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) override;
 

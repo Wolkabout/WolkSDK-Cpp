@@ -209,6 +209,8 @@ std::string toString(ParameterName parameterName)
         return "FIRMWARE_UPDATE_ENABLED";
     case ParameterName::FIRMWARE_UPDATE_CHECK_TIME:
         return "FIRMWARE_UPDATE_CHECK_TIME";
+    case ParameterName::FIRMWARE_UPDATE_REPOSITORY:
+        return "FIRMWARE_UPDATE_REPOSITORY";
     case ParameterName::FIRMWARE_VERSION:
         return "FIRMWARE_VERSION";
     case ParameterName::GATEWAY:
@@ -239,6 +241,8 @@ ParameterName parameterNameFromString(std::string parameterName)
         return ParameterName::FIRMWARE_UPDATE_ENABLED;
     if (parameterName == "FIRMWARE_UPDATE_CHECK_TIME")
         return ParameterName::FIRMWARE_UPDATE_CHECK_TIME;
+    if (parameterName == "FIRMWARE_UPDATE_REPOSITORY")
+        return ParameterName::FIRMWARE_UPDATE_REPOSITORY;
     if (parameterName == "FIRMWARE_VERSION")
         return ParameterName::FIRMWARE_VERSION;
     if (parameterName == "GATEWAY")
