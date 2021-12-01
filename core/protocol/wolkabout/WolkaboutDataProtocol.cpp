@@ -92,7 +92,7 @@ static void from_json(const json& j, std::vector<Reading>& r)
             case nlohmann::detail::value_t::number_unsigned:
             case nlohmann::detail::value_t::number_float:
             {
-                read.emplace_back(Reading{key, value.dump(), timestamp});
+                read.emplace_back(Reading{key, WolkaboutProtocol::removeQuotes(value.dump()), timestamp});
                 break;
             }
             case nlohmann::detail::value_t::array:
@@ -104,7 +104,7 @@ static void from_json(const json& j, std::vector<Reading>& r)
                     const auto& subValue = subValuePair.value();
                     if (!subValue.is_number())
                         throw std::runtime_error("Vector of values contains non-numeric values.");
-                    subValues.emplace_back(subValue.dump());
+                    subValues.emplace_back(WolkaboutProtocol::removeQuotes(subValue.dump()));
                 }
                 read.emplace_back(Reading{key, subValues, timestamp});
                 break;
@@ -136,11 +136,11 @@ static void from_json(const json& j, std::vector<Parameter>& p)
 
         // We need to check that the value is of valid type
         const auto& value = parameterPair.value();
-        if (!(value.is_string() || value.is_boolean() || value.is_number()))
+        if (!(value.is_string() || value.is_boolean() || value.is_number() || value.is_null()))
             throw std::runtime_error("Received a value of invalid type for a parameter.");
 
         // Add the parameter in the vector
-        p.emplace_back(parameterName, value.dump());
+        p.emplace_back(parameterName, WolkaboutProtocol::removeQuotes(value.dump()));
     }
 }
 
@@ -170,7 +170,7 @@ MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<Message> messa
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                        FeedRegistrationMessage feedRegistrationMessage)
+                                                                    FeedRegistrationMessage feedRegistrationMessage)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -193,7 +193,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                        FeedRemovalMessage feedRemovalMessage)
+                                                                    FeedRemovalMessage feedRemovalMessage)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -215,7 +215,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                        FeedValuesMessage feedValuesMessage)
+                                                                    FeedValuesMessage feedValuesMessage)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -268,7 +268,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                        PullFeedValuesMessage pullFeedValuesMessage)
+                                                                    PullFeedValuesMessage pullFeedValuesMessage)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -302,7 +302,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                        ParametersUpdateMessage parametersUpdateMessage)
+                                                                    ParametersUpdateMessage parametersUpdateMessage)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -346,7 +346,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
-                                                                        ParametersPullMessage parametersPullMessage)
+                                                                    ParametersPullMessage parametersPullMessage)
 {
     LOG(TRACE) << METHOD_INFO;
 

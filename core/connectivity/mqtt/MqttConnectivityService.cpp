@@ -38,23 +38,19 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
 , m_clientId(std::move(clientId))
 , m_lastWillRetain(false)
 {
-    m_mqttClient->onMessageReceived(
-      [this](const std::string& topic, const std::string& message) -> void
-      {
-          if (auto handler = m_listener.lock())
-          {
-              handler->messageReceived(topic, message);
-          }
-      });
+    m_mqttClient->onMessageReceived([this](const std::string& topic, const std::string& message) -> void {
+        if (auto handler = m_listener.lock())
+        {
+            handler->messageReceived(topic, message);
+        }
+    });
 
-    m_mqttClient->onConnectionLost(
-      [this]() -> void
-      {
-          if (auto handler = m_listener.lock())
-          {
-              handler->connectionLost();
-          }
-      });
+    m_mqttClient->onConnectionLost([this]() -> void {
+        if (auto handler = m_listener.lock())
+        {
+            handler->connectionLost();
+        }
+    });
 
     if (!m_trustStore.empty())
     {

@@ -49,7 +49,7 @@ public:
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
     virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                             FeedRegistrationMessage feedRegistrationMessage) = 0;
+                                                         FeedRegistrationMessage feedRegistrationMessage) = 0;
 
     /**
      * This method is a serialization method to create a send-able MQTT message from a FeedRemovalMessage.
@@ -59,7 +59,7 @@ public:
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
     virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                             FeedRemovalMessage feedRemovalMessage) = 0;
+                                                         FeedRemovalMessage feedRemovalMessage) = 0;
 
     /**
      * This method is a serialization method to create a send-able MQTT message from a FeedValuesMessage.
@@ -69,7 +69,7 @@ public:
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
     virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                             FeedValuesMessage feedValuesMessage) = 0;
+                                                         FeedValuesMessage feedValuesMessage) = 0;
 
     /**
      * This method is a serialization method to create a send-able MQTT message from a PullFeedValuesMessage.
@@ -79,7 +79,7 @@ public:
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
     virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                             PullFeedValuesMessage pullFeedValuesMessage) = 0;
+                                                         PullFeedValuesMessage pullFeedValuesMessage) = 0;
 
     /**
      * This method is a serialization method to create a send-able MQTT message from a AttributeRegistrationMessage.
@@ -88,8 +88,8 @@ public:
      * @param attributeRegistrationMessage The request message about new/updated attributes the device is sending.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<Message> makeOutboundMessage(
-      const std::string& deviceKey, AttributeRegistrationMessage attributeRegistrationMessage) = 0;
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         AttributeRegistrationMessage attributeRegistrationMessage) = 0;
 
     /**
      * This method is a serialization method to create a send-able MQTT message from a ParametersUpdateMessage.
@@ -99,7 +99,7 @@ public:
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
     virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                             ParametersUpdateMessage parametersUpdateMessage) = 0;
+                                                         ParametersUpdateMessage parametersUpdateMessage) = 0;
 
     /**
      * This method is a serialization method to create a send-able MQTT message from a ParametersPullMessage.
@@ -109,7 +109,7 @@ public:
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
     virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
-                                                             ParametersPullMessage parametersPullMessage) = 0;
+                                                         ParametersPullMessage parametersPullMessage) = 0;
 
     /**
      * This method is a serialization method to create send-able MQTT message from a SynchronizeParametersMessage.
@@ -118,8 +118,8 @@ public:
      * @param synchronizeParametersMessage The request message for which parameters need to be synchronized.
      * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
      */
-    virtual std::unique_ptr<Message> makeOutboundMessage(
-      const std::string& deviceKey, SynchronizeParametersMessage synchronizeParametersMessage) = 0;
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         SynchronizeParametersMessage synchronizeParametersMessage) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a FeedValuesMessage.
