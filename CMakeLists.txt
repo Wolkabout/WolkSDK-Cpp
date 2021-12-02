@@ -329,7 +329,7 @@ if (BUILD_CONNECTIVITY)
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
 endif ()
 
-if (${BUILD_TESTS})
+if (${BUILD_TESTS} AND (NOT ("${TESTS_SOURCE_FILES}" STREQUAL "")))
     add_executable(${PROJECT_NAME}Tests ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES})
     target_link_libraries(${PROJECT_NAME}Tests ${INSTALL_TARGETS} gtest gmock gtest_main)
     target_include_directories(${PROJECT_NAME}Tests PRIVATE ${PROJECT_SOURCE_DIR})
