@@ -32,6 +32,9 @@ public:
     ByteUtils() = delete;
 
     static ByteArray toByteArray(const std::string& data);
+
+    static std::string toHexString(const ByteArray& data);
+
     static ByteArray hashSHA256(const ByteArray& value);
 
     static const short SHA_256_HASH_BYTE_LENGTH = 32;
