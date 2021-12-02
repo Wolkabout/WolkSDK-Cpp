@@ -16,6 +16,7 @@
 
 #include "core/utilities/ByteUtils.h"
 
+#include <openssl/md5.h>
 #include <openssl/sha.h>
 #include <sstream>
 #include <iomanip>
@@ -32,6 +33,18 @@ ByteArray ByteUtils::toByteArray(const std::string& data)
     }
 
     return array;
+}
+
+std::string ByteUtils::toString(const ByteArray& data)
+{
+    auto stream = std::stringstream{};
+
+    for (const auto& byte : data)
+    {
+        stream << byte;
+    }
+
+    return stream.str();
 }
 
 std::string ByteUtils::toHexString(const ByteArray& data)
@@ -60,5 +73,18 @@ ByteArray ByteUtils::hashSHA256(const ByteArray& value)
     }
 
     return ret;
+}
+
+ByteArray ByteUtils::hashMDA5(const ByteArray& value)
+{
+    std::uint8_t hashCStr[MD5_DIGEST_LENGTH];
+    auto context = MD5_CTX();
+    MD5_Init(&context);
+    MD5_Update(&context, value.data(), value.size());
+    MD5_Final(hashCStr, &context);
+    auto hash = ByteArray{};
+    for (auto i = std::uint32_t{0}; i < MD5_DIGEST_LENGTH; ++i)
+        hash.emplace_back(hashCStr[i]);
+    return hash;
 }
 }    // namespace wolkabout
