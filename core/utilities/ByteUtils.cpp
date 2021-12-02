@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-#include "ByteUtils.h"
+#include "core/utilities/ByteUtils.h"
 
 #include <openssl/sha.h>
+#include <sstream>
+#include <iomanip>
 
 namespace wolkabout
 {
@@ -30,6 +32,18 @@ ByteArray ByteUtils::toByteArray(const std::string& data)
     }
 
     return array;
+}
+
+std::string ByteUtils::toHexString(const ByteArray& data)
+{
+    auto stream = std::stringstream{};
+
+    for (const auto& byte : data)
+    {
+        stream << std::setfill('0') << std::setw(2) << std::hex << static_cast<std::int32_t>(byte);
+    }
+
+    return stream.str();
 }
 
 ByteArray ByteUtils::hashSHA256(const ByteArray& value)
