@@ -48,6 +48,6 @@ jobs:
         shell: bash
         run: make tests && ctest .
       - name: Check Format
-        uses: jidicula/clang-format-action@v4.4.0
+        uses: jidicula/clang-format-action@v3.5.0
         with:
           clang-format-version: 10
