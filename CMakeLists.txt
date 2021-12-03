@@ -350,6 +350,6 @@ install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/l
 add_custom_target(format
         COMMAND "clang-format" -i -sort-includes -style=file ${UTILITY_HEADER_FILES} ${UTILITY_SOURCE_FILES}
         ${ALU_HEADER_FILES} ${ALU_SOURCE_FILES} ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES}
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         COMMENT "[Formatting source code]"
         VERBATIM)
