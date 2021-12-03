@@ -16,10 +16,10 @@
 
 #include "core/utilities/ByteUtils.h"
 
+#include <iomanip>
 #include <openssl/md5.h>
 #include <openssl/sha.h>
 #include <sstream>
-#include <iomanip>
 
 namespace wolkabout
 {
