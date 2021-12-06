@@ -108,7 +108,7 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
     }
     catch (mqtt::exception& e)
     {
-        LOG(DEBUG) << "Connecting failed: exception code " << e.get_reason_code();
+        LOG(DEBUG) << "Connecting failed: exception " << e.to_string();
         return false;
     }
 
@@ -128,7 +128,7 @@ void PahoMqttClient::disconnect()
         }
         catch (mqtt::exception& e)
         {
-            LOG(DEBUG) << "Disonnecting failed: exception code " << e.get_reason_code();
+            LOG(DEBUG) << "Disonnecting failed: exception " << e.to_string();
         }
     }
 }
@@ -161,7 +161,7 @@ bool PahoMqttClient::subscribe(const std::string& topic)
     }
     catch (mqtt::exception& e)
     {
-        LOG(DEBUG) << "Subscribing failed: exception code " << e.get_reason_code();
+        LOG(DEBUG) << "Subscribing failed: exception " << e.to_string();
         return false;
     }
 
@@ -198,7 +198,7 @@ bool PahoMqttClient::publish(const std::string& topic, const std::string& messag
     }
     catch (mqtt::exception& e)
     {
-        LOG(DEBUG) << "Publishing failed: exception code " << e.get_reason_code();
+        LOG(DEBUG) << "Publishing failed: exception " << e.to_string();
         return false;
     }
 
