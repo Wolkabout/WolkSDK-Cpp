@@ -19,20 +19,19 @@
 #include "MqttCallback.h"
 #include "MqttClient.h"
 #include "core/utilities/Logger.h"
-#include <mqtt/async_client.h>
 
 #include <atomic>
 #include <memory>
+#include <mqtt/async_client.h>
 #include <string>
 
 namespace wolkabout
 {
 const unsigned short PahoMqttClient::MQTT_CONNECTION_COMPLETITION_TIMEOUT_MSEC = 2000;
 const unsigned short PahoMqttClient::MQTT_ACTION_COMPLETITION_TIMEOUT_MSEC = 2000;
-const unsigned short PahoMqttClient::MQTT_KEEP_ALIVE_SEC = 60;
 const unsigned short PahoMqttClient::MQTT_QOS = 2;
 
-PahoMqttClient::PahoMqttClient() : m_isConnected(false)
+PahoMqttClient::PahoMqttClient(unsigned short keepAliveSec) : m_isConnected(false), m_keepAliveSec(keepAliveSec)
 {
     m_callback.reset(new MqttCallback(
       [&] {
@@ -73,7 +72,7 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
     connectOptions.set_user_name(username);
     connectOptions.set_password(password);
     connectOptions.set_clean_session(true);
-    connectOptions.set_keep_alive_interval(MQTT_KEEP_ALIVE_SEC);
+    connectOptions.set_keep_alive_interval(m_keepAliveSec);
 
     mqtt::ssl_options sslOptions;
     sslOptions.set_enable_server_cert_auth(false);
