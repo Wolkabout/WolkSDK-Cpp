@@ -16,6 +16,7 @@
 
 #include "core/connectivity/mqtt/PahoMqttClient.h"
 
+#include "core/connectivity/mqtt/MqttCallback.h"
 #include "core/utilities/Logger.h"
 
 #include <atomic>
@@ -28,6 +29,8 @@ const std::uint16_t PahoMqttClient::MQTT_CONNECTION_COMPLETION_TIMEOUT_MSEC = 20
 const std::uint16_t PahoMqttClient::MQTT_ACTION_COMPLETION_TIMEOUT_MSEC = 2000;
 const std::uint16_t PahoMqttClient::MQTT_KEEP_ALIVE_SEC = 60;
 const std::uint16_t PahoMqttClient::MQTT_QOS = 2;
+
+PahoMqttClient::~PahoMqttClient() = default;
 
 PahoMqttClient::PahoMqttClient() : m_isConnected(false)
 {
