@@ -17,7 +17,6 @@
 #ifndef PAHOMQTTCLIENT_H
 #define PAHOMQTTCLIENT_H
 
-#include "core/connectivity/mqtt/MqttCallback.h"
 #include "core/connectivity/mqtt/MqttClient.h"
 
 #include <atomic>
@@ -32,10 +31,13 @@ class async_client;
 
 namespace wolkabout
 {
+class MqttCallback;
+
 class PahoMqttClient : public MqttClient
 {
 public:
     PahoMqttClient();
+    ~PahoMqttClient();
 
     bool connect(const std::string& username, const std::string& password, const std::string& host,
                  const std::string& clientId) override;
