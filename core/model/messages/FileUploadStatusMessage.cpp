@@ -38,7 +38,7 @@ FileUploadError FileUploadStatusMessage::getError() const
     return m_error;
 }
 
-MessageType FileUploadStatusMessage::getMessageType()
+MessageType FileUploadStatusMessage::getMessageType() const
 {
     return MessageType::FILE_UPLOAD_STATUS;
 }

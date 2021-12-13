@@ -25,7 +25,7 @@ const std::string& FirmwareUpdateInstallMessage::getFile() const
     return m_file;
 }
 
-MessageType FirmwareUpdateInstallMessage::getMessageType()
+MessageType FirmwareUpdateInstallMessage::getMessageType() const
 {
     return MessageType::FIRMWARE_UPDATE_INSTALL;
 }

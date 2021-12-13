@@ -30,7 +30,7 @@ class AttributeRegistrationMessage : public MessageModel
 public:
     explicit AttributeRegistrationMessage(std::vector<Attribute> attributes);
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
     const std::vector<Attribute>& getAttributes() const;
 

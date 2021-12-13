@@ -33,7 +33,7 @@ public:
 
     FileUploadError getError() const;
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
 private:
     std::string m_name;

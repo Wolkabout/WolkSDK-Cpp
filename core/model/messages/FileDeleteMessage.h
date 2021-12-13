@@ -28,7 +28,7 @@ public:
 
     const std::vector<std::string>& getFiles() const;
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
 private:
     std::vector<std::string> m_files;

@@ -33,7 +33,7 @@ std::uint64_t FileBinaryRequestMessage::getChunkIndex() const
     return m_chunkIndex;
 }
 
-MessageType FileBinaryRequestMessage::getMessageType()
+MessageType FileBinaryRequestMessage::getMessageType() const
 {
     return MessageType::FILE_BINARY_REQUEST;
 }

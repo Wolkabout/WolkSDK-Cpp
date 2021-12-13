@@ -23,7 +23,7 @@ AttributeRegistrationMessage::AttributeRegistrationMessage(std::vector<Attribute
 {
 }
 
-MessageType AttributeRegistrationMessage::getMessageType()
+MessageType AttributeRegistrationMessage::getMessageType() const
 {
     return MessageType::ATTRIBUTE_REGISTRATION;
 }

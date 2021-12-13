@@ -28,7 +28,7 @@ class FeedRemovalMessage : public MessageModel
 public:
     explicit FeedRemovalMessage(std::vector<std::string> feedRefsToRemove);
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
     const std::vector<std::string>& getReferences() const;
 

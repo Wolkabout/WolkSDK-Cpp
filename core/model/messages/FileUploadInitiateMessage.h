@@ -32,7 +32,7 @@ public:
 
     const std::string& getHash() const;
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
 private:
     std::string m_name;

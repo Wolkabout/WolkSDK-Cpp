@@ -25,7 +25,7 @@ const std::vector<Feed>& FeedRegistrationMessage::getFeeds() const
     return m_feeds;
 }
 
-MessageType FeedRegistrationMessage::getMessageType()
+MessageType FeedRegistrationMessage::getMessageType() const
 {
     return MessageType::FEED_REGISTRATION;
 }

@@ -18,7 +18,7 @@
 
 namespace wolkabout
 {
-MessageType ParametersPullMessage::getMessageType()
+MessageType ParametersPullMessage::getMessageType() const
 {
     return MessageType::PULL_PARAMETERS;
 }

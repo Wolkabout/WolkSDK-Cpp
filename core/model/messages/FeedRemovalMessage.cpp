@@ -23,7 +23,7 @@ FeedRemovalMessage::FeedRemovalMessage(std::vector<std::string> feedRefsToRemove
 {
 }
 
-MessageType FeedRemovalMessage::getMessageType()
+MessageType FeedRemovalMessage::getMessageType() const
 {
     return MessageType::FEED_REMOVAL;
 }

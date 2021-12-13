@@ -28,7 +28,7 @@ public:
 
     const std::string& getPath() const;
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
 private:
     std::string m_path;

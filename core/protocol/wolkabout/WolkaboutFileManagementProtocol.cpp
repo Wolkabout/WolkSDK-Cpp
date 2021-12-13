@@ -32,22 +32,22 @@ std::vector<std::string> WolkaboutFileManagementProtocol::getInboundChannels() c
 std::vector<std::string> WolkaboutFileManagementProtocol::getInboundChannelsForDevice(
   const std::string& deviceKey) const
 {
-    return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FILE_UPLOAD_INIT),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FILE_UPLOAD_ABORT),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FILE_BINARY_RESPONSE),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FILE_URL_DOWNLOAD_INIT),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FILE_URL_DOWNLOAD_ABORT),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FILE_LIST_REQUEST),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FILE_DELETE),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FILE_PURGE)};
+    return {WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_UPLOAD_INIT),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_UPLOAD_ABORT),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_BINARY_RESPONSE),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_URL_DOWNLOAD_INIT),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_URL_DOWNLOAD_ABORT),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_LIST_REQUEST),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_DELETE),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_PURGE)};
 }
 
 std::string WolkaboutFileManagementProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
@@ -88,8 +88,8 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
     }
 
     // Make the topic for the message
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-                       toString(MessageType::FILE_UPLOAD_STATUS);
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_UPLOAD_STATUS);
 
     // Parse the message into a JSON
     auto payload = json{{"name", message.getName()}, {"status", statusString}};
@@ -112,8 +112,8 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
     }
 
     // Make the topic for the message
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-                       toString(MessageType::FILE_BINARY_REQUEST);
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_BINARY_REQUEST);
 
     // Parse the message into a JSON
     auto payload = json{{"name", message.getName()}, {"chunkIndex", message.getChunkIndex()}};
@@ -146,7 +146,8 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
     }
 
     // Make the topic for the message
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
                        toString(MessageType::FILE_URL_DOWNLOAD_STATUS);
 
     // Create the JSON payload
@@ -163,8 +164,8 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
     LOG(TRACE) << METHOD_INFO;
 
     // Make the topic for the message
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-                       toString(MessageType::FILE_LIST_REQUEST);
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_LIST_REQUEST);
 
     // Create the JSON payload
     auto payload = json::array();

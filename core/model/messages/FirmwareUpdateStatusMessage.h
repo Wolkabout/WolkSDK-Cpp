@@ -31,7 +31,7 @@ public:
 
     FirmwareUpdateError getError() const;
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
 private:
     FirmwareUpdateStatus m_status;

@@ -28,7 +28,7 @@ public:
 
     const std::string& getName() const;
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
 private:
     std::string m_name;

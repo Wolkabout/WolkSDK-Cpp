@@ -33,7 +33,7 @@ FirmwareUpdateError FirmwareUpdateStatusMessage::getError() const
     return m_error;
 }
 
-MessageType FirmwareUpdateStatusMessage::getMessageType()
+MessageType FirmwareUpdateStatusMessage::getMessageType() const
 {
     return MessageType::FIRMWARE_UPDATE_STATUS;
 }

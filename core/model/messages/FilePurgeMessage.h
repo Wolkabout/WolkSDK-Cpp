@@ -24,7 +24,7 @@ namespace wolkabout
 class FilePurgeMessage : public MessageModel
 {
 public:
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 };
 }    // namespace wolkabout
 

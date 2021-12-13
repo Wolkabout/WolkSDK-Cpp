@@ -44,7 +44,7 @@ FileUploadError FileUrlDownloadStatusMessage::getError() const
     return m_error;
 }
 
-MessageType FileUrlDownloadStatusMessage::getMessageType()
+MessageType FileUrlDownloadStatusMessage::getMessageType() const
 {
     return MessageType::FILE_URL_DOWNLOAD_STATUS;
 }

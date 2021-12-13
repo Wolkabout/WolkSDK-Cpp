@@ -26,7 +26,7 @@ FeedValuesMessage::FeedValuesMessage(const std::vector<Reading>& readings)
     }
 }
 
-MessageType FeedValuesMessage::getMessageType()
+MessageType FeedValuesMessage::getMessageType() const
 {
     return MessageType::FEED_VALUES;
 }

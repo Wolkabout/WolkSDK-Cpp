@@ -18,7 +18,7 @@
 
 namespace wolkabout
 {
-MessageType FirmwareUpdateAbortMessage::getMessageType()
+MessageType FirmwareUpdateAbortMessage::getMessageType() const
 {
     return MessageType::FIRMWARE_UPDATE_ABORT;
 }

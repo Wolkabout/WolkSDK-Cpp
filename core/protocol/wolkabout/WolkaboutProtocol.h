@@ -24,13 +24,6 @@
 
 namespace wolkabout
 {
-const std::string CHANNEL_DELIMITER = "/";
-const std::string CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
-const std::string DEVICE_TO_PLATFORM_DIRECTION = "d2p";
-const std::string PLATFORM_TO_DEVICE_DIRECTION = "p2d";
-
-const std::string TIMESTAMP_KEY = "timestamp";
-
 /**
  * This static class contains some generic methods that should be shared in between all Wolkabout protocol
  * implementations.
@@ -65,6 +58,14 @@ public:
      * @return The determined device key for the message topic.
      */
     static std::string extractDeviceKeyFromChannel(const std::string& topic);
+
+    // Some constants that are used throughout the code.
+    static std::string CHANNEL_DELIMITER;
+    static std::string CHANNEL_SINGLE_LEVEL_WILDCARD;
+    static std::string DEVICE_TO_PLATFORM_DIRECTION;
+    static std::string PLATFORM_TO_DEVICE_DIRECTION;
+    static std::string TIMESTAMP_KEY;
+    static std::string ESCAPED_QUOTES;
 
 private:
     WolkaboutProtocol() = default;

@@ -188,19 +188,11 @@ Location Reading::getLocationValue() const
 
 std::vector<std::string> Reading::getStringValues() const
 {
-    // Check if the reading is not a single-value reading.
-    if (!isMulti())
-        throw std::logic_error("Reading is single-value.");
-
     return m_values;
 }
 
 std::vector<std::uint64_t> Reading::getUIntValues() const
 {
-    // Check if the reading is not a single-value reading.
-    if (!isMulti())
-        throw std::logic_error("Reading is single-value.");
-
     // Make place for the values
     auto values = std::vector<std::uint64_t>{};
     for (const auto& value : m_values)
@@ -210,10 +202,6 @@ std::vector<std::uint64_t> Reading::getUIntValues() const
 
 std::vector<std::int64_t> Reading::getIntValues() const
 {
-    // Check if the reading is not a single-value reading.
-    if (!isMulti())
-        throw std::logic_error("Reading is single-value.");
-
     // Make place for the values
     auto values = std::vector<std::int64_t>{};
     for (const auto& value : m_values)
@@ -223,10 +211,6 @@ std::vector<std::int64_t> Reading::getIntValues() const
 
 std::vector<std::double_t> Reading::getDoubleValues() const
 {
-    // Check if the reading is not a single-value reading.
-    if (!isMulti())
-        throw std::logic_error("Reading is single-value.");
-
     // Make place for the values
     auto values = std::vector<std::double_t>{};
     for (const auto& value : m_values)

@@ -18,8 +18,6 @@
 
 namespace wolkabout
 {
-const std::string ESCAPED_QUOTES = "\"";
-
 std::string WolkaboutProtocol::removeQuotes(std::string value)
 {
     // Make place for the iterator in the string
@@ -47,4 +45,11 @@ std::string WolkaboutProtocol::extractDeviceKeyFromChannel(const std::string& to
     const auto lastDivider = topic.rfind(CHANNEL_DELIMITER);
     return topic.substr(firstDivider + 1, lastDivider - firstDivider - 1);
 }
+
+std::string WolkaboutProtocol::CHANNEL_DELIMITER = "/";
+std::string WolkaboutProtocol::CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
+std::string WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION = "d2p";
+std::string WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION = "p2d";
+std::string WolkaboutProtocol::TIMESTAMP_KEY = "timestamp";
+std::string WolkaboutProtocol::ESCAPED_QUOTES = "\"";
 }    // namespace wolkabout

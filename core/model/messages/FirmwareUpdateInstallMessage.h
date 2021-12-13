@@ -28,7 +28,7 @@ public:
 
     const std::string& getFile() const;
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
 private:
     std::string m_file;

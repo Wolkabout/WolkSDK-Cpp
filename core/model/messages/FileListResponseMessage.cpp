@@ -25,7 +25,7 @@ const std::vector<FileInformation>& FileListResponseMessage::getFiles() const
     return m_files;
 }
 
-MessageType FileListResponseMessage::getMessageType()
+MessageType FileListResponseMessage::getMessageType() const
 {
     return MessageType::FILE_LIST_RESPONSE;
 }

@@ -25,7 +25,7 @@ const std::string& FileUrlDownloadInitMessage::getPath() const
     return m_path;
 }
 
-MessageType FileUrlDownloadInitMessage::getMessageType()
+MessageType FileUrlDownloadInitMessage::getMessageType() const
 {
     return MessageType::FILE_URL_DOWNLOAD_INIT;
 }

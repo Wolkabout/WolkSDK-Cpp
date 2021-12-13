@@ -23,7 +23,7 @@ ParametersUpdateMessage::ParametersUpdateMessage(std::vector<Parameter> paramete
 {
 }
 
-MessageType ParametersUpdateMessage::getMessageType()
+MessageType ParametersUpdateMessage::getMessageType() const
 {
     return MessageType::PARAMETER_SYNC;
 }
