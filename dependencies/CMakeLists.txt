@@ -4,7 +4,7 @@ set(SPDLOG_VERSION "1.7.0")
 set(PAHO_MQTT_C_VERSION "1.3.8")
 set(PAHO_MQTT_CPP_VERSION "1.2.0")
 set(GTEST_VERSION "1.10.0")
-set(POCO_VERSION "1.9.4")
+set(POCO_VERSION "1.10.1")
 set(AWS_SDK_VERSION "1.8.173")
 
 ExternalProject_Add(spdlog
