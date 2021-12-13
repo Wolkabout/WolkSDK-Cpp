@@ -18,7 +18,7 @@
 
 namespace wolkabout
 {
-MessageType FileListRequestMessage::getMessageType()
+MessageType FileListRequestMessage::getMessageType() const
 {
     return MessageType::FILE_LIST_REQUEST;
 }

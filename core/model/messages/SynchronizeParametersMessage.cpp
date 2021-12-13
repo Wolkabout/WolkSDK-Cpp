@@ -30,7 +30,7 @@ const std::vector<ParameterName>& SynchronizeParametersMessage::getParameters() 
     return m_parameters;
 }
 
-MessageType SynchronizeParametersMessage::getMessageType()
+MessageType SynchronizeParametersMessage::getMessageType() const
 {
     return MessageType::SYNCHRONIZE_PARAMETERS;
 }

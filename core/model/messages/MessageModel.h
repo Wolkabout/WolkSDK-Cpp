@@ -31,7 +31,7 @@ class MessageModel
 public:
     virtual ~MessageModel() = default;
 
-    virtual MessageType getMessageType() = 0;
+    virtual MessageType getMessageType() const = 0;
 };
 }    // namespace wolkabout
 

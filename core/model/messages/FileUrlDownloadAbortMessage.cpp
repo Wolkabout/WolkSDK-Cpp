@@ -25,7 +25,7 @@ const std::string& FileUrlDownloadAbortMessage::getPath() const
     return m_path;
 }
 
-MessageType FileUrlDownloadAbortMessage::getMessageType()
+MessageType FileUrlDownloadAbortMessage::getMessageType() const
 {
     return MessageType::FILE_URL_DOWNLOAD_ABORT;
 }

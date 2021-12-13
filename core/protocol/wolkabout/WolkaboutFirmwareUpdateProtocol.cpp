@@ -32,10 +32,10 @@ std::vector<std::string> WolkaboutFirmwareUpdateProtocol::getInboundChannels() c
 std::vector<std::string> WolkaboutFirmwareUpdateProtocol::getInboundChannelsForDevice(
   const std::string& deviceKey) const
 {
-    return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FIRMWARE_UPDATE_INSTALL),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FIRMWARE_UPDATE_ABORT)};
+    return {WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FIRMWARE_UPDATE_INSTALL),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FIRMWARE_UPDATE_ABORT)};
 }
 
 MessageType WolkaboutFirmwareUpdateProtocol::getMessageType(std::shared_ptr<Message> message)
@@ -71,8 +71,8 @@ std::unique_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
     }
 
     // Make the topic for the message
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-                       toString(MessageType::FIRMWARE_UPDATE_STATUS);
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FIRMWARE_UPDATE_STATUS);
 
     // Parse the message into a JSON
     auto payload = nlohmann::json({{"status", statusString}});

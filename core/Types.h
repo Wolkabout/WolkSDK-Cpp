@@ -303,8 +303,8 @@ struct FileInformation
 
 struct Location
 {
-    float latitude;
-    float longitude;
+    double latitude;
+    double longitude;
 };
 }    // namespace wolkabout
 

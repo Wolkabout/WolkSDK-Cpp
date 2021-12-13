@@ -28,7 +28,7 @@ public:
 
     const std::vector<FileInformation>& getFiles() const;
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
 private:
     std::vector<FileInformation> m_files;

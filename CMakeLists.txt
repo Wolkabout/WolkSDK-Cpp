@@ -331,7 +331,7 @@ endif ()
 
 if (${BUILD_TESTS} AND (NOT ("${TESTS_SOURCE_FILES}" STREQUAL "")))
     add_executable(${PROJECT_NAME}Tests ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES})
-    target_link_libraries(${PROJECT_NAME}Tests ${INSTALL_TARGETS} gtest gmock gtest_main)
+    target_link_libraries(${PROJECT_NAME}Tests ${PROJECT_NAME} gtest gmock gtest_main)
     target_include_directories(${PROJECT_NAME}Tests PRIVATE ${PROJECT_SOURCE_DIR})
     target_include_directories(${PROJECT_NAME}Tests PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
     set_target_properties(${PROJECT_NAME}Tests PROPERTIES INSTALL_RPATH "$ORIGIN/../lib")

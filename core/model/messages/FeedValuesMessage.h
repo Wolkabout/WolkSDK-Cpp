@@ -31,7 +31,7 @@ class FeedValuesMessage : public MessageModel
 public:
     explicit FeedValuesMessage(const std::vector<Reading>& readings);
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
     const std::map<std::uint64_t, std::vector<Reading>>& getReadings() const;
 

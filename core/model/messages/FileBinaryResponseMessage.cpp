@@ -45,7 +45,7 @@ const std::string& FileBinaryResponseMessage::getCurrentHash() const
     return m_currentHash;
 }
 
-MessageType FileBinaryResponseMessage::getMessageType()
+MessageType FileBinaryResponseMessage::getMessageType() const
 {
     return MessageType::FILE_BINARY_RESPONSE;
 }

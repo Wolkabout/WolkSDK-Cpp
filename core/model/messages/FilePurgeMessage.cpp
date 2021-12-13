@@ -18,7 +18,7 @@
 
 namespace wolkabout
 {
-MessageType FilePurgeMessage::getMessageType()
+MessageType FilePurgeMessage::getMessageType() const
 {
     return MessageType::FILE_PURGE;
 }

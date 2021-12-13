@@ -26,7 +26,7 @@ class ParametersUpdateMessage : public MessageModel
 public:
     explicit ParametersUpdateMessage(std::vector<Parameter> parameterList);
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
     const std::vector<Parameter>& getParameters() const;
 

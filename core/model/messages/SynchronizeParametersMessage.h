@@ -28,7 +28,7 @@ public:
 
     const std::vector<ParameterName>& getParameters() const;
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
 private:
     std::vector<ParameterName> m_parameters;

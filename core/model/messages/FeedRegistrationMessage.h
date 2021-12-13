@@ -29,7 +29,7 @@ class FeedRegistrationMessage : public MessageModel
 public:
     explicit FeedRegistrationMessage(std::vector<Feed> feeds);
 
-    MessageType getMessageType() override;
+    MessageType getMessageType() const override;
 
     const std::vector<Feed>& getFeeds() const;
 

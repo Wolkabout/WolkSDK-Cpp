@@ -25,7 +25,7 @@ const std::vector<std::string>& FileDeleteMessage::getFiles() const
     return m_files;
 }
 
-MessageType FileDeleteMessage::getMessageType()
+MessageType FileDeleteMessage::getMessageType() const
 {
     return MessageType::FILE_DELETE;
 }

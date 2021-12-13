@@ -64,11 +64,11 @@ static void from_json(const json& j, std::vector<Reading>& r)
             throw std::runtime_error("One of array members is not an object.");
 
         // Obtain the timestamp from the object
-        auto timestampIt = readings.find(TIMESTAMP_KEY);
+        auto timestampIt = readings.find(WolkaboutProtocol::TIMESTAMP_KEY);
         if (timestampIt == readings.end())
-            throw std::runtime_error("Missing key '" + TIMESTAMP_KEY + "' in array member.");
+            throw std::runtime_error("Missing key '" + WolkaboutProtocol::TIMESTAMP_KEY + "' in array member.");
         if (!timestampIt->is_number_unsigned())
-            throw std::runtime_error("Value of '" + TIMESTAMP_KEY + "' is not an unsigned integer.");
+            throw std::runtime_error("Value of '" + WolkaboutProtocol::TIMESTAMP_KEY + "' is not an unsigned integer.");
         const auto timestamp = timestampIt.value().get<std::uint64_t>();
 
         // Create a list of all readings that will be read for this single timestamp.
@@ -80,7 +80,7 @@ static void from_json(const json& j, std::vector<Reading>& r)
             // Skip the timestamp
             const auto& key = valuePair.key();
             const auto& value = valuePair.value();
-            if (key == TIMESTAMP_KEY)
+            if (key == WolkaboutProtocol::TIMESTAMP_KEY)
                 continue;
 
             // Now take out the value
@@ -151,10 +151,10 @@ std::vector<std::string> WolkaboutDataProtocol::getInboundChannels() const
 
 std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    return {PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::PARAMETER_SYNC),
-            PLATFORM_TO_DEVICE_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-              toString(MessageType::FEED_VALUES)};
+    return {WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES)};
 }
 
 std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
@@ -177,7 +177,8 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     try
     {
         // Create the topic
-        const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
+        const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                           deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
                            toString(feedRegistrationMessage.getMessageType());
 
         // Create the content
@@ -205,8 +206,8 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     }
 
     // Create the topic
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-                       toString(feedRemovalMessage.getMessageType());
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(feedRemovalMessage.getMessageType());
 
     // Create the content
     auto feeds = feedRemovalMessage.getReferences();
@@ -227,8 +228,8 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     }
 
     // Create the topic
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-                       toString(feedValuesMessage.getMessageType());
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(feedValuesMessage.getMessageType());
 
     // Create the content
     auto payload = json::array();
@@ -245,7 +246,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
         // Create the object for this time
         auto time = json();
         if (member.first)
-            time[TIMESTAMP_KEY] = member.first;
+            time[WolkaboutProtocol::TIMESTAMP_KEY] = member.first;
         for (const auto& reading : member.second)
         {
             const auto& key = reading.getReference();
@@ -273,7 +274,8 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     LOG(TRACE) << METHOD_INFO;
 
     // Create the topic
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
                        toString(pullFeedValuesMessage.getMessageType());
     return std::unique_ptr<Message>(new Message({}, topic));
 }
@@ -286,7 +288,8 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
     try
     {
         // Create the topic
-        const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
+        const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                           deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
                            toString(attributeRegistrationMessage.getMessageType());
 
         // Create the payload
@@ -314,7 +317,8 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     }
 
     // Make the topic
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
                        toString(parametersUpdateMessage.getMessageType());
 
     // Make the payload
@@ -351,7 +355,8 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     LOG(TRACE) << METHOD_INFO;
 
     // Create the topic
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
                        toString(parametersPullMessage.getMessageType());
     return std::unique_ptr<Message>(new Message{"", topic});
 }
@@ -362,8 +367,8 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
     LOG(TRACE) << METHOD_INFO;
 
     // Create the topic
-    const auto topic = DEVICE_TO_PLATFORM_DIRECTION + CHANNEL_DELIMITER + deviceKey + CHANNEL_DELIMITER +
-                       toString(MessageType::SYNCHRONIZE_PARAMETERS);
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::SYNCHRONIZE_PARAMETERS);
 
     // Create the payload
     auto payload = json::array();

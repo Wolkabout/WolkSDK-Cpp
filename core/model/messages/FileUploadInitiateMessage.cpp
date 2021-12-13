@@ -38,7 +38,7 @@ const std::string& FileUploadInitiateMessage::getHash() const
     return m_hash;
 }
 
-MessageType FileUploadInitiateMessage::getMessageType()
+MessageType FileUploadInitiateMessage::getMessageType() const
 {
     return MessageType::FILE_UPLOAD_INIT;
 }

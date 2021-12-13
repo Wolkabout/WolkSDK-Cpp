@@ -18,7 +18,7 @@
 
 namespace wolkabout
 {
-MessageType PullFeedValuesMessage::getMessageType()
+MessageType PullFeedValuesMessage::getMessageType() const
 {
     return MessageType::PULL_FEED_VALUES;
 }

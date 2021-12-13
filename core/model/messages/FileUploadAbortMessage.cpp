@@ -25,7 +25,7 @@ const std::string& FileUploadAbortMessage::getName() const
     return m_name;
 }
 
-MessageType FileUploadAbortMessage::getMessageType()
+MessageType FileUploadAbortMessage::getMessageType() const
 {
     return MessageType::FILE_UPLOAD_ABORT;
 }
