@@ -48,8 +48,7 @@ const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_OFFLINE = "OFFLINE"
 
 void to_json(json& j, const DeviceStatus& p)
 {
-    const std::string status = [&]() -> std::string
-    {
+    const std::string status = [&]() -> std::string {
         switch (p.getStatus())
         {
         case DeviceStatus::Status::CONNECTED:
