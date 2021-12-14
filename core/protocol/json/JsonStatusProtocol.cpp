@@ -48,7 +48,8 @@ const std::string JsonStatusProtocol::STATUS_RESPONSE_STATUS_OFFLINE = "OFFLINE"
 
 void to_json(json& j, const DeviceStatus& p)
 {
-    const std::string status = [&]() -> std::string {
+    const std::string status = [&]() -> std::string
+    {
         switch (p.getStatus())
         {
         case DeviceStatus::Status::CONNECTED:
@@ -105,8 +106,10 @@ std::vector<std::string> JsonStatusProtocol::getInboundChannels() const
 
 std::vector<std::string> JsonStatusProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    return {DEVICE_STATUS_REQUEST_TOPIC_ROOT + m_devicePrefix + deviceKey,
-            DEVICE_STATUS_CONFIRM_TOPIC_ROOT + m_devicePrefix + deviceKey, PONG_TOPIC_ROOT + deviceKey};
+    return {
+      DEVICE_STATUS_REQUEST_TOPIC_ROOT + m_devicePrefix + deviceKey + CHANNEL_DELIMITER + CHANNEL_MULTI_LEVEL_WILDCARD,
+      DEVICE_STATUS_CONFIRM_TOPIC_ROOT + m_devicePrefix + deviceKey + CHANNEL_DELIMITER + CHANNEL_MULTI_LEVEL_WILDCARD,
+      PONG_TOPIC_ROOT + deviceKey};
 }
 
 bool JsonStatusProtocol::isStatusRequestMessage(const Message& message) const
