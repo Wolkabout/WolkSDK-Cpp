@@ -47,9 +47,10 @@ std::string WolkaboutProtocol::extractDeviceKeyFromChannel(const std::string& to
 }
 
 std::string WolkaboutProtocol::CHANNEL_DELIMITER = "/";
-std::string WolkaboutProtocol::CHANNEL_SINGLE_LEVEL_WILDCARD = "+";
 std::string WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION = "d2p";
 std::string WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION = "p2d";
+std::string WolkaboutProtocol::GATEWAY_TO_PLATFORM_DIRECTION = "g2p";
+std::string WolkaboutProtocol::PLATFORM_TO_GATEWAY_DIRECTION = "p2g";
 std::string WolkaboutProtocol::TIMESTAMP_KEY = "timestamp";
 std::string WolkaboutProtocol::ESCAPED_QUOTES = "\"";
 }    // namespace wolkabout

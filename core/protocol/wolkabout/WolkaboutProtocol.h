@@ -61,9 +61,10 @@ public:
 
     // Some constants that are used throughout the code.
     static std::string CHANNEL_DELIMITER;
-    static std::string CHANNEL_SINGLE_LEVEL_WILDCARD;
     static std::string DEVICE_TO_PLATFORM_DIRECTION;
     static std::string PLATFORM_TO_DEVICE_DIRECTION;
+    static std::string GATEWAY_TO_PLATFORM_DIRECTION;
+    static std::string PLATFORM_TO_GATEWAY_DIRECTION;
     static std::string TIMESTAMP_KEY;
     static std::string ESCAPED_QUOTES;
 
