@@ -68,15 +68,14 @@ TEST_F(WolkaboutRegistrationProtocolTests, GetInboundChannelsForDevice)
 TEST_F(WolkaboutRegistrationProtocolTests, ExtractDeviceKeyFromChannel)
 {
     // Test with some random topic
-    EXPECT_EQ(protocol->extractDeviceKeyFromChannel("p2g/" + DEVICE_KEY + "/registered_devices"), DEVICE_KEY);
+    EXPECT_EQ(protocol->getDeviceKey({"", "p2g/" + DEVICE_KEY + "/registered_devices"}), DEVICE_KEY);
 }
 
 TEST_F(WolkaboutRegistrationProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(
-      protocol->getMessageType(std::make_shared<wolkabout::Message>("", "p2g/" + DEVICE_KEY + "/registered_devices")),
-      MessageType::REGISTERED_DEVICES_RESPONSE);
+    EXPECT_EQ(protocol->getMessageType({"", "p2g/" + DEVICE_KEY + "/registered_devices"}),
+              MessageType::REGISTERED_DEVICES_RESPONSE);
 }
 
 TEST_F(WolkaboutRegistrationProtocolTests, SerializeDeviceRegistrationNoDevices)

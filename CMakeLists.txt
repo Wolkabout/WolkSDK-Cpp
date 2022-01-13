@@ -254,6 +254,7 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/FirmwareUpdateAbortMessage.cpp
             core/model/messages/FirmwareUpdateInstallMessage.cpp
             core/model/messages/FirmwareUpdateStatusMessage.cpp
+            core/model/messages/GatewaySubdeviceMessage.cpp
             core/model/messages/ParametersPullMessage.cpp
             core/model/messages/ParametersUpdateMessage.cpp
             core/model/messages/PlatformStatusMessage.cpp
@@ -303,6 +304,7 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/FirmwareUpdateAbortMessage.h
             core/model/messages/FirmwareUpdateInstallMessage.h
             core/model/messages/FirmwareUpdateStatusMessage.h
+            core/model/messages/GatewaySubdeviceMessage.h
             core/model/messages/MessageModel.h
             core/model/messages/ParametersPullMessage.h
             core/model/messages/ParametersUpdateMessage.h
@@ -324,6 +326,7 @@ if (BUILD_CONNECTIVITY)
             core/protocol/ErrorProtocol.h
             core/protocol/FileManagementProtocol.h
             core/protocol/FirmwareUpdateProtocol.h
+            core/protocol/GatewaySubdeviceProtocol.h
             core/protocol/PlatformStatusProtocol.h
             core/protocol/Protocol.h
             core/protocol/RegistrationProtocol.h
@@ -374,7 +377,7 @@ install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/l
 # Add the format rule
 add_custom_target(format
         COMMAND "clang-format" -i -sort-includes -style=file ${UTILITY_HEADER_FILES} ${UTILITY_SOURCE_FILES}
-        ${ALU_HEADER_FILES} ${ALU_SOURCE_FILES} ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES} ${TESTS_SOURCE_FILES}
+        ${ALU_HEADER_FILES} ${ALU_SOURCE_FILES} ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES} ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES}
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         COMMENT "[Formatting source code]"
         VERBATIM)

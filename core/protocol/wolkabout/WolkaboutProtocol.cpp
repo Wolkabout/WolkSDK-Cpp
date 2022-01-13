@@ -30,17 +30,30 @@ std::string WolkaboutProtocol::removeQuotes(std::string value)
     return value;
 }
 
-MessageType WolkaboutProtocol::getMessageType(const std::shared_ptr<Message>& message)
+MessageType WolkaboutProtocol::getMessageType(const Message& message)
 {
     // Take the topic, and extract its last part
-    const auto& topic = message->getChannel();
+    const auto& topic = message.getChannel();
     const auto section = topic.substr(topic.rfind(CHANNEL_DELIMITER) + 1);
     return messageTypeFromString(section);
 }
 
-std::string WolkaboutProtocol::extractDeviceKeyFromChannel(const std::string& topic)
+DeviceType WolkaboutProtocol::getDeviceType(const Message& message)
+{
+    // Take the topic, and extract its first part
+    const auto& topic = message.getChannel();
+    const auto section = topic.substr(0, topic.find(CHANNEL_DELIMITER));
+    if (section == GATEWAY_TO_PLATFORM_DIRECTION || section == PLATFORM_TO_GATEWAY_DIRECTION)
+        return DeviceType::GATEWAY;
+    else if (section == DEVICE_TO_PLATFORM_DIRECTION || section == PLATFORM_TO_DEVICE_DIRECTION)
+        return DeviceType::STANDALONE;
+    return DeviceType::NONE;
+}
+
+std::string WolkaboutProtocol::getDeviceKey(const Message& message)
 {
     // Substring between the two channel delimiters
+    const auto& topic = message.getChannel();
     const auto firstDivider = topic.find(CHANNEL_DELIMITER);
     const auto lastDivider = topic.rfind(CHANNEL_DELIMITER);
     return topic.substr(firstDivider + 1, lastDivider - firstDivider - 1);

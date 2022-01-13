@@ -50,13 +50,19 @@ std::vector<std::string> WolkaboutFileManagementProtocol::getInboundChannelsForD
               WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_PURGE)};
 }
 
-std::string WolkaboutFileManagementProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+std::string WolkaboutFileManagementProtocol::getDeviceKey(const Message& message) const
 {
     LOG(TRACE) << METHOD_INFO;
-    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+    return WolkaboutProtocol::getDeviceKey(message);
 }
 
-MessageType WolkaboutFileManagementProtocol::getMessageType(std::shared_ptr<Message> message)
+DeviceType WolkaboutFileManagementProtocol::getDeviceType(const Message& message)
+{
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceType(message);
+}
+
+MessageType WolkaboutFileManagementProtocol::getMessageType(const Message& message)
 {
     LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
@@ -81,7 +87,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
         return nullptr;
     }
     auto errorString = toString(message.getError());
-    if (message.getStatus() == FileUploadStatus::ERROR && errorString.empty())
+    if (message.getStatus() == FileTransferStatus::ERROR && errorString.empty())
     {
         LOG(ERROR) << errorPrefix << " -> Missing valid error value.";
         return nullptr;
@@ -93,7 +99,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
 
     // Parse the message into a JSON
     auto payload = json{{"name", message.getName()}, {"status", statusString}};
-    if (message.getStatus() == FileUploadStatus::ERROR)
+    if (message.getStatus() == FileTransferStatus::ERROR)
         payload["error"] = errorString;
     return std::unique_ptr<Message>(new Message{payload.dump(), topic});
 }
@@ -139,7 +145,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
         return nullptr;
     }
     const auto errorString = toString(message.getError());
-    if (message.getStatus() == FileUploadStatus::ERROR && errorString.empty())
+    if (message.getStatus() == FileTransferStatus::ERROR && errorString.empty())
     {
         LOG(ERROR) << errorPrefix << " -> Missing valid error value.";
         return nullptr;
@@ -153,7 +159,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
     // Create the JSON payload
     auto payload =
       json{{"fileName", message.getFileName()}, {"fileUrl", message.getFileUrl()}, {"status", statusString}};
-    if (message.getStatus() == FileUploadStatus::ERROR)
+    if (message.getStatus() == FileTransferStatus::ERROR)
         payload["error"] = errorString;
     return std::unique_ptr<Message>(new Message{payload.dump(), topic});
 }
@@ -181,7 +187,7 @@ std::unique_ptr<FileUploadInitiateMessage> WolkaboutFileManagementProtocol::pars
     const auto errorPrefix = "Failed to parse 'FileUploadInitiate' message";
 
     // Check that the message is a FileUploadInitiate message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_UPLOAD_INIT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileUploadInitiate' message.";
@@ -230,7 +236,7 @@ std::unique_ptr<FileUploadAbortMessage> WolkaboutFileManagementProtocol::parseFi
     const auto errorPrefix = "Failed to parse 'FileUploadAbort' message";
 
     // Check that the message is a FileUploadInitiate message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_UPLOAD_ABORT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileUploadAbort' message.";
@@ -249,7 +255,7 @@ std::unique_ptr<FileBinaryResponseMessage> WolkaboutFileManagementProtocol::pars
     const auto errorPrefix = "Failed to parse 'FileBinaryResponse' message";
 
     // Check that the message is a FileBinaryResponse message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_BINARY_RESPONSE)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileBinaryResponse' message.";
@@ -266,7 +272,7 @@ std::unique_ptr<FileUrlDownloadInitMessage> WolkaboutFileManagementProtocol::par
     const auto errorPrefix = "Failed to parse 'FileUrlDownloadInit' message";
 
     // Check that the message is a FileUrlDownloadInit message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_URL_DOWNLOAD_INIT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileUrlDownloadInit' message.";
@@ -285,7 +291,7 @@ std::unique_ptr<FileUrlDownloadAbortMessage> WolkaboutFileManagementProtocol::pa
     const auto errorPrefix = "Failed to parse 'FileUrlDownloadAbort' message";
 
     // Check that the message is a FileUrlDownloadAbort message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_URL_DOWNLOAD_ABORT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileUrlDownloadAbort' message.";
@@ -304,7 +310,7 @@ std::unique_ptr<FileListRequestMessage> WolkaboutFileManagementProtocol::parseFi
     const auto errorPrefix = "Failed to parse 'FileListRequest' message";
 
     // Check that the message is a FileListRequest message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_LIST_REQUEST)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileListRequest' message.";
@@ -321,7 +327,7 @@ std::unique_ptr<FileDeleteMessage> WolkaboutFileManagementProtocol::parseFileDel
     const auto errorPrefix = "Failed to parse 'FileDelete' message";
 
     // Check that the message is a FileDelete message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_DELETE)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileDelete' message.";
@@ -363,7 +369,7 @@ std::unique_ptr<FilePurgeMessage> WolkaboutFileManagementProtocol::parseFilePurg
     const auto errorPrefix = "Failed to parse 'FilePurge' message";
 
     // Check that the message is a FilePurge message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_PURGE)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FilePurge' message.";

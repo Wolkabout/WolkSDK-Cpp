@@ -71,14 +71,13 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetInboundChannelsForDevice)
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, ExtractDeviceKeyFromChannel)
 {
     // Test with some random topic
-    EXPECT_EQ(protocol->extractDeviceKeyFromChannel("p2d/" + DEVICE_KEY + "/firmware_update_install"), DEVICE_KEY);
+    EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}), DEVICE_KEY);
 }
 
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(protocol->getMessageType(
-                std::make_shared<wolkabout::Message>("", "p2d/" + DEVICE_KEY + "/firmware_update_install")),
+    EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}),
               MessageType::FIRMWARE_UPDATE_INSTALL);
 }
 

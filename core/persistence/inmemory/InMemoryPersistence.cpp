@@ -23,9 +23,9 @@
 
 namespace wolkabout
 {
-bool InMemoryPersistence::putReading(const std::string& key, std::shared_ptr<Reading> reading)
+bool InMemoryPersistence::putReading(const std::string& key, const Reading& reading)
 {
-    getOrCreateReadingsByKey(key).push_back(reading);
+    getOrCreateReadingsByKey(key).push_back(std::make_shared<Reading>(reading));
     return true;
 }
 

@@ -38,14 +38,22 @@ std::vector<std::string> WolkaboutErrorProtocol::getInboundChannelsForDevice(con
             WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::ERROR)};
 }
 
-MessageType WolkaboutErrorProtocol::getMessageType(std::shared_ptr<Message> message)
+MessageType WolkaboutErrorProtocol::getMessageType(const Message& message)
 {
+    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
-std::string WolkaboutErrorProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+DeviceType WolkaboutErrorProtocol::getDeviceType(const Message& message)
 {
-    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceType(message);
+}
+
+std::string WolkaboutErrorProtocol::getDeviceKey(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceKey(message);
 }
 
 std::unique_ptr<ErrorMessage> WolkaboutErrorProtocol::parseError(const std::shared_ptr<Message>& message)
@@ -54,7 +62,7 @@ std::unique_ptr<ErrorMessage> WolkaboutErrorProtocol::parseError(const std::shar
     const auto errorPrefix = "Failed to parse 'Error' message";
 
     // Check that the message is a RegisteredDeviceResponse message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::ERROR)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'Error' message.";
@@ -62,7 +70,7 @@ std::unique_ptr<ErrorMessage> WolkaboutErrorProtocol::parseError(const std::shar
     }
 
     // Extract the extra data
-    auto deviceKey = extractDeviceKeyFromChannel(message->getChannel());
+    auto deviceKey = getDeviceKey(*message);
     if (deviceKey.empty())
     {
         LOG(ERROR) << errorPrefix << " -> The device key is empty.";

@@ -53,7 +53,7 @@ public:
      * @return {@code true} if successful, or {@code false} if
      * element can not be inserted
      */
-    virtual bool putReading(const std::string& key, std::shared_ptr<Reading> reading) = 0;
+    virtual bool putReading(const std::string& key, const Reading& reading) = 0;
 
     /**
      * @brief Retrieves, first {@code count} wolkabout::Readings of this

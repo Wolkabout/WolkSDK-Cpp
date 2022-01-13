@@ -24,24 +24,26 @@ namespace wolkabout
 class FileUrlDownloadStatusMessage : public MessageModel
 {
 public:
-    explicit FileUrlDownloadStatusMessage(std::string fileUrl, std::string fileName, FileUploadStatus status,
-                                          FileUploadError error = FileUploadError::NONE);
+    FileUrlDownloadStatusMessage(std::string fileUrl, std::string fileName, FileTransferStatus status,
+                                 FileTransferError error = FileTransferError::NONE);
+
+    FileUrlDownloadStatusMessage(std::string fileUrl, FileTransferError error);
 
     const std::string& getFileUrl() const;
 
     const std::string& getFileName() const;
 
-    FileUploadStatus getStatus() const;
+    FileTransferStatus getStatus() const;
 
-    FileUploadError getError() const;
+    FileTransferError getError() const;
 
     MessageType getMessageType() const override;
 
 private:
     std::string m_fileUrl;
     std::string m_fileName;
-    FileUploadStatus m_status;
-    FileUploadError m_error;
+    FileTransferStatus m_status;
+    FileTransferError m_error;
 };
 }    // namespace wolkabout
 

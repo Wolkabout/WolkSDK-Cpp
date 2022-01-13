@@ -30,9 +30,11 @@ public:
 
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
-    MessageType getMessageType(std::shared_ptr<Message> message) override;
+    MessageType getMessageType(const Message& message) override;
 
-    std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
+    DeviceType getDeviceType(const Message& message) override;
+
+    std::string getDeviceKey(const Message& message) const override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  const DeviceRegistrationMessage& request) override;

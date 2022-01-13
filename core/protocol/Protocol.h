@@ -63,20 +63,30 @@ public:
      * The entire message gets passed through, so both the MQTT topic and the content of the message can be used to
      * determine that.
      *
-     * @param message The received MQTT message.
+     * @param message The message whose contents need to be analyzed.
      * @return The type of the message determined by the protocol.
      */
-    virtual MessageType getMessageType(std::shared_ptr<Message> message) = 0;
+    virtual MessageType getMessageType(const Message& message) = 0;
+
+    /**
+     * This method can be overridden to define the routine used to figure out what kind of device communicates with the
+     * platform using this message. This is used to disambiguate messages meant for standalone devices, and ones for
+     * gateways, or was sent out by a standalone/gateway device.
+     *
+     * @param message The message whose contents need to be analyzed.
+     * @return The type of the device meant to receive/send this message.
+     */
+    virtual DeviceType getDeviceType(const Message& message) = 0;
 
     /**
      * This method can be overridden to define the routine used to figure out the target device for the message.
      * Only the topic of the message is passed through as an argument, so the device key must be extracted from the
      * topic.
      *
-     * @param topic The topic of a received message.
+     * @param message The message whose contents need to be analyzed.
      * @return The device key extracted from the message topic.
      */
-    virtual std::string extractDeviceKeyFromChannel(const std::string& topic) const = 0;
+    virtual std::string getDeviceKey(const Message& message) const = 0;
 };
 }    // namespace wolkabout
 

@@ -65,14 +65,13 @@ TEST_F(WolkaboutPlatformStatusProtocolTests, GetInboundChannelsForDevice)
 TEST_F(WolkaboutPlatformStatusProtocolTests, ExtractDeviceKeyFromChannel)
 {
     // Test with some random topic
-    EXPECT_EQ(protocol->extractDeviceKeyFromChannel("p2d/" + DEVICE_KEY + "/firmware_update_install"), DEVICE_KEY);
+    EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}), DEVICE_KEY);
 }
 
 TEST_F(WolkaboutPlatformStatusProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(protocol->getMessageType(std::make_shared<wolkabout::Message>("", "p2d/connection_status")),
-              MessageType::PLATFORM_CONNECTION_STATUS);
+    EXPECT_EQ(protocol->getMessageType({"", "p2d/connection_status"}), MessageType::PLATFORM_CONNECTION_STATUS);
 }
 
 TEST_F(WolkaboutPlatformStatusProtocolTests, DeserializePlatformStatusNotRightTopic)

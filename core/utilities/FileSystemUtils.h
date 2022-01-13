@@ -39,7 +39,7 @@ public:
 
     static time_t getLastModified(const std::string& path);
 
-    static double getFileSize(const std::string& path);
+    static std::uint64_t getFileSize(const std::string& path);
 
     static bool isDirectoryPresent(const std::string& dirPath);
 

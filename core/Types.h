@@ -248,7 +248,7 @@ enum class MessageType
 std::string toString(MessageType type);
 MessageType messageTypeFromString(const std::string& type);
 
-enum class FileUploadStatus
+enum class FileTransferStatus
 {
     AWAITING_DEVICE,
     FILE_TRANSFER,
@@ -258,9 +258,9 @@ enum class FileUploadStatus
     UNKNOWN
 };
 
-std::string toString(wolkabout::FileUploadStatus status);
+std::string toString(wolkabout::FileTransferStatus status);
 
-enum class FileUploadError
+enum class FileTransferError
 {
     NONE = -1,
     UNKNOWN,
@@ -272,7 +272,14 @@ enum class FileUploadError
     RETRY_COUNT_EXCEEDED
 };
 
-std::string toString(wolkabout::FileUploadError error);
+std::string toString(wolkabout::FileTransferError error);
+
+enum class DeviceType
+{
+    NONE = -1,
+    STANDALONE,
+    GATEWAY
+};
 
 enum class FirmwareUpdateStatus
 {

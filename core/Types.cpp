@@ -382,44 +382,44 @@ MessageType messageTypeFromString(const std::string& type)
     return MessageType::UNKNOWN;
 }
 
-std::string toString(wolkabout::FileUploadStatus status)
+std::string toString(wolkabout::FileTransferStatus status)
 {
     switch (status)
     {
-    case FileUploadStatus::AWAITING_DEVICE:
+    case FileTransferStatus::AWAITING_DEVICE:
         return "AWAITING_DEVICE";
-    case FileUploadStatus::FILE_TRANSFER:
+    case FileTransferStatus::FILE_TRANSFER:
         return "FILE_TRANSFER";
-    case FileUploadStatus::FILE_READY:
+    case FileTransferStatus::FILE_READY:
         return "FILE_READY";
-    case FileUploadStatus::ERROR:
+    case FileTransferStatus::ERROR:
         return "ERROR";
-    case FileUploadStatus::ABORTED:
+    case FileTransferStatus::ABORTED:
         return "ABORTED";
-    case FileUploadStatus::UNKNOWN:
+    case FileTransferStatus::UNKNOWN:
         return "UNKNOWN";
     default:
         return "";
     }
 }
 
-std::string toString(wolkabout::FileUploadError error)
+std::string toString(wolkabout::FileTransferError error)
 {
     switch (error)
     {
-    case FileUploadError::UNKNOWN:
+    case FileTransferError::UNKNOWN:
         return "UNKNOWN";
-    case FileUploadError::TRANSFER_PROTOCOL_DISABLED:
+    case FileTransferError::TRANSFER_PROTOCOL_DISABLED:
         return "TRANSFER_PROTOCOL_DISABLED";
-    case FileUploadError::UNSUPPORTED_FILE_SIZE:
+    case FileTransferError::UNSUPPORTED_FILE_SIZE:
         return "UNSUPPORTED_FILE_SIZE";
-    case FileUploadError::MALFORMED_URL:
+    case FileTransferError::MALFORMED_URL:
         return "MALFORMED_URL";
-    case FileUploadError::FILE_HASH_MISMATCH:
+    case FileTransferError::FILE_HASH_MISMATCH:
         return "FILE_HASH_MISMATCH";
-    case FileUploadError::FILE_SYSTEM_ERROR:
+    case FileTransferError::FILE_SYSTEM_ERROR:
         return "FILE_SYSTEM_ERROR";
-    case FileUploadError::RETRY_COUNT_EXCEEDED:
+    case FileTransferError::RETRY_COUNT_EXCEEDED:
         return "RETRY_COUNT_EXCEEDED";
     default:
         return "";

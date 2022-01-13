@@ -33,14 +33,22 @@ std::vector<std::string> WolkaboutPlatformStatusProtocol::getInboundChannelsForD
     return {};
 }
 
-MessageType WolkaboutPlatformStatusProtocol::getMessageType(std::shared_ptr<Message> message)
+MessageType WolkaboutPlatformStatusProtocol::getMessageType(const Message& message)
 {
+    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
-std::string WolkaboutPlatformStatusProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+DeviceType WolkaboutPlatformStatusProtocol::getDeviceType(const Message& message)
 {
-    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceType(message);
+}
+
+std::string WolkaboutPlatformStatusProtocol::getDeviceKey(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceKey(message);
 }
 
 std::unique_ptr<PlatformStatusMessage> WolkaboutPlatformStatusProtocol::parsePlatformStatusMessage(
@@ -50,7 +58,7 @@ std::unique_ptr<PlatformStatusMessage> WolkaboutPlatformStatusProtocol::parsePla
     const auto errorPrefix = "Failed to parse 'PlatformStatus' message";
 
     // Check if the message is a PlatformStatus message
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::PLATFORM_CONNECTION_STATUS)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'PlatformStatus' message.";

@@ -38,16 +38,22 @@ std::vector<std::string> WolkaboutFirmwareUpdateProtocol::getInboundChannelsForD
               WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FIRMWARE_UPDATE_ABORT)};
 }
 
-MessageType WolkaboutFirmwareUpdateProtocol::getMessageType(std::shared_ptr<Message> message)
+MessageType WolkaboutFirmwareUpdateProtocol::getMessageType(const Message& message)
 {
     LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
-std::string WolkaboutFirmwareUpdateProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+DeviceType WolkaboutFirmwareUpdateProtocol::getDeviceType(const Message& message)
 {
     LOG(TRACE) << METHOD_INFO;
-    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+    return WolkaboutProtocol::getDeviceType(message);
+}
+
+std::string WolkaboutFirmwareUpdateProtocol::getDeviceKey(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceKey(message);
 }
 
 std::unique_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
@@ -88,7 +94,7 @@ std::unique_ptr<FirmwareUpdateInstallMessage> WolkaboutFirmwareUpdateProtocol::p
     const auto errorPrefix = "Failed to parse 'FirmwareUpdateInstall' message";
 
     // Check that the message is a FirmwareUpdateInstall message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FIRMWARE_UPDATE_INSTALL)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FirmwareUpdateInstall' message.";
@@ -107,7 +113,7 @@ std::unique_ptr<FirmwareUpdateAbortMessage> WolkaboutFirmwareUpdateProtocol::par
     const auto errorPrefix = "Failed to parse 'FirmwareUpdateAbort' message";
 
     // Check that the message is a FirmwareUpdateAbort message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FIRMWARE_UPDATE_ABORT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FirmwareUpdateAbort' message.";

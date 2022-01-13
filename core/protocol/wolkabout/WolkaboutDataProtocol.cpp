@@ -157,13 +157,19 @@ std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(cons
               WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES)};
 }
 
-std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+std::string WolkaboutDataProtocol::getDeviceKey(const Message& message) const
 {
     LOG(TRACE) << METHOD_INFO;
-    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+    return WolkaboutProtocol::getDeviceKey(message);
 }
 
-MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<Message> message)
+DeviceType WolkaboutDataProtocol::getDeviceType(const Message& message)
+{
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceType(message);
+}
+
+MessageType WolkaboutDataProtocol::getMessageType(const Message& message)
 {
     LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);

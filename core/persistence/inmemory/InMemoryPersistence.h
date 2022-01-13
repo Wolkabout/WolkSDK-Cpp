@@ -34,7 +34,7 @@ class InMemoryPersistence : public Persistence
 public:
     ~InMemoryPersistence() override = default;
 
-    bool putReading(const std::string& key, std::shared_ptr<Reading> reading) override;
+    bool putReading(const std::string& key, const Reading& reading) override;
 
     std::vector<std::shared_ptr<Reading>> getReadings(const std::string& key, std::uint_fast64_t count) override;
 

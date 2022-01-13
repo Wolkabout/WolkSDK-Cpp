@@ -103,14 +103,22 @@ std::vector<std::string> WolkaboutRegistrationProtocol::getInboundChannelsForDev
             WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::REGISTERED_DEVICES_RESPONSE)};
 }
 
-MessageType WolkaboutRegistrationProtocol::getMessageType(std::shared_ptr<Message> message)
+MessageType WolkaboutRegistrationProtocol::getMessageType(const Message& message)
 {
+    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
-std::string WolkaboutRegistrationProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+DeviceType WolkaboutRegistrationProtocol::getDeviceType(const Message& message)
 {
-    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceType(message);
+}
+
+std::string WolkaboutRegistrationProtocol::getDeviceKey(const Message& message) const
+{
+    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceKey(message);
 }
 
 std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -198,7 +206,7 @@ std::unique_ptr<RegisteredDevicesResponseMessage> WolkaboutRegistrationProtocol:
     const auto errorPrefix = "Failed to parse 'RegisteredDevicesResponse' message";
 
     // Check that the message is a RegisteredDeviceResponse message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::REGISTERED_DEVICES_RESPONSE)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'RegisteredDeviceResponse' message.";

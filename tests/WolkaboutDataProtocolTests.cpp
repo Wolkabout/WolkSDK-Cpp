@@ -77,14 +77,13 @@ TEST_F(WolkaboutDataProtocolTests, GetInboundChannelsForDevice)
 TEST_F(WolkaboutDataProtocolTests, ExtractDeviceKeyFromChannel)
 {
     // Test with some random topic
-    EXPECT_EQ(protocol->extractDeviceKeyFromChannel("p2d/" + DEVICE_KEY + "/parameters"), DEVICE_KEY);
+    EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/parameters"}), DEVICE_KEY);
 }
 
 TEST_F(WolkaboutDataProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(protocol->getMessageType(std::make_shared<wolkabout::Message>("", "p2d/" + DEVICE_KEY + "/parameters")),
-              MessageType::PARAMETER_SYNC);
+    EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/parameters"}), MessageType::PARAMETER_SYNC);
 }
 
 TEST_F(WolkaboutDataProtocolTests, SerializeFeedRegistrationSingle)
