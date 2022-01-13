@@ -66,4 +66,5 @@ std::string WolkaboutProtocol::GATEWAY_TO_PLATFORM_DIRECTION = "g2p";
 std::string WolkaboutProtocol::PLATFORM_TO_GATEWAY_DIRECTION = "p2g";
 std::string WolkaboutProtocol::TIMESTAMP_KEY = "timestamp";
 std::string WolkaboutProtocol::ESCAPED_QUOTES = "\"";
+std::string WolkaboutProtocol::WILDCARD_SINGLE_LEVEL = "+";
 }    // namespace wolkabout

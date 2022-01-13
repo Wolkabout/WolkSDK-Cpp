@@ -268,6 +268,7 @@ if (BUILD_CONNECTIVITY)
             core/protocol/wolkabout/WolkaboutErrorProtocol.cpp
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.cpp
             core/protocol/wolkabout/WolkaboutFirmwareUpdateProtocol.cpp
+            core/protocol/wolkabout/WolkaboutGatewaySubdeviceProtocol.cpp
             core/protocol/wolkabout/WolkaboutPlatformStatusProtocol.cpp
             core/protocol/wolkabout/WolkaboutProtocol.cpp
             core/protocol/wolkabout/WolkaboutRegistrationProtocol.cpp
@@ -319,6 +320,7 @@ if (BUILD_CONNECTIVITY)
             core/protocol/wolkabout/WolkaboutErrorProtocol.h
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.h
             core/protocol/wolkabout/WolkaboutFirmwareUpdateProtocol.h
+            core/protocol/wolkabout/WolkaboutGatewaySubdeviceProtocol.h
             core/protocol/wolkabout/WolkaboutPlatformStatusProtocol.h
             core/protocol/wolkabout/WolkaboutProtocol.h
             core/protocol/wolkabout/WolkaboutRegistrationProtocol.h
@@ -351,6 +353,7 @@ if (BUILD_CONNECTIVITY)
             tests/WolkaboutDataProtocolTests.cpp
             tests/WolkaboutFileManagementProtocolTests.cpp
             tests/WolkaboutFirmwareUpdateProtocolTests.cpp
+            tests/WolkaboutGatewaySubdeviceProtocolTests.cpp
             tests/WolkaboutPlatformStatusProtocolTests.cpp
             tests/WolkaboutRegistrationProtocolTests.cpp)
 

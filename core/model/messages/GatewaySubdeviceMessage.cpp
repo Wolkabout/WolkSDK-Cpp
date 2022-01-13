@@ -18,18 +18,10 @@
 
 namespace wolkabout
 {
-GatewaySubdeviceMessage::GatewaySubdeviceMessage(const Message& message, std::string subdeviceKey)
-: m_message(message), m_subdeviceKey(std::move(subdeviceKey))
-{
-}
+GatewaySubdeviceMessage::GatewaySubdeviceMessage(const Message& message) : m_message(message) {}
 
 const Message& GatewaySubdeviceMessage::getMessage() const
 {
     return m_message;
-}
-
-const std::string& GatewaySubdeviceMessage::getSubdeviceKey() const
-{
-    return m_subdeviceKey;
 }
 }    // namespace wolkabout

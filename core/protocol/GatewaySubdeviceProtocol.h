@@ -17,12 +17,35 @@
 #ifndef WOLKABOUTCORE_GATEWAYSUBDEVICEPROTOCOL_H
 #define WOLKABOUTCORE_GATEWAYSUBDEVICEPROTOCOL_H
 
+#include "core/model/messages/GatewaySubdeviceMessage.h"
 #include "core/protocol/Protocol.h"
 
 namespace wolkabout
 {
-class GatewaySubdeviceProtocol
+/**
+ * This interface is a definition of a protocol that is used to talk as a gateway on behalf of the devices to the
+ * platform.
+ */
+class GatewaySubdeviceProtocol : public Protocol
 {
+public:
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a GatewaySubdeviceMessage.
+     *
+     * @param deviceKey The device key of the gateway routing this message.
+     * @param message The message itself, containing the message received from the subdevice.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const GatewaySubdeviceMessage& message) = 0;
+
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a GatewaySubdeviceMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid GatewaySubdeviceMessage.
+     * @return All parsed GatewaySubdeviceMessages.
+     */
+    virtual std::vector<GatewaySubdeviceMessage> parseIncomingSubdeviceMessage(std::shared_ptr<Message> message) = 0;
 };
 }    // namespace wolkabout
 

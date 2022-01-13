@@ -78,6 +78,7 @@ public:
     static std::string PLATFORM_TO_GATEWAY_DIRECTION;
     static std::string TIMESTAMP_KEY;
     static std::string ESCAPED_QUOTES;
+    static std::string WILDCARD_SINGLE_LEVEL;
 
 private:
     WolkaboutProtocol() = default;

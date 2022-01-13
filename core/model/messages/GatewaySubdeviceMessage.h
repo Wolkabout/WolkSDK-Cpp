@@ -10,15 +10,12 @@ namespace wolkabout
 class GatewaySubdeviceMessage
 {
 public:
-    GatewaySubdeviceMessage(const Message& message, std::string subdeviceKey);
+    explicit GatewaySubdeviceMessage(const Message& message);
 
     const Message& getMessage() const;
 
-    const std::string& getSubdeviceKey() const;
-
 private:
     Message m_message;
-    std::string m_subdeviceKey;
 };
 }    // namespace wolkabout
 
