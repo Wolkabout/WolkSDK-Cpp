@@ -27,12 +27,11 @@ namespace wolkabout
 {
 const std::uint16_t PahoMqttClient::MQTT_CONNECTION_COMPLETION_TIMEOUT_MSEC = 2000;
 const std::uint16_t PahoMqttClient::MQTT_ACTION_COMPLETION_TIMEOUT_MSEC = 2000;
-const std::uint16_t PahoMqttClient::MQTT_KEEP_ALIVE_SEC = 60;
 const std::uint16_t PahoMqttClient::MQTT_QOS = 2;
 
 PahoMqttClient::~PahoMqttClient() = default;
 
-PahoMqttClient::PahoMqttClient() : m_isConnected(false)
+PahoMqttClient::PahoMqttClient(std::uint16_t keepAliveSec) : m_isConnected(false), m_keepAliveSec(keepAliveSec)
 {
     m_callback.reset(new MqttCallback(
       [&] {
@@ -53,7 +52,7 @@ PahoMqttClient::PahoMqttClient() : m_isConnected(false)
               m_onMessageReceived(msg->get_topic(), msg->get_payload_str());
           }
       },
-      [&](mqtt::delivery_token_ptr tok) {}));
+      [&](mqtt::delivery_token_ptr) {}));
 }
 
 bool PahoMqttClient::connect(const std::string& username, const std::string& password, const std::string& host,
@@ -73,7 +72,7 @@ bool PahoMqttClient::connect(const std::string& username, const std::string& pas
     connectOptions.set_user_name(username);
     connectOptions.set_password(password);
     connectOptions.set_clean_session(true);
-    connectOptions.set_keep_alive_interval(MQTT_KEEP_ALIVE_SEC);
+    connectOptions.set_keep_alive_interval(m_keepAliveSec);
 
     mqtt::ssl_options sslOptions;
     sslOptions.set_enable_server_cert_auth(false);
@@ -128,7 +127,7 @@ void PahoMqttClient::disconnect()
         }
         catch (mqtt::exception& e)
         {
-            LOG(DEBUG) << "Disonnecting failed: exception code " << e.get_reason_code();
+            LOG(DEBUG) << "Disconnecting failed: exception code " << e.get_reason_code();
         }
     }
 }

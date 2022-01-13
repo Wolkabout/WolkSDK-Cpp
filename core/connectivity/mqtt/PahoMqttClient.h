@@ -36,8 +36,8 @@ class MqttCallback;
 class PahoMqttClient : public MqttClient
 {
 public:
-    PahoMqttClient();
-    ~PahoMqttClient();
+    explicit PahoMqttClient(unsigned short keepAliveSec = 60);
+    ~PahoMqttClient() override;
 
     bool connect(const std::string& username, const std::string& password, const std::string& host,
                  const std::string& clientId) override;
@@ -54,11 +54,12 @@ private:
     std::unique_ptr<mqtt::async_client> m_client;
     std::unique_ptr<MqttCallback> m_callback;
 
+    const unsigned short m_keepAliveSec;
+
     std::mutex m_mutex;
 
     static const std::uint16_t MQTT_CONNECTION_COMPLETION_TIMEOUT_MSEC;
     static const std::uint16_t MQTT_ACTION_COMPLETION_TIMEOUT_MSEC;
-    static const std::uint16_t MQTT_KEEP_ALIVE_SEC;
     static const std::uint16_t MQTT_QOS;
 };
 }    // namespace wolkabout
