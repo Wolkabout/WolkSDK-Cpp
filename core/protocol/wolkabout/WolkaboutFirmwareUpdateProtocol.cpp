@@ -96,7 +96,8 @@ std::unique_ptr<FirmwareUpdateInstallMessage> WolkaboutFirmwareUpdateProtocol::p
     }
 
     // Take the payload as the file name
-    return std::unique_ptr<FirmwareUpdateInstallMessage>(new FirmwareUpdateInstallMessage(message->getContent()));
+    return std::unique_ptr<FirmwareUpdateInstallMessage>(
+      new FirmwareUpdateInstallMessage(WolkaboutProtocol::removeQuotes(message->getContent())));
 }
 
 std::unique_ptr<FirmwareUpdateAbortMessage> WolkaboutFirmwareUpdateProtocol::parseFirmwareUpdateAbort(

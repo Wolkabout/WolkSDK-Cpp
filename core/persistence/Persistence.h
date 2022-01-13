@@ -90,30 +90,94 @@ public:
     /**
      * @brief Inserts the device attribute.
      *
+     * @param key of the wolkabout::Attribute
      * @param attribute  to be inserted
      * @return {@code true} if successful, or {@code false} if
      * element can not be inserted
      */
-    virtual bool putAttribute(std::shared_ptr<Attribute> attribute) = 0;
+    virtual bool putAttribute(const std::string& key, std::shared_ptr<Attribute> attribute) = 0;
 
     /**
      * @brief Retrieves device attributes contained in this storage.
      *
-     * @return Device attribute as {@code std::vector<std::shared_ptr<Attribute>>}, or {@code nullptr}
+     * @return Device attribute as {@code std::map<std::string, std::shared_ptr<Attribute>>}, or an empty map
      * if this storage does not contain persisted device attributes
      */
-    virtual std::vector<std::shared_ptr<Attribute>> getAttributes() = 0;
+    virtual std::map<std::string, std::shared_ptr<Attribute>> getAttributes() = 0;
+
+    /**
+     * @brief Retrieves device attribute contained in this storage.
+     *
+     * @param key The key of the attribute which should be obtained.
+     * @return Device attribute as {@code std::shared_ptr<Attribute>}, or a {@code nullptr} if an attribute with the key
+     * couldn't be found.
+     */
+    virtual std::shared_ptr<Attribute> getAttributeUnderKey(const std::string& key) = 0;
 
     /**
      * @brief Removes device attributes from this storage.
      */
     virtual void removeAttributes() = 0;
 
-    virtual bool putParameter(Parameter parameter) = 0;
+    /**
+     * @brief Removes device attributes from this storage.
+     *
+     * @param key Key filter that can be used to delete a specific attribute.
+     */
+    virtual void removeAttributes(const std::string& key) = 0;
 
-    virtual std::map<ParameterName, std::string> getParameters() = 0;
+    /**
+     * Returns {@code std::vector<std::string>>} of wolkabout::Attribute keys contained in this storage.
+     *
+     * @return {@code std::vector<std::string>>} containing keys, or empty {@code std::vector<std::string>>} if no
+     * wolkabout::Attributes are present.
+     */
+    virtual std::vector<std::string> getAttributeKeys() = 0;
 
-    virtual void removeParameters(ParameterName parameterName) = 0;
+    /**
+     * @brief Inserts the device parameter.
+     *
+     * @param key of the wolkabout::Parameter
+     * @param parameter to be inserted
+     * @return {@code true} if successful, or {@code false} if element can not be inserted
+     */
+    virtual bool putParameter(const std::string& key, Parameter parameter) = 0;
+
+    /**
+     * @brief Retrieves device parameters contained in this storage.
+     *
+     * @return Device parameters as {@code std::map<std::string, wolkabout::Parameter>}, or an empty map if this storage
+     * does not contain persisted device parameters.
+     */
+    virtual std::map<std::string, Parameter> getParameters() = 0;
+
+    /**
+     * @brief Retrieves device parameters contained in this storage.
+     *
+     * @param key The key of the parameter which should be obtained.
+     * @return Device parameter as {@code Parameter}, or a {@code {}} if a parameter with the key couldn't be found.
+     */
+    virtual Parameter getParameterForKey(const std::string& key) = 0;
+
+    /**
+     * @brief Removes device parameters from the storage.
+     */
+    virtual void removeParameters() = 0;
+
+    /**
+     * @brief Removes device parameters from the storage.
+     *
+     * @param key Key filter that can be used to delete a specific parameter.
+     */
+    virtual void removeParameters(const std::string& key) = 0;
+
+    /**
+     * Returns {@code std::vector<std::string>} of wolkabout::Parameter keys contained in this storage.
+     *
+     * @return {@code std::vector<std::string>>} containing keys, or empty {@code std::vector<std::string>>] if no
+     * wolkabout::Parameters are present.
+     */
+    virtual std::vector<std::string> getParameterKeys() = 0;
 
     /**
      * Returns {@code true} if this storage contains no wolkabout::Readings,

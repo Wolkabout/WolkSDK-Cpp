@@ -305,10 +305,17 @@ std::string toString(MessageType type)
         return "firmware_update_status";
     case MessageType::FIRMWARE_UPDATE_ABORT:
         return "firmware_update_abort";
-    case MessageType::GATEWAY_DEVICE_REGISTRATION:
-        return "gateway_device_registration";
-    case MessageType::GATEWAY_DEVICE_REMOVAL:
-        return "gateway_device_removal";
+    case MessageType::DEVICE_REGISTRATION:
+        return "device_registration";
+    case MessageType::DEVICE_REMOVAL:
+        return "device_removal";
+    case MessageType::REGISTERED_DEVICES_REQUEST:
+    case MessageType::REGISTERED_DEVICES_RESPONSE:
+        return "registered_devices";
+    case MessageType::PLATFORM_CONNECTION_STATUS:
+        return "connection_status";
+    case MessageType::ERROR:
+        return "error";
     default:
         return "";
     }
@@ -362,10 +369,16 @@ MessageType messageTypeFromString(const std::string& type)
         return MessageType::FIRMWARE_UPDATE_STATUS;
     if (type == "firmware_update_abort")
         return MessageType::FIRMWARE_UPDATE_ABORT;
-    if (type == "gateway_device_registration")
-        return MessageType::GATEWAY_DEVICE_REGISTRATION;
-    if (type == "gateway_device_removal")
-        return MessageType::GATEWAY_DEVICE_REMOVAL;
+    if (type == "device_registration")
+        return MessageType::DEVICE_REGISTRATION;
+    if (type == "device_removal")
+        return MessageType::DEVICE_REMOVAL;
+    if (type == "registered_devices")
+        return MessageType::REGISTERED_DEVICES_RESPONSE;
+    if (type == "connection_status")
+        return MessageType::PLATFORM_CONNECTION_STATUS;
+    if (type == "error")
+        return MessageType::ERROR;
     return MessageType::UNKNOWN;
 }
 

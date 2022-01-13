@@ -233,6 +233,9 @@ if (BUILD_CONNECTIVITY)
             core/model/Message.cpp
             core/model/Reading.cpp
             core/model/messages/AttributeRegistrationMessage.cpp
+            core/model/messages/DeviceRegistrationMessage.cpp
+            core/model/messages/DeviceRemovalMessage.cpp
+            core/model/messages/ErrorMessage.cpp
             core/model/messages/FeedRegistrationMessage.cpp
             core/model/messages/FeedRemovalMessage.cpp
             core/model/messages/FeedValuesMessage.cpp
@@ -253,13 +256,20 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/FirmwareUpdateStatusMessage.cpp
             core/model/messages/ParametersPullMessage.cpp
             core/model/messages/ParametersUpdateMessage.cpp
+            core/model/messages/PlatformStatusMessage.cpp
+            core/model/messages/PullFeedValuesMessage.cpp
+            core/model/messages/RegisteredDevicesRequestMessage.cpp
+            core/model/messages/RegisteredDevicesResponseMessage.cpp
             core/model/messages/PullFeedValuesMessage.cpp
             core/model/messages/SynchronizeParametersMessage.cpp
             core/persistence/inmemory/InMemoryPersistence.cpp
             core/protocol/wolkabout/WolkaboutDataProtocol.cpp
+            core/protocol/wolkabout/WolkaboutErrorProtocol.cpp
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.cpp
             core/protocol/wolkabout/WolkaboutFirmwareUpdateProtocol.cpp
+            core/protocol/wolkabout/WolkaboutPlatformStatusProtocol.cpp
             core/protocol/wolkabout/WolkaboutProtocol.cpp
+            core/protocol/wolkabout/WolkaboutRegistrationProtocol.cpp
             core/Types.cpp)
     set(LIB_HEADER_FILES core/connectivity/mqtt/MqttCallback.h
             core/connectivity/mqtt/MqttClient.h
@@ -272,6 +282,9 @@ if (BUILD_CONNECTIVITY)
             core/model/Message.h
             core/model/Reading.h
             core/model/messages/AttributeRegistrationMessage.h
+            core/model/messages/DeviceRegistrationMessage.h
+            core/model/messages/DeviceRemovalMessage.h
+            core/model/messages/ErrorMessage.h
             core/model/messages/FeedRegistrationMessage.h
             core/model/messages/FeedRemovalMessage.h
             core/model/messages/FeedValuesMessage.h
@@ -293,17 +306,27 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/MessageModel.h
             core/model/messages/ParametersPullMessage.h
             core/model/messages/ParametersUpdateMessage.h
+            core/model/messages/PlatformStatusMessage.h
             core/model/messages/PullFeedValuesMessage.h
+            core/model/messages/RegisteredDevicesRequestMessage.h
+            core/model/messages/RegisteredDevicesResponseMessage.h
             core/model/messages/SynchronizeParametersMessage.h
             core/persistence/inmemory/InMemoryPersistence.h
             core/persistence/Persistence.h
             core/protocol/wolkabout/WolkaboutDataProtocol.h
+            core/protocol/wolkabout/WolkaboutErrorProtocol.h
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.h
             core/protocol/wolkabout/WolkaboutFirmwareUpdateProtocol.h
+            core/protocol/wolkabout/WolkaboutPlatformStatusProtocol.h
+            core/protocol/wolkabout/WolkaboutProtocol.h
+            core/protocol/wolkabout/WolkaboutRegistrationProtocol.h
             core/protocol/DataProtocol.h
+            core/protocol/ErrorProtocol.h
             core/protocol/FileManagementProtocol.h
             core/protocol/FirmwareUpdateProtocol.h
+            core/protocol/PlatformStatusProtocol.h
             core/protocol/Protocol.h
+            core/protocol/RegistrationProtocol.h
             core/InboundMessageHandler.h
             core/Types.h)
 
@@ -324,7 +347,9 @@ if (BUILD_CONNECTIVITY)
     set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
             tests/WolkaboutDataProtocolTests.cpp
             tests/WolkaboutFileManagementProtocolTests.cpp
-            tests/WolkaboutFirmwareUpdateProtocolTests.cpp)
+            tests/WolkaboutFirmwareUpdateProtocolTests.cpp
+            tests/WolkaboutPlatformStatusProtocolTests.cpp
+            tests/WolkaboutRegistrationProtocolTests.cpp)
 
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
 endif ()
@@ -349,7 +374,7 @@ install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/l
 # Add the format rule
 add_custom_target(format
         COMMAND "clang-format" -i -sort-includes -style=file ${UTILITY_HEADER_FILES} ${UTILITY_SOURCE_FILES}
-        ${ALU_HEADER_FILES} ${ALU_SOURCE_FILES} ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES}
+        ${ALU_HEADER_FILES} ${ALU_SOURCE_FILES} ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES} ${TESTS_SOURCE_FILES}
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         COMMENT "[Formatting source code]"
         VERBATIM)

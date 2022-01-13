@@ -25,6 +25,7 @@
 #include "core/utilities/json.hpp"
 
 #include <gtest/gtest.h>
+
 #include <regex>
 
 using namespace ::testing;
