@@ -1,4 +1,4 @@
-# Copyright 2021 WolkAbout Technology s.r.o.
+# Copyright 2022 Wolkabout Technology s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -170,7 +170,7 @@ include_directories(SYSTEM ${CMAKE_PREFIX_PATH}/include)
 
 find_package(Threads REQUIRED)
 
-# WolkAbout C++ SDK, in their separated packages
+# Wolkabout C++ SDK, in their separated packages
 set(INSTALL_TARGETS)
 set(TESTS_HEADER_FILES)
 set(TESTS_SOURCE_FILES)

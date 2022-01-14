@@ -1,12 +1,12 @@
 ----
-WolkAbout C++11 SDK for implementing Wolkabout connector, gateway or gateway module for connecting devices to [WolkAbout IoT Platform](https://demo.wolkabout.com/#/login).
+Wolkabout C++11 SDK for implementing Wolkabout connector, gateway or gateway module for connecting devices to [Wolkabout IoT Platform](https://demo.wolkabout.com/#/login).
 
 Supported protocol(s):
-* WolkAbout protocol
+* Wolkabout protocol
 
 Prerequisite
 ------
-Following tools/libraries are required in order to build WolkAbout C++ connector
+Following tools/libraries are required in order to build Wolkabout C++ connector
 
 * cmake - version 3.5 or later
 * autotools

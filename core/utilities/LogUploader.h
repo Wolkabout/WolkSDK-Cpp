@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 WolkAbout
+ * Copyright (c) 2022 Wolkabout
  */
 #ifndef LOGUPLOADER_H
 #define LOGUPLOADER_H
