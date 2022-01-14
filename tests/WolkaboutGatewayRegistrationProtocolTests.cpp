@@ -109,10 +109,7 @@ TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistratio
 {
     // Create the message
     auto message = std::make_shared<wolkabout::Message>(
-      R"([{"attributes":[{"dataType":"STRING","name":"Status","value":"lazy"}],
-      "feeds":[{"name":"Temperature","reference":"T","type":"IN_OUT",
-      "unitGuid":"CELSIUS"}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":
-      "high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      R"([{"attributes":[{"dataType":"STRING","name":"Status","value":"lazy"}],"feeds":[{"name":"Temperature","reference":"T","type":"IN_OUT","unitGuid":"CELSIUS"}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
       "d2p/WOLK_SDK_TEST/device_registration");
     LogMessage(*message);
 
