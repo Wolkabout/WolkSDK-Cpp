@@ -66,7 +66,7 @@ std::unique_ptr<PlatformStatusMessage> WolkaboutPlatformStatusProtocol::parsePla
     }
 
     // Check if the content can be parsed into a connection status
-    auto connectionStatus = fromString(WolkaboutProtocol::removeQuotes(message->getContent()));
+    auto connectionStatus = connectivityStatusFromString(WolkaboutProtocol::removeQuotes(message->getContent()));
     if (connectionStatus == ConnectivityStatus::NONE)
     {
         LOG(ERROR) << errorPrefix << " -> The connection status value of the message is not valid.";

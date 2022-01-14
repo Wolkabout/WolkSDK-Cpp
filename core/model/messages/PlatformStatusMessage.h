@@ -30,12 +30,20 @@ enum class ConnectivityStatus
 };
 
 /**
+ * This is a utility method that is used to convert a ConnectivityStatus value into a string value.
+ *
+ * @param value The ConnectivityStatus value.
+ * @return The value converted into a string. Will not parse value `NONE` into a string.
+ */
+std::string toString(ConnectivityStatus value);
+
+/**
  * This is a utility method that is used to convert a string into a ConnectivityStatus value.
  *
  * @param value The value as a string.
  * @return ConnectivityStatus value parsed from the string. `NONE` if failed to parse.
  */
-ConnectivityStatus fromString(const std::string& value);
+ConnectivityStatus connectivityStatusFromString(const std::string& value);
 
 /**
  * This message carries the platform connectivity status value sent out by the gateway.

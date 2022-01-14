@@ -268,6 +268,8 @@ if (BUILD_CONNECTIVITY)
             core/protocol/wolkabout/WolkaboutErrorProtocol.cpp
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.cpp
             core/protocol/wolkabout/WolkaboutFirmwareUpdateProtocol.cpp
+            core/protocol/wolkabout/WolkaboutGatewayPlatformStatusProtocol.cpp
+            core/protocol/wolkabout/WolkaboutGatewayRegistrationProtocol.cpp
             core/protocol/wolkabout/WolkaboutGatewaySubdeviceProtocol.cpp
             core/protocol/wolkabout/WolkaboutPlatformStatusProtocol.cpp
             core/protocol/wolkabout/WolkaboutProtocol.cpp
@@ -320,6 +322,8 @@ if (BUILD_CONNECTIVITY)
             core/protocol/wolkabout/WolkaboutErrorProtocol.h
             core/protocol/wolkabout/WolkaboutFileManagementProtocol.h
             core/protocol/wolkabout/WolkaboutFirmwareUpdateProtocol.h
+            core/protocol/wolkabout/WolkaboutGatewayPlatformStatusProtocol.h
+            core/protocol/wolkabout/WolkaboutGatewayRegistrationProtocol.h
             core/protocol/wolkabout/WolkaboutGatewaySubdeviceProtocol.h
             core/protocol/wolkabout/WolkaboutPlatformStatusProtocol.h
             core/protocol/wolkabout/WolkaboutProtocol.h
@@ -328,6 +332,8 @@ if (BUILD_CONNECTIVITY)
             core/protocol/ErrorProtocol.h
             core/protocol/FileManagementProtocol.h
             core/protocol/FirmwareUpdateProtocol.h
+            core/protocol/GatewayPlatformStatusProtocol.h
+            core/protocol/GatewayRegistrationProtocol.h
             core/protocol/GatewaySubdeviceProtocol.h
             core/protocol/PlatformStatusProtocol.h
             core/protocol/Protocol.h
@@ -351,8 +357,11 @@ if (BUILD_CONNECTIVITY)
 
     set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
             tests/WolkaboutDataProtocolTests.cpp
+            tests/WolkaboutErrorProtocolTests.cpp
             tests/WolkaboutFileManagementProtocolTests.cpp
             tests/WolkaboutFirmwareUpdateProtocolTests.cpp
+            tests/WolkaboutGatewayPlatformStatusProtocolTests.cpp
+            tests/WolkaboutGatewayRegistrationProtocolTests.cpp
             tests/WolkaboutGatewaySubdeviceProtocolTests.cpp
             tests/WolkaboutPlatformStatusProtocolTests.cpp
             tests/WolkaboutRegistrationProtocolTests.cpp)

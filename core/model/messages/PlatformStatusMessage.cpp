@@ -22,7 +22,22 @@
 
 namespace wolkabout
 {
-ConnectivityStatus fromString(const std::string& value)
+std::string toString(ConnectivityStatus value)
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    switch (value)
+    {
+    case ConnectivityStatus::CONNECTED:
+        return "CONNECTED";
+    case ConnectivityStatus::OFFLINE:
+        return "OFFLINE";
+    default:
+        return "";
+    }
+}
+
+ConnectivityStatus connectivityStatusFromString(const std::string& value)
 {
     LOG(TRACE) << METHOD_INFO;
 

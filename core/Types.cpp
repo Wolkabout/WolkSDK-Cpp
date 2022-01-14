@@ -46,6 +46,28 @@ std::string toString(DataType type)
     }
 }
 
+DataType dataTypeFromString(std::string value)
+{
+    // Convert the value into uppercase
+    std::transform(value.cbegin(), value.cend(), value.begin(), ::toupper);
+
+    if (value == "BOOLEAN")
+        return DataType::BOOLEAN;
+    else if (value == "NUMERIC")
+        return DataType::NUMERIC;
+    else if (value == "STRING")
+        return DataType::STRING;
+    else if (value == "HEXADECIMAL")
+        return DataType::HEXADECIMAL;
+    else if (value == "LOCATION")
+        return DataType::LOCATION;
+    else if (value == "ENUM")
+        return DataType::ENUM;
+    else if (value == "VECTOR")
+        return DataType::VECTOR;
+    return DataType::NONE;
+}
+
 std::string toString(FeedType type)
 {
     switch (type)
@@ -57,6 +79,19 @@ std::string toString(FeedType type)
     default:
         return "";
     }
+}
+
+FeedType feedTypeFromString(std::string value)
+{
+    // Convert the value into uppercase
+    std::transform(value.cbegin(), value.cend(), value.begin(), ::toupper);
+
+    // Check the value
+    if (value == "IN")
+        return FeedType::IN;
+    else if (value == "IN_OUT")
+        return FeedType::IN_OUT;
+    return FeedType::NONE;
 }
 
 const std::string Unit::NUMERIC = "NUMERIC";

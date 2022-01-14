@@ -24,6 +24,7 @@ namespace wolkabout
 {
 enum class DataType
 {
+    NONE = -1,
     STRING,
     NUMERIC,
     BOOLEAN,
@@ -34,14 +35,17 @@ enum class DataType
 };
 
 std::string toString(DataType type);
+DataType dataTypeFromString(std::string value);
 
 enum class FeedType
 {
+    NONE = -1,
     IN,
     IN_OUT,
 };
 
 std::string toString(FeedType type);
+FeedType feedTypeFromString(std::string value);
 
 class Unit
 {
