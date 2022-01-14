@@ -95,7 +95,7 @@ TEST_F(WolkaboutGatewaySubdeviceProtocolTests, GetDeviceType)
 TEST_F(WolkaboutGatewaySubdeviceProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(protocol->getMessageType({"", "p2g/" + DEVICE_KEY + "/feed_values"}), MessageType::GATEWAY_SUBDEVICE);
+    EXPECT_EQ(protocol->getMessageType({"", "p2g/" + DEVICE_KEY + "/feed_values"}), MessageType::FEED_VALUES);
 }
 
 TEST_F(WolkaboutGatewaySubdeviceProtocolTests, MakeOutboundFromFeedValues)
