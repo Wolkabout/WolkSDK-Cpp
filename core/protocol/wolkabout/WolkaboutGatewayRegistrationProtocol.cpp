@@ -100,8 +100,8 @@ static void from_json(const json& j, DeviceRegistrationData& data)
     data.name = j["name"].get<std::string>();
     data.key = extractValueIfPresent<std::string>(j, "key");
     data.guid = extractValueIfPresent<std::string>(j, "guid");
-    for (const auto& parameter : j["parameters"].get<std::vector<Parameter>>())
-        data.parameters.emplace(parameter.first, parameter.second);
+    //    for (const auto& parameter : j["parameters"].get<std::vector<Parameter>>())
+    //        data.parameters.emplace(parameter.first, parameter.second);
     for (const auto& feed : j["feeds"].get<std::vector<Feed>>())
         data.feeds.emplace(feed.getReference(), feed);
     for (const auto& attribute : j["attributes"].get<std::vector<Attribute>>())
