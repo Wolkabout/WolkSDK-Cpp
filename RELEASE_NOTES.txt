@@ -6,6 +6,9 @@
                                                 /_/   /_/
 ========================================================================================================================
 
+**Version 3.1.0-prerelease**
+    - [IMPROVEMENTS] - Added a lot of new protocols that allow the WolkSDK-Cpp to be used in WolkConnect-Cpp to communicate on behalf of subdevices, and also as a Gateway.
+
 **Version 3.0.0-prerelease**
     - [REWORK] - Updated the WolkSDK-Cpp to be ready for Wolkabout IoT Platform 22.GA - The Digital Twin Update
     - [IMPROVEMENTS] - Fixed the CMakeLists.txt file for private header file finding to use project files in private
