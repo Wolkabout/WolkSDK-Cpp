@@ -16,6 +16,7 @@ cmake_minimum_required(VERSION 3.5)
 project(WolkAboutCore C CXX)
 
 # Options for our library
+OPTION(BUILD_SHARED "Build this library as a shared library" ON)
 OPTION(BUILD_CONNECTIVITY "Build the library with Paho MQTT and allow MQTT connection to the platform." ON)
 OPTION(BUILD_POCO "Build the library with Poco." ON)
 OPTION(BUILD_GTEST "Build the library with GTest." ON)
@@ -156,6 +157,12 @@ if (${BUILD_TESTS})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -g")
 endif ()
 
+if (${BUILD_SHARED})
+    set(LIB_TYPE SHARED)
+else ()
+    set(LIB_TYPE STATIC)
+endif ()
+
 add_subdirectory(dependencies)
 link_directories(${CMAKE_PREFIX_PATH}/lib)
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
@@ -167,6 +174,17 @@ find_package(Threads REQUIRED)
 set(INSTALL_TARGETS)
 set(TESTS_HEADER_FILES)
 set(TESTS_SOURCE_FILES)
+
+# Define the version of the library
+set(WOLKSDK_VERSION_MAJOR 3)
+set(WOLKSDK_VERSION_MINOR 0)
+set(WOLKSDK_VERSION_PATCH 0)
+set(WOLKSDK_VERSION_SUFFIX prerelease)
+
+set(WOLKSDK_VERSION_STRING "${WOLKSDK_VERSION_MAJOR}.${WOLKSDK_VERSION_MINOR}.${WOLKSDK_VERSION_PATCH}")
+if (NOT "${WOLKSDK_VERSION_SUFFIX}" STREQUAL "")
+    set(WOLKSDK_VERSION_STRING "${WOLKSDK_VERSION_STRING}-${WOLKSDK_VERSION_SUFFIX}")
+endif ()
 
 # Utilities
 set(UTILITY_SOURCE_FILES core/utilities/ByteUtils.cpp
@@ -193,11 +211,15 @@ set(UTILITY_HEADER_FILES core/utilities/Buffer.h
 file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/utilities PATTERN *.cpp EXCLUDE)
 file(COPY core/Version.h DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/)
 
-add_library(${PROJECT_NAME}Utility SHARED ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
+add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
 target_link_libraries(${PROJECT_NAME}Utility crypto)
+if (NOT ${BUILD_SHARED})
+    target_link_libraries(${PROJECT_NAME}Utility Threads::Threads)
+endif ()
 target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
+set_target_properties(${PROJECT_NAME}Utility PROPERTIES VERSION ${WOLKSDK_VERSION_STRING} SOVERSION ${WOLKSDK_VERSION_MAJOR}.${WOLKSDK_VERSION_MINOR}.${WOLKSDK_VERSION_PATCH})
 add_dependencies(${PROJECT_NAME}Utility spdlog)
 
 list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
@@ -209,11 +231,12 @@ if (BUILD_AWS_LOG_UPLOADER)
 
     file(COPY core/log_uploader/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/log_uploader PATTERN *.cpp EXCLUDE)
 
-    add_library(${PROJECT_NAME}Aws SHARED ${ALU_SOURCE_FILES} ${ALU_HEADER_FILES})
+    add_library(${PROJECT_NAME}Aws ${LIB_TYPE} ${ALU_SOURCE_FILES} ${ALU_HEADER_FILES})
     target_link_libraries(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-cpp-sdk-core aws-cpp-sdk-s3)
     target_include_directories(${PROJECT_NAME}Aws PRIVATE ${PROJECT_SOURCE_DIR})
     target_include_directories(${PROJECT_NAME}Aws PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
     set_target_properties(${PROJECT_NAME}Aws PROPERTIES INSTALL_RPATH "$ORIGIN")
+    set_target_properties(${PROJECT_NAME}Aws PROPERTIES VERSION ${WOLKSDK_VERSION_STRING} SOVERSION ${WOLKSDK_VERSION_MAJOR}.${WOLKSDK_VERSION_MINOR}.${WOLKSDK_VERSION_PATCH})
     add_dependencies(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-sdk-cpp)
 
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Aws)
@@ -348,11 +371,12 @@ if (BUILD_CONNECTIVITY)
     file(COPY core/persistence/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/persistence PATTERN *.cpp EXCLUDE)
     file(COPY core/protocol/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/protocol PATTERN *.cpp EXCLUDE)
 
-    add_library(${PROJECT_NAME} SHARED ${LIB_SOURCE_FILES} ${LIB_HEADER_FILES})
+    add_library(${PROJECT_NAME} ${LIB_TYPE} ${LIB_SOURCE_FILES} ${LIB_HEADER_FILES})
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as)
     target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR})
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
+    set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${WOLKSDK_VERSION_STRING} SOVERSION ${WOLKSDK_VERSION_MAJOR}.${WOLKSDK_VERSION_MINOR}.${WOLKSDK_VERSION_PATCH})
     add_dependencies(${PROJECT_NAME} pahomqttcpp)
 
     set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
