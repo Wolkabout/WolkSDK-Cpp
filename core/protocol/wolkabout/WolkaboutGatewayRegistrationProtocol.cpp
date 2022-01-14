@@ -95,13 +95,32 @@ static void from_json(const json& j, std::vector<Attribute>& attributes)
     }
 }
 
+static void from_json(const json& j, std::vector<Parameter>& parameters)
+{
+    if (!j.is_object())
+        throw std::runtime_error("The field for reading parameters is not an object!");
+
+    for (const auto& item : j.items())
+    {
+        // Parse the key into the ParameterName
+        const auto& key = item.key();
+        const auto& value = item.value();
+        const auto parameterName = parameterNameFromString(key);
+        if (parameterName == ParameterName::UNKNOWN)
+            throw std::runtime_error("One of the keys is not a valid ParameterName.");
+
+        // Put the parameter in the vector
+        parameters.emplace_back(parameterName, value);
+    }
+}
+
 static void from_json(const json& j, DeviceRegistrationData& data)
 {
     data.name = j["name"].get<std::string>();
     data.key = extractValueIfPresent<std::string>(j, "key");
     data.guid = extractValueIfPresent<std::string>(j, "guid");
-    //    for (const auto& parameter : j["parameters"].get<std::vector<Parameter>>())
-    //        data.parameters.emplace(parameter.first, parameter.second);
+    for (const auto& parameter : j["parameters"].get<std::vector<Parameter>>())
+        data.parameters.emplace(parameter.first, parameter.second);
     for (const auto& feed : j["feeds"].get<std::vector<Feed>>())
         data.feeds.emplace(feed.getReference(), feed);
     for (const auto& attribute : j["attributes"].get<std::vector<Attribute>>())
