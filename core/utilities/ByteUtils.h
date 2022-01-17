@@ -37,11 +37,14 @@ public:
 
     static std::string toHexString(const ByteArray& data);
 
+    static std::string toUUIDString(const ByteArray& data);
+
     static ByteArray hashSHA256(const ByteArray& value);
 
     static ByteArray hashMDA5(const ByteArray& value);
 
     static const std::uint16_t SHA_256_HASH_BYTE_LENGTH = 256;
+    static const std::uint16_t UUID_VECTOR_SIZE = 16;
 };
 }    // namespace wolkabout
 
