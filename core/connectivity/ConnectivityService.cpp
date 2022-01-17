@@ -16,10 +16,14 @@
 
 #include "core/connectivity/ConnectivityService.h"
 
+#include "core/connectivity/ConnectivityServiceListener.h"
+
 #include <utility>
 
 namespace wolkabout
 {
+ConnectivityService::~ConnectivityService() = default;
+
 void ConnectivityService::setListener(std::weak_ptr<ConnectivityServiceListener> listener)
 {
     m_listener = std::move(listener);

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2022 Wolkabout
  */
 #ifndef LOGUPLOADER_H

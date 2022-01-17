@@ -21,13 +21,6 @@
 namespace wolkabout
 {
 MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,
-                                                 std::string password, std::string host, std::string trustStore)
-: MqttConnectivityService(std::move(mqttClient), std::move(key), std::move(password), std::move(host),
-                          std::move(trustStore), key)
-{
-}
-
-MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,
                                                  std::string password, std::string host, std::string trustStore,
                                                  std::string clientId)
 : m_mqttClient(std::move(mqttClient))
@@ -37,6 +30,11 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
 , m_trustStore(std::move(trustStore))
 , m_clientId(std::move(clientId))
 , m_lastWillRetain(false)
+, m_connectedState{*this}
+, m_disconnectedState{*this}
+, m_currentState{&m_disconnectedState}
+, m_run{true}
+, m_worker{new std::thread(&MqttConnectivityService::run, this)}
 {
     m_mqttClient->onMessageReceived([this](const std::string& topic, const std::string& message) -> void {
         if (auto handler = m_listener.lock())
@@ -50,12 +48,22 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
         {
             handler->connectionLost();
         }
+
+        changeToState(&m_disconnectedState);
     });
 
     if (!m_trustStore.empty())
     {
         m_mqttClient->setTrustStore(m_trustStore);
     }
+}
+
+MqttConnectivityService::~MqttConnectivityService()
+{
+    m_run = false;
+    m_buffer.stop();
+    if (m_worker->joinable())
+        m_worker->join();
 }
 
 bool MqttConnectivityService::connect()
@@ -72,6 +80,8 @@ bool MqttConnectivityService::connect()
                 m_mqttClient->subscribe(topic);
             }
         }
+
+        changeToState(&m_connectedState);
     }
 
     return isConnected;
@@ -80,6 +90,7 @@ bool MqttConnectivityService::connect()
 void MqttConnectivityService::disconnect()
 {
     m_mqttClient->disconnect();
+    changeToState(&m_disconnectedState);
 }
 
 bool MqttConnectivityService::reconnect()
@@ -96,5 +107,89 @@ bool MqttConnectivityService::isConnected()
 bool MqttConnectivityService::publish(std::shared_ptr<Message> outboundMessage)
 {
     return m_mqttClient->publish(outboundMessage->getChannel(), outboundMessage->getContent());
+}
+
+void MqttConnectivityService::addMessage(std::shared_ptr<Message> message)
+{
+    LOG(TRACE) << "MqttConnectivityService: Message added. Channel: '" << message->getChannel() << "' Payload: '"
+               << message->getContent() << "'";
+    m_buffer.push(std::move(message));
+}
+
+void MqttConnectivityService::changeToState(State* state)
+{
+    // Check if the current state is not the wanted state
+    if (m_currentState != state)
+    {
+        m_currentState = state;
+        m_buffer.notify();
+    }
+}
+
+void MqttConnectivityService::run()
+{
+    while (m_run)
+    {
+        auto state = m_currentState.load();
+        state->run();
+    }
+
+    m_buffer.notify();
+}
+
+MqttConnectivityService::State::State(MqttConnectivityService& service) : m_service{service} {}
+
+void MqttConnectivityService::DisconnectedState::run()
+{
+    while (m_service.m_run && !m_service.isConnected() && !m_service.m_buffer.isEmpty())
+    {
+        const auto message = m_service.m_buffer.pop();
+        if (!message)
+            break;
+
+        if (!m_service.m_persistence->push(message))
+        {
+            LOG(ERROR) << "Failed to persist message";
+        }
+    }
+
+    m_service.m_buffer.swapBuffers();
+}
+
+void MqttConnectivityService::ConnectedState::run()
+{
+    while (m_service.m_run && m_service.isConnected() && !m_service.m_buffer.isEmpty())
+    {
+        const auto message = m_service.m_buffer.pop();
+        if (!message)
+            break;
+
+        if (!m_service.publish(message))
+        {
+            m_service.m_persistence->push(message);
+            LOG(ERROR) << "Failed to publish message";
+            break;
+        }
+    }
+
+    // publish persisted until new message arrives
+    while (m_service.m_run && m_service.isConnected() && !m_service.m_persistence->empty() &&
+           m_service.m_buffer.isEmpty())
+    {
+        const auto message = m_service.m_persistence->front();
+        if (!message)
+            break;
+
+        if (m_service.publish(message))
+        {
+            m_service.m_persistence->pop();
+        }
+        else
+        {
+            LOG(ERROR) << "Failed to publish message";
+        }
+    }
+
+    m_service.m_buffer.swapBuffers();
 }
 }    // namespace wolkabout

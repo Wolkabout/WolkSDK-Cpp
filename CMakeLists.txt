@@ -245,11 +245,12 @@ endif ()
 # Build the MQTT logic if Paho is enabled
 if (BUILD_CONNECTIVITY)
     set(LIB_SOURCE_FILES
+            core/connectivity/ConnectivityService.cpp
+            core/connectivity/OutboundRetryMessageHandler.cpp
             core/connectivity/mqtt/MqttCallback.cpp
             core/connectivity/mqtt/MqttClient.cpp
             core/connectivity/mqtt/MqttConnectivityService.cpp
             core/connectivity/mqtt/PahoMqttClient.cpp
-            core/connectivity/ConnectivityService.cpp
             core/model/Attribute.cpp
             core/model/Device.cpp
             core/model/Feed.cpp
@@ -298,11 +299,15 @@ if (BUILD_CONNECTIVITY)
             core/protocol/wolkabout/WolkaboutProtocol.cpp
             core/protocol/wolkabout/WolkaboutRegistrationProtocol.cpp
             core/Types.cpp)
-    set(LIB_HEADER_FILES core/connectivity/mqtt/MqttCallback.h
+    set(LIB_HEADER_FILES
+            core/connectivity/ConnectivityService.h
+            core/connectivity/ConnectivityServiceListener.h
+            core/connectivity/OutboundMessageHandler.h
+            core/connectivity/OutboundRetryMessageHandler.h
+            core/connectivity/mqtt/MqttCallback.h
             core/connectivity/mqtt/MqttClient.h
             core/connectivity/mqtt/MqttConnectivityService.h
             core/connectivity/mqtt/PahoMqttClient.h
-            core/connectivity/ConnectivityService.h
             core/model/Attribute.h
             core/model/Device.h
             core/model/Feed.h
@@ -340,6 +345,7 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/RegisteredDevicesResponseMessage.h
             core/model/messages/SynchronizeParametersMessage.h
             core/persistence/inmemory/InMemoryPersistence.h
+            core/persistence/MessagePersistence.h
             core/persistence/Persistence.h
             core/protocol/wolkabout/WolkaboutDataProtocol.h
             core/protocol/wolkabout/WolkaboutErrorProtocol.h
@@ -362,6 +368,7 @@ if (BUILD_CONNECTIVITY)
             core/protocol/Protocol.h
             core/protocol/RegistrationProtocol.h
             core/InboundMessageHandler.h
+            core/MessageListener.h
             core/Types.h)
 
     file(COPY core/InboundMessageHandler.h DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core)

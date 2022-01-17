@@ -17,6 +17,8 @@
 #ifndef CONNECTIVITYSERVICE_H
 #define CONNECTIVITYSERVICE_H
 
+#include "core/connectivity/ConnectivityServiceListener.h"
+
 #include <functional>
 #include <memory>
 #include <string>
@@ -24,23 +26,12 @@
 
 namespace wolkabout
 {
-class ConnectivityServiceListener
-{
-public:
-    virtual ~ConnectivityServiceListener() = default;
-
-    virtual void messageReceived(const std::string& topic, const std::string& message) = 0;
-
-    virtual void connectionLost() = 0;
-
-    virtual std::vector<std::string> getChannels() const = 0;
-};
-
 class Message;
+
 class ConnectivityService
 {
 public:
-    virtual ~ConnectivityService() = default;
+    virtual ~ConnectivityService();
 
     virtual bool connect() = 0;
     virtual void disconnect() = 0;

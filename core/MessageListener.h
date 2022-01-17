@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-#ifndef INBOUNDMESSAGEHANDLER_H
-#define INBOUNDMESSAGEHANDLER_H
+#ifndef WOLKABOUTCORE_MESSAGELISTENER_H
+#define WOLKABOUTCORE_MESSAGELISTENER_H
 
-#include "core/MessageListener.h"
+#include "core/model/Message.h"
 
-#include <map>
 #include <memory>
-#include <string>
-#include <vector>
 
 namespace wolkabout
 {
-class InboundMessageHandler
+class Protocol;
+
+class MessageListener
 {
 public:
-    virtual ~InboundMessageHandler() = default;
+    virtual ~MessageListener() = default;
 
-    virtual void messageReceived(const std::string& channel, const std::string& message) = 0;
+    virtual void messageReceived(std::shared_ptr<Message> message) = 0;
 
-    virtual std::vector<std::string> getChannels() const = 0;
-
-    virtual void addListener(std::weak_ptr<MessageListener> listener) = 0;
+    virtual const Protocol& getProtocol() = 0;
 };
 }    // namespace wolkabout
 
-#endif    // INBOUNDMESSAGEHANDLER_H
+#endif    // WOLKABOUTCORE_MESSAGELISTENER_H
