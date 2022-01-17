@@ -19,6 +19,7 @@
 #include <iomanip>
 #include <openssl/md5.h>
 #include <openssl/sha.h>
+#include <random>
 #include <sstream>
 
 namespace wolkabout
@@ -33,6 +34,18 @@ ByteArray ByteUtils::toByteArray(const std::string& data)
     }
 
     return array;
+}
+
+ByteArray ByteUtils::generateRandomBytes(std::uint16_t size)
+{
+    static std::random_device device;
+    static auto engine = std::mt19937(device());
+    static auto distribution = std::uniform_int_distribution<std::mt19937::result_type>(0, UINT8_MAX);
+
+    auto bytes = ByteArray{};
+    for (auto i = 0; i < size; ++i)
+        bytes.emplace_back(distribution(engine));
+    return bytes;
 }
 
 std::string ByteUtils::toString(const ByteArray& data)

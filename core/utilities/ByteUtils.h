@@ -33,6 +33,8 @@ public:
 
     static ByteArray toByteArray(const std::string& data);
 
+    static ByteArray generateRandomBytes(std::uint16_t size);
+
     static std::string toString(const ByteArray& data);
 
     static std::string toHexString(const ByteArray& data);
