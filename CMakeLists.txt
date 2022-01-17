@@ -371,8 +371,8 @@ if (BUILD_CONNECTIVITY)
             core/MessageListener.h
             core/Types.h)
 
-    file(COPY core/InboundMessageHandler.h DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core)
-    file(COPY core/Types.h DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core)
+    file(GLOB ROOT_HEADERS core/*.h)
+    file(COPY ${ROOT_HEADERS} DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core)
     file(COPY core/connectivity/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/connectivity PATTERN *.cpp EXCLUDE)
     file(COPY core/model/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/model PATTERN *.cpp EXCLUDE)
     file(COPY core/persistence/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/persistence PATTERN *.cpp EXCLUDE)
