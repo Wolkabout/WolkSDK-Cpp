@@ -17,11 +17,11 @@
 #ifndef WOLKABOUTCONNECTOR_INBOUNDMESSAGEHANDLERMOCK_H
 #define WOLKABOUTCONNECTOR_INBOUNDMESSAGEHANDLERMOCK_H
 
-#include "core/InboundMessageHandler.h"
+#include "core/connectivity/InboundMessageHandler.h"
 
 #include <gmock/gmock.h>
 
-using namespace wolkabout::connect;
+using namespace wolkabout;
 
 class InboundMessageHandlerMock : public InboundMessageHandler
 {
