@@ -386,6 +386,7 @@ if (BUILD_CONNECTIVITY)
     add_dependencies(${PROJECT_NAME} pahomqttcpp)
 
     set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
+            tests/InboundPlatformMessageHandlerTests.cpp
             tests/WolkaboutDataProtocolTests.cpp
             tests/WolkaboutErrorProtocolTests.cpp
             tests/WolkaboutFileManagementProtocolTests.cpp
@@ -395,13 +396,24 @@ if (BUILD_CONNECTIVITY)
             tests/WolkaboutGatewaySubdeviceProtocolTests.cpp
             tests/WolkaboutPlatformStatusProtocolTests.cpp
             tests/WolkaboutRegistrationProtocolTests.cpp)
+    set(TESTS_HEADER_FILES ${TESTS_HEADER_FILES}
+            tests/mocks/DataProtocolMock.h
+            tests/mocks/ErrorProtocolMock.h
+            tests/mocks/FileManagementProtocolMock.h
+            tests/mocks/InboundMessageHandlerMock.h
+            tests/mocks/MessageListenerMock.h
+            tests/mocks/PahoMqttClientMock.h
+            tests/mocks/PersistenceMock.h
+            tests/mocks/PlatformStatusProtocolMock.h
+            tests/mocks/ProtocolMock.h
+            tests/mocks/RegistrationProtocolMock.h)
 
     list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
 endif ()
 
 if (${BUILD_TESTS} AND (NOT ("${TESTS_SOURCE_FILES}" STREQUAL "")))
     add_executable(${PROJECT_NAME}Tests ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES})
-    target_link_libraries(${PROJECT_NAME}Tests ${PROJECT_NAME} gtest gmock gtest_main)
+    target_link_libraries(${PROJECT_NAME}Tests ${PROJECT_NAME} gtest gmock gtest_main Threads::Threads)
     target_include_directories(${PROJECT_NAME}Tests PRIVATE ${PROJECT_SOURCE_DIR})
     target_include_directories(${PROJECT_NAME}Tests PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
     set_target_properties(${PROJECT_NAME}Tests PROPERTIES INSTALL_RPATH "$ORIGIN/../lib")
