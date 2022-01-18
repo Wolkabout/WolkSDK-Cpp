@@ -17,7 +17,7 @@
 #ifndef INBOUNDPLATFORMMESSAGEHANDLER_H
 #define INBOUNDPLATFORMMESSAGEHANDLER_H
 
-#include "core/InboundMessageHandler.h"
+#include "core/connectivity/InboundMessageHandler.h"
 #include "core/utilities/CommandBuffer.h"
 
 #include <map>
