@@ -397,6 +397,7 @@ if (BUILD_CONNECTIVITY)
             tests/WolkaboutPlatformStatusProtocolTests.cpp
             tests/WolkaboutRegistrationProtocolTests.cpp)
     set(TESTS_HEADER_FILES ${TESTS_HEADER_FILES}
+            tests/mocks/ConnectivityServiceMock.h
             tests/mocks/DataProtocolMock.h
             tests/mocks/ErrorProtocolMock.h
             tests/mocks/FileManagementProtocolMock.h
