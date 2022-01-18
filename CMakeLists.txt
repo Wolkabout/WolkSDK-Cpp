@@ -204,12 +204,10 @@ set(UTILITY_HEADER_FILES core/utilities/Buffer.h
         core/utilities/LogUploader.h
         core/utilities/Service.h
         core/utilities/StringUtils.h
-        core/utilities/Timer.h
-        core/Version.h)
+        core/utilities/Timer.h)
 
 # path for interface files
 file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/utilities PATTERN *.cpp EXCLUDE)
-file(COPY core/Version.h DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/)
 
 add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
 target_link_libraries(${PROJECT_NAME}Utility crypto)
@@ -244,8 +242,8 @@ endif ()
 
 # Build the MQTT logic if Paho is enabled
 if (BUILD_CONNECTIVITY)
-    set(LIB_SOURCE_FILES
-            core/connectivity/ConnectivityService.cpp
+    set(LIB_SOURCE_FILES core/connectivity/ConnectivityService.cpp
+            core/connectivity/InboundPlatformMessageHandler.cpp
             core/connectivity/OutboundRetryMessageHandler.cpp
             core/connectivity/mqtt/MqttCallback.cpp
             core/connectivity/mqtt/MqttClient.cpp
@@ -299,9 +297,10 @@ if (BUILD_CONNECTIVITY)
             core/protocol/wolkabout/WolkaboutProtocol.cpp
             core/protocol/wolkabout/WolkaboutRegistrationProtocol.cpp
             core/Types.cpp)
-    set(LIB_HEADER_FILES
-            core/connectivity/ConnectivityService.h
+    set(LIB_HEADER_FILES core/connectivity/ConnectivityService.h
             core/connectivity/ConnectivityServiceListener.h
+            core/connectivity/InboundMessageHandler.h
+            core/connectivity/InboundPlatformMessageHandler.h
             core/connectivity/OutboundMessageHandler.h
             core/connectivity/OutboundRetryMessageHandler.h
             core/connectivity/mqtt/MqttCallback.h
@@ -367,7 +366,7 @@ if (BUILD_CONNECTIVITY)
             core/protocol/PlatformStatusProtocol.h
             core/protocol/Protocol.h
             core/protocol/RegistrationProtocol.h
-            core/InboundMessageHandler.h
+            core/connectivity/InboundMessageHandler.h
             core/MessageListener.h
             core/Types.h)
 
