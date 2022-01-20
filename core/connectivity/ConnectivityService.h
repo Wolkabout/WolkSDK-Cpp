@@ -17,7 +17,6 @@
 #ifndef CONNECTIVITYSERVICE_H
 #define CONNECTIVITYSERVICE_H
 
-#include "core/connectivity/ConnectivityStatusListener.h"
 #include "core/connectivity/InboundMessageHandler.h"
 
 #include <functional>
