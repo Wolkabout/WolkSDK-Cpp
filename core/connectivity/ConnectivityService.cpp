@@ -20,9 +20,9 @@
 
 namespace wolkabout
 {
-void ConnectivityService::setListener(std::weak_ptr<ConnectivityStatusListener> connectivityStatusListener)
+void ConnectivityService::onConnectionLost(std::function<void()> onConnectionLost)
 {
-    m_connectivityStatusListener = std::move(connectivityStatusListener);
+    m_onConnectionLost = std::move(onConnectionLost);
 }
 
 void ConnectivityService::setListner(std::weak_ptr<InboundMessageHandler> inboundMessageHandler)

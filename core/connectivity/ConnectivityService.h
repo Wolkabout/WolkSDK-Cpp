@@ -42,12 +42,12 @@ public:
 
     virtual bool publish(std::shared_ptr<Message> outboundMessage) = 0;
 
-    virtual void setListener(std::weak_ptr<ConnectivityStatusListener> connectivityStatusListener);
+    virtual void onConnectionLost(std::function<void()> onConnectionLost);
 
     virtual void setListner(std::weak_ptr<InboundMessageHandler> inboundMessageHandler);
 
 protected:
-    std::weak_ptr<ConnectivityStatusListener> m_connectivityStatusListener;
+    std::function<void()> m_onConnectionLost;
     std::weak_ptr<InboundMessageHandler> m_inboundMessageHandler;
 };
 }    // namespace wolkabout

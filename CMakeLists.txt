@@ -298,7 +298,6 @@ if (BUILD_CONNECTIVITY)
             core/protocol/wolkabout/WolkaboutRegistrationProtocol.cpp
             core/Types.cpp)
     set(LIB_HEADER_FILES core/connectivity/ConnectivityService.h
-            core/connectivity/ConnectivityStatusListener.h
             core/connectivity/InboundMessageHandler.h
             core/connectivity/InboundPlatformMessageHandler.h
             core/connectivity/OutboundMessageHandler.h

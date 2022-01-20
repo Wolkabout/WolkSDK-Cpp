@@ -44,10 +44,8 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
     });
 
     m_mqttClient->onConnectionLost([this]() -> void {
-        if (auto handler = m_connectivityStatusListener.lock())
-        {
-            handler->connectionLost();
-        }
+        if (m_onConnectionLost)
+            m_onConnectionLost();
 
         changeToState(&m_disconnectedState);
     });
