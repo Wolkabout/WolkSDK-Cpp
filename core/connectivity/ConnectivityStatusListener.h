@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-#ifndef WOLKABOUTCORE_CONNECTIVITYSERVICELISTENER_H
-#define WOLKABOUTCORE_CONNECTIVITYSERVICELISTENER_H
+#ifndef WOLKABOUTCORE_CONNECTIVITYSTATUSLISTENER_H
+#define WOLKABOUTCORE_CONNECTIVITYSTATUSLISTENER_H
 
 #include <string>
 #include <vector>
 
 namespace wolkabout
 {
-class ConnectivityServiceListener
+class ConnectivityStatusListener
 {
 public:
-    virtual ~ConnectivityServiceListener() = default;
-
-    virtual void messageReceived(const std::string& topic, const std::string& message) = 0;
+    virtual ~ConnectivityStatusListener() = default;
 
     virtual void connectionLost() = 0;
-
-    virtual std::vector<std::string> getChannels() const = 0;
 };
 }    // namespace wolkabout
 
-#endif    // WOLKABOUTCORE_CONNECTIVITYSERVICELISTENER_H
+#endif    // WOLKABOUTCORE_CONNECTIVITYSTATUSLISTENER_H

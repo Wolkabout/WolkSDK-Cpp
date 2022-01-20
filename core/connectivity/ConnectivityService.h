@@ -17,7 +17,8 @@
 #ifndef CONNECTIVITYSERVICE_H
 #define CONNECTIVITYSERVICE_H
 
-#include "core/connectivity/ConnectivityServiceListener.h"
+#include "core/connectivity/ConnectivityStatusListener.h"
+#include "core/connectivity/InboundMessageHandler.h"
 
 #include <functional>
 #include <memory>
@@ -31,7 +32,7 @@ class Message;
 class ConnectivityService
 {
 public:
-    virtual ~ConnectivityService();
+    virtual ~ConnectivityService() = default;
 
     virtual bool connect() = 0;
     virtual void disconnect() = 0;
@@ -41,10 +42,13 @@ public:
 
     virtual bool publish(std::shared_ptr<Message> outboundMessage) = 0;
 
-    void setListener(std::weak_ptr<ConnectivityServiceListener> listener);
+    virtual void setListener(std::weak_ptr<ConnectivityStatusListener> connectivityStatusListener);
+
+    virtual void setListner(std::weak_ptr<InboundMessageHandler> inboundMessageHandler);
 
 protected:
-    std::weak_ptr<ConnectivityServiceListener> m_listener;
+    std::weak_ptr<ConnectivityStatusListener> m_connectivityStatusListener;
+    std::weak_ptr<InboundMessageHandler> m_inboundMessageHandler;
 };
 }    // namespace wolkabout
 

@@ -37,14 +37,14 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
 , m_worker{new std::thread(&MqttConnectivityService::run, this)}
 {
     m_mqttClient->onMessageReceived([this](const std::string& topic, const std::string& message) -> void {
-        if (auto handler = m_listener.lock())
+        if (auto handler = m_inboundMessageHandler.lock())
         {
             handler->messageReceived(topic, message);
         }
     });
 
     m_mqttClient->onConnectionLost([this]() -> void {
-        if (auto handler = m_listener.lock())
+        if (auto handler = m_connectivityStatusListener.lock())
         {
             handler->connectionLost();
         }
@@ -72,7 +72,7 @@ bool MqttConnectivityService::connect()
     bool isConnected = m_mqttClient->connect(m_key, m_password, m_host, m_clientId);
     if (isConnected)
     {
-        if (auto handler = m_listener.lock())
+        if (auto handler = m_inboundMessageHandler.lock())
         {
             const auto& topics = handler->getChannels();
             for (const std::string& topic : topics)
