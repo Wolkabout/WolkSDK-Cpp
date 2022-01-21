@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-#ifndef WOLKABOUTCONNECTOR_CONNECTIVITYSERVICEMOCK_H
-#define WOLKABOUTCONNECTOR_CONNECTIVITYSERVICEMOCK_H
+#ifndef MESSAGEPERSISTER_H
+#define MESSAGEPERSISTER_H
 
-#include "core/connectivity/ConnectivityService.h"
+#include "core/model/Message.h"
 
-#include <gmock/gmock.h>
+#include <memory>
 
-using namespace wolkabout;
-
-class ConnectivityServiceMock : public ConnectivityService
+namespace wolkabout
+{
+class MessagePersister
 {
 public:
-    MOCK_METHOD(bool, connect, ());
-    MOCK_METHOD(void, disconnect, ());
-    MOCK_METHOD(bool, reconnect, ());
-    MOCK_METHOD(bool, isConnected, ());
-    MOCK_METHOD(bool, publish, (std::shared_ptr<Message>));
-};
+    virtual ~MessagePersister() = default;
 
-#endif    // WOLKABOUTCONNECTOR_CONNECTIVITYSERVICEMOCK_H
+    virtual std::string save(const Message& message) const;
+    virtual std::unique_ptr<Message> load(const std::string& text) const;
+};
+}    // namespace wolkabout
+
+#endif    // MESSAGEPERSISTER_H

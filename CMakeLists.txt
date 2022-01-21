@@ -285,6 +285,10 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/RegisteredDevicesResponseMessage.cpp
             core/model/messages/PullFeedValuesMessage.cpp
             core/model/messages/SynchronizeParametersMessage.cpp
+            core/persistence/filesystem/CircularFileSystemMessagePersistence.cpp
+            core/persistence/filesystem/FileSystemMessagePersistence.cpp
+            core/persistence/filesystem/MessagePersister.cpp
+            core/persistence/inmemory/InMemoryMessagePersistence.cpp
             core/persistence/inmemory/InMemoryPersistence.cpp
             core/protocol/wolkabout/WolkaboutDataProtocol.cpp
             core/protocol/wolkabout/WolkaboutErrorProtocol.cpp
@@ -342,6 +346,10 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/RegisteredDevicesRequestMessage.h
             core/model/messages/RegisteredDevicesResponseMessage.h
             core/model/messages/SynchronizeParametersMessage.h
+            core/persistence/filesystem/CircularFileSystemMessagePersistence.h
+            core/persistence/filesystem/FileSystemMessagePersistence.h
+            core/persistence/filesystem/MessagePersister.h
+            core/persistence/inmemory/InMemoryMessagePersistence.h
             core/persistence/inmemory/InMemoryPersistence.h
             core/persistence/MessagePersistence.h
             core/persistence/Persistence.h

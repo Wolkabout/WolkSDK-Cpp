@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-#ifndef WOLKABOUTCONNECTOR_CONNECTIVITYSERVICEMOCK_H
-#define WOLKABOUTCONNECTOR_CONNECTIVITYSERVICEMOCK_H
+#ifndef INMEMORYMESSAGEPERSISTENCE_H
+#define INMEMORYMESSAGEPERSISTENCE_H
 
-#include "core/connectivity/ConnectivityService.h"
+#include "core/persistence/MessagePersistence.h"
 
-#include <gmock/gmock.h>
+#include <memory>
+#include <mutex>
+#include <queue>
 
-using namespace wolkabout;
-
-class ConnectivityServiceMock : public ConnectivityService
+namespace wolkabout
+{
+class InMemoryMessagePersistence : public MessagePersistence
 {
 public:
-    MOCK_METHOD(bool, connect, ());
-    MOCK_METHOD(void, disconnect, ());
-    MOCK_METHOD(bool, reconnect, ());
-    MOCK_METHOD(bool, isConnected, ());
-    MOCK_METHOD(bool, publish, (std::shared_ptr<Message>));
-};
+    bool push(std::shared_ptr<Message> message) override;
+    void pop() override;
+    std::shared_ptr<Message> front() override;
+    bool empty() const override;
 
-#endif    // WOLKABOUTCONNECTOR_CONNECTIVITYSERVICEMOCK_H
+private:
+    mutable std::mutex m_lock;
+    std::queue<std::shared_ptr<Message>> m_queue;
+};
+}    // namespace wolkabout
+
+#endif

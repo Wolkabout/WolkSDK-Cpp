@@ -33,13 +33,13 @@ enum class PersistenceMethod
  * A storage designed for holding messages in persistent store prior to publishing. Implementation storing/retrieving
  * strategy must be FIFO. All methods must be implemented in a thread safe manner.
  */
-class GatewayPersistence
+class MessagePersistence
 {
 public:
     /**
      * @brief Destructor
      */
-    virtual ~GatewayPersistence() = default;
+    virtual ~MessagePersistence() = default;
 
     /**
      * @brief Inserts the wolkabout::Message

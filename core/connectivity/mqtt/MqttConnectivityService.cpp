@@ -17,12 +17,14 @@
 #include "core/connectivity/mqtt/MqttConnectivityService.h"
 
 #include "core/model/Message.h"
+#include "core/persistence/inmemory/InMemoryMessagePersistence.h"
 
 namespace wolkabout
 {
 MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,
                                                  std::string password, std::string host, std::string trustStore,
-                                                 std::string clientId)
+                                                 std::string clientId,
+                                                 std::shared_ptr<MessagePersistence> messagePersistence)
 : m_mqttClient(std::move(mqttClient))
 , m_key(std::move(key))
 , m_password(std::move(password))
@@ -30,12 +32,16 @@ MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqt
 , m_trustStore(std::move(trustStore))
 , m_clientId(std::move(clientId))
 , m_lastWillRetain(false)
+, m_persistence{std::move(messagePersistence)}
 , m_connectedState{*this}
 , m_disconnectedState{*this}
 , m_currentState{&m_disconnectedState}
 , m_run{true}
 , m_worker{new std::thread(&MqttConnectivityService::run, this)}
 {
+    if (m_persistence == nullptr)
+        m_persistence = std::make_shared<InMemoryMessagePersistence>();
+
     m_mqttClient->onMessageReceived([this](const std::string& topic, const std::string& message) -> void {
         if (auto handler = m_inboundMessageHandler.lock())
         {

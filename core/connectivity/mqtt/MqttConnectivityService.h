@@ -34,7 +34,8 @@ class MqttConnectivityService : public ConnectivityService, public OutboundMessa
 {
 public:
     MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
-                            std::string host, std::string trustStore, std::string clientId);
+                            std::string host, std::string trustStore, std::string clientId,
+                            std::shared_ptr<MessagePersistence> messagePersistence);
 
     ~MqttConnectivityService() override;
 
@@ -92,7 +93,7 @@ private:
     bool m_lastWillRetain;
 
     // OutboundMessageHandler fields
-    std::shared_ptr<GatewayPersistence> m_persistence;
+    std::shared_ptr<MessagePersistence> m_persistence;
 
     ConnectedState m_connectedState;
     DisconnectedState m_disconnectedState;
