@@ -94,20 +94,23 @@ std::vector<GatewaySubdeviceMessage> WolkaboutGatewaySubdeviceProtocol::parseInc
     // Make place for all the messages
     auto messages = std::vector<GatewaySubdeviceMessage>{};
 
-    // Obtain the payloads
-    auto json = json::parse(message->getContent());
-    for (const auto& pair : json.items())
-    {
-        // Get the value from the array
-        const auto& value = pair.value();
-
+    // Make the lambda expression that will analyze a payload object
+    auto extractMessage = [&](const json& j) {
         // Extract necessities to make a message
-        auto payload = value["payload"];
-        auto deviceKey = value["device"].get<std::string>();
+        auto payload = j["payload"];
+        auto deviceKey = j["device"].get<std::string>();
         messages.emplace_back(Message{payload.dump(), WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION +
                                                         WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
                                                         WolkaboutProtocol::CHANNEL_DELIMITER + toString(type)});
-    }
+    };
+
+    // Obtain the payloads
+    auto json = json::parse(message->getContent());
+    if (json.is_object())
+        extractMessage(json);
+    else if (json.is_array())
+        for (const auto& pair : json.items())
+            extractMessage(pair.value());
     return messages;
 }
 }    // namespace wolkabout
