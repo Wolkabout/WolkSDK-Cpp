@@ -26,8 +26,15 @@ namespace wolkabout
 {
 static void to_json(json& j, const GatewaySubdeviceMessage& message)
 {
-    j["device"] = WolkaboutProtocol::getDeviceKey(message.getMessage());
-    j["payload"] = json::parse(message.getMessage().getContent());
+    if (!message.getMessage().getContent().empty())
+    {
+        j["device"] = WolkaboutProtocol::getDeviceKey(message.getMessage());
+        j["payload"] = json::parse(message.getMessage().getContent());
+    }
+    else
+    {
+        j = WolkaboutProtocol::getDeviceKey(message.getMessage());
+    }
 }
 
 std::vector<std::string> WolkaboutGatewaySubdeviceProtocol::getInboundChannels() const
