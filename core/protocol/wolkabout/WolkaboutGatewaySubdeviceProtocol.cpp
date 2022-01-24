@@ -90,6 +90,8 @@ std::vector<GatewaySubdeviceMessage> WolkaboutGatewaySubdeviceProtocol::parseInc
 
     // Check the type of the received message
     auto type = getMessageType(*message);
+    if (type >= MessageType::DEVICE_REGISTRATION && type <= MessageType::REGISTERED_DEVICES_RESPONSE)
+        return {GatewaySubdeviceMessage{*message}};
 
     // Make place for all the messages
     auto messages = std::vector<GatewaySubdeviceMessage>{};

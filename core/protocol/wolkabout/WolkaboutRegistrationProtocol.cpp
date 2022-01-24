@@ -74,9 +74,13 @@ static void from_json(const json& j, std::vector<RegisteredDeviceInformation>& r
 
         // Obtain the values
         auto deviceKey = device["deviceKey"].get<std::string>();
-        auto deviceType = device["deviceType"].get<std::string>();
+        auto deviceType = std::string{};
+        const auto deviceTypeIt = device.find("deviceType");
+        if (deviceTypeIt != device.cend() && deviceTypeIt->is_string())
+            deviceType = deviceTypeIt->get<std::string>();
         auto externalId = std::string{};
-        if (device.find("externalId") != device.cend())
+        const auto externalIdIt = device.find("externalId");
+        if (externalIdIt != device.cend() && externalIdIt->is_string())
             externalId = device["externalId"].get<std::string>();
 
         // Put the information in the array
@@ -231,10 +235,12 @@ std::unique_ptr<RegisteredDevicesResponseMessage> WolkaboutRegistrationProtocol:
 
         auto timestampFrom = j["timestampFrom"].get<std::uint64_t>();
         auto deviceType = std::string{};
-        if (j.find("deviceType") != j.end())
+        const auto deviceTypeIt = j.find("deviceType");
+        if (deviceTypeIt != j.end() && deviceTypeIt->is_string())
             deviceType = j["deviceType"].get<std::string>();
         auto externalId = std::string{};
-        if (j.find("externalId") != j.end())
+        const auto externalIdIt = j.find("externalId");
+        if (externalIdIt != j.end() && externalIdIt->is_string())
             externalId = j["externalId"].get<std::string>();
         auto matchingDevices = j["matchingDevices"].get<std::vector<RegisteredDeviceInformation>>();
 
