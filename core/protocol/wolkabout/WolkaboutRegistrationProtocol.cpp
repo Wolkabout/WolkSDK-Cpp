@@ -199,6 +199,12 @@ std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(
     return std::unique_ptr<Message>(new Message{payload.dump(), topic});
 }
 
+std::string WolkaboutRegistrationProtocol::getResponseChannelForRegisteredDeviceRequest(const std::string& deviceKey)
+{
+    return m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::REGISTERED_DEVICES_RESPONSE);
+}
+
 std::unique_ptr<RegisteredDevicesResponseMessage> WolkaboutRegistrationProtocol::parseRegisteredDevicesResponse(
   const std::shared_ptr<Message>& message)
 {

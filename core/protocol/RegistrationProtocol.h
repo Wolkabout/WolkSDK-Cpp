@@ -63,6 +63,15 @@ public:
                                                          const RegisteredDevicesRequestMessage& request) = 0;
 
     /**
+     * This method provides additional information regarding the request message that this protocol can send.
+     * This method will return the channel on which the response message will be returned.
+     *
+     * @param deviceKey The key of the device that will listen to the response channel.
+     * @return The response channel on which the message should be listened to.
+     */
+    virtual std::string getResponseChannelForRegisteredDeviceRequest(const std::string& deviceKey) = 0;
+
+    /**
      * This method is a deserialization method used to parse a MQTT message into a RegisteredDevicesResponse.
      *
      * @param message The received MQTT message that is potentially a valid RegisteredDevicesResponse message.
