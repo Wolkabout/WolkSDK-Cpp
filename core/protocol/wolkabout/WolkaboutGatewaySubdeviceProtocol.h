@@ -24,6 +24,8 @@ namespace wolkabout
 class WolkaboutGatewaySubdeviceProtocol : public GatewaySubdeviceProtocol
 {
 public:
+    explicit WolkaboutGatewaySubdeviceProtocol(bool isGateway = true);
+
     std::vector<std::string> getInboundChannels() const override;
 
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
@@ -38,6 +40,9 @@ public:
                                                  const GatewaySubdeviceMessage& message) override;
 
     std::vector<GatewaySubdeviceMessage> parseIncomingSubdeviceMessage(std::shared_ptr<Message> message) override;
+
+private:
+    std::string m_incomingDirection;
 };
 }    // namespace wolkabout
 

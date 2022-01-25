@@ -37,6 +37,12 @@ static void to_json(json& j, const GatewaySubdeviceMessage& message)
     }
 }
 
+WolkaboutGatewaySubdeviceProtocol::WolkaboutGatewaySubdeviceProtocol(bool isGateway)
+: m_incomingDirection{isGateway ? WolkaboutProtocol::PLATFORM_TO_GATEWAY_DIRECTION :
+                                  WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION}
+{
+}
+
 std::vector<std::string> WolkaboutGatewaySubdeviceProtocol::getInboundChannels() const
 {
     return {};
@@ -45,7 +51,7 @@ std::vector<std::string> WolkaboutGatewaySubdeviceProtocol::getInboundChannels()
 std::vector<std::string> WolkaboutGatewaySubdeviceProtocol::getInboundChannelsForDevice(
   const std::string& deviceKey) const
 {
-    return {WolkaboutProtocol::PLATFORM_TO_GATEWAY_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+    return {m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
             WolkaboutProtocol::CHANNEL_DELIMITER + WolkaboutProtocol::WILDCARD_SINGLE_LEVEL};
 }
 

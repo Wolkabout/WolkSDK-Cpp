@@ -167,13 +167,6 @@ std::unique_ptr<Message> WolkaboutGatewayRegistrationProtocol::makeOutboundMessa
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to generate outbound 'RegisteredDeviceResponse' message";
 
-    // Verify that the timestamp in the response is set to something
-    if (message.getTimestampFrom().count() == 0)
-    {
-        LOG(ERROR) << errorPrefix << " -> The timestamp is not set.";
-        return nullptr;
-    }
-
     // Create the topic
     try
     {
