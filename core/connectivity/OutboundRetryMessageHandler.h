@@ -46,10 +46,12 @@ class OutboundRetryMessageHandler
 {
 public:
     explicit OutboundRetryMessageHandler(OutboundMessageHandler& messageHandler);
-    ~OutboundRetryMessageHandler();
 
-    void addMessage(RetryMessageStruct msg);
-    void messageReceived(std::shared_ptr<Message> message);
+    virtual ~OutboundRetryMessageHandler();
+
+    virtual void addMessage(RetryMessageStruct msg);
+
+    virtual void messageReceived(std::shared_ptr<Message> message);
 
 private:
     void clearTimers();
