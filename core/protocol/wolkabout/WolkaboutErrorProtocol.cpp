@@ -61,24 +61,32 @@ std::unique_ptr<ErrorMessage> WolkaboutErrorProtocol::parseError(const std::shar
     LOG(TRACE) << METHOD_INFO;
     const auto errorPrefix = "Failed to parse 'Error' message";
 
-    // Check that the message is a RegisteredDeviceResponse message.
-    auto type = getMessageType(*message);
-    if (type != MessageType::ERROR)
+    try
     {
-        LOG(ERROR) << errorPrefix << " -> The message is not a 'Error' message.";
+        // Check that the message is a RegisteredDeviceResponse message.
+        auto type = getMessageType(*message);
+        if (type != MessageType::ERROR)
+        {
+            LOG(ERROR) << errorPrefix << " -> The message is not a 'Error' message.";
+            return nullptr;
+        }
+
+        // Extract the extra data
+        auto deviceKey = getDeviceKey(*message);
+        if (deviceKey.empty())
+        {
+            LOG(ERROR) << errorPrefix << " -> The device key is empty.";
+            return nullptr;
+        }
+        auto time = std::chrono::system_clock::now();
+
+        // Make the message
+        return std::unique_ptr<ErrorMessage>(new ErrorMessage(deviceKey, message->getContent(), time));
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
         return nullptr;
     }
-
-    // Extract the extra data
-    auto deviceKey = getDeviceKey(*message);
-    if (deviceKey.empty())
-    {
-        LOG(ERROR) << errorPrefix << " -> The device key is empty.";
-        return nullptr;
-    }
-    auto time = std::chrono::system_clock::now();
-
-    // Make the message
-    return std::unique_ptr<ErrorMessage>(new ErrorMessage(deviceKey, message->getContent(), time));
 }
 }    // namespace wolkabout

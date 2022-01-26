@@ -194,7 +194,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     }
     catch (const std::exception& exception)
     {
-        LOG(ERROR) << "Failed to serialize 'FeedRegistrationMessage' -> " << exception.what();
+        LOG(ERROR) << "Failed to serialize 'FeedRegistrationMessage' -> '" << exception.what() << "'.";
         return nullptr;
     }
 }
@@ -215,10 +215,18 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(feedRemovalMessage.getMessageType());
 
-    // Create the content
-    auto feeds = feedRemovalMessage.getReferences();
-    auto payload = json(feeds);
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    try
+    {
+        // Create the content
+        auto feeds = feedRemovalMessage.getReferences();
+        auto payload = json(feeds);
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to serialize 'FeedRemovalMessage' -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -237,41 +245,49 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(feedValuesMessage.getMessageType());
 
-    // Create the content
-    auto payload = json::array();
-    const auto& values = feedValuesMessage.getReadings();
-    for (const auto& member : values)
+    try
     {
-        // Check if the map is empty
-        if (member.second.empty())
+        // Create the content
+        auto payload = json::array();
+        const auto& values = feedValuesMessage.getReadings();
+        for (const auto& member : values)
         {
-            LOG(ERROR) << "Failed to serialize 'FeedValuesMessage' -> One of the readings map entries is empty.";
-            return nullptr;
-        }
+            // Check if the map is empty
+            if (member.second.empty())
+            {
+                LOG(ERROR) << "Failed to serialize 'FeedValuesMessage' -> One of the readings map entries is empty.";
+                return nullptr;
+            }
 
-        // Create the object for this time
-        auto time = json();
-        if (member.first)
-            time[WolkaboutProtocol::TIMESTAMP_KEY] = member.first;
-        for (const auto& reading : member.second)
-        {
-            const auto& key = reading.getReference();
-            if (reading.isBoolean())
-                time[key] = reading.getBoolValue();
-            else if (reading.isUInt())
-                time[key] = reading.getUIntValue();
-            else if (reading.isInt())
-                time[key] = reading.getIntValue();
-            else if (reading.isDouble())
-                time[key] = reading.getDoubleValue();
-            else
-                time[key] = reading.getStringValue();
-        }
+            // Create the object for this time
+            auto time = json();
+            if (member.first)
+                time[WolkaboutProtocol::TIMESTAMP_KEY] = member.first;
+            for (const auto& reading : member.second)
+            {
+                const auto& key = reading.getReference();
+                if (reading.isBoolean())
+                    time[key] = reading.getBoolValue();
+                else if (reading.isUInt())
+                    time[key] = reading.getUIntValue();
+                else if (reading.isInt())
+                    time[key] = reading.getIntValue();
+                else if (reading.isDouble())
+                    time[key] = reading.getDoubleValue();
+                else
+                    time[key] = reading.getStringValue();
+            }
 
-        // And add it into the array
-        payload += time;
+            // And add it into the array
+            payload += time;
+        }
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to serialize 'FeedValuesMessage' -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -291,13 +307,13 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
 {
     LOG(TRACE) << METHOD_INFO;
 
+    // Create the topic
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       toString(attributeRegistrationMessage.getMessageType());
+
     try
     {
-        // Create the topic
-        const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
-                           deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
-                           toString(attributeRegistrationMessage.getMessageType());
-
         // Create the payload
         auto attributes = attributeRegistrationMessage.getAttributes();
         auto payload = json(attributes);
@@ -305,7 +321,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
     }
     catch (const std::exception& exception)
     {
-        LOG(ERROR) << "Failed to serialize 'AttributeRegistrationMessage' -> " << exception.what();
+        LOG(ERROR) << "Failed to serialize 'AttributeRegistrationMessage' -> '" << exception.what() << "'.";
         return nullptr;
     }
 }
@@ -327,32 +343,41 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
                        toString(parametersUpdateMessage.getMessageType());
 
-    // Make the payload
-    auto payload = json();
-    for (const auto& parameter : parametersUpdateMessage.getParameters())
+    try
     {
-        // Check the parameter name
-        auto parameterName = toString(parameter.first);
-        if (parameterName.empty())
+        // Make the payload
+        auto payload = json();
+        for (const auto& parameter : parametersUpdateMessage.getParameters())
         {
-            LOG(ERROR) << "Failed to serialize 'ParametersUpdateMessage' -> One of parameter keys values is invalid.";
-            return nullptr;
-        }
+            // Check the parameter name
+            auto parameterName = toString(parameter.first);
+            if (parameterName.empty())
+            {
+                LOG(ERROR)
+                  << "Failed to serialize 'ParametersUpdateMessage' -> One of parameter keys values is invalid.";
+                return nullptr;
+            }
 
-        // Make the reading out of the value, and check how it can be written in
-        auto reading = Reading{"Parameter", parameter.second};
-        if (reading.isBoolean())
-            payload[parameterName] = reading.getBoolValue();
-        else if (reading.isUInt())
-            payload[parameterName] = reading.getUIntValue();
-        else if (reading.isInt())
-            payload[parameterName] = reading.getIntValue();
-        else if (reading.isDouble())
-            payload[parameterName] = reading.getDoubleValue();
-        else
-            payload[parameterName] = reading.getStringValue();
+            // Make the reading out of the value, and check how it can be written in
+            auto reading = Reading{"Parameter", parameter.second};
+            if (reading.isBoolean())
+                payload[parameterName] = reading.getBoolValue();
+            else if (reading.isUInt())
+                payload[parameterName] = reading.getUIntValue();
+            else if (reading.isInt())
+                payload[parameterName] = reading.getIntValue();
+            else if (reading.isDouble())
+                payload[parameterName] = reading.getDoubleValue();
+            else
+                payload[parameterName] = reading.getStringValue();
+        }
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to serialize 'ParametersUpdateMessage' -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,

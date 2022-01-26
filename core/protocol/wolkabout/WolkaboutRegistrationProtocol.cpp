@@ -181,10 +181,18 @@ std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(cons
     const auto topic = m_outgoingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
                        WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::DEVICE_REMOVAL);
 
-    // Create the payload for the message
-    auto payload = json::array();
-    payload = request.getKeys();
-    return std::unique_ptr<Message>(new Message(payload.dump(), topic));
+    try
+    {
+        // Create the payload for the message
+        auto payload = json::array();
+        payload = request.getKeys();
+        return std::unique_ptr<Message>(new Message(payload.dump(), topic));
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(
@@ -195,12 +203,21 @@ std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(
     // Create the topic for the message
     const auto topic = m_outgoingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
                        WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::REGISTERED_DEVICES_REQUEST);
-    auto payload = json{{"timestampFrom", request.getTimestampFrom().count()}};
-    if (!request.getDeviceType().empty())
-        payload["deviceType"] = request.getDeviceType();
-    if (!request.getExternalId().empty())
-        payload["externalId"] = request.getExternalId();
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+
+    try
+    {
+        auto payload = json{{"timestampFrom", request.getTimestampFrom().count()}};
+        if (!request.getDeviceType().empty())
+            payload["deviceType"] = request.getDeviceType();
+        if (!request.getExternalId().empty())
+            payload["externalId"] = request.getExternalId();
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to generate outbound 'RegisteredDevicesRequest' message -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::string WolkaboutRegistrationProtocol::getResponseChannelForRegisteredDeviceRequest(const std::string& deviceKey)

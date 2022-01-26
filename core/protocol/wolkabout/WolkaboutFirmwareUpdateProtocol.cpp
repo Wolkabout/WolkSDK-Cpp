@@ -80,11 +80,19 @@ std::unique_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FIRMWARE_UPDATE_STATUS);
 
-    // Parse the message into a JSON
-    auto payload = nlohmann::json({{"status", statusString}});
-    if (message.getStatus() == FirmwareUpdateStatus::ERROR)
-        payload["error"] = errorString;
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    try
+    {
+        // Parse the message into a JSON
+        auto payload = nlohmann::json({{"status", statusString}});
+        if (message.getStatus() == FirmwareUpdateStatus::ERROR)
+            payload["error"] = errorString;
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<FirmwareUpdateInstallMessage> WolkaboutFirmwareUpdateProtocol::parseFirmwareUpdateInstall(

@@ -79,14 +79,24 @@ std::unique_ptr<Message> WolkaboutGatewaySubdeviceProtocol::makeOutboundMessage(
     auto subMessageType = getMessageType(message.getMessage());
     if (subMessageType > MessageType::PLATFORM_CONNECTION_STATUS)
     {
-        LOG(ERROR) << "The sub-message has a type that is invalid for a sub-device to send!";
+        LOG(ERROR) << "Failed to generate outbound subdevice message -> The sub-message has a type that is invalid for "
+                      "a subdevice to send!";
         return nullptr;
     }
 
-    // Create the message
-    return std::unique_ptr<Message>{new Message{
-      json{message}.dump(), WolkaboutProtocol::GATEWAY_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
-                              deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(subMessageType)}};
+    try
+    {
+        // Create the message
+        return std::unique_ptr<Message>{
+          new Message{json{message}.dump(), WolkaboutProtocol::GATEWAY_TO_PLATFORM_DIRECTION +
+                                              WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+                                              WolkaboutProtocol::CHANNEL_DELIMITER + toString(subMessageType)}};
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to generate outbound subdevice message -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::vector<GatewaySubdeviceMessage> WolkaboutGatewaySubdeviceProtocol::parseIncomingSubdeviceMessage(
@@ -112,13 +122,21 @@ std::vector<GatewaySubdeviceMessage> WolkaboutGatewaySubdeviceProtocol::parseInc
                                                         WolkaboutProtocol::CHANNEL_DELIMITER + toString(type)});
     };
 
-    // Obtain the payloads
-    auto json = json::parse(message->getContent());
-    if (json.is_object())
-        extractMessage(json);
-    else if (json.is_array())
-        for (const auto& pair : json.items())
-            extractMessage(pair.value());
-    return messages;
+    try
+    {
+        // Obtain the payloads
+        auto json = json::parse(message->getContent());
+        if (json.is_object())
+            extractMessage(json);
+        else if (json.is_array())
+            for (const auto& pair : json.items())
+                extractMessage(pair.value());
+        return messages;
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to parse incoming subdevice message -> '" << exception.what() << "'.";
+        return messages;
+    }
 }
 }    // namespace wolkabout
