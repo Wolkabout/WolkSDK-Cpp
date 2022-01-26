@@ -18,6 +18,7 @@
 
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
+#include "core/utilities/StringUtils.h"
 #include "core/utilities/json.hpp"
 
 using json = nlohmann::json;
@@ -117,9 +118,14 @@ std::vector<GatewaySubdeviceMessage> WolkaboutGatewaySubdeviceProtocol::parseInc
         // Extract necessities to make a message
         auto payload = j["payload"];
         auto deviceKey = j["device"].get<std::string>();
-        messages.emplace_back(Message{payload.dump(), WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION +
-                                                        WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-                                                        WolkaboutProtocol::CHANNEL_DELIMITER + toString(type)});
+
+        // If the payload needs to be transformed, we're going to do it here
+        auto payloadDump = payload.dump();
+        if (type == MessageType::FILE_BINARY_RESPONSE)
+            payloadDump = StringUtils::base64Decode(WolkaboutProtocol::removeQuotes(payloadDump));
+        messages.emplace_back(Message{payloadDump, WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION +
+                                                     WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+                                                     WolkaboutProtocol::CHANNEL_DELIMITER + toString(type)});
     };
 
     try
