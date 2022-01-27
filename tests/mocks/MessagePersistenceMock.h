@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-#ifndef WOLKGATEWAY_OUTBOUNDRETRYMESSAGEHANDLERMOCK_H
-#define WOLKGATEWAY_OUTBOUNDRETRYMESSAGEHANDLERMOCK_H
+#ifndef WOLKGATEWAY_MESSAGEPERSISTENCEMOCK_H
+#define WOLKGATEWAY_MESSAGEPERSISTENCEMOCK_H
 
-#include "core/connectivity/OutboundRetryMessageHandler.h"
+#include "core/persistence/MessagePersistence.h"
 
 #include <gmock/gmock.h>
 
 using namespace wolkabout;
 
-class OutboundRetryMessageHandlerMock : public OutboundRetryMessageHandler
+class MessagePersistenceMock : public MessagePersistence
 {
 public:
-    explicit OutboundRetryMessageHandlerMock(OutboundMessageHandler& messageHandler)
-    : OutboundRetryMessageHandler(messageHandler)
-    {
-    }
-    MOCK_METHOD(void, addMessage, (RetryMessageStruct));
-    MOCK_METHOD(void, messageReceived, (std::shared_ptr<Message>));
+    MOCK_METHOD(bool, push, (std::shared_ptr<Message>));
+    MOCK_METHOD(void, pop, ());
+    MOCK_METHOD(std::shared_ptr<Message>, front, ());
+    MOCK_METHOD(bool, empty, (), (const));
 };
 
-#endif    // WOLKGATEWAY_OUTBOUNDRETRYMESSAGEHANDLERMOCK_H
+#endif    // WOLKGATEWAY_MESSAGEPERSISTENCEMOCK_H
