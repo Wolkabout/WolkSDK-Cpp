@@ -24,8 +24,8 @@
 #undef protected
 
 #include "core/utilities/Logger.h"
-#include "mocks/MessageListenerMock.h"
-#include "mocks/ProtocolMock.h"
+#include "tests/mocks/MessageListenerMock.h"
+#include "tests/mocks/ProtocolMock.h"
 
 #include <gtest/gtest.h>
 
