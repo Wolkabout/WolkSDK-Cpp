@@ -174,7 +174,6 @@ find_package(Threads REQUIRED)
 set(INSTALL_TARGETS)
 set(TESTS_HEADER_FILES)
 set(TESTS_SOURCE_FILES)
-set(FORMAT_FILES)
 
 # Define the version of the library
 set(WOLKSDK_VERSION_MAJOR 3)
@@ -206,7 +205,6 @@ set(UTILITY_HEADER_FILES core/utilities/Buffer.h
         core/utilities/Service.h
         core/utilities/StringUtils.h
         core/utilities/Timer.h)
-set(FORMAT_FILES ${FORMAT_FILES} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
 
 # path for interface files
 file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/utilities PATTERN *.cpp EXCLUDE)
@@ -228,7 +226,6 @@ list(APPEND INSTALL_TARGETS ${PROJECT_NAME}Utility)
 if (BUILD_AWS_LOG_UPLOADER)
     set(ALU_SOURCE_FILES core/log_uploader/AwsLogUploader.cpp)
     set(ALU_HEADER_FILES core/log_uploader/AwsLogUploader.h)
-    set(FORMAT_FILES ${FORMAT_FILES} ${ALU_SOURCE_FILES} ${ALU_HEADER_FILES})
 
     file(COPY core/log_uploader/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/log_uploader PATTERN *.cpp EXCLUDE)
 
@@ -379,7 +376,6 @@ if (BUILD_CONNECTIVITY)
             core/connectivity/InboundMessageHandler.h
             core/MessageListener.h
             core/Types.h)
-    set(FORMAT_FILES ${FORMAT_FILES} ${LIB_SOURCE_FILES} ${LIB_HEADER_FILES})
 
     file(GLOB ROOT_HEADERS core/*.h)
     file(COPY ${ROOT_HEADERS} DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core)
@@ -424,7 +420,6 @@ if (BUILD_CONNECTIVITY)
 endif ()
 
 if (${BUILD_TESTS} AND (NOT ("${TESTS_SOURCE_FILES}" STREQUAL "")))
-    set(FORMAT_FILES ${FORMAT_FILES} ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES})
     add_executable(${PROJECT_NAME}Tests ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES})
     target_link_libraries(${PROJECT_NAME}Tests ${PROJECT_NAME} gtest gmock gtest_main Threads::Threads)
     target_include_directories(${PROJECT_NAME}Tests PRIVATE ${PROJECT_SOURCE_DIR})
@@ -446,7 +441,7 @@ install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/l
 file(GLOB_RECURSE ALL_FILES ${CMAKE_SOURCE_DIR}/**/*.cpp ${CMAKE_SOURCE_DIR}/**/*.h)
 list(FILTER ALL_FILES EXCLUDE REGEX "/out")
 add_custom_target(format
-        COMMAND "clang-format" -i -sort-includes -style=file ${FORMAT_FILES}
+        COMMAND "clang-format" -i -sort-includes -style=file ${ALL_FILES}
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         COMMENT "[Formatting source code]"
         VERBATIM)
