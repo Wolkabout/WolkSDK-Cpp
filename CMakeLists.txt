@@ -445,9 +445,10 @@ install(DIRECTORY ${CMAKE_PREFIX_PATH}/lib/ DESTINATION ${CMAKE_INSTALL_PREFIX}/
 install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # Add the format rule
+file(GLOB_RECURSE ALL_SOURCE_FILES ./**/*.cpp)
+file(GLOB_RECURSE ALL_HEADER_FILES ./**/*.h)
 add_custom_target(format
-        COMMAND "clang-format" -i -sort-includes -style=file ${UTILITY_HEADER_FILES} ${UTILITY_SOURCE_FILES}
-        ${ALU_HEADER_FILES} ${ALU_SOURCE_FILES} ${LIB_HEADER_FILES} ${LIB_SOURCE_FILES} ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES}
+        COMMAND "clang-format" -i -sort-includes -style=file ${ALL_SOURCE_FILES} ${ALL_HEADER_FILES}
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         COMMENT "[Formatting source code]"
         VERBATIM)
