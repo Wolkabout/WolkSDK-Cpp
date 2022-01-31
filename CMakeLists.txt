@@ -443,6 +443,8 @@ install(DIRECTORY ${CMAKE_PREFIX_PATH}/lib/ DESTINATION ${CMAKE_INSTALL_PREFIX}/
 install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # Add the format rule
+file(GLOB_RECURSE ALL_FILES ${CMAKE_SOURCE_DIR}/**/*.cpp ${CMAKE_SOURCE_DIR}/**/*.h)
+list(FILTER ALL_FILES EXCLUDE REGEX "/out")
 add_custom_target(format
         COMMAND "clang-format" -i -sort-includes -style=file ${FORMAT_FILES}
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
