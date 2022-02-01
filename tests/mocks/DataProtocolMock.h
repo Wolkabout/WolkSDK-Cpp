@@ -41,8 +41,11 @@ public:
     MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage, (const std::string&, ParametersUpdateMessage));
     MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage, (const std::string&, ParametersPullMessage));
     MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage, (const std::string&, SynchronizeParametersMessage));
+    MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage,
+                (const std::string&, DetailsSynchronizationRequestMessage));
     MOCK_METHOD(std::shared_ptr<FeedValuesMessage>, parseFeedValues, (std::shared_ptr<Message>));
     MOCK_METHOD(std::shared_ptr<ParametersUpdateMessage>, parseParameters, (std::shared_ptr<Message>));
+    MOCK_METHOD(std::shared_ptr<DetailsSynchronizationResponseMessage>, parseDetails, (std::shared_ptr<Message>));
 };
 
 #endif    // WOLKABOUTCONNECTOR_DATAPROTOCOLMOCK_H

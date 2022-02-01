@@ -17,6 +17,8 @@
 #ifndef WOLKABOUTCORE_REGISTRATIONPROTOCOL_H
 #define WOLKABOUTCORE_REGISTRATIONPROTOCOL_H
 
+#include "core/model/messages/ChildrenSynchronizationRequestMessage.h"
+#include "core/model/messages/ChildrenSynchronizationResponseMessage.h"
 #include "core/model/messages/DeviceRegistrationMessage.h"
 #include "core/model/messages/DeviceRemovalMessage.h"
 #include "core/model/messages/RegisteredDevicesRequestMessage.h"
@@ -53,6 +55,17 @@ public:
                                                          const DeviceRemovalMessage& request) = 0;
 
     /**
+     * This method is a serialization method to create a send-able MQTT message from a
+     * ChildrenSynchronizationRequestMessage.
+     *
+     * @param deviceKey The key of the device sending the request message.
+     * @param request The request itself.
+     * @return A newly generated MQTT message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const ChildrenSynchronizationRequestMessage& request) = 0;
+
+    /**
      * This method is a serialization method to create a send-able MQTT message from a RegisteredDevicesRequestMessage.
      *
      * @param deviceKey The key of the device sending the request message.
@@ -70,6 +83,16 @@ public:
      * @return The response channel on which the message should be listened to.
      */
     virtual std::string getResponseChannelForRegisteredDeviceRequest(const std::string& deviceKey) = 0;
+
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a
+     * ChildrenSynchronizationResponseMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid ChildrenSynchronizationResponse message.
+     * @return A parsed ChildrenSynchronizationResponse message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<ChildrenSynchronizationResponseMessage> parseChildrenSynchronizationResponse(
+      const std::shared_ptr<Message>& message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a RegisteredDevicesResponse.

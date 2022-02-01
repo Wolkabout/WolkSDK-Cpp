@@ -174,6 +174,21 @@ TEST_F(WolkaboutRegistrationProtocolTests, SerializeDeviceRemovalSingle)
     EXPECT_TRUE(std::regex_match(message->getContent(), payloadRegex));
 }
 
+TEST_F(WolkaboutRegistrationProtocolTests, SerializeChildrenSynchronization)
+{
+    // Make place for the payload
+    auto message = std::unique_ptr<Message>{};
+    ASSERT_NO_FATAL_FAILURE(message =
+                              protocol->makeOutboundMessage(DEVICE_KEY, ChildrenSynchronizationRequestMessage{}));
+    ASSERT_NE(message, nullptr);
+    LogMessage(*message);
+
+    // Check both the topic and the payload with some regexes
+    const auto topicRegex = std::regex(R"(g2p\/\w+\/children_synchronization)");
+    EXPECT_TRUE(std::regex_match(message->getChannel(), topicRegex));
+    EXPECT_TRUE(message->getContent().empty());
+}
+
 TEST_F(WolkaboutRegistrationProtocolTests, SerializeRegisteredDevicesRequestNoParams)
 {
     // Make a request with all default values
@@ -211,6 +226,43 @@ TEST_F(WolkaboutRegistrationProtocolTests, SerializeRegisteredDevicesRequestWith
       std::regex(R"(\{"deviceType":"\w+","externalId":"\d+:\d+:\d+:\d+:\d+:\d+","timestampFrom":\d+\})");
     EXPECT_TRUE(std::regex_match(message->getChannel(), topicRegex));
     EXPECT_TRUE(std::regex_match(message->getContent(), payloadRegex));
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeChildrenSynchronizationWrongType)
+{
+    auto message = std::make_shared<Message>("", "p2g/" + DEVICE_KEY + "/ha?");
+    EXPECT_EQ(protocol->parseChildrenSynchronizationResponse(message), nullptr);
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeChildrenSynchronizationNotArray)
+{
+    auto message = std::make_shared<Message>("{}", "p2g/" + DEVICE_KEY + "/children_synchronization");
+    EXPECT_EQ(protocol->parseChildrenSynchronizationResponse(message), nullptr);
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeChildrenSynchronizationNotStrings)
+{
+    auto message = std::make_shared<Message>("[1, 2, 3]", "p2g/" + DEVICE_KEY + "/children_synchronization");
+    EXPECT_EQ(protocol->parseChildrenSynchronizationResponse(message), nullptr);
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeChildrenSynchronizationEmptyStrings)
+{
+    auto message = std::make_shared<Message>(R"([""])", "p2g/" + DEVICE_KEY + "/children_synchronization");
+    EXPECT_EQ(protocol->parseChildrenSynchronizationResponse(message), nullptr);
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeChildrenSynchronizationHappyFlow)
+{
+    auto message =
+      std::make_shared<Message>(R"(["C1", "C2", "C3"])", "p2g/" + DEVICE_KEY + "/children_synchronization");
+    LogMessage(*message);
+
+    auto parsedMessage = std::unique_ptr<ChildrenSynchronizationResponseMessage>{};
+    ASSERT_NO_FATAL_FAILURE(parsedMessage = protocol->parseChildrenSynchronizationResponse(message));
+    ASSERT_NE(parsedMessage, nullptr);
+
+    ASSERT_EQ(parsedMessage->getChildren().size(), 3);
 }
 
 TEST_F(WolkaboutRegistrationProtocolTests, DeserializeRegisteredDevicesNotRightTopic)

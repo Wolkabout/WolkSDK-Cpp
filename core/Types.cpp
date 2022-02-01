@@ -309,6 +309,9 @@ std::string toString(MessageType type)
         return "pull_parameters";
     case MessageType::SYNCHRONIZE_PARAMETERS:
         return "synchronize_parameters";
+    case MessageType::DETAILS_SYNCHRONIZATION_REQUEST:
+    case MessageType::DETAILS_SYNCHRONIZATION_RESPONSE:
+        return "details_synchronization";
     case MessageType::TIME_SYNC:
         return "time";
     case MessageType::FILE_UPLOAD_INIT:
@@ -344,6 +347,9 @@ std::string toString(MessageType type)
         return "device_registration";
     case MessageType::DEVICE_REMOVAL:
         return "device_removal";
+    case MessageType::CHILDREN_SYNCHRONIZATION_REQUEST:
+    case MessageType::CHILDREN_SYNCHRONIZATION_RESPONSE:
+        return "children_synchronization";
     case MessageType::REGISTERED_DEVICES_REQUEST:
     case MessageType::REGISTERED_DEVICES_RESPONSE:
         return "registered_devices";
@@ -374,6 +380,8 @@ MessageType messageTypeFromString(const std::string& type)
         return MessageType::PULL_PARAMETERS;
     if (type == "synchronize_parameters")
         return MessageType::SYNCHRONIZE_PARAMETERS;
+    if (type == "details_synchronization")
+        return MessageType::DETAILS_SYNCHRONIZATION_RESPONSE;
     if (type == "time")
         return MessageType::TIME_SYNC;
     if (type == "file_upload_initiate")
@@ -408,6 +416,8 @@ MessageType messageTypeFromString(const std::string& type)
         return MessageType::DEVICE_REGISTRATION;
     if (type == "device_removal")
         return MessageType::DEVICE_REMOVAL;
+    if (type == "children_synchronization")
+        return MessageType::CHILDREN_SYNCHRONIZATION_RESPONSE;
     if (type == "registered_devices")
         return MessageType::REGISTERED_DEVICES_RESPONSE;
     if (type == "connection_status")

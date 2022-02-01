@@ -86,6 +86,12 @@ TEST_F(WolkaboutDataProtocolTests, GetMessageType)
     EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/parameters"}), MessageType::PARAMETER_SYNC);
 }
 
+TEST_F(WolkaboutDataProtocolTests, GetDeviceType)
+{
+    // Test with a simple example
+    EXPECT_EQ(protocol->getDeviceType({"", "p2d/" + DEVICE_KEY + "/parameters"}), DeviceType::STANDALONE);
+}
+
 TEST_F(WolkaboutDataProtocolTests, SerializeFeedRegistrationSingle)
 {
     // Make a single feed that needs to be registered
@@ -381,6 +387,21 @@ TEST_F(WolkaboutDataProtocolTests, SerializeSynchronizeParametersInvalidParamete
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, synchronize), nullptr);
 }
 
+TEST_F(WolkaboutDataProtocolTests, SerializeDetailsSynchronization)
+{
+    // Make place for the payload
+    auto message = std::unique_ptr<wolkabout::Message>{};
+    ASSERT_NO_FATAL_FAILURE(message =
+                              protocol->makeOutboundMessage(DEVICE_KEY, DetailsSynchronizationRequestMessage{}));
+    ASSERT_NE(message, nullptr);
+    LogMessage(*message);
+
+    // Analyze both the topic and the content by regex
+    const auto topicRegex = std::regex(R"(d2p\/\w+\/details_synchronization)");
+    EXPECT_TRUE(std::regex_match(message->getChannel(), topicRegex));
+    EXPECT_TRUE(message->getContent().empty());
+}
+
 TEST_F(WolkaboutDataProtocolTests, DeserializeFeedValuesNotArray)
 {
     // Make the invalid payload
@@ -587,4 +608,54 @@ TEST_F(WolkaboutDataProtocolTests, DeserializeParametersSingle)
     const auto& parameter = parameters.front();
     ASSERT_EQ(parameter.first, ParameterName::FIRMWARE_UPDATE_CHECK_TIME);
     ASSERT_EQ(std::stoull(parameter.second), 21600);
+}
+
+TEST_F(WolkaboutDataProtocolTests, DeserializeDetailsSynchronizationWrongTopic)
+{
+    auto message = std::make_shared<wolkabout::Message>("", "p2d/" + DEVICE_KEY + "/ha?");
+    LogMessage(*message);
+    ASSERT_EQ(protocol->parseDetails(message), nullptr);
+}
+
+TEST_F(WolkaboutDataProtocolTests, DeserializeDetailsSynchronizationNotObject)
+{
+    auto message = std::make_shared<wolkabout::Message>("[]", "p2d/" + DEVICE_KEY + "/details_synchronization");
+    LogMessage(*message);
+    ASSERT_EQ(protocol->parseDetails(message), nullptr);
+}
+
+TEST_F(WolkaboutDataProtocolTests, DeserializeDetailsSynchronizationNoRequiredField)
+{
+    auto message =
+      std::make_shared<wolkabout::Message>(R"({"feeds": []})", "p2d/" + DEVICE_KEY + "/details_synchronization");
+    LogMessage(*message);
+    ASSERT_EQ(protocol->parseDetails(message), nullptr);
+}
+
+TEST_F(WolkaboutDataProtocolTests, DeserializeDetailsSynchronizationFeedsEmptyStrings)
+{
+    auto message = std::make_shared<wolkabout::Message>(R"({"feeds": [""], "attributes": [""]})",
+                                                        "p2d/" + DEVICE_KEY + "/details_synchronization");
+    LogMessage(*message);
+    ASSERT_EQ(protocol->parseDetails(message), nullptr);
+}
+
+TEST_F(WolkaboutDataProtocolTests, DeserializeDetailsSynchronizationAttributesEmptyStrings)
+{
+    auto message = std::make_shared<wolkabout::Message>(R"({"feeds": ["F1", "F2"], "attributes": [""]})",
+                                                        "p2d/" + DEVICE_KEY + "/details_synchronization");
+    LogMessage(*message);
+    ASSERT_EQ(protocol->parseDetails(message), nullptr);
+}
+
+TEST_F(WolkaboutDataProtocolTests, DeserializeDetailsSynchronizationHappyFlow)
+{
+    auto message = std::make_shared<wolkabout::Message>(R"({"feeds": ["F1", "F2"], "attributes": ["A1"]})",
+                                                        "p2d/" + DEVICE_KEY + "/details_synchronization");
+    LogMessage(*message);
+    auto parsedMessage = std::shared_ptr<DetailsSynchronizationResponseMessage>{};
+    ASSERT_NO_FATAL_FAILURE(parsedMessage = protocol->parseDetails(message));
+    ASSERT_NE(parsedMessage, nullptr);
+    ASSERT_EQ(parsedMessage->getFeeds().size(), 2);
+    ASSERT_EQ(parsedMessage->getAttributes().size(), 1);
 }

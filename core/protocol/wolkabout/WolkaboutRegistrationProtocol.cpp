@@ -196,6 +196,17 @@ std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(cons
 }
 
 std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(
+  const std::string& deviceKey, const ChildrenSynchronizationRequestMessage& request)
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    // Create the topic for the message
+    const auto topic = m_outgoingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+                       WolkaboutProtocol::CHANNEL_DELIMITER + toString(request.getMessageType());
+    return std::unique_ptr<Message>(new Message{"", topic});
+}
+
+std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(
   const std::string& deviceKey, const RegisteredDevicesRequestMessage& request)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -216,6 +227,45 @@ std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(
     catch (const std::exception& exception)
     {
         LOG(ERROR) << "Failed to generate outbound 'RegisteredDevicesRequest' message -> '" << exception.what() << "'.";
+        return nullptr;
+    }
+}
+
+std::unique_ptr<ChildrenSynchronizationResponseMessage>
+WolkaboutRegistrationProtocol::parseChildrenSynchronizationResponse(const std::shared_ptr<Message>& message)
+{
+    LOG(TRACE) << METHOD_INFO;
+    const auto errorPrefix = "Failed to parse 'ChildrenSynchronizationResponse' message";
+
+    // Check that the message is a RegisteredDeviceResponse message.
+    auto type = getMessageType(*message);
+    if (type != MessageType::CHILDREN_SYNCHRONIZATION_RESPONSE)
+    {
+        LOG(ERROR) << errorPrefix << " -> The message is not a 'ChildrenSynchronizationResponse' message.";
+        return nullptr;
+    }
+
+    try
+    {
+        // Parse the information
+        auto j = json::parse(message->getContent());
+        if (!j.is_array())
+        {
+            LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON object.";
+            return nullptr;
+        }
+        auto children = j.get<std::vector<std::string>>();
+        if (std::any_of(children.cbegin(), children.cend(), [](const std::string& value) { return value.empty(); }))
+        {
+            LOG(ERROR) << errorPrefix << " -> The payload contains an empty children name string.";
+            return nullptr;
+        }
+        return std::unique_ptr<ChildrenSynchronizationResponseMessage>(
+          new ChildrenSynchronizationResponseMessage{children});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
         return nullptr;
     }
 }

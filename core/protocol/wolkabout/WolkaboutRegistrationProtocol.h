@@ -43,7 +43,13 @@ public:
                                                  const DeviceRemovalMessage& request) override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const ChildrenSynchronizationRequestMessage& request) override;
+
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  const RegisteredDevicesRequestMessage& request) override;
+
+    std::unique_ptr<ChildrenSynchronizationResponseMessage> parseChildrenSynchronizationResponse(
+      const std::shared_ptr<Message>& message) override;
 
     std::string getResponseChannelForRegisteredDeviceRequest(const std::string& deviceKey) override;
 

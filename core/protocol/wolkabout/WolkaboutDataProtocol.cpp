@@ -418,6 +418,18 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
     return std::unique_ptr<Message>(new Message{payload.dump(), topic});
 }
 
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
+  const std::string& deviceKey, DetailsSynchronizationRequestMessage detailsSynchronizationRequestMessage)
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    // Create the topic
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       toString(detailsSynchronizationRequestMessage.getMessageType());
+    return std::unique_ptr<Message>(new Message{"", topic});
+}
+
 std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -448,6 +460,50 @@ std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(
     catch (const std::exception& exception)
     {
         LOG(ERROR) << "Failed to deserialize 'Parameters' message -> '" << exception.what() << "'.";
+        return nullptr;
+    }
+}
+
+std::shared_ptr<DetailsSynchronizationResponseMessage> WolkaboutDataProtocol::parseDetails(
+  std::shared_ptr<Message> message)
+{
+    LOG(TRACE) << METHOD_INFO;
+    const auto errorPrefix = "Failed to parse 'DetailsSynchronizationResponse' message -> ";
+
+    // Check that the message is a DetailsSynchronizationResponse message.
+    auto type = getMessageType(*message);
+    if (type != MessageType::DETAILS_SYNCHRONIZATION_RESPONSE)
+    {
+        LOG(ERROR) << errorPrefix << " -> The message is not a 'DetailsSynchronizationResponse' message.";
+        return nullptr;
+    }
+
+    try
+    {
+        // Parse the information
+        auto j = json::parse(message->getContent());
+        if (!j.is_object())
+        {
+            LOG(ERROR) << errorPrefix << " -> The payload is not a JSON object.";
+            return nullptr;
+        }
+        auto feeds = j["feeds"].get<std::vector<std::string>>();
+        if (std::any_of(feeds.cbegin(), feeds.cend(), [](const std::string& value) { return value.empty(); }))
+        {
+            LOG(ERROR) << errorPrefix << " -> The feeds array contains an empty string.";
+            return nullptr;
+        }
+        auto attributes = j["attributes"].get<std::vector<std::string>>();
+        if (std::any_of(attributes.cbegin(), attributes.cend(), [](const std::string& value) { return value.empty(); }))
+        {
+            LOG(ERROR) << errorPrefix << " -> The attributes array contains an empty string.";
+            return nullptr;
+        }
+        return std::make_shared<DetailsSynchronizationResponseMessage>(feeds, attributes);
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
         return nullptr;
     }
 }

@@ -36,8 +36,12 @@ public:
     MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage, (const std::string&, const DeviceRegistrationMessage&));
     MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage, (const std::string&, const DeviceRemovalMessage&));
     MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage,
+                (const std::string&, const ChildrenSynchronizationRequestMessage&));
+    MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage,
                 (const std::string&, const RegisteredDevicesRequestMessage&));
     MOCK_METHOD(std::string, getResponseChannelForRegisteredDeviceRequest, (const std::string&));
+    MOCK_METHOD(std::unique_ptr<ChildrenSynchronizationResponseMessage>, parseChildrenSynchronizationResponse,
+                (const std::shared_ptr<Message>&));
     MOCK_METHOD(std::unique_ptr<RegisteredDevicesResponseMessage>, parseRegisteredDevicesResponse,
                 (const std::shared_ptr<Message>&));
 };

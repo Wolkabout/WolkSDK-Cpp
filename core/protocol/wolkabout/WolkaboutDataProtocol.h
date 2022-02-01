@@ -66,9 +66,14 @@ public:
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  SynchronizeParametersMessage synchronizeParametersMessage) override;
 
+    std::unique_ptr<Message> makeOutboundMessage(
+      const std::string& deviceKey, DetailsSynchronizationRequestMessage detailsSynchronizationRequestMessage) override;
+
     std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) override;
 
     std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) override;
+
+    std::shared_ptr<DetailsSynchronizationResponseMessage> parseDetails(std::shared_ptr<Message> message) override;
 };
 }    // namespace wolkabout
 #endif    // WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H

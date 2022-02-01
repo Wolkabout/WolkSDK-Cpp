@@ -255,6 +255,10 @@ if (BUILD_CONNECTIVITY)
             core/model/Message.cpp
             core/model/Reading.cpp
             core/model/messages/AttributeRegistrationMessage.cpp
+            core/model/messages/ChildrenSynchronizationRequestMessage.cpp
+            core/model/messages/ChildrenSynchronizationResponseMessage.cpp
+            core/model/messages/DetailsSynchronizationRequestMessage.cpp
+            core/model/messages/DetailsSynchronizationResponseMessage.cpp
             core/model/messages/DeviceRegistrationMessage.cpp
             core/model/messages/DeviceRemovalMessage.cpp
             core/model/messages/ErrorMessage.cpp
@@ -316,6 +320,10 @@ if (BUILD_CONNECTIVITY)
             core/model/Message.h
             core/model/Reading.h
             core/model/messages/AttributeRegistrationMessage.h
+            core/model/messages/ChildrenSynchronizationRequestMessage.h
+            core/model/messages/ChildrenSynchronizationResponseMessage.h
+            core/model/messages/DetailsSynchronizationRequestMessage.h
+            core/model/messages/DetailsSynchronizationResponseMessage.h
             core/model/messages/DeviceRegistrationMessage.h
             core/model/messages/DeviceRemovalMessage.h
             core/model/messages/ErrorMessage.h

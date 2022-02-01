@@ -18,6 +18,8 @@
 #define DATAPROTOCOL_H
 
 #include "core/model/messages/AttributeRegistrationMessage.h"
+#include "core/model/messages/DetailsSynchronizationRequestMessage.h"
+#include "core/model/messages/DetailsSynchronizationResponseMessage.h"
 #include "core/model/messages/FeedRegistrationMessage.h"
 #include "core/model/messages/FeedRemovalMessage.h"
 #include "core/model/messages/FeedValuesMessage.h"
@@ -122,6 +124,17 @@ public:
                                                          SynchronizeParametersMessage synchronizeParametersMessage) = 0;
 
     /**
+     * This method is a serialization method to create a send-able MQTT message from
+     * DetailsSynchronizationRequestMessage.
+     *
+     * @param deviceKey The device key for which the DetailsSynchronizationRequestMessage is regarding.
+     * @param detailsSynchronizationRequestMessage The request message requesting details.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<Message> makeOutboundMessage(
+      const std::string& deviceKey, DetailsSynchronizationRequestMessage detailsSynchronizationRequestMessage) = 0;
+
+    /**
      * This method is a deserialization method used to parse a MQTT message into a FeedValuesMessage.
      *
      * @param message The received MQTT message that is potentially a valid FeedValuesMessage.
@@ -136,6 +149,15 @@ public:
      * @return A parsed ParametersUpdateMessage. `nullptr` if an error has occurred.
      */
     virtual std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) = 0;
+
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a
+     * DetailsSynchronizationResponseMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid DetailsSynchronizationResponseMessage.
+     * @return A parsed DetailsSynchronizationResponseMessage. `nullptr` if an error has occurred.
+     */
+    virtual std::shared_ptr<DetailsSynchronizationResponseMessage> parseDetails(std::shared_ptr<Message> message) = 0;
 };
 }    // namespace wolkabout
 
