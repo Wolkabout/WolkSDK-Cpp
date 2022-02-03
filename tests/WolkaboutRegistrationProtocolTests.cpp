@@ -61,6 +61,8 @@ TEST_F(WolkaboutRegistrationProtocolTests, GetInboundChannelsForDevice)
     ASSERT_FALSE(channels.empty());
 
     // Analyze the channels
+    EXPECT_TRUE(std::find(channels.cbegin(), channels.cend(), "p2g/" + DEVICE_KEY + "/children_synchronization") !=
+                channels.cend());
     EXPECT_TRUE(std::find(channels.cbegin(), channels.cend(), "p2g/" + DEVICE_KEY + "/registered_devices") !=
                 channels.cend());
 }

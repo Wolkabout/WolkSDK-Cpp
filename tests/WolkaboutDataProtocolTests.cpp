@@ -72,6 +72,8 @@ TEST_F(WolkaboutDataProtocolTests, GetInboundChannelsForDevice)
     // Analyze the channels
     EXPECT_TRUE(std::find(channels.cbegin(), channels.cend(), "p2d/" + DEVICE_KEY + "/parameters") != channels.cend());
     EXPECT_TRUE(std::find(channels.cbegin(), channels.cend(), "p2d/" + DEVICE_KEY + "/feed_values") != channels.cend());
+    EXPECT_TRUE(std::find(channels.cbegin(), channels.cend(), "p2d/" + DEVICE_KEY + "/details_synchronization") !=
+                channels.cend());
 }
 
 TEST_F(WolkaboutDataProtocolTests, ExtractDeviceKeyFromChannel)

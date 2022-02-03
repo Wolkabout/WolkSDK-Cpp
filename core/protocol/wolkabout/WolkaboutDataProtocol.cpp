@@ -154,7 +154,9 @@ std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(cons
     return {WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
               WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC),
             WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES)};
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES),
+            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::DETAILS_SYNCHRONIZATION_RESPONSE)};
 }
 
 std::string WolkaboutDataProtocol::getDeviceKey(const Message& message) const

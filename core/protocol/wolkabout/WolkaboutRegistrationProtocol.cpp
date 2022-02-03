@@ -104,7 +104,9 @@ std::vector<std::string> WolkaboutRegistrationProtocol::getInboundChannels() con
 std::vector<std::string> WolkaboutRegistrationProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
     return {m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-            WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::REGISTERED_DEVICES_RESPONSE)};
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::CHILDREN_SYNCHRONIZATION_RESPONSE),
+            m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::REGISTERED_DEVICES_RESPONSE)};
 }
 
 MessageType WolkaboutRegistrationProtocol::getMessageType(const Message& message)
