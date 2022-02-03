@@ -71,6 +71,12 @@ std::string WolkaboutGatewaySubdeviceProtocol::getDeviceKey(const Message& messa
     return WolkaboutProtocol::getDeviceKey(message);
 }
 
+std::string WolkaboutGatewaySubdeviceProtocol::getResponseChannelForMessage(MessageType /* type */,
+                                                                            const std::string& /* deviceKey */) const
+{
+    return {};
+}
+
 std::unique_ptr<Message> WolkaboutGatewaySubdeviceProtocol::makeOutboundMessage(const std::string& deviceKey,
                                                                                 const GatewaySubdeviceMessage& message)
 {

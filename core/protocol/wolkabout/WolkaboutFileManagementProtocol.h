@@ -34,6 +34,8 @@ public:
 
     MessageType getMessageType(const Message& message) override;
 
+    std::string getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const override;
+
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  const FileUploadStatusMessage& message) override;
 

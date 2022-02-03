@@ -32,6 +32,7 @@ public:
     MOCK_METHOD(MessageType, getMessageType, (const Message&));
     MOCK_METHOD(DeviceType, getDeviceType, (const Message&));
     MOCK_METHOD(std::string, getDeviceKey, (const Message&), (const));
+    MOCK_METHOD(std::string, getResponseChannelForMessage, (MessageType, const std::string&), (const));
     // ErrorProtocol methods
     MOCK_METHOD(std::unique_ptr<ErrorMessage>, parseError, (const std::shared_ptr<Message>&));
 };

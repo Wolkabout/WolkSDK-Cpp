@@ -40,20 +40,23 @@ std::vector<std::string> WolkaboutFirmwareUpdateProtocol::getInboundChannelsForD
 
 MessageType WolkaboutFirmwareUpdateProtocol::getMessageType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
 DeviceType WolkaboutFirmwareUpdateProtocol::getDeviceType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceType(message);
 }
 
 std::string WolkaboutFirmwareUpdateProtocol::getDeviceKey(const Message& message) const
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceKey(message);
+}
+
+std::string WolkaboutFirmwareUpdateProtocol::getResponseChannelForMessage(MessageType /* type */,
+                                                                          const std::string& /* deviceKey */) const
+{
+    return {};
 }
 
 std::unique_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(

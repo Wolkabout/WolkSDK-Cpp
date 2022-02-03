@@ -46,6 +46,12 @@ std::string WolkaboutGatewayPlatformStatusProtocol::getDeviceKey(const Message& 
     return WolkaboutProtocol::getDeviceKey(message);
 }
 
+std::string WolkaboutGatewayPlatformStatusProtocol::getResponseChannelForMessage(MessageType type,
+                                                                                 const std::string& deviceKey) const
+{
+    return {};
+}
+
 std::unique_ptr<Message> WolkaboutGatewayPlatformStatusProtocol::makeOutboundMessage(
   const std::string& /** deviceKey */, const PlatformStatusMessage& message)
 {

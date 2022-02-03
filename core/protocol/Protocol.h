@@ -59,6 +59,18 @@ public:
     virtual std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const = 0;
 
     /**
+     * This method can be overridden to provide information on a response channel that should be listened to for a
+     * certain MessageType - if the MessageType has a response channel.
+     *
+     * @param type The type of the message for which a response channel is requested.
+     * @param deviceKey The device key that should be included in the response channel, if the response channel needs
+     * it.
+     * @return The response channel for the message type. Can be empty if the message type does not have a response
+     * channel.
+     */
+    virtual std::string getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const = 0;
+
+    /**
      * This method can be overridden to define the routine used to figure out the type of the received message.
      * The entire message gets passed through, so both the MQTT topic and the content of the message can be used to
      * determine that.

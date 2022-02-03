@@ -40,20 +40,23 @@ std::vector<std::string> WolkaboutErrorProtocol::getInboundChannelsForDevice(con
 
 MessageType WolkaboutErrorProtocol::getMessageType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
 DeviceType WolkaboutErrorProtocol::getDeviceType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceType(message);
 }
 
 std::string WolkaboutErrorProtocol::getDeviceKey(const Message& message) const
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceKey(message);
+}
+
+std::string WolkaboutErrorProtocol::getResponseChannelForMessage(MessageType /* type */,
+                                                                 const std::string& /* deviceKey */) const
+{
+    return {};
 }
 
 std::unique_ptr<ErrorMessage> WolkaboutErrorProtocol::parseError(const std::shared_ptr<Message>& message)

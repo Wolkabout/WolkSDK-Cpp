@@ -31,6 +31,7 @@ public:
     MOCK_METHOD(MessageType, getMessageType, (const Message&));
     MOCK_METHOD(DeviceType, getDeviceType, (const Message&));
     MOCK_METHOD(std::string, getDeviceKey, (const Message&), (const));
+    MOCK_METHOD(std::string, getResponseChannelForMessage, (MessageType, const std::string&), (const));
 };
 
 #endif    // WOLKABOUTCONNECTOR_PROTOCOLMOCK_H

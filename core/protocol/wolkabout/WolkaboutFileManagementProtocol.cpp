@@ -52,20 +52,23 @@ std::vector<std::string> WolkaboutFileManagementProtocol::getInboundChannelsForD
 
 std::string WolkaboutFileManagementProtocol::getDeviceKey(const Message& message) const
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceKey(message);
 }
 
 DeviceType WolkaboutFileManagementProtocol::getDeviceType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceType(message);
 }
 
 MessageType WolkaboutFileManagementProtocol::getMessageType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
+}
+
+std::string WolkaboutFileManagementProtocol::getResponseChannelForMessage(MessageType /* type */,
+                                                                          const std::string& /* deviceKey */) const
+{
+    return {};
 }
 
 std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(const std::string& deviceKey,

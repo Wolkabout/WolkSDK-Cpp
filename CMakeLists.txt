@@ -416,8 +416,15 @@ if (BUILD_CONNECTIVITY)
             tests/mocks/DataProtocolMock.h
             tests/mocks/ErrorProtocolMock.h
             tests/mocks/FileManagementProtocolMock.h
+            tests/mocks/FirmwareUpdateProtocolMock.h
+            tests/mocks/GatewayPlatformStatusProtocolMock.h
+            tests/mocks/GatewayRegistrationProtocolMock.h
+            tests/mocks/GatewaySubdeviceProtocolMock.h
             tests/mocks/InboundMessageHandlerMock.h
             tests/mocks/MessageListenerMock.h
+            tests/mocks/MessagePersistenceMock.h
+            tests/mocks/OutboundMessageHandlerMock.h
+            tests/mocks/OutboundRetryMessageHandlerMock.h
             tests/mocks/PahoMqttClientMock.h
             tests/mocks/PersistenceMock.h
             tests/mocks/PlatformStatusProtocolMock.h

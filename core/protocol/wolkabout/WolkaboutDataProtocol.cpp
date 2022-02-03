@@ -151,30 +151,38 @@ std::vector<std::string> WolkaboutDataProtocol::getInboundChannels() const
 
 std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    return {WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC),
-            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES),
-            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::DETAILS_SYNCHRONIZATION_RESPONSE)};
+    return {getFeedTopic(deviceKey), getParametersTopic(deviceKey), getDetailsSynchronizationTopic(deviceKey)};
 }
 
 std::string WolkaboutDataProtocol::getDeviceKey(const Message& message) const
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceKey(message);
 }
 
 DeviceType WolkaboutDataProtocol::getDeviceType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceType(message);
 }
 
 MessageType WolkaboutDataProtocol::getMessageType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
+}
+
+std::string WolkaboutDataProtocol::getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const
+{
+    switch (type)
+    {
+    case MessageType::PULL_FEED_VALUES:
+        return getFeedTopic(deviceKey);
+    case MessageType::PULL_PARAMETERS:
+    case MessageType::SYNCHRONIZE_PARAMETERS:
+        return getParametersTopic(deviceKey);
+    case MessageType::DETAILS_SYNCHRONIZATION_REQUEST:
+        return getDetailsSynchronizationTopic(deviceKey);
+    default:
+        return "";
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -508,5 +516,23 @@ std::shared_ptr<DetailsSynchronizationResponseMessage> WolkaboutDataProtocol::pa
         LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
         return nullptr;
     }
+}
+
+std::string WolkaboutDataProtocol::getFeedTopic(const std::string& deviceKey)
+{
+    return WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC);
+}
+
+std::string WolkaboutDataProtocol::getParametersTopic(const std::string& deviceKey)
+{
+    return WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES);
+}
+
+std::string WolkaboutDataProtocol::getDetailsSynchronizationTopic(const std::string& deviceKey)
+{
+    return WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::DETAILS_SYNCHRONIZATION_RESPONSE);
 }
 }    // namespace wolkabout

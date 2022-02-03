@@ -42,6 +42,8 @@ public:
 
     MessageType getMessageType(const Message& message) override;
 
+    std::string getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const override;
+
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  FeedRegistrationMessage feedRegistrationMessage) override;
 
@@ -74,6 +76,13 @@ public:
     std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) override;
 
     std::shared_ptr<DetailsSynchronizationResponseMessage> parseDetails(std::shared_ptr<Message> message) override;
+
+private:
+    static std::string getFeedTopic(const std::string& deviceKey);
+
+    static std::string getParametersTopic(const std::string& deviceKey);
+
+    static std::string getDetailsSynchronizationTopic(const std::string& deviceKey);
 };
 }    // namespace wolkabout
 #endif    // WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H

@@ -161,6 +161,12 @@ std::string WolkaboutGatewayRegistrationProtocol::getDeviceKey(const Message& me
     return WolkaboutProtocol::getDeviceKey(message);
 }
 
+std::string WolkaboutGatewayRegistrationProtocol::getResponseChannelForMessage(MessageType /* type */,
+                                                                               const std::string& /* deviceKey */) const
+{
+    return {};
+}
+
 std::unique_ptr<Message> WolkaboutGatewayRegistrationProtocol::makeOutboundMessage(
   const std::string& deviceKey, const RegisteredDevicesResponseMessage& message)
 {

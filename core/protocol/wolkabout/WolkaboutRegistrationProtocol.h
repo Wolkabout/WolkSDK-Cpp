@@ -36,6 +36,8 @@ public:
 
     std::string getDeviceKey(const Message& message) const override;
 
+    std::string getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const override;
+
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  const DeviceRegistrationMessage& request) override;
 
@@ -51,12 +53,14 @@ public:
     std::unique_ptr<ChildrenSynchronizationResponseMessage> parseChildrenSynchronizationResponse(
       const std::shared_ptr<Message>& message) override;
 
-    std::string getResponseChannelForRegisteredDeviceRequest(const std::string& deviceKey) override;
-
     std::unique_ptr<RegisteredDevicesResponseMessage> parseRegisteredDevicesResponse(
       const std::shared_ptr<Message>& message) override;
 
 private:
+    std::string getChildrenSynchronizationTopic(const std::string& deviceKey) const;
+
+    std::string getRegisteredDevicesTopic(const std::string& deviceKey) const;
+
     std::string m_outgoingDirection;
     std::string m_incomingDirection;
 };

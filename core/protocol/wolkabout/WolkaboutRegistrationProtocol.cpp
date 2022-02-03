@@ -103,28 +103,36 @@ std::vector<std::string> WolkaboutRegistrationProtocol::getInboundChannels() con
 
 std::vector<std::string> WolkaboutRegistrationProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    return {m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::CHILDREN_SYNCHRONIZATION_RESPONSE),
-            m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::REGISTERED_DEVICES_RESPONSE)};
+    return {getChildrenSynchronizationTopic(deviceKey), getRegisteredDevicesTopic(deviceKey)};
 }
 
 MessageType WolkaboutRegistrationProtocol::getMessageType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
 DeviceType WolkaboutRegistrationProtocol::getDeviceType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceType(message);
 }
 
 std::string WolkaboutRegistrationProtocol::getDeviceKey(const Message& message) const
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceKey(message);
+}
+
+std::string WolkaboutRegistrationProtocol::getResponseChannelForMessage(MessageType type,
+                                                                        const std::string& deviceKey) const
+{
+    switch (type)
+    {
+    case MessageType::CHILDREN_SYNCHRONIZATION_REQUEST:
+        return getChildrenSynchronizationTopic(deviceKey);
+    case MessageType::REGISTERED_DEVICES_REQUEST:
+        return getRegisteredDevicesTopic(deviceKey);
+    default:
+        return "";
+    }
 }
 
 std::unique_ptr<Message> WolkaboutRegistrationProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -272,12 +280,6 @@ WolkaboutRegistrationProtocol::parseChildrenSynchronizationResponse(const std::s
     }
 }
 
-std::string WolkaboutRegistrationProtocol::getResponseChannelForRegisteredDeviceRequest(const std::string& deviceKey)
-{
-    return m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::REGISTERED_DEVICES_RESPONSE);
-}
-
 std::unique_ptr<RegisteredDevicesResponseMessage> WolkaboutRegistrationProtocol::parseRegisteredDevicesResponse(
   const std::shared_ptr<Message>& message)
 {
@@ -322,5 +324,17 @@ std::unique_ptr<RegisteredDevicesResponseMessage> WolkaboutRegistrationProtocol:
         LOG(ERROR) << errorPrefix << " -> An exception was thrown '" << exception.what() << "'.";
         return nullptr;
     }
+}
+
+std::string WolkaboutRegistrationProtocol::getChildrenSynchronizationTopic(const std::string& deviceKey) const
+{
+    return m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::CHILDREN_SYNCHRONIZATION_RESPONSE);
+}
+
+std::string WolkaboutRegistrationProtocol::getRegisteredDevicesTopic(const std::string& deviceKey) const
+{
+    return m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::REGISTERED_DEVICES_RESPONSE);
 }
 }    // namespace wolkabout

@@ -34,6 +34,8 @@ public:
 
     std::string getDeviceKey(const Message& message) const override;
 
+    std::string getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const override;
+
     std::unique_ptr<PlatformStatusMessage> parsePlatformStatusMessage(const std::shared_ptr<Message>& message) override;
 };
 }    // namespace wolkabout

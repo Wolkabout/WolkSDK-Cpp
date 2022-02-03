@@ -32,6 +32,7 @@ public:
     MOCK_METHOD(MessageType, getMessageType, (const Message&));
     MOCK_METHOD(DeviceType, getDeviceType, (const Message&));
     MOCK_METHOD(std::string, getDeviceKey, (const Message&), (const));
+    MOCK_METHOD(std::string, getResponseChannelForMessage, (MessageType, const std::string&), (const));
     // GatewaySubdeviceProtocol methods
     MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage, (const std::string&, const GatewaySubdeviceMessage&));
     MOCK_METHOD(std::vector<GatewaySubdeviceMessage>, parseIncomingSubdeviceMessage, (std::shared_ptr<Message>));

@@ -35,20 +35,23 @@ std::vector<std::string> WolkaboutPlatformStatusProtocol::getInboundChannelsForD
 
 MessageType WolkaboutPlatformStatusProtocol::getMessageType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
 DeviceType WolkaboutPlatformStatusProtocol::getDeviceType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceType(message);
 }
 
 std::string WolkaboutPlatformStatusProtocol::getDeviceKey(const Message& message) const
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getDeviceKey(message);
+}
+
+std::string WolkaboutPlatformStatusProtocol::getResponseChannelForMessage(MessageType /* type */,
+                                                                          const std::string& /* deviceKey */) const
+{
+    return {};
 }
 
 std::unique_ptr<PlatformStatusMessage> WolkaboutPlatformStatusProtocol::parsePlatformStatusMessage(
