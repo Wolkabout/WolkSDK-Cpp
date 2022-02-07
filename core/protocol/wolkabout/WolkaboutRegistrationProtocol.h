@@ -53,6 +53,9 @@ public:
     std::unique_ptr<ChildrenSynchronizationResponseMessage> parseChildrenSynchronizationResponse(
       const std::shared_ptr<Message>& message) override;
 
+    std::unique_ptr<DeviceRegistrationResponseMessage> parseDeviceRegistrationResponse(
+      const std::shared_ptr<Message>& message) override;
+
     std::unique_ptr<RegisteredDevicesResponseMessage> parseRegisteredDevicesResponse(
       const std::shared_ptr<Message>& message) override;
 

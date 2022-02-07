@@ -35,6 +35,8 @@ public:
     MOCK_METHOD(std::string, getResponseChannelForMessage, (MessageType, const std::string&), (const));
     // GatewayRegistrationProtocol methods
     MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage,
+                (const std::string&, const DeviceRegistrationResponseMessage&));
+    MOCK_METHOD(std::unique_ptr<Message>, makeOutboundMessage,
                 (const std::string&, const RegisteredDevicesResponseMessage&));
     MOCK_METHOD(std::unique_ptr<DeviceRegistrationMessage>, parseDeviceRegistrationMessage,
                 (const std::shared_ptr<Message>&));

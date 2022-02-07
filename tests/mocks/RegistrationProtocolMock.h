@@ -42,6 +42,8 @@ public:
                 (const std::string&, const RegisteredDevicesRequestMessage&));
     MOCK_METHOD(std::unique_ptr<ChildrenSynchronizationResponseMessage>, parseChildrenSynchronizationResponse,
                 (const std::shared_ptr<Message>&));
+    MOCK_METHOD(std::unique_ptr<DeviceRegistrationResponseMessage>, parseDeviceRegistrationResponse,
+                (const std::shared_ptr<Message>&));
     MOCK_METHOD(std::unique_ptr<RegisteredDevicesResponseMessage>, parseRegisteredDevicesResponse,
                 (const std::shared_ptr<Message>&));
 };

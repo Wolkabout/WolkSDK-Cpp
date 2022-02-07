@@ -85,6 +85,24 @@ TEST_F(WolkaboutGatewayRegistrationProtocolTests, GetMessageType)
     EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/error"}), MessageType::ERROR);
 }
 
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseOutgoingDeviceRegistrationResponseMessage)
+{
+    // Make the message
+    auto response = DeviceRegistrationResponseMessage{{"D1", "D2"}, {"D3"}};
+
+    // Parse it into a message
+    auto parsedMessage = std::unique_ptr<wolkabout::Message>{};
+    ASSERT_NO_FATAL_FAILURE(parsedMessage = protocol->makeOutboundMessage(DEVICE_KEY, response));
+    ASSERT_NE(parsedMessage, nullptr);
+    LogMessage(*parsedMessage);
+
+    // Check both the topic and the payload with some regexes
+    const auto topicRegex = std::regex(R"(p2d\/\w+\/device_registration_response)");
+    const auto payloadRegex = std::regex(R"(\{"failed":\["\w+"\],"success":\["\w+","\w+"\]\})");
+    EXPECT_TRUE(std::regex_match(parsedMessage->getChannel(), topicRegex));
+    EXPECT_TRUE(std::regex_match(parsedMessage->getContent(), payloadRegex));
+}
+
 TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseOutgoingRegisteredDevicesResponseMessage)
 {
     // Make the message

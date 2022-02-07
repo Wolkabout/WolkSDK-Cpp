@@ -280,6 +280,45 @@ WolkaboutRegistrationProtocol::parseChildrenSynchronizationResponse(const std::s
     }
 }
 
+std::unique_ptr<DeviceRegistrationResponseMessage> WolkaboutRegistrationProtocol::parseDeviceRegistrationResponse(
+  const std::shared_ptr<Message>& message)
+{
+    LOG(TRACE) << METHOD_INFO;
+    const auto errorPrefix = "Failed to parse 'DeviceRegistrationResponse' message";
+
+    // Check that the message is a DeviceRegistrationResponse message.
+    auto type = getMessageType(*message);
+    if (type != MessageType::DEVICE_REGISTRATION_RESPONSE)
+    {
+        LOG(ERROR) << errorPrefix << " -> The message is not a 'DeviceRegistrationResponse' message.";
+        return nullptr;
+    }
+
+    try
+    {
+        // Parse the information
+        auto j = json::parse(message->getContent());
+        if (!j.is_object())
+        {
+            LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON object.";
+            return nullptr;
+        }
+
+        // Take out the data
+        const auto success = j["success"].get<std::vector<std::string>>();
+        const auto failed = j["failed"].get<std::vector<std::string>>();
+
+        // Return the message
+        return std::unique_ptr<DeviceRegistrationResponseMessage>(
+          new DeviceRegistrationResponseMessage{success, failed});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> An exception was thrown '" << exception.what() << "'.";
+        return nullptr;
+    }
+}
+
 std::unique_ptr<RegisteredDevicesResponseMessage> WolkaboutRegistrationProtocol::parseRegisteredDevicesResponse(
   const std::shared_ptr<Message>& message)
 {

@@ -37,6 +37,9 @@ public:
     std::string getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                 const DeviceRegistrationResponseMessage& message) override;
+
+    std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  const RegisteredDevicesResponseMessage& message) override;
 
     std::unique_ptr<DeviceRegistrationMessage> parseDeviceRegistrationMessage(

@@ -267,6 +267,43 @@ TEST_F(WolkaboutRegistrationProtocolTests, DeserializeChildrenSynchronizationHap
     ASSERT_EQ(parsedMessage->getChildren().size(), 3);
 }
 
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeDeviceRegistrationResponseNotRightTopic)
+{
+    const auto message = std::make_shared<Message>("", "p2g/" + DEVICE_KEY + "/oh_is_this_registered?");
+    LogMessage(*message);
+    EXPECT_EQ(protocol->parseDeviceRegistrationResponse(message), nullptr);
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeDeviceRegistrationResponsePayloadMalformed)
+{
+    const auto message = std::make_shared<Message>("[]", "p2g/" + DEVICE_KEY + "/device_registration_response");
+    LogMessage(*message);
+    EXPECT_EQ(protocol->parseDeviceRegistrationResponse(message), nullptr);
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeDeviceRegistrationResponseSuccessIsMissing)
+{
+    const auto message = std::make_shared<Message>("{}", "p2g/" + DEVICE_KEY + "/device_registration_response");
+    LogMessage(*message);
+    EXPECT_EQ(protocol->parseDeviceRegistrationResponse(message), nullptr);
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeDeviceRegistrationResponseHappyFlow)
+{
+    const auto message = std::make_shared<Message>(R"({"success":["D1","D2"],"failed":["D3"]})",
+                                                   "p2g/" + DEVICE_KEY + "/device_registration_response");
+    LogMessage(*message);
+
+    // Make place for the parsed message
+    auto parsedMessage = std::unique_ptr<DeviceRegistrationResponseMessage>{};
+    ASSERT_NO_FATAL_FAILURE(parsedMessage = protocol->parseDeviceRegistrationResponse(message));
+    ASSERT_NE(parsedMessage, nullptr);
+
+    // Check that the array contain values
+    EXPECT_EQ(parsedMessage->getSuccess().size(), 2);
+    EXPECT_EQ(parsedMessage->getFailed().size(), 1);
+}
+
 TEST_F(WolkaboutRegistrationProtocolTests, DeserializeRegisteredDevicesNotRightTopic)
 {
     // Make a message with the topic that is not right

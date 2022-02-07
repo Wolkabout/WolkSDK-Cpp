@@ -20,6 +20,7 @@
 #include "core/model/messages/ChildrenSynchronizationRequestMessage.h"
 #include "core/model/messages/ChildrenSynchronizationResponseMessage.h"
 #include "core/model/messages/DeviceRegistrationMessage.h"
+#include "core/model/messages/DeviceRegistrationResponseMessage.h"
 #include "core/model/messages/DeviceRemovalMessage.h"
 #include "core/model/messages/RegisteredDevicesRequestMessage.h"
 #include "core/model/messages/RegisteredDevicesResponseMessage.h"
@@ -83,6 +84,15 @@ public:
      * @return A parsed ChildrenSynchronizationResponse message. A `nullptr` if an error has occurred.
      */
     virtual std::unique_ptr<ChildrenSynchronizationResponseMessage> parseChildrenSynchronizationResponse(
+      const std::shared_ptr<Message>& message) = 0;
+
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a DeviceRegistrationResponseMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid DeviceRegistrationResponse message.
+     * @return A parsed DeviceRegistrationResponse message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<DeviceRegistrationResponseMessage> parseDeviceRegistrationResponse(
       const std::shared_ptr<Message>& message) = 0;
 
     /**

@@ -168,6 +168,27 @@ std::string WolkaboutGatewayRegistrationProtocol::getResponseChannelForMessage(M
 }
 
 std::unique_ptr<Message> WolkaboutGatewayRegistrationProtocol::makeOutboundMessage(
+  const std::string& deviceKey, const DeviceRegistrationResponseMessage& message)
+{
+    LOG(TRACE) << METHOD_INFO;
+    const auto errorPrefix = "Failed to generate outbound 'DeviceRegistrationResponse' message";
+
+    // Create the topic
+    try
+    {
+        return std::unique_ptr<Message>{new Message{
+          json({{"success", message.getSuccess()}, {"failed", message.getFailed()}}).dump(),
+          WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+            WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::DEVICE_REGISTRATION_RESPONSE)}};
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> Failed to parse the payload into a JSON - '" << exception.what() << "'.";
+        return nullptr;
+    }
+}
+
+std::unique_ptr<Message> WolkaboutGatewayRegistrationProtocol::makeOutboundMessage(
   const std::string& deviceKey, const RegisteredDevicesResponseMessage& message)
 {
     LOG(TRACE) << METHOD_INFO;

@@ -345,6 +345,8 @@ std::string toString(MessageType type)
         return "firmware_update_abort";
     case MessageType::DEVICE_REGISTRATION:
         return "device_registration";
+    case MessageType::DEVICE_REGISTRATION_RESPONSE:
+        return "device_registration_response";
     case MessageType::DEVICE_REMOVAL:
         return "device_removal";
     case MessageType::CHILDREN_SYNCHRONIZATION_REQUEST:
@@ -414,6 +416,8 @@ MessageType messageTypeFromString(const std::string& type)
         return MessageType::FIRMWARE_UPDATE_ABORT;
     if (type == "device_registration")
         return MessageType::DEVICE_REGISTRATION;
+    if (type == "device_registration_response")
+        return MessageType::DEVICE_REGISTRATION_RESPONSE;
     if (type == "device_removal")
         return MessageType::DEVICE_REMOVAL;
     if (type == "children_synchronization")

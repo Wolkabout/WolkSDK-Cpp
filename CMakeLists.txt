@@ -260,6 +260,7 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/DetailsSynchronizationRequestMessage.cpp
             core/model/messages/DetailsSynchronizationResponseMessage.cpp
             core/model/messages/DeviceRegistrationMessage.cpp
+            core/model/messages/DeviceRegistrationResponseMessage.cpp
             core/model/messages/DeviceRemovalMessage.cpp
             core/model/messages/ErrorMessage.cpp
             core/model/messages/FeedRegistrationMessage.cpp
@@ -325,6 +326,7 @@ if (BUILD_CONNECTIVITY)
             core/model/messages/DetailsSynchronizationRequestMessage.h
             core/model/messages/DetailsSynchronizationResponseMessage.h
             core/model/messages/DeviceRegistrationMessage.h
+            core/model/messages/DeviceRegistrationResponseMessage.h
             core/model/messages/DeviceRemovalMessage.h
             core/model/messages/ErrorMessage.h
             core/model/messages/FeedRegistrationMessage.h

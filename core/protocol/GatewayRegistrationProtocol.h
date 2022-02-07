@@ -18,6 +18,7 @@
 #define WOLKABOUTCORE_GATEWAYREGISTRATIONPROTOCOL_H
 
 #include "core/model/messages/DeviceRegistrationMessage.h"
+#include "core/model/messages/DeviceRegistrationResponseMessage.h"
 #include "core/model/messages/DeviceRemovalMessage.h"
 #include "core/model/messages/RegisteredDevicesRequestMessage.h"
 #include "core/model/messages/RegisteredDevicesResponseMessage.h"
@@ -31,6 +32,17 @@ namespace wolkabout
 class GatewayRegistrationProtocol : public Protocol
 {
 public:
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a
+     * DeviceRegistrationResponseMessage.
+     *
+     * @param deviceKey The key of the device sending the response message.
+     * @param message The message containing the response data.
+     * @return A newly generated MQTT message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const DeviceRegistrationResponseMessage& message) = 0;
+
     /**
      * This method is a serialization method to create a send-able MQTT message from a RegisteredDevicesResponseMessage.
      *
