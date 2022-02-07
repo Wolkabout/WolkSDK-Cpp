@@ -62,6 +62,8 @@ public:
 private:
     std::string getChildrenSynchronizationTopic(const std::string& deviceKey) const;
 
+    std::string getDeviceRegistrationResponseTopic(const std::string& deviceKey) const;
+
     std::string getRegisteredDevicesTopic(const std::string& deviceKey) const;
 
     std::string m_outgoingDirection;
