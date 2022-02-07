@@ -53,7 +53,7 @@ private:
 
     std::vector<std::string> m_subscriptionList;
 
-    std::map<std::string, std::weak_ptr<MessageListener>> m_channelHandlers;
+    std::map<std::string, std::weak_ptr<MessageListener>, std::greater<std::string>> m_channelHandlers;
 
     mutable std::mutex m_lock;
 };
