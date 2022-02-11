@@ -95,33 +95,6 @@ void InboundPlatformMessageHandler::addListener(std::weak_ptr<MessageListener> l
     }
 }
 
-void InboundPlatformMessageHandler::addDevice(const std::string& deviceKey)
-{
-    std::lock_guard<std::mutex> locker{m_lock};
-
-    for (const auto& listener : m_listeners)
-    {
-        if (auto handler = listener.lock())
-        {
-            for (const auto& channel : handler->getProtocol().getInboundChannels())
-            {
-                LOG(DEBUG) << "Adding listener for channel: " << channel;
-                m_channelHandlers[channel] = listener;
-                m_subscriptionList.emplace_back(channel);
-            }
-
-            for (const auto& channel : handler->getProtocol().getInboundChannelsForDevice(deviceKey))
-            {
-                LOG(DEBUG) << "Adding listener for channel: " << channel;
-                m_channelHandlers[channel] = listener;
-                m_subscriptionList.emplace_back(channel);
-            }
-
-            m_deviceKeys.emplace_back(deviceKey);
-        }
-    }
-}
-
 void InboundPlatformMessageHandler::addToCommandBuffer(std::function<void()> command)
 {
     m_commandBuffer->pushCommand(std::make_shared<std::function<void()>>(command));

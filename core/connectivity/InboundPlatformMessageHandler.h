@@ -40,8 +40,6 @@ public:
 
     void addListener(std::weak_ptr<MessageListener> listener) override;
 
-    void addDevice(const std::string& deviceKey);
-
 private:
     void addToCommandBuffer(std::function<void()> command);
 
