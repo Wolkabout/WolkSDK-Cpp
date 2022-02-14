@@ -58,6 +58,9 @@ static void from_json(const json& j, std::vector<Feed>& feeds)
     for (const auto& item : j.items())
     {
         const auto& value = item.value();
+        if (!WolkaboutProtocol::checkThatObjectContainsKeys(value, {"name", "reference", "type", "unitGuid"}))
+            throw std::runtime_error(
+              "Missing keys in feed object. Required keys are 'name', 'reference', 'type' and 'unitGuid'.");
 
         // Check the values
         const auto name = value["name"].get<std::string>();
@@ -82,6 +85,8 @@ static void from_json(const json& j, std::vector<Attribute>& attributes)
     for (const auto& item : j.items())
     {
         const auto& value = item.value();
+        if (!WolkaboutProtocol::checkThatObjectContainsKeys(value, {"name", "dataType", "value"}))
+            throw std::runtime_error("Missing keys in feed object. Required keys are 'name', 'dataType', and 'value'.");
 
         // Check the values
         const auto name = value["name"].get<std::string>();
@@ -95,27 +100,12 @@ static void from_json(const json& j, std::vector<Attribute>& attributes)
     }
 }
 
-static void from_json(const json& j, std::vector<Parameter>& parameters)
-{
-    if (!j.is_object())
-        throw std::runtime_error("The field for reading parameters is not an object!");
-
-    for (const auto& item : j.items())
-    {
-        // Parse the key into the ParameterName
-        const auto& key = item.key();
-        const auto& value = item.value();
-        const auto parameterName = parameterNameFromString(key);
-        if (parameterName == ParameterName::UNKNOWN)
-            throw std::runtime_error("One of the keys is not a valid ParameterName.");
-
-        // Put the parameter in the vector
-        parameters.emplace_back(parameterName, value);
-    }
-}
-
 static void from_json(const json& j, DeviceRegistrationData& data)
 {
+    if (!WolkaboutProtocol::checkThatObjectContainsKeys(j, {"name", "parameters", "feeds", "attributes"}))
+        throw std::runtime_error(
+          "Missing keys in feed object. Required keys are 'name', 'parameters', 'feeds' and 'attributes'.");
+
     data.name = j["name"].get<std::string>();
     data.key = extractValueIfPresent<std::string>(j, "key");
     data.guid = extractValueIfPresent<std::string>(j, "guid");

@@ -411,21 +411,29 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::SYNCHRONIZE_PARAMETERS);
 
-    // Create the payload
-    auto payload = json::array();
-    for (const auto& parameter : synchronizeParametersMessage.getParameters())
+    try
     {
-        // Check that the parameter is valid
-        auto parameterString = toString(parameter);
-        if (parameterString.empty())
+        // Create the payload
+        auto payload = json::array();
+        for (const auto& parameter : synchronizeParametersMessage.getParameters())
         {
-            LOG(ERROR)
-              << "Failed to serialize 'SynchronizeParametersMessage' -> One of parameter name values is not valid.";
-            return nullptr;
+            // Check that the parameter is valid
+            auto parameterString = toString(parameter);
+            if (parameterString.empty())
+            {
+                LOG(ERROR)
+                  << "Failed to serialize 'SynchronizeParametersMessage' -> One of parameter name values is not valid.";
+                return nullptr;
+            }
+            payload += parameterString;
         }
-        payload += parameterString;
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to serialize 'SynchronizeParametersMessage' -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
@@ -521,13 +529,13 @@ std::shared_ptr<DetailsSynchronizationResponseMessage> WolkaboutDataProtocol::pa
 std::string WolkaboutDataProtocol::getFeedTopic(const std::string& deviceKey)
 {
     return WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC);
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES);
 }
 
 std::string WolkaboutDataProtocol::getParametersTopic(const std::string& deviceKey)
 {
     return WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES);
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC);
 }
 
 std::string WolkaboutDataProtocol::getDetailsSynchronizationTopic(const std::string& deviceKey)

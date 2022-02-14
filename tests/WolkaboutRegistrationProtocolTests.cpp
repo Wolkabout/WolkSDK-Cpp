@@ -73,11 +73,40 @@ TEST_F(WolkaboutRegistrationProtocolTests, ExtractDeviceKeyFromChannel)
     EXPECT_EQ(protocol->getDeviceKey({"", "p2g/" + DEVICE_KEY + "/registered_devices"}), DEVICE_KEY);
 }
 
+TEST_F(WolkaboutRegistrationProtocolTests, GetDeviceType)
+{
+    EXPECT_EQ(protocol->getDeviceType({"", "p2g/" + DEVICE_KEY + "/registered_devices"}), DeviceType::GATEWAY);
+}
+
 TEST_F(WolkaboutRegistrationProtocolTests, GetMessageType)
 {
     // Test with a simple example
     EXPECT_EQ(protocol->getMessageType({"", "p2g/" + DEVICE_KEY + "/registered_devices"}),
               MessageType::REGISTERED_DEVICES_RESPONSE);
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, ResponseChannelForUnknown)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(wolkabout::MessageType::UNKNOWN, DEVICE_KEY).empty());
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, ResponseChannelForChildrenSynchronizationRequest)
+{
+    EXPECT_EQ(
+      protocol->getResponseChannelForMessage(wolkabout::MessageType::CHILDREN_SYNCHRONIZATION_REQUEST, DEVICE_KEY),
+      "p2g/" + DEVICE_KEY + "/children_synchronization");
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, ResponseChannelForPullParameters)
+{
+    EXPECT_EQ(protocol->getResponseChannelForMessage(wolkabout::MessageType::DEVICE_REGISTRATION, DEVICE_KEY),
+              "p2g/" + DEVICE_KEY + "/device_registration_response");
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, ResponseChannelForSynchronizeParameters)
+{
+    EXPECT_EQ(protocol->getResponseChannelForMessage(wolkabout::MessageType::REGISTERED_DEVICES_REQUEST, DEVICE_KEY),
+              "p2g/" + DEVICE_KEY + "/registered_devices");
 }
 
 TEST_F(WolkaboutRegistrationProtocolTests, SerializeDeviceRegistrationNoDevices)
@@ -333,6 +362,19 @@ TEST_F(WolkaboutRegistrationProtocolTests, DeserializeRegisteredDevicesMalformed
     // Make a message with the `matchingDevices` field malformed
     auto topic = "p2g/" + DEVICE_KEY + "/registered_devices";
     auto payload = R"({"timestampFrom": 1625578239000,"deviceType":"iBeacon","matchingDevices":1234})";
+    auto message = std::make_shared<Message>(payload, topic);
+    LogMessage(*message);
+
+    // Expect that deserialization returns a nullptr
+    EXPECT_EQ(protocol->parseRegisteredDevicesResponse(message), nullptr);
+}
+
+TEST_F(WolkaboutRegistrationProtocolTests, DeserializeRegisteredDevicesOneArrayMemberIsNotObject)
+{
+    // Make a message with a valid payload containing a single device
+    auto topic = "p2g/" + DEVICE_KEY + "/registered_devices";
+    auto payload =
+      R"({"deviceType":"iBeacon","externalId":"00:11:22:33:44:55","matchingDevices":[123],"timestampFrom": 1625578239000})";
     auto message = std::make_shared<Message>(payload, topic);
     LogMessage(*message);
 

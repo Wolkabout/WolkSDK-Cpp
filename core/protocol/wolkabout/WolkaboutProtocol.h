@@ -19,6 +19,7 @@
 
 #include "core/Types.h"
 #include "core/model/Message.h"
+#include "core/utilities/json.hpp"
 
 #include <memory>
 
@@ -31,6 +32,15 @@ namespace wolkabout
 class WolkaboutProtocol
 {
 public:
+    /**
+     * This is a helper method that is used to check whether a JSON object contains all the keys that are in the list.
+     *
+     * @param j The JSON object in question.
+     * @param keys The list of keys that need to be found in the object.
+     * @return Whether the object contains all the keys.
+     */
+    static bool checkThatObjectContainsKeys(const nlohmann::json& j, const std::vector<std::string>& keys);
+
     /**
      * This is a helper method that will remove any escaped quotes from a string.
      *

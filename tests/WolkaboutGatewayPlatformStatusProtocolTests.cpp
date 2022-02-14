@@ -55,21 +55,26 @@ TEST_F(WolkaboutGatewayPlatformStatusProtocolTests, GetInboundChannelsForDevice)
     EXPECT_TRUE(protocol->getInboundChannelsForDevice(DEVICE_KEY).empty());
 }
 
-TEST_F(WolkaboutGatewayPlatformStatusProtocolTests, GetDeviceType)
-{
-    EXPECT_EQ(protocol->getDeviceType({"", "p2d/error"}), DeviceType::STANDALONE);
-}
-
 TEST_F(WolkaboutGatewayPlatformStatusProtocolTests, ExtractDeviceKeyFromChannel)
 {
     // Test with some random topic
     EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/error"}), DEVICE_KEY);
 }
 
+TEST_F(WolkaboutGatewayPlatformStatusProtocolTests, GetDeviceType)
+{
+    EXPECT_EQ(protocol->getDeviceType({"", "p2d/error"}), DeviceType::STANDALONE);
+}
+
 TEST_F(WolkaboutGatewayPlatformStatusProtocolTests, GetMessageType)
 {
     // Test with a simple example
     EXPECT_EQ(protocol->getMessageType({"", "p2d/connection_status"}), MessageType::PLATFORM_CONNECTION_STATUS);
+}
+
+TEST_F(WolkaboutGatewayPlatformStatusProtocolTests, GetResponseChannelForAnything)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::PLATFORM_CONNECTION_STATUS, DEVICE_KEY).empty());
 }
 
 TEST_F(WolkaboutGatewayPlatformStatusProtocolTests, ParseMessageInvalidStatus)

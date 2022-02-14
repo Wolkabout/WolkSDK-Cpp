@@ -87,11 +87,21 @@ TEST_F(WolkaboutFileManagementProtocolTests, ExtractDeviceKeyFromChannel)
     EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/file_upload_initiate"}), DEVICE_KEY);
 }
 
+TEST_F(WolkaboutFileManagementProtocolTests, GetDeviceType)
+{
+    EXPECT_EQ(protocol->getDeviceType({"", "p2d/" + DEVICE_KEY + "/file_upload_initiate"}), DeviceType::STANDALONE);
+}
+
 TEST_F(WolkaboutFileManagementProtocolTests, GetMessageType)
 {
     // Test with a simple example
     EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/file_upload_initiate"}),
               MessageType::FILE_UPLOAD_INIT);
+}
+
+TEST_F(WolkaboutFileManagementProtocolTests, GetResponseChannelForAnything)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::FIRMWARE_UPDATE_INSTALL, DEVICE_KEY).empty());
 }
 
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusEmptyName)

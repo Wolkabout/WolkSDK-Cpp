@@ -94,6 +94,36 @@ TEST_F(WolkaboutDataProtocolTests, GetDeviceType)
     EXPECT_EQ(protocol->getDeviceType({"", "p2d/" + DEVICE_KEY + "/parameters"}), DeviceType::STANDALONE);
 }
 
+TEST_F(WolkaboutDataProtocolTests, ResponseChannelForUnknown)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(wolkabout::MessageType::UNKNOWN, DEVICE_KEY).empty());
+}
+
+TEST_F(WolkaboutDataProtocolTests, ResponseChannelForFeedValues)
+{
+    EXPECT_EQ(protocol->getResponseChannelForMessage(wolkabout::MessageType::PULL_FEED_VALUES, DEVICE_KEY),
+              "p2d/" + DEVICE_KEY + "/feed_values");
+}
+
+TEST_F(WolkaboutDataProtocolTests, ResponseChannelForPullParameters)
+{
+    EXPECT_EQ(protocol->getResponseChannelForMessage(wolkabout::MessageType::PULL_PARAMETERS, DEVICE_KEY),
+              "p2d/" + DEVICE_KEY + "/parameters");
+}
+
+TEST_F(WolkaboutDataProtocolTests, ResponseChannelForSynchronizeParameters)
+{
+    EXPECT_EQ(protocol->getResponseChannelForMessage(wolkabout::MessageType::SYNCHRONIZE_PARAMETERS, DEVICE_KEY),
+              "p2d/" + DEVICE_KEY + "/parameters");
+}
+
+TEST_F(WolkaboutDataProtocolTests, ResponseChannelForDeviceDetails)
+{
+    EXPECT_EQ(
+      protocol->getResponseChannelForMessage(wolkabout::MessageType::DETAILS_SYNCHRONIZATION_REQUEST, DEVICE_KEY),
+      "p2d/" + DEVICE_KEY + "/details_synchronization");
+}
+
 TEST_F(WolkaboutDataProtocolTests, SerializeFeedRegistrationSingle)
 {
     // Make a single feed that needs to be registered

@@ -65,13 +65,23 @@ TEST_F(WolkaboutPlatformStatusProtocolTests, GetInboundChannelsForDevice)
 TEST_F(WolkaboutPlatformStatusProtocolTests, ExtractDeviceKeyFromChannel)
 {
     // Test with some random topic
-    EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}), DEVICE_KEY);
+    EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/platform_status"}), DEVICE_KEY);
+}
+
+TEST_F(WolkaboutPlatformStatusProtocolTests, GetDeviceType)
+{
+    EXPECT_EQ(protocol->getDeviceType({"", "p2d/" + DEVICE_KEY + "/platform_status"}), DeviceType::STANDALONE);
 }
 
 TEST_F(WolkaboutPlatformStatusProtocolTests, GetMessageType)
 {
     // Test with a simple example
     EXPECT_EQ(protocol->getMessageType({"", "p2d/connection_status"}), MessageType::PLATFORM_CONNECTION_STATUS);
+}
+
+TEST_F(WolkaboutPlatformStatusProtocolTests, GetResponseChannelForAnything)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::PLATFORM_CONNECTION_STATUS, DEVICE_KEY).empty());
 }
 
 TEST_F(WolkaboutPlatformStatusProtocolTests, DeserializePlatformStatusNotRightTopic)

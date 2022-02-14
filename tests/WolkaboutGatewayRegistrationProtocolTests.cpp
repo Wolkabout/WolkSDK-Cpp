@@ -76,13 +76,24 @@ TEST_F(WolkaboutGatewayRegistrationProtocolTests, GetInboundChannelsForDevice)
 TEST_F(WolkaboutGatewayRegistrationProtocolTests, ExtractDeviceKeyFromChannel)
 {
     // Test with some random topic
-    EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/error"}), DEVICE_KEY);
+    EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/device_registration"}), DEVICE_KEY);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, GetDeviceType)
+{
+    EXPECT_EQ(protocol->getDeviceType({"", "p2d/" + DEVICE_KEY + "/device_registration"}), DeviceType::STANDALONE);
 }
 
 TEST_F(WolkaboutGatewayRegistrationProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/error"}), MessageType::ERROR);
+    EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/device_registration"}),
+              MessageType::DEVICE_REGISTRATION);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, GetResponseChannelForAnything)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::DEVICE_REGISTRATION, DEVICE_KEY).empty());
 }
 
 TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseOutgoingDeviceRegistrationResponseMessage)
@@ -121,6 +132,138 @@ TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseOutgoingRegisteredDevices
       R"(\{"deviceType":"\w+","externalId":"\w+","matchingDevices":\[\{"deviceKey":"\w+","deviceType":"\w+","externalId":"\w+"\}\],"timestampFrom":\d+\})");
     EXPECT_TRUE(std::regex_match(parsedMessage->getChannel(), topicRegex));
     EXPECT_TRUE(std::regex_match(parsedMessage->getContent(), payloadRegex));
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageNotDeviceRegistrationMessage)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"dataType":"STRING","name":"Status","value":"lazy"}],"feeds":[{"name":"Temperature","reference":"T","type":"IN_OUT","unitGuid":"CELSIUS"}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/i_want_new_device_please");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageMissingKeys)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"dataType":"STRING","name":"Status","value":"lazy"}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageFeedsNotArray)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"dataType":"STRING","name":"Status","value":"lazy"}],"feeds":{},"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageFeedMissingKeys)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"dataType":"STRING","name":"Status","value":"lazy"}],"feeds":[{"name":""}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageFeedsEmptyName)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"dataType":"STRING","name":"Status","value":"lazy"}],"feeds":[{"name":"","reference":"","type":"","unitGuid":""}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageFeedReferenceEmptyName)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"dataType":"STRING","name":"Status","value":"lazy"}],"feeds":[{"name":"test-feed","reference":"","type":"","unitGuid":""}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageFeedInvalidType)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"dataType":"STRING","name":"Status","value":"lazy"}],"feeds":[{"name":"test-feed","reference":"tf","type":"stupid","unitGuid":""}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageAttributesNotArray)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":{},"feeds":[{"name":"test-feed","reference":"tf","type":"IN_OUT","unitGuid":""}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageAttributesMissingKeys)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"name":""}],"feeds":[{"name":"test-feed","reference":"tf","type":"IN_OUT","unitGuid":""}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageAttributesEmptyName)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"name":"","dataType":"","value":""}],"feeds":[{"name":"test-feed","reference":"tf","type":"IN_OUT","unitGuid":""}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessageAttributesEmptyDataType)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"([{"attributes":[{"name":"test-attribute","dataType":"","value":""}],"feeds":[{"name":"test-feed","reference":"tf","type":"IN_OUT","unitGuid":""}],"guid":"b42ff956-078e-4d6c-8500-791182149729","key":"high","name":"furnish","parameters":{"FIRMWARE_VERSION":"3.0.0"}}])",
+      "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect it to return a nullptr
+    EXPECT_EQ(protocol->parseDeviceRegistrationMessage(message), nullptr);
 }
 
 TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistrationMessage)
@@ -170,6 +313,26 @@ TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRegistratio
     EXPECT_EQ(attribute.getValue(), "lazy");
 }
 
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRemovalNotDeviceRemovalMessage)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(R"([])", "d2p/WOLK_SDK_TEST/device_registration");
+    LogMessage(*message);
+
+    // Expect a nullptr
+    EXPECT_EQ(protocol->parseDeviceRemovalMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRemovalMessageEmptyKey)
+{
+    // Create the message
+    auto message = std::make_shared<wolkabout::Message>(R"([""])", "d2p/WOLK_SDK_TEST/device_removal");
+    LogMessage(*message);
+
+    // Expect a nullptr
+    EXPECT_EQ(protocol->parseDeviceRemovalMessage(message), nullptr);
+}
+
 TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRemovalMessage)
 {
     // Create the message
@@ -185,6 +348,37 @@ TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingDeviceRemovalMess
     ASSERT_FALSE(parsedMessage->getKeys().empty());
     ASSERT_EQ(parsedMessage->getKeys().size(), 1);
     EXPECT_EQ(parsedMessage->getKeys().front(), "TestKey");
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests,
+       ParseIncomingRegisteredDevicesRequestMessageNotRegisteredDevicesMessage)
+{
+    // Prepare the message
+    auto message = std::make_shared<wolkabout::Message>(
+      R"({"deviceType":"iBeacon","externalId":"00:11:22:33:44:55","timestampFrom":1642172260746})",
+      "g2p/WOLK_SDK_TEST/can_i_see_please");
+    LogMessage(*message);
+
+    // Expect a nullptr to be returned
+    EXPECT_EQ(protocol->parseRegisteredDevicesRequestMessage(message), nullptr);
+}
+
+TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingRegisteredDevicesRequestMessageOnlyRequired)
+{
+    // Prepare the message
+    auto message = std::make_shared<wolkabout::Message>(R"({"timestampFrom":1642172260746})",
+                                                        "g2p/WOLK_SDK_TEST/registered_devices");
+    LogMessage(*message);
+
+    // Parse the message
+    auto parsedMessage = std::unique_ptr<RegisteredDevicesRequestMessage>{};
+    ASSERT_NO_FATAL_FAILURE(parsedMessage = protocol->parseRegisteredDevicesRequestMessage(message));
+    ASSERT_NE(parsedMessage, nullptr);
+
+    // Check the fields
+    EXPECT_EQ(parsedMessage->getTimestampFrom().count(), 1642172260746);
+    EXPECT_TRUE(parsedMessage->getDeviceType().empty());
+    EXPECT_TRUE(parsedMessage->getExternalId().empty());
 }
 
 TEST_F(WolkaboutGatewayRegistrationProtocolTests, ParseIncomingRegisteredDevicesRequestMessage)

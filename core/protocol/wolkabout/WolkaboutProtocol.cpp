@@ -18,6 +18,11 @@
 
 namespace wolkabout
 {
+bool WolkaboutProtocol::checkThatObjectContainsKeys(const nlohmann::json& j, const std::vector<std::string>& keys)
+{
+    return std::all_of(keys.cbegin(), keys.cend(), [&](const std::string& key) { return j.find(key) != j.cend(); });
+}
+
 std::string WolkaboutProtocol::removeQuotes(std::string value)
 {
     // Make place for the iterator in the string

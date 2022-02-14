@@ -84,7 +84,7 @@ std::unique_ptr<Message> WolkaboutGatewaySubdeviceProtocol::makeOutboundMessage(
 
     // Find the message type of the sub-message
     auto subMessageType = getMessageType(message.getMessage());
-    if (subMessageType > MessageType::PLATFORM_CONNECTION_STATUS)
+    if (subMessageType >= MessageType::DEVICE_REGISTRATION)
     {
         LOG(ERROR) << "Failed to generate outbound subdevice message -> The sub-message has a type that is invalid for "
                       "a subdevice to send!";

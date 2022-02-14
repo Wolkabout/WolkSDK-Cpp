@@ -28,7 +28,7 @@ class ErrorMessage : public MessageModel
 {
 public:
     explicit ErrorMessage(std::string deviceKey, std::string errorMessage,
-                          std::chrono::system_clock::time_point arrivalTime);
+                          std::chrono::system_clock::time_point arrivalTime = {});
 
     const std::string& getDeviceKey() const;
 

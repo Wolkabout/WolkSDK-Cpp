@@ -64,10 +64,30 @@ TEST_F(WolkaboutErrorProtocolTests, ExtractDeviceKeyFromChannel)
     EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/error"}), DEVICE_KEY);
 }
 
+TEST_F(WolkaboutErrorProtocolTests, GetDeviceType)
+{
+    EXPECT_EQ(protocol->getDeviceType({"", "p2d/" + DEVICE_KEY + "/error"}), DeviceType::STANDALONE);
+}
+
 TEST_F(WolkaboutErrorProtocolTests, GetMessageType)
 {
     // Test with a simple example
     EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/error"}), MessageType::ERROR);
+}
+
+TEST_F(WolkaboutErrorProtocolTests, GetResponseChannelForAnything)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::ERROR, DEVICE_KEY).empty());
+}
+
+TEST_F(WolkaboutErrorProtocolTests, ParseErrorMessageTypeIsNotError)
+{
+    ASSERT_EQ(protocol->parseError(std::make_shared<wolkabout::Message>("", "p2d/" + DEVICE_KEY + "/what?")), nullptr);
+}
+
+TEST_F(WolkaboutErrorProtocolTests, ParseErrorMessageEmptyDeviceKey)
+{
+    ASSERT_EQ(protocol->parseError(std::make_shared<wolkabout::Message>("", "p2d//error")), nullptr);
 }
 
 TEST_F(WolkaboutErrorProtocolTests, ParseError)

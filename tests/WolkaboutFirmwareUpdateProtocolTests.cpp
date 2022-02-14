@@ -74,11 +74,21 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, ExtractDeviceKeyFromChannel)
     EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}), DEVICE_KEY);
 }
 
+TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetDeviceType)
+{
+    EXPECT_EQ(protocol->getDeviceType({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}), DeviceType::STANDALONE);
+}
+
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetMessageType)
 {
     // Test with a simple example
     EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}),
               MessageType::FIRMWARE_UPDATE_INSTALL);
+}
+
+TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetResponseChannelForAnything)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::FIRMWARE_UPDATE_INSTALL, DEVICE_KEY).empty());
 }
 
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, SerializeFirmwareUpdateStatusInvalidStatus)

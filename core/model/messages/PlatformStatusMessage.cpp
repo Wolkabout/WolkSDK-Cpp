@@ -62,6 +62,6 @@ ConnectivityStatus PlatformStatusMessage::getStatus() const
 
 MessageType PlatformStatusMessage::getMessageType() const
 {
-    return MessageType::SYNCHRONIZE_PARAMETERS;
+    return MessageType::PLATFORM_CONNECTION_STATUS;
 }
 }    // namespace wolkabout

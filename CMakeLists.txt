@@ -404,6 +404,7 @@ if (BUILD_CONNECTIVITY)
 
     set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
             tests/InboundPlatformMessageHandlerTests.cpp
+            tests/ModelMessagesTests.cpp
             tests/WolkaboutDataProtocolTests.cpp
             tests/WolkaboutErrorProtocolTests.cpp
             tests/WolkaboutFileManagementProtocolTests.cpp
