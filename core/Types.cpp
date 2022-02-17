@@ -75,7 +75,7 @@ std::string toString(FeedType type)
     case FeedType::IN:
         return "IN";
     case FeedType::IN_OUT:
-        return "IN/OUT";
+        return "IN_OUT";
     default:
         return "";
     }

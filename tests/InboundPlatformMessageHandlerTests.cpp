@@ -60,6 +60,7 @@ TEST_F(InboundPlatformMessageHandlerTests, CoveringTest)
       std::make_shared<wolkabout::InboundPlatformMessageHandler>(std::vector<std::string>{key});
     auto pointer = std::shared_ptr<MessageListenerMock>(messageListenerMock.release());
 
+    EXPECT_CALL(*protocolMock, getInboundChannels).WillOnce(Return(channels));
     EXPECT_CALL(*protocolMock, getInboundChannelsForDevice(key)).WillOnce(testing::Return(channels));
 
     ASSERT_NO_THROW(messageHandler->addListener(pointer));
@@ -75,5 +76,5 @@ TEST_F(InboundPlatformMessageHandlerTests, CoveringTest)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    EXPECT_EQ(channels.size(), messageHandler->getChannels().size());
+    EXPECT_EQ(messageHandler->getChannels().size(), 6);
 }

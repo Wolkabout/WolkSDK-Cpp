@@ -406,6 +406,8 @@ if (BUILD_CONNECTIVITY)
             tests/InboundPlatformMessageHandlerTests.cpp
             tests/ModelMessagesTests.cpp
             tests/ModelsTests.cpp
+            tests/OutboundRetryMessageHandlerTests.cpp
+            tests/TypesTests.cpp
             tests/WolkaboutDataProtocolTests.cpp
             tests/WolkaboutErrorProtocolTests.cpp
             tests/WolkaboutFileManagementProtocolTests.cpp
