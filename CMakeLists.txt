@@ -403,10 +403,20 @@ if (BUILD_CONNECTIVITY)
     add_dependencies(${PROJECT_NAME} pahomqttcpp)
 
     set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
+            tests/BufferTests.cpp
+            tests/ByteUtilsTests.cpp
+            tests/CommandBufferTests.cpp
+            tests/FileSystemUtils.cpp
             tests/InboundPlatformMessageHandlerTests.cpp
+            tests/LoggerTests.cpp
+            tests/LogManagerTests.cpp
             tests/ModelMessagesTests.cpp
             tests/ModelsTests.cpp
+            tests/MqttConnectivityServiceTests.cpp
             tests/OutboundRetryMessageHandlerTests.cpp
+            tests/PahoMqttClientTests.cpp
+            tests/StringUtilsTests.cpp
+            tests/TimerTests.cpp
             tests/TypesTests.cpp
             tests/WolkaboutDataProtocolTests.cpp
             tests/WolkaboutErrorProtocolTests.cpp

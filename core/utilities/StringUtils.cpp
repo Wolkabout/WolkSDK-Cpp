@@ -267,9 +267,9 @@ std::string StringUtils::toUpperCase(const std::string& string)
 {
     std::string transformed = string;
     std::transform(transformed.begin(), transformed.end(), transformed.begin(), ::toupper);
-
     return transformed;
 }
+
 std::vector<std::string> StringUtils::tokenize(const std::string& str, const char delimiter)
 {
     size_t start;

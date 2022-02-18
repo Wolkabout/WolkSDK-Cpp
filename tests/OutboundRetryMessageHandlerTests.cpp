@@ -83,3 +83,24 @@ TEST_F(OutboundRetryMessageHandlerTests, AddSingleMessageAndGetItAfter2Sends)
     ASSERT_NO_FATAL_FAILURE(
       service->messageReceived(std::make_shared<wolkabout::Message>("Hiya!", "message_response")));
 }
+
+TEST_F(OutboundRetryMessageHandlerTests, AddSingleMessageGetsRemovedFromMessages)
+{
+    EXPECT_CALL(outboundMessageHandlerMock, addMessage).Times(2);
+    ASSERT_NO_FATAL_FAILURE(
+      service->addMessage({std::make_shared<wolkabout::Message>("Hello!", "message"), "message_response",
+                           [&](const std::shared_ptr<wolkabout::Message>&) {}, 5, std::chrono::milliseconds{300}}));
+    std::this_thread::sleep_for(std::chrono::milliseconds{600});
+    ASSERT_NO_FATAL_FAILURE(service->m_messages.clear());
+}
+
+TEST_F(OutboundRetryMessageHandlerTests, AddSingleMessageGetsFlagged)
+{
+    EXPECT_CALL(outboundMessageHandlerMock, addMessage).Times(2);
+    ASSERT_NO_FATAL_FAILURE(
+      service->addMessage({std::make_shared<wolkabout::Message>("Hello!", "message"), "message_response",
+                           [&](const std::shared_ptr<wolkabout::Message>&) {}, 5, std::chrono::milliseconds{300}}));
+    std::this_thread::sleep_for(std::chrono::milliseconds{600});
+    auto& tuple = service->m_messages.begin()->second;
+    ASSERT_NO_FATAL_FAILURE(std::get<3>(tuple) = true);
+}
