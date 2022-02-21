@@ -117,6 +117,15 @@ static void from_json(const json& j, DeviceRegistrationData& data)
         data.attributes.emplace(attribute.getName(), attribute);
 }
 
+static void from_json(const json& j, std::vector<DeviceRegistrationData>& data)
+{
+    if (!j.is_array())
+        throw std::runtime_error("The payload must be an array.");
+
+    for (const auto& pair : j.items())
+        data.emplace_back(pair.value().get<DeviceRegistrationData>());
+}
+
 std::vector<std::string> WolkaboutGatewayRegistrationProtocol::getInboundChannels() const
 {
     return {};
