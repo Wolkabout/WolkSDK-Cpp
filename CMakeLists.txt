@@ -210,10 +210,7 @@ set(UTILITY_HEADER_FILES core/utilities/Buffer.h
 file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/utilities PATTERN *.cpp EXCLUDE)
 
 add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
-target_link_libraries(${PROJECT_NAME}Utility crypto)
-if (NOT ${BUILD_SHARED})
-    target_link_libraries(${PROJECT_NAME}Utility Threads::Threads)
-endif ()
+target_link_libraries(${PROJECT_NAME}Utility crypto Threads::Threads)
 target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
