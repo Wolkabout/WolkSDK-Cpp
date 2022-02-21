@@ -157,9 +157,12 @@ void OutboundRetryMessageHandler::clearTimers()
 
         lg.unlock();
 
-        static std::mutex cvMutex;
-        std::unique_lock<std::mutex> lock{cvMutex};
-        m_condition.wait(lock);
+        if (m_run)
+        {
+            static std::mutex cvMutex;
+            std::unique_lock<std::mutex> lock{cvMutex};
+            m_condition.wait(lock);
+        }
     }
 }
 
