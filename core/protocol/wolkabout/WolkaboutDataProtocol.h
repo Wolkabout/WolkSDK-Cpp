@@ -71,11 +71,11 @@ public:
     std::unique_ptr<Message> makeOutboundMessage(
       const std::string& deviceKey, DetailsSynchronizationRequestMessage detailsSynchronizationRequestMessage) override;
 
-    std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) override;
+    std::unique_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) override;
 
-    std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) override;
+    std::unique_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) override;
 
-    std::shared_ptr<DetailsSynchronizationResponseMessage> parseDetails(std::shared_ptr<Message> message) override;
+    std::unique_ptr<DetailsSynchronizationResponseMessage> parseDetails(std::shared_ptr<Message> message) override;
 
 private:
     static std::string getFeedTopic(const std::string& deviceKey);

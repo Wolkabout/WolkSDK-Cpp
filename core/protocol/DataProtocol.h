@@ -140,7 +140,7 @@ public:
      * @param message The received MQTT message that is potentially a valid FeedValuesMessage.
      * @return A parsed FeedValuesMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) = 0;
+    virtual std::unique_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a ParametersUpdateMessage.
@@ -148,7 +148,7 @@ public:
      * @param message The received MQTT message that is potentially a valid ParametersUpdateMessage.
      * @return A parsed ParametersUpdateMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) = 0;
+    virtual std::unique_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) = 0;
 
     /**
      * This method is a deserialization method used to parse a MQTT message into a
@@ -157,7 +157,7 @@ public:
      * @param message The received MQTT message that is potentially a valid DetailsSynchronizationResponseMessage.
      * @return A parsed DetailsSynchronizationResponseMessage. `nullptr` if an error has occurred.
      */
-    virtual std::shared_ptr<DetailsSynchronizationResponseMessage> parseDetails(std::shared_ptr<Message> message) = 0;
+    virtual std::unique_ptr<DetailsSynchronizationResponseMessage> parseDetails(std::shared_ptr<Message> message) = 0;
 };
 }    // namespace wolkabout
 

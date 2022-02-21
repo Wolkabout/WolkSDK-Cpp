@@ -51,8 +51,3 @@ public:
 
     std::shared_ptr<MessagePersistenceMock> messagePersistenceMock;
 };
-
-TEST_F(MqttConnectivityServiceTests, HelloWorld)
-{
-    LOG(INFO) << "Hello World!";
-}

@@ -20,7 +20,6 @@
 #include "core/connectivity/ConnectivityService.h"
 #include "core/connectivity/OutboundMessageHandler.h"
 #include "core/connectivity/mqtt/MqttClient.h"
-#include "core/persistence/MessagePersistence.h"
 #include "core/utilities/Buffer.h"
 
 #include <atomic>
@@ -30,6 +29,8 @@
 
 namespace wolkabout
 {
+class MessagePersistence;
+
 class MqttConnectivityService : public ConnectivityService, public OutboundMessageHandler
 {
 public:

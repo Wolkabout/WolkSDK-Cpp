@@ -448,7 +448,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
     return std::unique_ptr<Message>(new Message{"", topic});
 }
 
-std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
+std::unique_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -456,7 +456,7 @@ std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::s
     {
         auto j = json::parse(message->getContent());
         auto readings = j.get<std::vector<Reading>>();
-        return std::make_shared<FeedValuesMessage>(readings);
+        return std::unique_ptr<FeedValuesMessage>{new FeedValuesMessage{readings}};
     }
     catch (const std::exception& exception)
     {
@@ -465,7 +465,7 @@ std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::s
     }
 }
 
-std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<Message> message)
+std::unique_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -473,7 +473,7 @@ std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(
     {
         auto j = json::parse(message->getContent());
         auto parameters = j.get<std::vector<Parameter>>();
-        return std::make_shared<ParametersUpdateMessage>(parameters);
+        return std::unique_ptr<ParametersUpdateMessage>{new ParametersUpdateMessage{parameters}};
     }
     catch (const std::exception& exception)
     {
@@ -482,7 +482,7 @@ std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(
     }
 }
 
-std::shared_ptr<DetailsSynchronizationResponseMessage> WolkaboutDataProtocol::parseDetails(
+std::unique_ptr<DetailsSynchronizationResponseMessage> WolkaboutDataProtocol::parseDetails(
   std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
@@ -517,7 +517,8 @@ std::shared_ptr<DetailsSynchronizationResponseMessage> WolkaboutDataProtocol::pa
             LOG(ERROR) << errorPrefix << " -> The attributes array contains an empty string.";
             return nullptr;
         }
-        return std::make_shared<DetailsSynchronizationResponseMessage>(feeds, attributes);
+        return std::unique_ptr<DetailsSynchronizationResponseMessage>{
+          new DetailsSynchronizationResponseMessage{feeds, attributes}};
     }
     catch (const std::exception& exception)
     {

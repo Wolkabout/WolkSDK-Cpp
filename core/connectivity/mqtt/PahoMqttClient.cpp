@@ -170,9 +170,6 @@ bool PahoMqttClient::subscribe(const std::string& topic)
 
 bool PahoMqttClient::publish(const std::string& topic, const std::string& message, bool retained)
 {
-    if (topic.find("binary_response") != std::string::npos)
-        LOG(DEBUG) << "I'm here!";
-
     if (!m_isConnected)
     {
         LOG(DEBUG) << "Publishing aborted: not connected";
