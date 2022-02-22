@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class InMemoryPersistence : public Persistence
 public:
     ~InMemoryPersistence() override = default;
 
-    bool putReading(const std::string& key, std::shared_ptr<Reading> reading) override;
+    bool putReading(const std::string& key, const Reading& reading) override;
 
     std::vector<std::shared_ptr<Reading>> getReadings(const std::string& key, std::uint_fast64_t count) override;
 
@@ -42,28 +42,40 @@ public:
 
     std::vector<std::string> getReadingsKeys() override;
 
-    bool isEmpty() override;
+    bool putAttribute(const std::string& key, std::shared_ptr<Attribute> attribute) override;
 
-    bool putAttribute(std::shared_ptr<Attribute> attribute) override;
+    std::map<std::string, std::shared_ptr<Attribute>> getAttributes() override;
 
-    std::vector<std::shared_ptr<Attribute>> getAttributes() override;
+    std::shared_ptr<Attribute> getAttributeUnderKey(const std::string& key) override;
 
     void removeAttributes() override;
 
-    bool putParameter(Parameter parameter) override;
+    void removeAttributes(const std::string& key) override;
 
-    std::map<ParameterName, std::string> getParameters() override;
+    std::vector<std::string> getAttributeKeys() override;
 
-    void removeParameters(ParameterName parameterName) override;
+    bool putParameter(const std::string& key, Parameter parameter) override;
+
+    std::map<std::string, Parameter> getParameters() override;
+
+    Parameter getParameterForKey(const std::string& key) override;
+
+    void removeParameters() override;
+
+    void removeParameters(const std::string& key) override;
+
+    std::vector<std::string> getParameterKeys() override;
+
+    bool isEmpty() override;
 
 private:
     std::vector<std::shared_ptr<Reading>>& getOrCreateReadingsByKey(const std::string& key);
 
     std::map<std::string, std::vector<std::shared_ptr<Reading>>> m_readings;
 
-    std::vector<std::shared_ptr<Attribute>> m_attributes;
+    std::map<std::string, std::shared_ptr<Attribute>> m_attributes;
 
-    std::map<ParameterName, std::string> m_parameters;
+    std::map<std::string, Parameter> m_parameters;
 };
 }    // namespace wolkabout
 

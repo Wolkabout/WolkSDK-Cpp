@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,22 +151,38 @@ std::vector<std::string> WolkaboutDataProtocol::getInboundChannels() const
 
 std::vector<std::string> WolkaboutDataProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
-    return {WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC),
-            WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-              WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES)};
+    return {getFeedTopic(deviceKey), getParametersTopic(deviceKey), getDetailsSynchronizationTopic(deviceKey)};
 }
 
-std::string WolkaboutDataProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+std::string WolkaboutDataProtocol::getDeviceKey(const Message& message) const
 {
-    LOG(TRACE) << METHOD_INFO;
-    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+    return WolkaboutProtocol::getDeviceKey(message);
 }
 
-MessageType WolkaboutDataProtocol::getMessageType(std::shared_ptr<Message> message)
+DeviceType WolkaboutDataProtocol::getDeviceType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceType(message);
+}
+
+MessageType WolkaboutDataProtocol::getMessageType(const Message& message)
+{
     return WolkaboutProtocol::getMessageType(message);
+}
+
+std::string WolkaboutDataProtocol::getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const
+{
+    switch (type)
+    {
+    case MessageType::PULL_FEED_VALUES:
+        return getFeedTopic(deviceKey);
+    case MessageType::PULL_PARAMETERS:
+    case MessageType::SYNCHRONIZE_PARAMETERS:
+        return getParametersTopic(deviceKey);
+    case MessageType::DETAILS_SYNCHRONIZATION_REQUEST:
+        return getDetailsSynchronizationTopic(deviceKey);
+    default:
+        return "";
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -188,7 +204,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     }
     catch (const std::exception& exception)
     {
-        LOG(ERROR) << "Failed to serialize 'FeedRegistrationMessage' -> " << exception.what();
+        LOG(ERROR) << "Failed to serialize 'FeedRegistrationMessage' -> '" << exception.what() << "'.";
         return nullptr;
     }
 }
@@ -209,10 +225,18 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(feedRemovalMessage.getMessageType());
 
-    // Create the content
-    auto feeds = feedRemovalMessage.getReferences();
-    auto payload = json(feeds);
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    try
+    {
+        // Create the content
+        auto feeds = feedRemovalMessage.getReferences();
+        auto payload = json(feeds);
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to serialize 'FeedRemovalMessage' -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -231,41 +255,49 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(feedValuesMessage.getMessageType());
 
-    // Create the content
-    auto payload = json::array();
-    const auto& values = feedValuesMessage.getReadings();
-    for (const auto& member : values)
+    try
     {
-        // Check if the map is empty
-        if (member.second.empty())
+        // Create the content
+        auto payload = json::array();
+        const auto& values = feedValuesMessage.getReadings();
+        for (const auto& member : values)
         {
-            LOG(ERROR) << "Failed to serialize 'FeedValuesMessage' -> One of the readings map entries is empty.";
-            return nullptr;
-        }
+            // Check if the map is empty
+            if (member.second.empty())
+            {
+                LOG(ERROR) << "Failed to serialize 'FeedValuesMessage' -> One of the readings map entries is empty.";
+                return nullptr;
+            }
 
-        // Create the object for this time
-        auto time = json();
-        if (member.first)
-            time[WolkaboutProtocol::TIMESTAMP_KEY] = member.first;
-        for (const auto& reading : member.second)
-        {
-            const auto& key = reading.getReference();
-            if (reading.isBoolean())
-                time[key] = reading.getBoolValue();
-            else if (reading.isUInt())
-                time[key] = reading.getUIntValue();
-            else if (reading.isInt())
-                time[key] = reading.getIntValue();
-            else if (reading.isDouble())
-                time[key] = reading.getDoubleValue();
-            else
-                time[key] = reading.getStringValue();
-        }
+            // Create the object for this time
+            auto time = json();
+            if (member.first)
+                time[WolkaboutProtocol::TIMESTAMP_KEY] = member.first;
+            for (const auto& reading : member.second)
+            {
+                const auto& key = reading.getReference();
+                if (reading.isBoolean())
+                    time[key] = reading.getBoolValue();
+                else if (reading.isUInt())
+                    time[key] = reading.getUIntValue();
+                else if (reading.isInt())
+                    time[key] = reading.getIntValue();
+                else if (reading.isDouble())
+                    time[key] = reading.getDoubleValue();
+                else
+                    time[key] = reading.getStringValue();
+            }
 
-        // And add it into the array
-        payload += time;
+            // And add it into the array
+            payload += time;
+        }
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to serialize 'FeedValuesMessage' -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -285,13 +317,13 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
 {
     LOG(TRACE) << METHOD_INFO;
 
+    // Create the topic
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       toString(attributeRegistrationMessage.getMessageType());
+
     try
     {
-        // Create the topic
-        const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
-                           deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
-                           toString(attributeRegistrationMessage.getMessageType());
-
         // Create the payload
         auto attributes = attributeRegistrationMessage.getAttributes();
         auto payload = json(attributes);
@@ -299,7 +331,7 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
     }
     catch (const std::exception& exception)
     {
-        LOG(ERROR) << "Failed to serialize 'AttributeRegistrationMessage' -> " << exception.what();
+        LOG(ERROR) << "Failed to serialize 'AttributeRegistrationMessage' -> '" << exception.what() << "'.";
         return nullptr;
     }
 }
@@ -321,32 +353,41 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
                        toString(parametersUpdateMessage.getMessageType());
 
-    // Make the payload
-    auto payload = json();
-    for (const auto& parameter : parametersUpdateMessage.getParameters())
+    try
     {
-        // Check the parameter name
-        auto parameterName = toString(parameter.first);
-        if (parameterName.empty())
+        // Make the payload
+        auto payload = json();
+        for (const auto& parameter : parametersUpdateMessage.getParameters())
         {
-            LOG(ERROR) << "Failed to serialize 'ParametersUpdateMessage' -> One of parameter keys values is invalid.";
-            return nullptr;
-        }
+            // Check the parameter name
+            auto parameterName = toString(parameter.first);
+            if (parameterName.empty())
+            {
+                LOG(ERROR)
+                  << "Failed to serialize 'ParametersUpdateMessage' -> One of parameter keys values is invalid.";
+                return nullptr;
+            }
 
-        // Make the reading out of the value, and check how it can be written in
-        auto reading = Reading{"Parameter", parameter.second};
-        if (reading.isBoolean())
-            payload[parameterName] = reading.getBoolValue();
-        else if (reading.isUInt())
-            payload[parameterName] = reading.getUIntValue();
-        else if (reading.isInt())
-            payload[parameterName] = reading.getIntValue();
-        else if (reading.isDouble())
-            payload[parameterName] = reading.getDoubleValue();
-        else
-            payload[parameterName] = reading.getStringValue();
+            // Make the reading out of the value, and check how it can be written in
+            auto reading = Reading{"Parameter", parameter.second};
+            if (reading.isBoolean())
+                payload[parameterName] = reading.getBoolValue();
+            else if (reading.isUInt())
+                payload[parameterName] = reading.getUIntValue();
+            else if (reading.isInt())
+                payload[parameterName] = reading.getIntValue();
+            else if (reading.isDouble())
+                payload[parameterName] = reading.getDoubleValue();
+            else
+                payload[parameterName] = reading.getStringValue();
+        }
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to serialize 'ParametersUpdateMessage' -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -370,24 +411,44 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::SYNCHRONIZE_PARAMETERS);
 
-    // Create the payload
-    auto payload = json::array();
-    for (const auto& parameter : synchronizeParametersMessage.getParameters())
+    try
     {
-        // Check that the parameter is valid
-        auto parameterString = toString(parameter);
-        if (parameterString.empty())
+        // Create the payload
+        auto payload = json::array();
+        for (const auto& parameter : synchronizeParametersMessage.getParameters())
         {
-            LOG(ERROR)
-              << "Failed to serialize 'SynchronizeParametersMessage' -> One of parameter name values is not valid.";
-            return nullptr;
+            // Check that the parameter is valid
+            auto parameterString = toString(parameter);
+            if (parameterString.empty())
+            {
+                LOG(ERROR)
+                  << "Failed to serialize 'SynchronizeParametersMessage' -> One of parameter name values is not valid.";
+                return nullptr;
+            }
+            payload += parameterString;
         }
-        payload += parameterString;
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to serialize 'SynchronizeParametersMessage' -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
-std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
+std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(
+  const std::string& deviceKey, DetailsSynchronizationRequestMessage detailsSynchronizationRequestMessage)
+{
+    LOG(TRACE) << METHOD_INFO;
+
+    // Create the topic
+    const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
+                       toString(detailsSynchronizationRequestMessage.getMessageType());
+    return std::unique_ptr<Message>(new Message{"", topic});
+}
+
+std::unique_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -395,7 +456,7 @@ std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::s
     {
         auto j = json::parse(message->getContent());
         auto readings = j.get<std::vector<Reading>>();
-        return std::make_shared<FeedValuesMessage>(readings);
+        return std::unique_ptr<FeedValuesMessage>{new FeedValuesMessage{readings}};
     }
     catch (const std::exception& exception)
     {
@@ -404,7 +465,7 @@ std::shared_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::s
     }
 }
 
-std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<Message> message)
+std::unique_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(std::shared_ptr<Message> message)
 {
     LOG(TRACE) << METHOD_INFO;
 
@@ -412,12 +473,75 @@ std::shared_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(
     {
         auto j = json::parse(message->getContent());
         auto parameters = j.get<std::vector<Parameter>>();
-        return std::make_shared<ParametersUpdateMessage>(parameters);
+        return std::unique_ptr<ParametersUpdateMessage>{new ParametersUpdateMessage{parameters}};
     }
     catch (const std::exception& exception)
     {
         LOG(ERROR) << "Failed to deserialize 'Parameters' message -> '" << exception.what() << "'.";
         return nullptr;
     }
+}
+
+std::unique_ptr<DetailsSynchronizationResponseMessage> WolkaboutDataProtocol::parseDetails(
+  std::shared_ptr<Message> message)
+{
+    LOG(TRACE) << METHOD_INFO;
+    const auto errorPrefix = "Failed to parse 'DetailsSynchronizationResponse' message -> ";
+
+    // Check that the message is a DetailsSynchronizationResponse message.
+    auto type = getMessageType(*message);
+    if (type != MessageType::DETAILS_SYNCHRONIZATION_RESPONSE)
+    {
+        LOG(ERROR) << errorPrefix << " -> The message is not a 'DetailsSynchronizationResponse' message.";
+        return nullptr;
+    }
+
+    try
+    {
+        // Parse the information
+        auto j = json::parse(message->getContent());
+        if (!j.is_object())
+        {
+            LOG(ERROR) << errorPrefix << " -> The payload is not a JSON object.";
+            return nullptr;
+        }
+        auto feeds = j["feeds"].get<std::vector<std::string>>();
+        if (std::any_of(feeds.cbegin(), feeds.cend(), [](const std::string& value) { return value.empty(); }))
+        {
+            LOG(ERROR) << errorPrefix << " -> The feeds array contains an empty string.";
+            return nullptr;
+        }
+        auto attributes = j["attributes"].get<std::vector<std::string>>();
+        if (std::any_of(attributes.cbegin(), attributes.cend(), [](const std::string& value) { return value.empty(); }))
+        {
+            LOG(ERROR) << errorPrefix << " -> The attributes array contains an empty string.";
+            return nullptr;
+        }
+        return std::unique_ptr<DetailsSynchronizationResponseMessage>{
+          new DetailsSynchronizationResponseMessage{feeds, attributes}};
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
+        return nullptr;
+    }
+}
+
+std::string WolkaboutDataProtocol::getFeedTopic(const std::string& deviceKey)
+{
+    return WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FEED_VALUES);
+}
+
+std::string WolkaboutDataProtocol::getParametersTopic(const std::string& deviceKey)
+{
+    return WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::PARAMETER_SYNC);
+}
+
+std::string WolkaboutDataProtocol::getDetailsSynchronizationTopic(const std::string& deviceKey)
+{
+    return WolkaboutProtocol::PLATFORM_TO_DEVICE_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
+           WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::DETAILS_SYNCHRONIZATION_RESPONSE);
 }
 }    // namespace wolkabout

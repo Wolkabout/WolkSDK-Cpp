@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,9 +36,13 @@ public:
 
     std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const override;
 
-    std::string extractDeviceKeyFromChannel(const std::string& topic) const override;
+    std::string getDeviceKey(const Message& message) const override;
 
-    MessageType getMessageType(std::shared_ptr<Message> message) override;
+    DeviceType getDeviceType(const Message& message) override;
+
+    MessageType getMessageType(const Message& message) override;
+
+    std::string getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const override;
 
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  FeedRegistrationMessage feedRegistrationMessage) override;
@@ -64,9 +68,21 @@ public:
     std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
                                                  SynchronizeParametersMessage synchronizeParametersMessage) override;
 
-    std::shared_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) override;
+    std::unique_ptr<Message> makeOutboundMessage(
+      const std::string& deviceKey, DetailsSynchronizationRequestMessage detailsSynchronizationRequestMessage) override;
 
-    std::shared_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) override;
+    std::unique_ptr<FeedValuesMessage> parseFeedValues(std::shared_ptr<Message> message) override;
+
+    std::unique_ptr<ParametersUpdateMessage> parseParameters(std::shared_ptr<Message> message) override;
+
+    std::unique_ptr<DetailsSynchronizationResponseMessage> parseDetails(std::shared_ptr<Message> message) override;
+
+private:
+    static std::string getFeedTopic(const std::string& deviceKey);
+
+    static std::string getParametersTopic(const std::string& deviceKey);
+
+    static std::string getDetailsSynchronizationTopic(const std::string& deviceKey);
 };
 }    // namespace wolkabout
 #endif    // WOLKABOUTCORE_WOLKABOUTDATAPROTOCOL_H

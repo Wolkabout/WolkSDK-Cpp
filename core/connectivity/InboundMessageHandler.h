@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 #ifndef INBOUNDMESSAGEHANDLER_H
 #define INBOUNDMESSAGEHANDLER_H
 
+#include "core/MessageListener.h"
+
 #include <map>
 #include <memory>
 #include <string>
@@ -24,19 +26,6 @@
 
 namespace wolkabout
 {
-class Message;
-class Protocol;
-
-class MessageListener
-{
-public:
-    virtual ~MessageListener() = default;
-
-    virtual void messageReceived(std::shared_ptr<Message> message) = 0;
-
-    virtual const Protocol& getProtocol() = 0;
-};
-
 class InboundMessageHandler
 {
 public:

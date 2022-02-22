@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,16 +38,25 @@ std::vector<std::string> WolkaboutFirmwareUpdateProtocol::getInboundChannelsForD
               WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FIRMWARE_UPDATE_ABORT)};
 }
 
-MessageType WolkaboutFirmwareUpdateProtocol::getMessageType(std::shared_ptr<Message> message)
+MessageType WolkaboutFirmwareUpdateProtocol::getMessageType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
     return WolkaboutProtocol::getMessageType(message);
 }
 
-std::string WolkaboutFirmwareUpdateProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+DeviceType WolkaboutFirmwareUpdateProtocol::getDeviceType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
-    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+    return WolkaboutProtocol::getDeviceType(message);
+}
+
+std::string WolkaboutFirmwareUpdateProtocol::getDeviceKey(const Message& message) const
+{
+    return WolkaboutProtocol::getDeviceKey(message);
+}
+
+std::string WolkaboutFirmwareUpdateProtocol::getResponseChannelForMessage(MessageType /* type */,
+                                                                          const std::string& /* deviceKey */) const
+{
+    return {};
 }
 
 std::unique_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
@@ -74,11 +83,19 @@ std::unique_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FIRMWARE_UPDATE_STATUS);
 
-    // Parse the message into a JSON
-    auto payload = nlohmann::json({{"status", statusString}});
-    if (message.getStatus() == FirmwareUpdateStatus::ERROR)
-        payload["error"] = errorString;
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    try
+    {
+        // Parse the message into a JSON
+        auto payload = nlohmann::json({{"status", statusString}});
+        if (message.getStatus() == FirmwareUpdateStatus::ERROR)
+            payload["error"] = errorString;
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<FirmwareUpdateInstallMessage> WolkaboutFirmwareUpdateProtocol::parseFirmwareUpdateInstall(
@@ -88,7 +105,7 @@ std::unique_ptr<FirmwareUpdateInstallMessage> WolkaboutFirmwareUpdateProtocol::p
     const auto errorPrefix = "Failed to parse 'FirmwareUpdateInstall' message";
 
     // Check that the message is a FirmwareUpdateInstall message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FIRMWARE_UPDATE_INSTALL)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FirmwareUpdateInstall' message.";
@@ -96,7 +113,8 @@ std::unique_ptr<FirmwareUpdateInstallMessage> WolkaboutFirmwareUpdateProtocol::p
     }
 
     // Take the payload as the file name
-    return std::unique_ptr<FirmwareUpdateInstallMessage>(new FirmwareUpdateInstallMessage(message->getContent()));
+    return std::unique_ptr<FirmwareUpdateInstallMessage>(
+      new FirmwareUpdateInstallMessage(WolkaboutProtocol::removeQuotes(message->getContent())));
 }
 
 std::unique_ptr<FirmwareUpdateAbortMessage> WolkaboutFirmwareUpdateProtocol::parseFirmwareUpdateAbort(
@@ -106,7 +124,7 @@ std::unique_ptr<FirmwareUpdateAbortMessage> WolkaboutFirmwareUpdateProtocol::par
     const auto errorPrefix = "Failed to parse 'FirmwareUpdateAbort' message";
 
     // Check that the message is a FirmwareUpdateAbort message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FIRMWARE_UPDATE_ABORT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FirmwareUpdateAbort' message.";

@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef WOLK_VERSION_H
-#define WOLK_VERSION_H
+#include "core/model/messages/ChildrenSynchronizationRequestMessage.h"
 
-#define WOLK_CONNECT_VERSION_MAJOR 3
-#define WOLK_CONNECT_VERSION_MINOR 0
-#define WOLK_CONNECT_VERSION_PATCH 0
-
-#endif
+namespace wolkabout
+{
+MessageType ChildrenSynchronizationRequestMessage::getMessageType() const
+{
+    return MessageType::CHILDREN_SYNCHRONIZATION_REQUEST;
+}
+}    // namespace wolkabout

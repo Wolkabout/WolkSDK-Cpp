@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,16 +50,25 @@ std::vector<std::string> WolkaboutFileManagementProtocol::getInboundChannelsForD
               WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_PURGE)};
 }
 
-std::string WolkaboutFileManagementProtocol::extractDeviceKeyFromChannel(const std::string& topic) const
+std::string WolkaboutFileManagementProtocol::getDeviceKey(const Message& message) const
 {
-    LOG(TRACE) << METHOD_INFO;
-    return WolkaboutProtocol::extractDeviceKeyFromChannel(topic);
+    return WolkaboutProtocol::getDeviceKey(message);
 }
 
-MessageType WolkaboutFileManagementProtocol::getMessageType(std::shared_ptr<Message> message)
+DeviceType WolkaboutFileManagementProtocol::getDeviceType(const Message& message)
 {
-    LOG(TRACE) << METHOD_INFO;
+    return WolkaboutProtocol::getDeviceType(message);
+}
+
+MessageType WolkaboutFileManagementProtocol::getMessageType(const Message& message)
+{
     return WolkaboutProtocol::getMessageType(message);
+}
+
+std::string WolkaboutFileManagementProtocol::getResponseChannelForMessage(MessageType /* type */,
+                                                                          const std::string& /* deviceKey */) const
+{
+    return {};
 }
 
 std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -81,7 +90,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
         return nullptr;
     }
     auto errorString = toString(message.getError());
-    if (message.getStatus() == FileUploadStatus::ERROR && errorString.empty())
+    if (message.getStatus() == FileTransferStatus::ERROR && errorString.empty())
     {
         LOG(ERROR) << errorPrefix << " -> Missing valid error value.";
         return nullptr;
@@ -91,11 +100,19 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_UPLOAD_STATUS);
 
-    // Parse the message into a JSON
-    auto payload = json{{"name", message.getName()}, {"status", statusString}};
-    if (message.getStatus() == FileUploadStatus::ERROR)
-        payload["error"] = errorString;
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    try
+    {
+        // Parse the message into a JSON
+        auto payload = json{{"name", message.getName()}, {"status", statusString}};
+        if (message.getStatus() == FileTransferStatus::ERROR)
+            payload["error"] = errorString;
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -115,9 +132,17 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_BINARY_REQUEST);
 
-    // Parse the message into a JSON
-    auto payload = json{{"name", message.getName()}, {"chunkIndex", message.getChunkIndex()}};
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    try
+    {
+        // Parse the message into a JSON
+        auto payload = json{{"name", message.getName()}, {"chunkIndex", message.getChunkIndex()}};
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
@@ -139,7 +164,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
         return nullptr;
     }
     const auto errorString = toString(message.getError());
-    if (message.getStatus() == FileUploadStatus::ERROR && errorString.empty())
+    if (message.getStatus() == FileTransferStatus::ERROR && errorString.empty())
     {
         LOG(ERROR) << errorPrefix << " -> Missing valid error value.";
         return nullptr;
@@ -150,12 +175,20 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER +
                        toString(MessageType::FILE_URL_DOWNLOAD_STATUS);
 
-    // Create the JSON payload
-    auto payload =
-      json{{"fileName", message.getFileName()}, {"fileUrl", message.getFileUrl()}, {"status", statusString}};
-    if (message.getStatus() == FileUploadStatus::ERROR)
-        payload["error"] = errorString;
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    try
+    {
+        // Create the JSON payload
+        auto payload =
+          json{{"fileName", message.getFileName()}, {"fileUrl", message.getFileUrl()}, {"status", statusString}};
+        if (message.getStatus() == FileTransferStatus::ERROR)
+            payload["error"] = errorString;
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(const std::string& deviceKey,
@@ -167,11 +200,19 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
     const auto topic = WolkaboutProtocol::DEVICE_TO_PLATFORM_DIRECTION + WolkaboutProtocol::CHANNEL_DELIMITER +
                        deviceKey + WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::FILE_LIST_REQUEST);
 
-    // Create the JSON payload
-    auto payload = json::array();
-    for (const auto& file : message.getFiles())
-        payload.push_back(json{{"name", file.name}, {"size", file.size}, {"hash", file.hash}});
-    return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    try
+    {
+        // Create the JSON payload
+        auto payload = json::array();
+        for (const auto& file : message.getFiles())
+            payload.push_back(json{{"name", file.name}, {"size", file.size}, {"hash", file.hash}});
+        return std::unique_ptr<Message>(new Message{payload.dump(), topic});
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << "Failed to generate outbound 'FileListResponse' message -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<FileUploadInitiateMessage> WolkaboutFileManagementProtocol::parseFileUploadInit(
@@ -181,46 +222,54 @@ std::unique_ptr<FileUploadInitiateMessage> WolkaboutFileManagementProtocol::pars
     const auto errorPrefix = "Failed to parse 'FileUploadInitiate' message";
 
     // Check that the message is a FileUploadInitiate message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_UPLOAD_INIT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileUploadInitiate' message.";
         return nullptr;
     }
 
-    // Load the JSON contents of the message
-    auto payload = json::parse(message->getContent());
+    try
+    {
+        // Load the JSON contents of the message
+        auto payload = json::parse(message->getContent());
 
-    // Check that the payload is an object, and contains required fields
-    if (!payload.is_object())
-    {
-        LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON object.";
-        return nullptr;
-    }
+        // Check that the payload is an object, and contains required fields
+        if (!payload.is_object())
+        {
+            LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON object.";
+            return nullptr;
+        }
 
-    // Required fields
-    auto nameIt = payload.find("name");
-    if (nameIt == payload.end() || !nameIt->is_string())
-    {
-        LOG(ERROR) << errorPrefix << " -> The payload is missing a valid 'name' value.";
-        return nullptr;
-    }
-    auto sizeIt = payload.find("size");
-    if (sizeIt == payload.end() || !sizeIt->is_number_unsigned())
-    {
-        LOG(ERROR) << errorPrefix << " -> The payload is missing a valid 'size' value.";
-        return nullptr;
-    }
-    auto hashIt = payload.find("hash");
-    if (hashIt == payload.end() || !hashIt->is_string())
-    {
-        LOG(ERROR) << errorPrefix << " -> The payload is missing a valid 'hash' value.";
-        return nullptr;
-    }
+        // Required fields
+        auto nameIt = payload.find("name");
+        if (nameIt == payload.end() || !nameIt->is_string())
+        {
+            LOG(ERROR) << errorPrefix << " -> The payload is missing a valid 'name' value.";
+            return nullptr;
+        }
+        auto sizeIt = payload.find("size");
+        if (sizeIt == payload.end() || !sizeIt->is_number_unsigned())
+        {
+            LOG(ERROR) << errorPrefix << " -> The payload is missing a valid 'size' value.";
+            return nullptr;
+        }
+        auto hashIt = payload.find("hash");
+        if (hashIt == payload.end() || !hashIt->is_string())
+        {
+            LOG(ERROR) << errorPrefix << " -> The payload is missing a valid 'hash' value.";
+            return nullptr;
+        }
 
-    // Make the message
-    return std::unique_ptr<FileUploadInitiateMessage>(new FileUploadInitiateMessage(
-      nameIt->get<std::string>(), sizeIt->get<std::uint64_t>(), hashIt->get<std::string>()));
+        // Make the message
+        return std::unique_ptr<FileUploadInitiateMessage>(new FileUploadInitiateMessage(
+          nameIt->get<std::string>(), sizeIt->get<std::uint64_t>(), hashIt->get<std::string>()));
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<FileUploadAbortMessage> WolkaboutFileManagementProtocol::parseFileUploadAbort(
@@ -230,7 +279,7 @@ std::unique_ptr<FileUploadAbortMessage> WolkaboutFileManagementProtocol::parseFi
     const auto errorPrefix = "Failed to parse 'FileUploadAbort' message";
 
     // Check that the message is a FileUploadInitiate message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_UPLOAD_ABORT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileUploadAbort' message.";
@@ -249,7 +298,7 @@ std::unique_ptr<FileBinaryResponseMessage> WolkaboutFileManagementProtocol::pars
     const auto errorPrefix = "Failed to parse 'FileBinaryResponse' message";
 
     // Check that the message is a FileBinaryResponse message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_BINARY_RESPONSE)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileBinaryResponse' message.";
@@ -259,6 +308,7 @@ std::unique_ptr<FileBinaryResponseMessage> WolkaboutFileManagementProtocol::pars
     // Return the entire payload in the response
     return std::unique_ptr<FileBinaryResponseMessage>(new FileBinaryResponseMessage(message->getContent()));
 }
+
 std::unique_ptr<FileUrlDownloadInitMessage> WolkaboutFileManagementProtocol::parseFileUrlDownloadInit(
   std::shared_ptr<Message> message)
 {
@@ -266,7 +316,7 @@ std::unique_ptr<FileUrlDownloadInitMessage> WolkaboutFileManagementProtocol::par
     const auto errorPrefix = "Failed to parse 'FileUrlDownloadInit' message";
 
     // Check that the message is a FileUrlDownloadInit message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_URL_DOWNLOAD_INIT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileUrlDownloadInit' message.";
@@ -285,7 +335,7 @@ std::unique_ptr<FileUrlDownloadAbortMessage> WolkaboutFileManagementProtocol::pa
     const auto errorPrefix = "Failed to parse 'FileUrlDownloadAbort' message";
 
     // Check that the message is a FileUrlDownloadAbort message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_URL_DOWNLOAD_ABORT)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileUrlDownloadAbort' message.";
@@ -304,7 +354,7 @@ std::unique_ptr<FileListRequestMessage> WolkaboutFileManagementProtocol::parseFi
     const auto errorPrefix = "Failed to parse 'FileListRequest' message";
 
     // Check that the message is a FileListRequest message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_LIST_REQUEST)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileListRequest' message.";
@@ -321,40 +371,48 @@ std::unique_ptr<FileDeleteMessage> WolkaboutFileManagementProtocol::parseFileDel
     const auto errorPrefix = "Failed to parse 'FileDelete' message";
 
     // Check that the message is a FileDelete message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_DELETE)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FileDelete' message.";
         return nullptr;
     }
 
-    // Load the JSON contents of the message
-    auto payload = json::parse(message->getContent());
-
-    // Check that the payload is an array of strings
-    if (!payload.is_array())
+    try
     {
-        LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON array.";
-        return nullptr;
-    }
+        // Load the JSON contents of the message
+        auto payload = json::parse(message->getContent());
 
-    // Start checking every value of the array
-    auto files = std::vector<std::string>{};
-    for (const auto& file : payload.items())
-    {
-        // Check the type of the value
-        if (!file.value().is_string())
+        // Check that the payload is an array of strings
+        if (!payload.is_array())
         {
-            LOG(ERROR) << errorPrefix << " -> The payload contains array values that are not strings.";
+            LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON array.";
             return nullptr;
         }
 
-        // Place the file name into the vector
-        files.emplace_back(file.value().get<std::string>());
-    }
+        // Start checking every value of the array
+        auto files = std::vector<std::string>{};
+        for (const auto& file : payload.items())
+        {
+            // Check the type of the value
+            if (!file.value().is_string())
+            {
+                LOG(ERROR) << errorPrefix << " -> The payload contains array values that are not strings.";
+                return nullptr;
+            }
 
-    // Make the message
-    return std::unique_ptr<FileDeleteMessage>(new FileDeleteMessage(files));
+            // Place the file name into the vector
+            files.emplace_back(file.value().get<std::string>());
+        }
+
+        // Make the message
+        return std::unique_ptr<FileDeleteMessage>(new FileDeleteMessage(files));
+    }
+    catch (const std::exception& exception)
+    {
+        LOG(ERROR) << errorPrefix << " -> '" << exception.what() << "'.";
+        return nullptr;
+    }
 }
 
 std::unique_ptr<FilePurgeMessage> WolkaboutFileManagementProtocol::parseFilePurge(std::shared_ptr<Message> message)
@@ -363,7 +421,7 @@ std::unique_ptr<FilePurgeMessage> WolkaboutFileManagementProtocol::parseFilePurg
     const auto errorPrefix = "Failed to parse 'FilePurge' message";
 
     // Check that the message is a FilePurge message.
-    auto type = getMessageType(message);
+    auto type = getMessageType(*message);
     if (type != MessageType::FILE_PURGE)
     {
         LOG(ERROR) << errorPrefix << " -> The message is not a 'FilePurge' message.";

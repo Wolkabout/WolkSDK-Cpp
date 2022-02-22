@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ namespace spdlog
 class logger;
 namespace sinks
 {
-    template <typename Mutex> class ringbuffer_sink;
+template <typename Mutex> class ringbuffer_sink;
 }
 }    // namespace spdlog
 

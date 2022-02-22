@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 #include "core/persistence/inmemory/InMemoryPersistence.h"
 
+#include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
 
 namespace wolkabout
 {
-bool InMemoryPersistence::putReading(const std::string& key, std::shared_ptr<Reading> reading)
+bool InMemoryPersistence::putReading(const std::string& key, const Reading& reading)
 {
-    getOrCreateReadingsByKey(key).push_back(reading);
+    getOrCreateReadingsByKey(key).push_back(std::make_shared<Reading>(reading));
     return true;
 }
 
@@ -67,21 +68,23 @@ std::vector<std::string> InMemoryPersistence::getReadingsKeys()
     return keys;
 }
 
-bool InMemoryPersistence::isEmpty()
+bool InMemoryPersistence::putAttribute(const std::string& key, std::shared_ptr<Attribute> attribute)
 {
-    return getReadingsKeys().empty() && m_attributes.empty() && m_parameters.empty();
-}
-
-bool InMemoryPersistence::putAttribute(std::shared_ptr<Attribute> attribute)
-{
-    m_attributes.push_back(attribute);
-
+    m_attributes.emplace(key, std::move(attribute));
     return true;
 }
 
-std::vector<std::shared_ptr<Attribute>> InMemoryPersistence::getAttributes()
+std::map<std::string, std::shared_ptr<Attribute>> InMemoryPersistence::getAttributes()
 {
     return m_attributes;
+}
+
+std::shared_ptr<Attribute> InMemoryPersistence::getAttributeUnderKey(const std::string& key)
+{
+    const auto it = m_attributes.find(key);
+    if (it == m_attributes.cend())
+        return {};
+    return it->second;
 }
 
 void InMemoryPersistence::removeAttributes()
@@ -89,20 +92,58 @@ void InMemoryPersistence::removeAttributes()
     m_attributes.clear();
 }
 
-bool InMemoryPersistence::putParameter(Parameter parameter)
+void InMemoryPersistence::removeAttributes(const std::string& key)
 {
-    m_parameters.insert(parameter);
+    const auto it = m_attributes.find(key);
+    if (it != m_attributes.cend())
+        m_attributes.erase(it);
+}
+
+std::vector<std::string> InMemoryPersistence::getAttributeKeys()
+{
+    auto keys = std::vector<std::string>{};
+    std::transform(m_attributes.cbegin(), m_attributes.cend(), keys.end(),
+                   [&](const std::pair<std::string, std::shared_ptr<Attribute>>& pair) { return pair.first; });
+    return keys;
+}
+
+bool InMemoryPersistence::putParameter(const std::string& key, Parameter parameter)
+{
+    m_parameters.emplace(key, std::move(parameter));
     return true;
 }
 
-std::map<ParameterName, std::string> InMemoryPersistence::getParameters()
+std::map<std::string, Parameter> InMemoryPersistence::getParameters()
 {
     return m_parameters;
 }
 
-void InMemoryPersistence::removeParameters(ParameterName parameterName)
+Parameter InMemoryPersistence::getParameterForKey(const std::string& key)
+{
+    const auto it = m_parameters.find(key);
+    if (it == m_parameters.cend())
+        return {};
+    return it->second;
+}
+
+void InMemoryPersistence::removeParameters()
 {
     m_parameters.clear();
+}
+
+void InMemoryPersistence::removeParameters(const std::string& key)
+{
+    const auto it = m_parameters.find(key);
+    if (it != m_parameters.cend())
+        m_parameters.erase(it);
+}
+
+std::vector<std::string> InMemoryPersistence::getParameterKeys()
+{
+    auto keys = std::vector<std::string>{};
+    std::transform(m_parameters.cbegin(), m_parameters.cend(), keys.end(),
+                   [&](const std::pair<std::string, Parameter>& pair) { return pair.first; });
+    return keys;
 }
 
 std::vector<std::shared_ptr<Reading>>& InMemoryPersistence::getOrCreateReadingsByKey(const std::string& key)
@@ -113,5 +154,10 @@ std::vector<std::shared_ptr<Reading>>& InMemoryPersistence::getOrCreateReadingsB
     }
 
     return m_readings.at(key);
+}
+
+bool InMemoryPersistence::isEmpty()
+{
+    return m_readings.empty() && m_attributes.empty() && m_parameters.empty();
 }
 }    // namespace wolkabout

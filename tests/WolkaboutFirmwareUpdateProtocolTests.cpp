@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2022 Adriateh d.o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@
 #include "core/utilities/json.hpp"
 
 #include <gtest/gtest.h>
+
 #include <regex>
 
 using namespace ::testing;
@@ -70,15 +71,24 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetInboundChannelsForDevice)
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, ExtractDeviceKeyFromChannel)
 {
     // Test with some random topic
-    EXPECT_EQ(protocol->extractDeviceKeyFromChannel("p2d/" + DEVICE_KEY + "/firmware_update_install"), DEVICE_KEY);
+    EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}), DEVICE_KEY);
+}
+
+TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetDeviceType)
+{
+    EXPECT_EQ(protocol->getDeviceType({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}), DeviceType::STANDALONE);
 }
 
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(protocol->getMessageType(
-                std::make_shared<wolkabout::Message>("", "p2d/" + DEVICE_KEY + "/firmware_update_install")),
+    EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/firmware_update_install"}),
               MessageType::FIRMWARE_UPDATE_INSTALL);
+}
+
+TEST_F(WolkaboutFirmwareUpdateProtocolTests, GetResponseChannelForAnything)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::FIRMWARE_UPDATE_INSTALL, DEVICE_KEY).empty());
 }
 
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, SerializeFirmwareUpdateStatusInvalidStatus)

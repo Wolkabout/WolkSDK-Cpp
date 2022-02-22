@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 #ifndef CONNECTIVITYSERVICE_H
 #define CONNECTIVITYSERVICE_H
 
+#include "core/connectivity/InboundMessageHandler.h"
+
 #include <functional>
 #include <memory>
 #include <string>
@@ -24,19 +26,8 @@
 
 namespace wolkabout
 {
-class ConnectivityServiceListener
-{
-public:
-    virtual ~ConnectivityServiceListener() = default;
-
-    virtual void messageReceived(const std::string& topic, const std::string& message) = 0;
-
-    virtual void connectionLost() = 0;
-
-    virtual std::vector<std::string> getChannels() const = 0;
-};
-
 class Message;
+
 class ConnectivityService
 {
 public:
@@ -50,10 +41,13 @@ public:
 
     virtual bool publish(std::shared_ptr<Message> outboundMessage) = 0;
 
-    void setListener(std::weak_ptr<ConnectivityServiceListener> listener);
+    virtual void onConnectionLost(std::function<void()> onConnectionLost);
+
+    virtual void setListner(std::weak_ptr<InboundMessageHandler> inboundMessageHandler);
 
 protected:
-    std::weak_ptr<ConnectivityServiceListener> m_listener;
+    std::function<void()> m_onConnectionLost;
+    std::weak_ptr<InboundMessageHandler> m_inboundMessageHandler;
 };
 }    // namespace wolkabout
 

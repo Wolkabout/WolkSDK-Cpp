@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 
 #include "core/Types.h"
 #include "core/model/Message.h"
+#include "core/utilities/json.hpp"
 
 #include <memory>
 
@@ -32,6 +33,15 @@ class WolkaboutProtocol
 {
 public:
     /**
+     * This is a helper method that is used to check whether a JSON object contains all the keys that are in the list.
+     *
+     * @param j The JSON object in question.
+     * @param keys The list of keys that need to be found in the object.
+     * @return Whether the object contains all the keys.
+     */
+    static bool checkThatObjectContainsKeys(const nlohmann::json& j, const std::vector<std::string>& keys);
+
+    /**
      * This is a helper method that will remove any escaped quotes from a string.
      *
      * @param value Original value.
@@ -44,28 +54,41 @@ public:
      * This is done by extracting the last part of the topic, which must correspond to a unique MessageType - this is
      * currently set by the Wolkabout protocol.
      *
-     * @param message The message for which the MessageType needs to be determined.
+     * @param message The message whose contents need to be analyzed.
      * @return The determined message type for the received message.
      */
-    static MessageType getMessageType(const std::shared_ptr<Message>& message);
+    static MessageType getMessageType(const Message& message);
 
     /**
-     * This is a generic Wolkabout implementation for the `extractDeviceKeyFromChannel` interface method of the Protocol
+     * This is a generic Wolkabout implementation for the `getDeviceType` interface method of the Protocol interface.
+     * This is done by extracting the first part of the topic, and checking for characters 'g' or 'd'. If 'g' appears
+     * (such as in 'g2p' or 'p2g'), it would mean the Message is meant for a gateway, otherwise it's meant for a
+     * standalone device.
+     *
+     * @param message The message whose contents need to be analyzed.
+     * @return The determined DeviceType for the received message.
+     */
+    static DeviceType getDeviceType(const Message& message);
+
+    /**
+     * This is a generic Wolkabout implementation for the `getDeviceKey` interface method of the Protocol
      * interface. This is done by extracting the second part of the topic, which comes after the message direction
      * (usually `p2d`), and is always a device key - this is currently set by the Wolkabout protocol.
      *
-     * @param topic The message topic from which a device key needs to be extracted.
+     * @param message The message whose contents need to be analyzed.
      * @return The determined device key for the message topic.
      */
-    static std::string extractDeviceKeyFromChannel(const std::string& topic);
+    static std::string getDeviceKey(const Message& message);
 
     // Some constants that are used throughout the code.
     static std::string CHANNEL_DELIMITER;
-    static std::string CHANNEL_SINGLE_LEVEL_WILDCARD;
     static std::string DEVICE_TO_PLATFORM_DIRECTION;
     static std::string PLATFORM_TO_DEVICE_DIRECTION;
+    static std::string GATEWAY_TO_PLATFORM_DIRECTION;
+    static std::string PLATFORM_TO_GATEWAY_DIRECTION;
     static std::string TIMESTAMP_KEY;
     static std::string ESCAPED_QUOTES;
+    static std::string WILDCARD_SINGLE_LEVEL;
 
 private:
     WolkaboutProtocol() = default;

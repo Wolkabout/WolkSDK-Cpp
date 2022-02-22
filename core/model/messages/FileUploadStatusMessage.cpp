@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Wolkabout s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,13 @@
 
 namespace wolkabout
 {
-FileUploadStatusMessage::FileUploadStatusMessage(std::string name, FileUploadStatus status, FileUploadError error)
+FileUploadStatusMessage::FileUploadStatusMessage(std::string name, FileTransferStatus status, FileTransferError error)
 : m_name(std::move(name)), m_status(status), m_error(error)
+{
+}
+
+FileUploadStatusMessage::FileUploadStatusMessage(std::string name, FileTransferError error)
+: m_name(std::move(name)), m_status(FileTransferStatus::ERROR), m_error(error)
 {
 }
 
@@ -28,12 +33,12 @@ const std::string& FileUploadStatusMessage::getName() const
     return m_name;
 }
 
-FileUploadStatus FileUploadStatusMessage::getStatus() const
+FileTransferStatus FileUploadStatusMessage::getStatus() const
 {
     return m_status;
 }
 
-FileUploadError FileUploadStatusMessage::getError() const
+FileTransferError FileUploadStatusMessage::getError() const
 {
     return m_error;
 }

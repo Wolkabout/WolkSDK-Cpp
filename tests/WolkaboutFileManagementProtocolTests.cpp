@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Adriateh d.o.o.
+/**
+ * Copyright 2022 Adriateh d.o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@
 #include "core/utilities/json.hpp"
 
 #include <gtest/gtest.h>
+
 #include <regex>
 
 using namespace ::testing;
@@ -83,21 +84,30 @@ TEST_F(WolkaboutFileManagementProtocolTests, GetInboundChannelsForDevice)
 TEST_F(WolkaboutFileManagementProtocolTests, ExtractDeviceKeyFromChannel)
 {
     // Test with some random topic
-    EXPECT_EQ(protocol->extractDeviceKeyFromChannel("p2d/" + DEVICE_KEY + "/file_upload_initiate"), DEVICE_KEY);
+    EXPECT_EQ(protocol->getDeviceKey({"", "p2d/" + DEVICE_KEY + "/file_upload_initiate"}), DEVICE_KEY);
+}
+
+TEST_F(WolkaboutFileManagementProtocolTests, GetDeviceType)
+{
+    EXPECT_EQ(protocol->getDeviceType({"", "p2d/" + DEVICE_KEY + "/file_upload_initiate"}), DeviceType::STANDALONE);
 }
 
 TEST_F(WolkaboutFileManagementProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(
-      protocol->getMessageType(std::make_shared<wolkabout::Message>("", "p2d/" + DEVICE_KEY + "/file_upload_initiate")),
-      MessageType::FILE_UPLOAD_INIT);
+    EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/file_upload_initiate"}),
+              MessageType::FILE_UPLOAD_INIT);
+}
+
+TEST_F(WolkaboutFileManagementProtocolTests, GetResponseChannelForAnything)
+{
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::FIRMWARE_UPDATE_INSTALL, DEVICE_KEY).empty());
 }
 
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusEmptyName)
 {
     // Make a message with an empty name
-    auto status = FileUploadStatusMessage{{}, FileUploadStatus::FILE_READY};
+    auto status = FileUploadStatusMessage{{}, FileTransferStatus::FILE_READY};
 
     // Expect that protocol will return nullptr
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, status), nullptr);
@@ -106,7 +116,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusEmptyName)
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusInvalidStatus)
 {
     // Make a message with an invalid status
-    auto status = FileUploadStatusMessage{TEST_FILE, static_cast<FileUploadStatus>(1234)};
+    auto status = FileUploadStatusMessage{TEST_FILE, static_cast<FileTransferStatus>(1234)};
 
     // Expect that protocol will return nullptr
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, status), nullptr);
@@ -115,7 +125,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusInvalidSta
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusInvalidError)
 {
     // Make a message with an invalid error
-    auto status = FileUploadStatusMessage{TEST_FILE, FileUploadStatus::ERROR, static_cast<FileUploadError>(1234)};
+    auto status = FileUploadStatusMessage{TEST_FILE, FileTransferStatus::ERROR, static_cast<FileTransferError>(1234)};
 
     // Expect that protocol will return nullptr
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, status), nullptr);
@@ -124,7 +134,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusInvalidErr
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusSingleNonError)
 {
     // Make a message with a non-error status
-    auto status = FileUploadStatusMessage{TEST_FILE, FileUploadStatus::FILE_READY};
+    auto status = FileUploadStatusMessage{TEST_FILE, FileTransferStatus::FILE_READY};
 
     // Make place for the payload
     auto message = std::unique_ptr<wolkabout::Message>{};
@@ -143,7 +153,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusSingleErro
 {
     // Make a message with a non-error status
     auto status =
-      FileUploadStatusMessage{TEST_FILE, FileUploadStatus::ERROR, FileUploadError::TRANSFER_PROTOCOL_DISABLED};
+      FileUploadStatusMessage{TEST_FILE, FileTransferStatus::ERROR, FileTransferError::TRANSFER_PROTOCOL_DISABLED};
 
     // Make place for the payload
     auto message = std::unique_ptr<wolkabout::Message>{};
@@ -188,7 +198,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileBinaryRequestSingle)
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusEmptyName)
 {
     // Make a message with an empty name
-    auto status = FileUrlDownloadStatusMessage{{}, {}, FileUploadStatus::FILE_READY};
+    auto status = FileUrlDownloadStatusMessage{{}, {}, FileTransferStatus::FILE_READY};
 
     // Expect that the protocol returns a nullptr
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, status), nullptr);
@@ -197,7 +207,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusEmpty
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusEmptyUrl)
 {
     // Make a message with an empty url
-    auto status = FileUrlDownloadStatusMessage{{}, TEST_FILE, FileUploadStatus::FILE_READY};
+    auto status = FileUrlDownloadStatusMessage{{}, TEST_FILE, FileTransferStatus::FILE_READY};
 
     // Expect that the protocol returns a nullptr
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, status), nullptr);
@@ -206,7 +216,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusEmpty
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusInvalidStatus)
 {
     // Make a message with an invalid status
-    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, static_cast<FileUploadStatus>(1234)};
+    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, static_cast<FileTransferStatus>(1234)};
 
     // Expect that the protocol returns a nullptr
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, status), nullptr);
@@ -215,8 +225,8 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusInval
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusInvalidError)
 {
     // Make a message with an invalid error
-    auto status =
-      FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileUploadStatus::ERROR, static_cast<FileUploadError>(1234)};
+    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileTransferStatus::ERROR,
+                                               static_cast<FileTransferError>(1234)};
 
     // Expect that the protocol returns a nullptr
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, status), nullptr);
@@ -225,7 +235,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusInval
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusSingleNonError)
 {
     // Make a valid message that is not an error
-    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileUploadStatus::FILE_READY};
+    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileTransferStatus::FILE_READY};
 
     // Make place for the parsed message
     auto message = std::unique_ptr<wolkabout::Message>{};
@@ -244,8 +254,8 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusSingl
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusSingleError)
 {
     // Make a valid message that is not an error
-    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileUploadStatus::ERROR,
-                                               FileUploadError::TRANSFER_PROTOCOL_DISABLED};
+    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileTransferStatus::ERROR,
+                                               FileTransferError::TRANSFER_PROTOCOL_DISABLED};
 
     // Make place for the parsed message
     auto message = std::unique_ptr<wolkabout::Message>{};

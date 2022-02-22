@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,24 +59,46 @@ public:
     virtual std::vector<std::string> getInboundChannelsForDevice(const std::string& deviceKey) const = 0;
 
     /**
+     * This method can be overridden to provide information on a response channel that should be listened to for a
+     * certain MessageType - if the MessageType has a response channel.
+     *
+     * @param type The type of the message for which a response channel is requested.
+     * @param deviceKey The device key that should be included in the response channel, if the response channel needs
+     * it.
+     * @return The response channel for the message type. Can be empty if the message type does not have a response
+     * channel.
+     */
+    virtual std::string getResponseChannelForMessage(MessageType type, const std::string& deviceKey) const = 0;
+
+    /**
      * This method can be overridden to define the routine used to figure out the type of the received message.
      * The entire message gets passed through, so both the MQTT topic and the content of the message can be used to
      * determine that.
      *
-     * @param message The received MQTT message.
+     * @param message The message whose contents need to be analyzed.
      * @return The type of the message determined by the protocol.
      */
-    virtual MessageType getMessageType(std::shared_ptr<Message> message) = 0;
+    virtual MessageType getMessageType(const Message& message) = 0;
+
+    /**
+     * This method can be overridden to define the routine used to figure out what kind of device communicates with the
+     * platform using this message. This is used to disambiguate messages meant for standalone devices, and ones for
+     * gateways, or was sent out by a standalone/gateway device.
+     *
+     * @param message The message whose contents need to be analyzed.
+     * @return The type of the device meant to receive/send this message.
+     */
+    virtual DeviceType getDeviceType(const Message& message) = 0;
 
     /**
      * This method can be overridden to define the routine used to figure out the target device for the message.
      * Only the topic of the message is passed through as an argument, so the device key must be extracted from the
      * topic.
      *
-     * @param topic The topic of a received message.
+     * @param message The message whose contents need to be analyzed.
      * @return The device key extracted from the message topic.
      */
-    virtual std::string extractDeviceKeyFromChannel(const std::string& topic) const = 0;
+    virtual std::string getDeviceKey(const Message& message) const = 0;
 };
 }    // namespace wolkabout
 

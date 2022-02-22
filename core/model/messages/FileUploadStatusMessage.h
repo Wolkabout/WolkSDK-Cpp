@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Wolkabout s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,23 @@ namespace wolkabout
 class FileUploadStatusMessage : public MessageModel
 {
 public:
-    explicit FileUploadStatusMessage(std::string name, FileUploadStatus status,
-                                     FileUploadError error = FileUploadError::NONE);
+    FileUploadStatusMessage(std::string name, FileTransferStatus status,
+                            FileTransferError error = FileTransferError::NONE);
+
+    FileUploadStatusMessage(std::string name, FileTransferError error);
 
     const std::string& getName() const;
 
-    FileUploadStatus getStatus() const;
+    FileTransferStatus getStatus() const;
 
-    FileUploadError getError() const;
+    FileTransferError getError() const;
 
     MessageType getMessageType() const override;
 
 private:
     std::string m_name;
-    FileUploadStatus m_status;
-    FileUploadError m_error;
+    FileTransferStatus m_status;
+    FileTransferError m_error;
 };
 }    // namespace wolkabout
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ namespace wolkabout
 {
 enum class DataType
 {
+    NONE = -1,
     STRING,
     NUMERIC,
     BOOLEAN,
@@ -34,14 +35,17 @@ enum class DataType
 };
 
 std::string toString(DataType type);
+DataType dataTypeFromString(std::string value);
 
 enum class FeedType
 {
+    NONE = -1,
     IN,
     IN_OUT,
 };
 
 std::string toString(FeedType type);
+FeedType feedTypeFromString(std::string value);
 
 class Unit
 {
@@ -220,6 +224,8 @@ enum class MessageType
     PARAMETER_SYNC,
     PULL_PARAMETERS,
     SYNCHRONIZE_PARAMETERS,
+    DETAILS_SYNCHRONIZATION_REQUEST,
+    DETAILS_SYNCHRONIZATION_RESPONSE,
     TIME_SYNC,
     FILE_UPLOAD_INIT,
     FILE_UPLOAD_STATUS,
@@ -236,17 +242,23 @@ enum class MessageType
     FIRMWARE_UPDATE_INSTALL,
     FIRMWARE_UPDATE_STATUS,
     FIRMWARE_UPDATE_ABORT,
-
-    GATEWAY_DEVICE_REGISTRATION,
-    GATEWAY_DEVICE_REMOVAL,
-
+    DEVICE_REGISTRATION,
+    DEVICE_REGISTRATION_RESPONSE,
+    DEVICE_REMOVAL,
+    CHILDREN_SYNCHRONIZATION_REQUEST,
+    CHILDREN_SYNCHRONIZATION_RESPONSE,
+    REGISTERED_DEVICES_REQUEST,
+    REGISTERED_DEVICES_RESPONSE,
+    PLATFORM_CONNECTION_STATUS,
+    GATEWAY_SUBDEVICE,
+    ERROR,
     UNKNOWN,
 };
 
 std::string toString(MessageType type);
 MessageType messageTypeFromString(const std::string& type);
 
-enum class FileUploadStatus
+enum class FileTransferStatus
 {
     AWAITING_DEVICE,
     FILE_TRANSFER,
@@ -256,9 +268,9 @@ enum class FileUploadStatus
     UNKNOWN
 };
 
-std::string toString(wolkabout::FileUploadStatus status);
+std::string toString(wolkabout::FileTransferStatus status);
 
-enum class FileUploadError
+enum class FileTransferError
 {
     NONE = -1,
     UNKNOWN,
@@ -270,7 +282,14 @@ enum class FileUploadError
     RETRY_COUNT_EXCEEDED
 };
 
-std::string toString(wolkabout::FileUploadError error);
+std::string toString(wolkabout::FileTransferError error);
+
+enum class DeviceType
+{
+    NONE = -1,
+    STANDALONE,
+    GATEWAY
+};
 
 enum class FirmwareUpdateStatus
 {

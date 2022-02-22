@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,28 @@ std::string toString(DataType type)
     }
 }
 
+DataType dataTypeFromString(std::string value)
+{
+    // Convert the value into uppercase
+    std::transform(value.cbegin(), value.cend(), value.begin(), ::toupper);
+
+    if (value == "BOOLEAN")
+        return DataType::BOOLEAN;
+    else if (value == "NUMERIC")
+        return DataType::NUMERIC;
+    else if (value == "STRING")
+        return DataType::STRING;
+    else if (value == "HEXADECIMAL")
+        return DataType::HEXADECIMAL;
+    else if (value == "LOCATION")
+        return DataType::LOCATION;
+    else if (value == "ENUM")
+        return DataType::ENUM;
+    else if (value == "VECTOR")
+        return DataType::VECTOR;
+    return DataType::NONE;
+}
+
 std::string toString(FeedType type)
 {
     switch (type)
@@ -53,10 +75,23 @@ std::string toString(FeedType type)
     case FeedType::IN:
         return "IN";
     case FeedType::IN_OUT:
-        return "IN/OUT";
+        return "IN_OUT";
     default:
         return "";
     }
+}
+
+FeedType feedTypeFromString(std::string value)
+{
+    // Convert the value into uppercase
+    std::transform(value.cbegin(), value.cend(), value.begin(), ::toupper);
+
+    // Check the value
+    if (value == "IN")
+        return FeedType::IN;
+    else if (value == "IN_OUT")
+        return FeedType::IN_OUT;
+    return FeedType::NONE;
 }
 
 const std::string Unit::NUMERIC = "NUMERIC";
@@ -274,6 +309,9 @@ std::string toString(MessageType type)
         return "pull_parameters";
     case MessageType::SYNCHRONIZE_PARAMETERS:
         return "synchronize_parameters";
+    case MessageType::DETAILS_SYNCHRONIZATION_REQUEST:
+    case MessageType::DETAILS_SYNCHRONIZATION_RESPONSE:
+        return "details_synchronization";
     case MessageType::TIME_SYNC:
         return "time";
     case MessageType::FILE_UPLOAD_INIT:
@@ -305,10 +343,22 @@ std::string toString(MessageType type)
         return "firmware_update_status";
     case MessageType::FIRMWARE_UPDATE_ABORT:
         return "firmware_update_abort";
-    case MessageType::GATEWAY_DEVICE_REGISTRATION:
-        return "gateway_device_registration";
-    case MessageType::GATEWAY_DEVICE_REMOVAL:
-        return "gateway_device_removal";
+    case MessageType::DEVICE_REGISTRATION:
+        return "device_registration";
+    case MessageType::DEVICE_REGISTRATION_RESPONSE:
+        return "device_registration_response";
+    case MessageType::DEVICE_REMOVAL:
+        return "device_removal";
+    case MessageType::CHILDREN_SYNCHRONIZATION_REQUEST:
+    case MessageType::CHILDREN_SYNCHRONIZATION_RESPONSE:
+        return "children_synchronization";
+    case MessageType::REGISTERED_DEVICES_REQUEST:
+    case MessageType::REGISTERED_DEVICES_RESPONSE:
+        return "registered_devices";
+    case MessageType::PLATFORM_CONNECTION_STATUS:
+        return "connection_status";
+    case MessageType::ERROR:
+        return "error";
     default:
         return "";
     }
@@ -332,6 +382,8 @@ MessageType messageTypeFromString(const std::string& type)
         return MessageType::PULL_PARAMETERS;
     if (type == "synchronize_parameters")
         return MessageType::SYNCHRONIZE_PARAMETERS;
+    if (type == "details_synchronization")
+        return MessageType::DETAILS_SYNCHRONIZATION_RESPONSE;
     if (type == "time")
         return MessageType::TIME_SYNC;
     if (type == "file_upload_initiate")
@@ -362,51 +414,61 @@ MessageType messageTypeFromString(const std::string& type)
         return MessageType::FIRMWARE_UPDATE_STATUS;
     if (type == "firmware_update_abort")
         return MessageType::FIRMWARE_UPDATE_ABORT;
-    if (type == "gateway_device_registration")
-        return MessageType::GATEWAY_DEVICE_REGISTRATION;
-    if (type == "gateway_device_removal")
-        return MessageType::GATEWAY_DEVICE_REMOVAL;
+    if (type == "device_registration")
+        return MessageType::DEVICE_REGISTRATION;
+    if (type == "device_registration_response")
+        return MessageType::DEVICE_REGISTRATION_RESPONSE;
+    if (type == "device_removal")
+        return MessageType::DEVICE_REMOVAL;
+    if (type == "children_synchronization")
+        return MessageType::CHILDREN_SYNCHRONIZATION_RESPONSE;
+    if (type == "registered_devices")
+        return MessageType::REGISTERED_DEVICES_RESPONSE;
+    if (type == "connection_status")
+        return MessageType::PLATFORM_CONNECTION_STATUS;
+    if (type == "error")
+        return MessageType::ERROR;
     return MessageType::UNKNOWN;
 }
 
-std::string toString(wolkabout::FileUploadStatus status)
+std::string toString(wolkabout::FileTransferStatus status)
 {
     switch (status)
     {
-    case FileUploadStatus::AWAITING_DEVICE:
+    case FileTransferStatus::AWAITING_DEVICE:
         return "AWAITING_DEVICE";
-    case FileUploadStatus::FILE_TRANSFER:
+    case FileTransferStatus::FILE_TRANSFER:
         return "FILE_TRANSFER";
-    case FileUploadStatus::FILE_READY:
+    case FileTransferStatus::FILE_READY:
         return "FILE_READY";
-    case FileUploadStatus::ERROR:
+    case FileTransferStatus::ERROR:
         return "ERROR";
-    case FileUploadStatus::ABORTED:
+    case FileTransferStatus::ABORTED:
         return "ABORTED";
-    case FileUploadStatus::UNKNOWN:
+    case FileTransferStatus::UNKNOWN:
         return "UNKNOWN";
     default:
         return "";
     }
 }
 
-std::string toString(wolkabout::FileUploadError error)
+std::string toString(wolkabout::FileTransferError error)
 {
     switch (error)
     {
-    case FileUploadError::UNKNOWN:
+    case FileTransferError::UNKNOWN:
         return "UNKNOWN";
-    case FileUploadError::TRANSFER_PROTOCOL_DISABLED:
+    case FileTransferError::TRANSFER_PROTOCOL_DISABLED:
         return "TRANSFER_PROTOCOL_DISABLED";
-    case FileUploadError::UNSUPPORTED_FILE_SIZE:
+    case FileTransferError::UNSUPPORTED_FILE_SIZE:
         return "UNSUPPORTED_FILE_SIZE";
-    case FileUploadError::MALFORMED_URL:
+    case FileTransferError::MALFORMED_URL:
         return "MALFORMED_URL";
-    case FileUploadError::FILE_HASH_MISMATCH:
+    case FileTransferError::FILE_HASH_MISMATCH:
         return "FILE_HASH_MISMATCH";
-    case FileUploadError::FILE_SYSTEM_ERROR:
+    case FileTransferError::FILE_SYSTEM_ERROR:
         return "FILE_SYSTEM_ERROR";
-    case FileUploadError::RETRY_COUNT_EXCEEDED:
+    case FileTransferError::RETRY_COUNT_EXCEEDED:
         return "RETRY_COUNT_EXCEEDED";
     default:
         return "";

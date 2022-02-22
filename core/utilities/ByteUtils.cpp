@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 WolkAbout Technology s.r.o.
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 #include <iomanip>
 #include <openssl/md5.h>
 #include <openssl/sha.h>
+#include <random>
 #include <sstream>
 
 namespace wolkabout
@@ -33,6 +34,18 @@ ByteArray ByteUtils::toByteArray(const std::string& data)
     }
 
     return array;
+}
+
+ByteArray ByteUtils::generateRandomBytes(std::uint16_t size)
+{
+    static std::random_device device;
+    static auto engine = std::mt19937(device());
+    static auto distribution = std::uniform_int_distribution<std::mt19937::result_type>(0, UINT8_MAX);
+
+    auto bytes = ByteArray{};
+    for (auto i = 0; i < size; ++i)
+        bytes.emplace_back(distribution(engine));
+    return bytes;
 }
 
 std::string ByteUtils::toString(const ByteArray& data)
@@ -57,6 +70,30 @@ std::string ByteUtils::toHexString(const ByteArray& data)
     }
 
     return stream.str();
+}
+
+std::string ByteUtils::toUUIDString(const ByteArray& data)
+{
+    // Check the vector size
+    if (data.size() != UUID_VECTOR_SIZE)
+        return "";
+
+    // Start the string stream
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0');
+    // Go through the bytes
+    for (uint16_t i = 0; i < UUID_VECTOR_SIZE; i++)
+    {
+        // Add the lines on appropriate spots
+        if (i % 2 == 0 && i != 0 && i != 2 && i != 12 && i != 14)
+        {
+            ss << '-';
+        }
+        // Append the bytes
+        ss << std::setw(2) << static_cast<int>(data[i]);
+    }
+    // Return the newly formed string
+    return ss.str();
 }
 
 ByteArray ByteUtils::hashSHA256(const ByteArray& value)
