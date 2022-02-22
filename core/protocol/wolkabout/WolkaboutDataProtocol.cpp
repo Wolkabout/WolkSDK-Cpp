@@ -276,16 +276,27 @@ std::unique_ptr<Message> WolkaboutDataProtocol::makeOutboundMessage(const std::s
             for (const auto& reading : member.second)
             {
                 const auto& key = reading.getReference();
-                if (reading.isBoolean())
-                    time[key] = reading.getBoolValue();
-                else if (reading.isUInt())
-                    time[key] = reading.getUIntValue();
-                else if (reading.isInt())
-                    time[key] = reading.getIntValue();
-                else if (reading.isDouble())
-                    time[key] = reading.getDoubleValue();
+                if (!reading.isMulti())
+                {
+                    if (reading.isBoolean())
+                        time[key] = reading.getBoolValue();
+                    else if (reading.isUInt())
+                        time[key] = reading.getUIntValue();
+                    else if (reading.isInt())
+                        time[key] = reading.getIntValue();
+                    else if (reading.isDouble())
+                        time[key] = reading.getDoubleValue();
+                    else
+                        time[key] = reading.getStringValue();
+                }
                 else
-                    time[key] = reading.getStringValue();
+                {
+                    auto string = std::stringstream{};
+                    const auto size = reading.getStringValues().size();
+                    for (auto i = std::size_t{0}; i < size; ++i)
+                        string << reading.getStringValues()[i] << (i < (size - 1) ? "," : "");
+                    time[key] = string.str();
+                }
             }
 
             // And add it into the array
