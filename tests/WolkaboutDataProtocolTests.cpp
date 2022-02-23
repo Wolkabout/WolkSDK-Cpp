@@ -50,6 +50,8 @@ public:
 
     const std::string TEMPERATURE = "T";
 
+    const std::string ACCELERATION = "Acceleration";
+
     const std::string ROTATION = "Rotation";
 
     const std::string TRANSLATION = "Translation";
@@ -196,6 +198,25 @@ TEST_F(WolkaboutDataProtocolTests, SerializeFeedValuesSingle)
     // Analyze both the topic and the content by regex
     const auto topicRegex = std::regex(R"(d2p\/\w+\/feed_values)");
     const auto payloadRegex = std::regex(R"(\[\{"\w+":\d+\}\])");
+    EXPECT_TRUE(std::regex_match(message->getChannel(), topicRegex));
+    EXPECT_TRUE(std::regex_match(message->getContent(), payloadRegex));
+}
+
+TEST_F(WolkaboutDataProtocolTests, SerializeMultiValueReading)
+{
+    // Make a single reading that will be sent out
+    auto reading = Reading{ACCELERATION, std::vector<std::double_t>{12.1005, 0.2304, -0.128}};
+    auto values = FeedValuesMessage({reading});
+
+    // Make place for the payload
+    auto message = std::unique_ptr<wolkabout::Message>{};
+    ASSERT_NO_FATAL_FAILURE(message = protocol->makeOutboundMessage(DEVICE_KEY, values));
+    ASSERT_NE(message, nullptr);
+    LogMessage(*message);
+
+    // Analyze both the topic and the content by regex
+    const auto topicRegex = std::regex(R"(d2p\/\w+\/feed_values)");
+    const auto payloadRegex = std::regex(R"(\[\{"\w+":"\d+.\d+,\d+.\d+,\-\d+.\d+"\}\])");
     EXPECT_TRUE(std::regex_match(message->getChannel(), topicRegex));
     EXPECT_TRUE(std::regex_match(message->getContent(), payloadRegex));
 }
