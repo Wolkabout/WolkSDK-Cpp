@@ -106,7 +106,7 @@ template <class T> void Buffer<T>::swapBuffers()
 {
     std::unique_lock<std::mutex> pushGuard(m_pushLock);
 
-    if (m_pushQueue.empty())
+    if (m_pushQueue.empty() && !m_exitCondition)
     {
         m_condition.wait(pushGuard, [&] { return !m_pushQueue.empty() || m_exitCondition; });
     }

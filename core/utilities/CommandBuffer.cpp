@@ -79,7 +79,7 @@ void CommandBuffer::switchBuffers()
 {
     std::unique_lock<std::mutex> unique_lock(m_lock);
 
-    if (m_pushCommandQueue.empty())
+    if (m_pushCommandQueue.empty() && m_isRunning)
     {
         m_condition.wait(unique_lock);
     }
