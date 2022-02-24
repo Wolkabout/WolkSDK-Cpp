@@ -35,7 +35,7 @@ public:
     CommandBuffer();
     virtual ~CommandBuffer();
 
-    void pushCommand(std::shared_ptr<Command> command);
+    void pushCommand(const std::shared_ptr<Command>& command);
 
     void stop();
 

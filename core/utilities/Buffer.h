@@ -62,7 +62,10 @@ template <class T> Buffer<T>::~Buffer()
 
 template <class T> void Buffer<T>::stop()
 {
-    m_exitCondition = true;
+    {
+        std::lock_guard<std::mutex> lg{m_pushLock};
+        m_exitCondition = true;
+    }
     m_condition.notify_one();
 }
 
@@ -92,7 +95,7 @@ template <class T> T Buffer<T>::pop()
 
     if (m_popQueue.empty())
     {
-        LOG(ERROR) << "Poping from empty buffer";
+        LOG(ERROR) << "Popping from empty buffer";
         return {};
     }
 
@@ -106,10 +109,8 @@ template <class T> void Buffer<T>::swapBuffers()
 {
     std::unique_lock<std::mutex> pushGuard(m_pushLock);
 
-    if (m_pushQueue.empty() && !m_exitCondition)
-    {
+    if (m_pushQueue.empty())
         m_condition.wait(pushGuard, [&] { return !m_pushQueue.empty() || m_exitCondition; });
-    }
 
     std::lock_guard<std::mutex> popGuard{m_popLock};
     std::swap(m_pushQueue, m_popQueue);
