@@ -95,6 +95,9 @@ void CommandBuffer::processCommands()
 {
     switchBuffers();
 
+    if (!m_isRunning)
+        return;
+
     std::shared_ptr<std::function<void()>> command;
     while ((command = popCommand()) != nullptr)
     {
