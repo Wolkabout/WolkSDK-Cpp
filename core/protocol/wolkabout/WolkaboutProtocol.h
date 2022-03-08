@@ -80,6 +80,16 @@ public:
      */
     static std::string getDeviceKey(const Message& message);
 
+    /**
+     * This is a method that will use JSON schemas to validate the incoming payload.
+     * This method throws an exception if the message is not valid.
+     *
+     * @param message The message that needs validation.
+     * @return Whether the message was successfully validated. If this is false, that means that the message can not be
+     * validated.
+     */
+    static bool validateJSONPayload(const Message& message);
+
     // Some constants that are used throughout the code.
     static std::string CHANNEL_DELIMITER;
     static std::string DEVICE_TO_PLATFORM_DIRECTION;

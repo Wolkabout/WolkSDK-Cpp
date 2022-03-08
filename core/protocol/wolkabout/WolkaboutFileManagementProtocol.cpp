@@ -231,39 +231,15 @@ std::unique_ptr<FileUploadInitiateMessage> WolkaboutFileManagementProtocol::pars
 
     try
     {
+        WolkaboutProtocol::validateJSONPayload(*message);
+
         // Load the JSON contents of the message
         auto payload = json::parse(message->getContent());
 
-        // Check that the payload is an object, and contains required fields
-        if (!payload.is_object())
-        {
-            LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON object.";
-            return nullptr;
-        }
-
-        // Required fields
-        auto nameIt = payload.find("name");
-        if (nameIt == payload.end() || !nameIt->is_string())
-        {
-            LOG(ERROR) << errorPrefix << " -> The payload is missing a valid 'name' value.";
-            return nullptr;
-        }
-        auto sizeIt = payload.find("size");
-        if (sizeIt == payload.end() || !sizeIt->is_number_unsigned())
-        {
-            LOG(ERROR) << errorPrefix << " -> The payload is missing a valid 'size' value.";
-            return nullptr;
-        }
-        auto hashIt = payload.find("hash");
-        if (hashIt == payload.end() || !hashIt->is_string())
-        {
-            LOG(ERROR) << errorPrefix << " -> The payload is missing a valid 'hash' value.";
-            return nullptr;
-        }
-
         // Make the message
-        return std::unique_ptr<FileUploadInitiateMessage>(new FileUploadInitiateMessage(
-          nameIt->get<std::string>(), sizeIt->get<std::uint64_t>(), hashIt->get<std::string>()));
+        return std::unique_ptr<FileUploadInitiateMessage>(
+          new FileUploadInitiateMessage(payload["name"].get<std::string>(), payload["size"].get<std::uint64_t>(),
+                                        payload["hash"].get<std::string>()));
     }
     catch (const std::exception& exception)
     {
@@ -380,27 +356,15 @@ std::unique_ptr<FileDeleteMessage> WolkaboutFileManagementProtocol::parseFileDel
 
     try
     {
+        WolkaboutProtocol::validateJSONPayload(*message);
+
         // Load the JSON contents of the message
         auto payload = json::parse(message->getContent());
-
-        // Check that the payload is an array of strings
-        if (!payload.is_array())
-        {
-            LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON array.";
-            return nullptr;
-        }
 
         // Start checking every value of the array
         auto files = std::vector<std::string>{};
         for (const auto& file : payload.items())
         {
-            // Check the type of the value
-            if (!file.value().is_string())
-            {
-                LOG(ERROR) << errorPrefix << " -> The payload contains array values that are not strings.";
-                return nullptr;
-            }
-
             // Place the file name into the vector
             files.emplace_back(file.value().get<std::string>());
         }

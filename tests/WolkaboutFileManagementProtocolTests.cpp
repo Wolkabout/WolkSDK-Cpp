@@ -377,7 +377,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitSingle)
 {
     // Make a message
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_initiate";
-    auto payload = json{{"name", TEST_FILE}, {"size", 123}, {"hash", "123"}};
+    auto payload = json{{"name", TEST_FILE}, {"size", 123}, {"hash", "202cb962ac59075b964b07152d234b70"}};
     auto message = std::make_shared<wolkabout::Message>(payload.dump(), topic);
     LogMessage(*message);
 
@@ -390,7 +390,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadInitSingle)
     EXPECT_EQ(parsedMessage->getMessageType(), MessageType::FILE_UPLOAD_INIT);
     EXPECT_EQ(parsedMessage->getName(), TEST_FILE);
     EXPECT_EQ(parsedMessage->getSize(), 123);
-    EXPECT_EQ(parsedMessage->getHash(), "123");
+    EXPECT_EQ(parsedMessage->getHash(), "202cb962ac59075b964b07152d234b70");
 }
 
 TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadAbortInvalidTopic)
@@ -408,7 +408,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, DeserializeFileUploadAbortSingle)
 {
     // Make a message where the topic is not the right one
     auto topic = "p2d/" + DEVICE_KEY + "/file_upload_abort";
-    auto message = std::make_shared<wolkabout::Message>(std::string{}, topic);
+    auto message = std::make_shared<wolkabout::Message>("hello!", topic);
     LogMessage(*message);
 
     // Make place for the parsed message

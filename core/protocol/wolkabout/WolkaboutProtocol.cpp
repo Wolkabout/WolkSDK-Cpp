@@ -16,8 +16,145 @@
 
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 
+#include "core/utilities/nlohmann/json-schema.hpp"
+
+using nlohmann::json;
+using nlohmann::json_schema::json_validator;
+
 namespace wolkabout
 {
+const json feed_values_schema = R"(
+{
+	"$schema": "https://json-schema.org/draft/2019-09/schema",
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "timestamp"
+      ]
+    }
+}
+)"_json;
+
+const json parameters_schema = R"(
+{
+	"$schema": "https://json-schema.org/draft/2019-09/schema",
+    "type": "object",
+    "propertyNames": {
+        "pattern": "CONNECTIVITY_TYPE|OUTBOUND_DATA_MODE|OUTBOUND_DATA_RETENTION_TIME|MAXIMUM_MESSAGE_SIZE|FILE_TRANSFER_PLATFORM_ENABLED|FILE_TRANSFER_URL_ENABLED|FIRMWARE_UPDATE_ENABLED|FIRMWARE_UPDATE_CHECK_TIME|FIRMWARE_UPDATE_REPOSITORY|FIRMWARE_VERSION|GATEWAY|GATEWAY_PARENT|EXTERNAL_ID|UNKNOWN"
+    }
+}
+)"_json;
+
+const json details_synchronization_schema = R"(
+{
+	"$schema": "https://json-schema.org/draft/2019-09/schema",
+    "type": "object",
+	"properties": {
+    	"feeds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(?!\\s*$).+"
+          }
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(?!\\s*$).+"
+          }
+        }
+    },
+    "required": [
+      "feeds", "attributes"
+    ]
+}
+)"_json;
+
+const json file_upload_initiate_schema = R"(
+{
+	"$schema": "https://json-schema.org/draft/2019-09/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "size": {
+        "type": "number"
+      },
+      "hash": {
+        "type": "string",
+        "pattern": "[0-9A-Fa-f]{32}"
+      }
+    },
+    "required": [
+      "name", "size", "hash"
+    ]
+}
+)"_json;
+
+const json string_array_schema = R"(
+{
+	"$schema": "https://json-schema.org/draft/2019-09/schema",
+    "type": "array",
+    "items": {
+        "type": "string",
+        "pattern": "^(?!\\s*$).+"
+    }
+}
+)"_json;
+const json file_delete_schema = string_array_schema;
+
+const json children_synchronization_schema = string_array_schema;
+
+const json registered_devices_schema = R"(
+{
+	"$schema": "https://json-schema.org/draft/2019-09/schema",
+    "type": "object",
+    "properties": {
+      "timestampFrom": {
+        "type": "number"
+      },
+      "deviceType": {
+        "type": "string"
+      },
+      "externalId": {
+        "type": "string"
+      },
+      "matchingDevices": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "deviceKey": {
+              "type": "string",
+              "pattern": "^(?!\\s*$).+"
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "deviceType": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "deviceKey", "deviceType"
+          ]
+        }
+      }
+    },
+    "required": [
+      "timestampFrom", "matchingDevices"
+    ]
+}
+)"_json;
+
 bool WolkaboutProtocol::checkThatObjectContainsKeys(const nlohmann::json& j, const std::vector<std::string>& keys)
 {
     return std::all_of(keys.cbegin(), keys.cend(), [&](const std::string& key) { return j.find(key) != j.cend(); });
@@ -62,6 +199,43 @@ std::string WolkaboutProtocol::getDeviceKey(const Message& message)
     const auto firstDivider = topic.find(CHANNEL_DELIMITER);
     const auto lastDivider = topic.rfind(CHANNEL_DELIMITER);
     return topic.substr(firstDivider + 1, lastDivider - firstDivider - 1);
+}
+
+bool WolkaboutProtocol::validateJSONPayload(const Message& message)
+{
+    // Create the validator, and set the proper scheme
+    static auto validator = json_validator{};
+    switch (getMessageType(message))
+    {
+    case MessageType::FEED_VALUES:
+        validator.set_root_schema(feed_values_schema);
+        break;
+    case MessageType::PARAMETER_SYNC:
+    case MessageType::SYNCHRONIZE_PARAMETERS:
+        validator.set_root_schema(parameters_schema);
+        break;
+    case MessageType::DETAILS_SYNCHRONIZATION_RESPONSE:
+        validator.set_root_schema(details_synchronization_schema);
+        break;
+    case MessageType::FILE_UPLOAD_INIT:
+        validator.set_root_schema(file_upload_initiate_schema);
+        break;
+    case MessageType::FILE_DELETE:
+        validator.set_root_schema(file_delete_schema);
+        break;
+    case MessageType::CHILDREN_SYNCHRONIZATION_RESPONSE:
+        validator.set_root_schema(children_synchronization_schema);
+        break;
+    case MessageType::REGISTERED_DEVICES_RESPONSE:
+        validator.set_root_schema(registered_devices_schema);
+        break;
+    default:
+        return false;
+    }
+
+    // Validate the message
+    validator.validate(json::parse(message.getContent()));
+    return true;
 }
 
 std::string WolkaboutProtocol::CHANNEL_DELIMITER = "/";
