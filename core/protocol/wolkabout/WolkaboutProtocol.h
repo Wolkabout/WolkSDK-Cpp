@@ -19,7 +19,7 @@
 
 #include "core/Types.h"
 #include "core/model/Message.h"
-#include "core/utilities/json.hpp"
+#include "core/utilities/nlohmann/json.hpp"
 
 #include <memory>
 
