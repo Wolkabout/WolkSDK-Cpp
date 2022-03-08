@@ -21,7 +21,7 @@
 #include "core/model/Reading.h"
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
-#include "core/utilities/json.hpp"
+#include "core/utilities/nlohmann/json.hpp"
 
 #include <memory>
 #include <string>

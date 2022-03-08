@@ -35,7 +35,7 @@ case "${1}" in
    echo "Runs clang-format on source files"
    ;;
  * )
-   for file in `git diff --cached --name-only --diff-filter=ACMRT | grep -E "^(.*\.(c|cpp|h|hpp)\$)" | grep -v "mpack"` ; do
+   for file in `git diff --cached --name-only --diff-filter=ACMRT | grep -E "^(.*\.(c|cpp|h|hpp)\$)" | grep -v "mpack" | grep -v "json.hpp"` ; do
      format_file "${file}"
    done
    ;;

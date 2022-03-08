@@ -163,6 +163,7 @@ else ()
     set(LIB_TYPE STATIC)
 endif ()
 
+# Import the dependencies
 add_subdirectory(dependencies)
 link_directories(${CMAKE_PREFIX_PATH}/lib)
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
@@ -198,7 +199,6 @@ set(UTILITY_HEADER_FILES core/utilities/Buffer.h
         core/utilities/ByteUtils.h
         core/utilities/CommandBuffer.h
         core/utilities/FileSystemUtils.h
-        core/utilities/json.hpp
         core/utilities/Logger.h
         core/utilities/LogManager.h
         core/utilities/LogUploader.h
@@ -206,10 +206,19 @@ set(UTILITY_HEADER_FILES core/utilities/Buffer.h
         core/utilities/StringUtils.h
         core/utilities/Timer.h)
 
+set(NLOHMANN_JSON_FILES core/utilities/nlohmann/json.hpp
+        core/utilities/nlohmann/json-patch.cpp
+        core/utilities/nlohmann/json-patch.hpp
+        core/utilities/nlohmann/json-schema-draft7.json.cpp
+        core/utilities/nlohmann/json-schema.hpp
+        core/utilities/nlohmann/json-uri.cpp
+        core/utilities/nlohmann/json-validator.cpp
+        core/utilities/nlohmann/string-format-check.cpp)
+
 # path for interface files
 file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/utilities PATTERN *.cpp EXCLUDE)
 
-add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
+add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES} ${NLOHMANN_JSON_FILES})
 target_link_libraries(${PROJECT_NAME}Utility crypto Threads::Threads)
 target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
@@ -466,8 +475,9 @@ install(DIRECTORY ${CMAKE_PREFIX_PATH}/lib DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # Add the format rule
-file(GLOB_RECURSE ALL_FILES ${CMAKE_SOURCE_DIR}/**/*.cpp ${CMAKE_SOURCE_DIR}/**/*.h)
+file(GLOB_RECURSE ALL_FILES ${CMAKE_SOURCE_DIR}/**/*.cpp ${CMAKE_SOURCE_DIR}/**/*.hpp ${CMAKE_SOURCE_DIR}/**/*.h)
 list(FILTER ALL_FILES EXCLUDE REGEX "/out")
+list(FILTER ALL_FILES EXCLUDE REGEX "json.hpp")
 add_custom_target(format
         COMMAND "clang-format" -i -sort-includes -style=file ${ALL_FILES}
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
