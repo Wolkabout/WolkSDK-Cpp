@@ -8,6 +8,7 @@
 
 **Version 3.1.0-prerelease**
     - [IMPROVEMENTS] - Added a lot of new protocols that allow the WolkSDK-Cpp to be used in WolkConnect-Cpp to communicate on behalf of subdevices, and also as a Gateway.
+    - [IMPROVEMENTS] - Implemented JSON schemas for processing incoming payloads and filtering out invalid payloads.
 
 **Version 3.0.0-prerelease**
     - [REWORK] - Updated the WolkSDK-Cpp to be ready for Wolkabout IoT Platform 22.GA - The Digital Twin Update
