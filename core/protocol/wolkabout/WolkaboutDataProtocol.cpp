@@ -21,7 +21,7 @@
 #include "core/model/Reading.h"
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
-#include "core/utilities/json.hpp"
+#include "core/utilities/nlohmann/json.hpp"
 
 #include <memory>
 #include <string>
@@ -51,25 +51,14 @@ static void to_json(json& j, const Attribute& attribute)
 
 static void from_json(const json& j, std::vector<Reading>& r)
 {
-    // Check that the json is an array
-    if (!j.is_array())
-        throw std::runtime_error("Received payload is not an array.");
-
     // Now we need to go through every object in the array
     for (const auto& timePair : j.items())
     {
         // Check that this json is an object
         const auto& readings = timePair.value();
-        if (!readings.is_object())
-            throw std::runtime_error("One of array members is not an object.");
 
         // Obtain the timestamp from the object
-        auto timestampIt = readings.find(WolkaboutProtocol::TIMESTAMP_KEY);
-        if (timestampIt == readings.end())
-            throw std::runtime_error("Missing key '" + WolkaboutProtocol::TIMESTAMP_KEY + "' in array member.");
-        if (!timestampIt->is_number_unsigned())
-            throw std::runtime_error("Value of '" + WolkaboutProtocol::TIMESTAMP_KEY + "' is not an unsigned integer.");
-        const auto timestamp = timestampIt.value().get<std::uint64_t>();
+        const auto timestamp = readings[WolkaboutProtocol::TIMESTAMP_KEY].get<std::uint64_t>();
 
         // Create a list of all readings that will be read for this single timestamp.
         auto read = std::vector<Reading>{};
@@ -465,6 +454,8 @@ std::unique_ptr<FeedValuesMessage> WolkaboutDataProtocol::parseFeedValues(std::s
 
     try
     {
+        WolkaboutProtocol::validateJSONPayload(*message);
+
         auto j = json::parse(message->getContent());
         auto readings = j.get<std::vector<Reading>>();
         return std::unique_ptr<FeedValuesMessage>{new FeedValuesMessage{readings}};
@@ -482,6 +473,8 @@ std::unique_ptr<ParametersUpdateMessage> WolkaboutDataProtocol::parseParameters(
 
     try
     {
+        WolkaboutProtocol::validateJSONPayload(*message);
+
         auto j = json::parse(message->getContent());
         auto parameters = j.get<std::vector<Parameter>>();
         return std::unique_ptr<ParametersUpdateMessage>{new ParametersUpdateMessage{parameters}};
@@ -509,25 +502,12 @@ std::unique_ptr<DetailsSynchronizationResponseMessage> WolkaboutDataProtocol::pa
 
     try
     {
+        WolkaboutProtocol::validateJSONPayload(*message);
+
         // Parse the information
         auto j = json::parse(message->getContent());
-        if (!j.is_object())
-        {
-            LOG(ERROR) << errorPrefix << " -> The payload is not a JSON object.";
-            return nullptr;
-        }
         auto feeds = j["feeds"].get<std::vector<std::string>>();
-        if (std::any_of(feeds.cbegin(), feeds.cend(), [](const std::string& value) { return value.empty(); }))
-        {
-            LOG(ERROR) << errorPrefix << " -> The feeds array contains an empty string.";
-            return nullptr;
-        }
         auto attributes = j["attributes"].get<std::vector<std::string>>();
-        if (std::any_of(attributes.cbegin(), attributes.cend(), [](const std::string& value) { return value.empty(); }))
-        {
-            LOG(ERROR) << errorPrefix << " -> The attributes array contains an empty string.";
-            return nullptr;
-        }
         return std::unique_ptr<DetailsSynchronizationResponseMessage>{
           new DetailsSynchronizationResponseMessage{feeds, attributes}};
     }

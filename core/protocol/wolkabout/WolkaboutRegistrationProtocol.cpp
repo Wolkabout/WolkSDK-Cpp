@@ -18,7 +18,7 @@
 
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
-#include "core/utilities/json.hpp"
+#include "core/utilities/nlohmann/json.hpp"
 
 using namespace nlohmann;
 
@@ -260,19 +260,11 @@ WolkaboutRegistrationProtocol::parseChildrenSynchronizationResponse(const std::s
 
     try
     {
+        WolkaboutProtocol::validateJSONPayload(*message);
+
         // Parse the information
         auto j = json::parse(message->getContent());
-        if (!j.is_array())
-        {
-            LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON object.";
-            return nullptr;
-        }
         auto children = j.get<std::vector<std::string>>();
-        if (std::any_of(children.cbegin(), children.cend(), [](const std::string& value) { return value.empty(); }))
-        {
-            LOG(ERROR) << errorPrefix << " -> The payload contains an empty children name string.";
-            return nullptr;
-        }
         return std::unique_ptr<ChildrenSynchronizationResponseMessage>(
           new ChildrenSynchronizationResponseMessage{children});
     }
@@ -338,13 +330,10 @@ std::unique_ptr<RegisteredDevicesResponseMessage> WolkaboutRegistrationProtocol:
 
     try
     {
+        WolkaboutProtocol::validateJSONPayload(*message);
+
         // Parse the information
         auto j = json::parse(message->getContent());
-        if (!j.is_object())
-        {
-            LOG(ERROR) << errorPrefix << " -> The payload is not a valid JSON object.";
-            return nullptr;
-        }
 
         auto timestampFrom = j["timestampFrom"].get<std::uint64_t>();
         auto deviceType = std::string{};

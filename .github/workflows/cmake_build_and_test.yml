@@ -51,3 +51,4 @@ jobs:
         uses: jidicula/clang-format-action@v3.5.2
         with:
           clang-format-version: 10
+          exclude-regex: "core/utilities/nlohmann/json.hpp"
