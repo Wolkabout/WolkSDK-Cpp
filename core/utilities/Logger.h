@@ -80,7 +80,6 @@ public:
     std::vector<std::string> buffer();
 
 private:
-    Logger() = default;
     void logMessage(const Log& log, spdlog::logger& logger);
 
     static void setupFileLogger(const std::string& filePathWithExtension);
