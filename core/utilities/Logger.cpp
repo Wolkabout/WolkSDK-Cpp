@@ -27,11 +27,13 @@
 
 namespace
 {
-const unsigned BUFFER_LOG_SIZE = 5000;
+const unsigned BURRER_LOG_SIZE = 2500;
 }
 
 namespace wolkabout
 {
+std::unique_ptr<Logger> Logger::m_instance;
+
 struct custom_filename_calculator
 {
     // Create filename for the form basename.YYYY-MM-DD_hh-mm.ext
@@ -46,17 +48,16 @@ struct custom_filename_calculator
     }
 };
 
-void Logger::operator+=(Log& log)
+void Logger::set(std::unique_ptr<Logger> logger)
 {
-    if (log.getLogLevel() == LogLevel::OFF)
-        return;
-    logEntry(log);
+    m_instance = std::move(logger);
 }
 
 Logger& Logger::getInstance()
 {
-    static Logger instance;
-    return instance;
+    if (m_instance == nullptr)
+        m_instance = std::unique_ptr<Logger>{new Logger};
+    return *m_instance;
 }
 
 void Logger::init(LogLevel level, Type type, const std::string& filePathWithExtension)
@@ -87,6 +88,11 @@ void Logger::init(LogLevel level, Type type, const std::string& filePathWithExte
     setupLoggerParams(level);
 }
 
+void Logger::operator+=(const Log& log)
+{
+    logEntry(log);
+}
+
 void Logger::logEntry(const Log& log)
 {
     if (m_fileLogger)
@@ -104,36 +110,15 @@ void Logger::logEntry(const Log& log)
         logMessage(log, *m_bufferLogger);
     }
 }
-void Logger::setLevel(wolkabout::LogLevel level)
+
+std::vector<std::string> Logger::buffer()
 {
-    switch (level)
+    if (!m_bufferSink)
     {
-    case LogLevel::TRACE:
-    {
-        spdlog::set_level(spdlog::level::trace);
-        break;
+        return {};
     }
-    case LogLevel::DEBUG:
-    {
-        spdlog::set_level(spdlog::level::debug);
-        break;
-    }
-    case LogLevel::INFO:
-    {
-        spdlog::set_level(spdlog::level::info);
-        break;
-    }
-    case LogLevel::OFF:
-    {
-        spdlog::set_level(spdlog::level::off);
-        break;
-    }
-    case LogLevel::ERROR:
-    default:
-    {
-        spdlog::set_level(spdlog::level::err);
-    }
-    }
+
+    return m_bufferSink->last_formatted();
 }
 
 void Logger::logMessage(const Log& log, spdlog::logger& logger)
@@ -143,10 +128,6 @@ void Logger::logMessage(const Log& log, spdlog::logger& logger)
     case LogLevel::ERROR:
     {
         return logger.error(log.getMessage());
-    }
-    case LogLevel::WARN:
-    {
-        return logger.warn(log.getMessage());
     }
     case LogLevel::INFO:
     {
@@ -170,8 +151,8 @@ void Logger::setupFileLogger(const std::string& filePathWithExtension)
     try
     {
         instance.m_fileLogger = spdlog::synchronous_factory::template create<
-          spdlog::sinks::daily_file_sink<std::mutex, custom_filename_calculator>>("fileLogger", filePathWithExtension,
-                                                                                  0, 0);
+          spdlog::sinks::daily_file_sink<std::mutex, custom_filename_calculator>>("vending_fileLogger",
+                                                                                  filePathWithExtension, 0, 0);
     }
     catch (spdlog::spdlog_ex& e)
     {
@@ -193,7 +174,7 @@ void Logger::setupConsoleLogger()
 {
     auto& instance = getInstance();
 
-    instance.m_consoleLogger = spdlog::stdout_logger_mt("consoleLogger");
+    instance.m_consoleLogger = spdlog::stdout_logger_mt("vending_consoleLogger");
 }
 
 void Logger::setupBufferLogger()
@@ -201,9 +182,9 @@ void Logger::setupBufferLogger()
     auto& instance = getInstance();
 
     instance.m_bufferLogger = spdlog::synchronous_factory::template create<spdlog::sinks::ringbuffer_sink<std::mutex>>(
-      "bufferLogger", BUFFER_LOG_SIZE);
+      "bufferLogger", BURRER_LOG_SIZE);
     instance.m_bufferSink =
-      dynamic_cast<spdlog::sinks::ringbuffer_sink_mt*>(instance.m_bufferLogger->sinks().at(0).get());
+      dynamic_cast<spdlog::sinks::ringbuffer_sink<std::mutex>*>(instance.m_bufferLogger->sinks().at(0).get());
 }
 
 void Logger::setupLoggerParams(LogLevel level)
@@ -230,11 +211,6 @@ void Logger::setupLoggerParams(LogLevel level)
         spdlog::set_level(spdlog::level::info);
         break;
     }
-    case LogLevel::OFF:
-    {
-        spdlog::set_level(spdlog::level::off);
-        break;
-    }
     case LogLevel::ERROR:
     default:
     {
@@ -255,39 +231,37 @@ std::string Log::getMessage() const
     return m_message.str();
 }
 
-std::vector<std::string> Logger::buffer()
+LOG::LOG(wolkabout::LogLevel level, bool doLog) : m_log(level), m_doLog(doLog) {}
+
+LOG::~LOG()
 {
-    auto& instance = getInstance();
-
-    if (!instance.m_bufferSink)
+    if (m_doLog)
     {
-        return {};
+        wolkabout::Logger::getInstance() += m_log;
     }
-
-    return instance.m_bufferSink->last_formatted();
 }
 
 wolkabout::LogLevel from_string(std::string level)
 {
     std::transform(level.begin(), level.end(), level.begin(), ::toupper);
 
-    if (level.compare("TRACE") == 0)
+    if (level == "TRACE")
     {
         return wolkabout::LogLevel::TRACE;
     }
-    else if (level.compare("DEBUG") == 0)
+    else if (level == "DEBUG")
     {
         return wolkabout::LogLevel::DEBUG;
     }
-    else if (level.compare("INFO") == 0)
+    else if (level == "INFO")
     {
         return wolkabout::LogLevel::INFO;
     }
-    else if (level.compare("WARN") == 0)
+    else if (level == "WARN")
     {
         return wolkabout::LogLevel::WARN;
     }
-    else if (level.compare("OFF") == 0)
+    else if (level == "OFF")
     {
         return wolkabout::LogLevel::OFF;
     }

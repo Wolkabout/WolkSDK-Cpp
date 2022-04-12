@@ -152,7 +152,7 @@ TEST_F(ModelMessagesTests, DeviceRemovalMessageGetKeys)
 
 TEST_F(ModelMessagesTests, MessageTypeForErrorMessage)
 {
-    EXPECT_EQ(ErrorMessage({}, {}).getMessageType(), MessageType::ERROR);
+    EXPECT_EQ(ErrorMessage({}, {}).getMessageType(), MessageType::ERROR_MESSAGE);
 }
 
 TEST_F(ModelMessagesTests, ErrorMessageGetValues)
@@ -287,7 +287,7 @@ TEST_F(ModelMessagesTests, FileUploadStatusMessageGetEverything)
 {
     const auto message = FileUploadStatusMessage{"TestFile", FileTransferError::FILE_SYSTEM_ERROR};
     EXPECT_EQ(message.getName(), "TestFile");
-    EXPECT_EQ(message.getStatus(), FileTransferStatus::ERROR);
+    EXPECT_EQ(message.getStatus(), FileTransferStatus::ERROR_TRANSFER);
     EXPECT_EQ(message.getError(), FileTransferError::FILE_SYSTEM_ERROR);
 }
 
@@ -324,7 +324,7 @@ TEST_F(ModelMessagesTests, FileUrlDownloadStatusMessageGetEverything)
     const auto message = FileUrlDownloadStatusMessage{"TestPath", FileTransferError::FILE_SYSTEM_ERROR};
     EXPECT_EQ(message.getFileUrl(), "TestPath");
     EXPECT_TRUE(message.getFileName().empty());
-    EXPECT_EQ(message.getStatus(), FileTransferStatus::ERROR);
+    EXPECT_EQ(message.getStatus(), FileTransferStatus::ERROR_TRANSFER);
     EXPECT_EQ(message.getError(), FileTransferError::FILE_SYSTEM_ERROR);
 }
 
@@ -353,8 +353,8 @@ TEST_F(ModelMessagesTests, MessageTypeForFirmwareUpdateStatusMessage)
 TEST_F(ModelMessagesTests, FirmwareUpdateStatusMessageGetStatusAndError)
 {
     const auto message =
-      FirmwareUpdateStatusMessage{FirmwareUpdateStatus::ERROR, FirmwareUpdateError::INSTALLATION_FAILED};
-    EXPECT_EQ(message.getStatus(), FirmwareUpdateStatus::ERROR);
+      FirmwareUpdateStatusMessage{FirmwareUpdateStatus::ERROR_UPDATE, FirmwareUpdateError::INSTALLATION_FAILED};
+    EXPECT_EQ(message.getStatus(), FirmwareUpdateStatus::ERROR_UPDATE);
     EXPECT_EQ(message.getError(), FirmwareUpdateError::INSTALLATION_FAILED);
 }
 

@@ -35,7 +35,7 @@ std::vector<std::string> WolkaboutErrorProtocol::getInboundChannels() const
 std::vector<std::string> WolkaboutErrorProtocol::getInboundChannelsForDevice(const std::string& deviceKey) const
 {
     return {m_incomingDirection + WolkaboutProtocol::CHANNEL_DELIMITER + deviceKey +
-            WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::ERROR)};
+            WolkaboutProtocol::CHANNEL_DELIMITER + toString(MessageType::ERROR_MESSAGE)};
 }
 
 MessageType WolkaboutErrorProtocol::getMessageType(const Message& message)
@@ -68,7 +68,7 @@ std::unique_ptr<ErrorMessage> WolkaboutErrorProtocol::parseError(const std::shar
     {
         // Check that the message is a RegisteredDeviceResponse message.
         auto type = getMessageType(*message);
-        if (type != MessageType::ERROR)
+        if (type != MessageType::ERROR_MESSAGE)
         {
             LOG(ERROR) << errorPrefix << " -> The message is not a 'Error' message.";
             return nullptr;

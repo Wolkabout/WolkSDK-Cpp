@@ -72,12 +72,12 @@ TEST_F(WolkaboutErrorProtocolTests, GetDeviceType)
 TEST_F(WolkaboutErrorProtocolTests, GetMessageType)
 {
     // Test with a simple example
-    EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/error"}), MessageType::ERROR);
+    EXPECT_EQ(protocol->getMessageType({"", "p2d/" + DEVICE_KEY + "/error"}), MessageType::ERROR_MESSAGE);
 }
 
 TEST_F(WolkaboutErrorProtocolTests, GetResponseChannelForAnything)
 {
-    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::ERROR, DEVICE_KEY).empty());
+    EXPECT_TRUE(protocol->getResponseChannelForMessage(MessageType::ERROR_MESSAGE, DEVICE_KEY).empty());
 }
 
 TEST_F(WolkaboutErrorProtocolTests, ParseErrorMessageTypeIsNotError)

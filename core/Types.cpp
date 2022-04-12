@@ -357,7 +357,7 @@ std::string toString(MessageType type)
         return "registered_devices";
     case MessageType::PLATFORM_CONNECTION_STATUS:
         return "connection_status";
-    case MessageType::ERROR:
+    case MessageType::ERROR_MESSAGE:
         return "error";
     default:
         return "";
@@ -427,7 +427,7 @@ MessageType messageTypeFromString(const std::string& type)
     if (type == "connection_status")
         return MessageType::PLATFORM_CONNECTION_STATUS;
     if (type == "error")
-        return MessageType::ERROR;
+        return MessageType::ERROR_MESSAGE;
     return MessageType::UNKNOWN;
 }
 
@@ -441,7 +441,7 @@ std::string toString(wolkabout::FileTransferStatus status)
         return "FILE_TRANSFER";
     case FileTransferStatus::FILE_READY:
         return "FILE_READY";
-    case FileTransferStatus::ERROR:
+    case FileTransferStatus::ERROR_TRANSFER:
         return "ERROR";
     case FileTransferStatus::ABORTED:
         return "ABORTED";
@@ -485,7 +485,7 @@ std::string toString(wolkabout::FirmwareUpdateStatus status)
         return "INSTALLING";
     case FirmwareUpdateStatus::SUCCESS:
         return "SUCCESS";
-    case FirmwareUpdateStatus::ERROR:
+    case FirmwareUpdateStatus::ERROR_UPDATE:
         return "ERROR";
     case FirmwareUpdateStatus::ABORTED:
         return "ABORTED";

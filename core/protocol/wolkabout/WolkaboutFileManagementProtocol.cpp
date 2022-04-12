@@ -90,7 +90,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
         return nullptr;
     }
     auto errorString = toString(message.getError());
-    if (message.getStatus() == FileTransferStatus::ERROR && errorString.empty())
+    if (message.getStatus() == FileTransferStatus::ERROR_TRANSFER && errorString.empty())
     {
         LOG(ERROR) << errorPrefix << " -> Missing valid error value.";
         return nullptr;
@@ -104,7 +104,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(co
     {
         // Parse the message into a JSON
         auto payload = json{{"name", message.getName()}, {"status", statusString}};
-        if (message.getStatus() == FileTransferStatus::ERROR)
+        if (message.getStatus() == FileTransferStatus::ERROR_TRANSFER)
             payload["error"] = errorString;
         return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }
@@ -164,7 +164,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
         return nullptr;
     }
     const auto errorString = toString(message.getError());
-    if (message.getStatus() == FileTransferStatus::ERROR && errorString.empty())
+    if (message.getStatus() == FileTransferStatus::ERROR_TRANSFER && errorString.empty())
     {
         LOG(ERROR) << errorPrefix << " -> Missing valid error value.";
         return nullptr;
@@ -180,7 +180,7 @@ std::unique_ptr<Message> WolkaboutFileManagementProtocol::makeOutboundMessage(
         // Create the JSON payload
         auto payload =
           json{{"fileName", message.getFileName()}, {"fileUrl", message.getFileUrl()}, {"status", statusString}};
-        if (message.getStatus() == FileTransferStatus::ERROR)
+        if (message.getStatus() == FileTransferStatus::ERROR_TRANSFER)
             payload["error"] = errorString;
         return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }

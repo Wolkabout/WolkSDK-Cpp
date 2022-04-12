@@ -251,7 +251,7 @@ enum class MessageType
     REGISTERED_DEVICES_RESPONSE,
     PLATFORM_CONNECTION_STATUS,
     GATEWAY_SUBDEVICE,
-    ERROR,
+    ERROR_MESSAGE,
     UNKNOWN,
 };
 
@@ -263,7 +263,7 @@ enum class FileTransferStatus
     AWAITING_DEVICE,
     FILE_TRANSFER,
     FILE_READY,
-    ERROR,
+    ERROR_TRANSFER,
     ABORTED,
     UNKNOWN
 };
@@ -296,7 +296,7 @@ enum class FirmwareUpdateStatus
     AWAITING_DEVICE,
     INSTALLING,
     SUCCESS,
-    ERROR,
+    ERROR_UPDATE,
     ABORTED,
     UNKNOWN
 };

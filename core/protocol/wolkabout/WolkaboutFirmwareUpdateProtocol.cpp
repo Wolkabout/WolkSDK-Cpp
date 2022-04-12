@@ -73,7 +73,7 @@ std::unique_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
         return nullptr;
     }
     auto errorString = toString(message.getError());
-    if (message.getStatus() == FirmwareUpdateStatus::ERROR && errorString.empty())
+    if (message.getStatus() == FirmwareUpdateStatus::ERROR_UPDATE && errorString.empty())
     {
         LOG(ERROR) << errorPrefix << " -> Missing valid error value.";
         return nullptr;
@@ -87,7 +87,7 @@ std::unique_ptr<Message> WolkaboutFirmwareUpdateProtocol::makeOutboundMessage(
     {
         // Parse the message into a JSON
         auto payload = nlohmann::json({{"status", statusString}});
-        if (message.getStatus() == FirmwareUpdateStatus::ERROR)
+        if (message.getStatus() == FirmwareUpdateStatus::ERROR_UPDATE)
             payload["error"] = errorString;
         return std::unique_ptr<Message>(new Message{payload.dump(), topic});
     }

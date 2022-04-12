@@ -103,7 +103,8 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, SerializeFirmwareUpdateStatusInvali
 TEST_F(WolkaboutFirmwareUpdateProtocolTests, SerializeFirmwareUpdateStatusInvalidError)
 {
     // Create a message with an invalid error
-    auto status = FirmwareUpdateStatusMessage{FirmwareUpdateStatus::ERROR, static_cast<FirmwareUpdateError>(1234)};
+    auto status =
+      FirmwareUpdateStatusMessage{FirmwareUpdateStatus::ERROR_UPDATE, static_cast<FirmwareUpdateError>(1234)};
 
     // Expect that parsing this message will return a nullptr
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, status), nullptr);
@@ -133,7 +134,8 @@ TEST_F(WolkaboutFirmwareUpdateProtocolTests, SerializeFirmwareUpdateSingleError)
 {
     // In this test we expect that when the error is set as status, the error value shows up in the serialized payload.
     // Make a message with status different that error and an error value
-    auto status = FirmwareUpdateStatusMessage{FirmwareUpdateStatus::ERROR, FirmwareUpdateError::INSTALLATION_FAILED};
+    auto status =
+      FirmwareUpdateStatusMessage{FirmwareUpdateStatus::ERROR_UPDATE, FirmwareUpdateError::INSTALLATION_FAILED};
 
     // Make place for the payload
     auto message = std::unique_ptr<wolkabout::Message>{};

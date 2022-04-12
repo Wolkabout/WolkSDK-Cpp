@@ -25,7 +25,7 @@ FileUrlDownloadStatusMessage::FileUrlDownloadStatusMessage(std::string fileUrl, 
 }
 
 FileUrlDownloadStatusMessage::FileUrlDownloadStatusMessage(std::string fileUrl, FileTransferError error)
-: m_fileUrl(std::move(fileUrl)), m_status(FileTransferStatus::ERROR), m_error(error)
+: m_fileUrl(std::move(fileUrl)), m_status(FileTransferStatus::ERROR_TRANSFER), m_error(error)
 {
 }
 
