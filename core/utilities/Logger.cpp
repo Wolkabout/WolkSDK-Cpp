@@ -151,7 +151,7 @@ void Logger::setupFileLogger(const std::string& filePathWithExtension)
     try
     {
         instance.m_fileLogger = spdlog::synchronous_factory::template create<
-          spdlog::sinks::daily_file_sink<std::mutex, custom_filename_calculator>>("vending_fileLogger",
+          spdlog::sinks::daily_file_sink<std::mutex, custom_filename_calculator>>("WolkSDK_fileLogger",
                                                                                   filePathWithExtension, 0, 0);
     }
     catch (spdlog::spdlog_ex& e)
@@ -174,7 +174,7 @@ void Logger::setupConsoleLogger()
 {
     auto& instance = getInstance();
 
-    instance.m_consoleLogger = spdlog::stdout_logger_mt("vending_consoleLogger");
+    instance.m_consoleLogger = spdlog::stdout_logger_mt("WolkSDK_consoleLogger");
 }
 
 void Logger::setupBufferLogger()
