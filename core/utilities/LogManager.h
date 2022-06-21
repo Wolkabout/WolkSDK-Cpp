@@ -2,8 +2,8 @@
  * Copyright (c) 2022 Wolkabout.
  */
 
-#ifndef LOGMANAGER_H
-#define LOGMANAGER_H
+#ifndef WOLKABOUTCORE_LOGMANAGER_H
+#define WOLKABOUTCORE_LOGMANAGER_H
 
 #include "core/utilities/LogUploader.h"
 #include "core/utilities/Timer.h"
@@ -85,4 +85,4 @@ private:
 };
 
 }    // namespace wolkabout
-#endif    // LOGMANAGER_H
+#endif    // WOLKABOUTCORE_LOGMANAGER_H

@@ -147,7 +147,7 @@ TEST_F(TypesTests, MessageTypeTest)
       {MessageType::REGISTERED_DEVICES_REQUEST, "registered_devices"},
       {MessageType::REGISTERED_DEVICES_RESPONSE, "registered_devices"},
       {MessageType::PLATFORM_CONNECTION_STATUS, "connection_status"},
-      {MessageType::ERROR, "error"},
+      {MessageType::ERROR_MESSAGE, "error"},
     };
 
     // Check the `toString` function
@@ -177,7 +177,7 @@ TEST_F(TypesTests, FileTransferStatusTest)
     const auto map = std::map<FileTransferStatus, std::string>{{FileTransferStatus::AWAITING_DEVICE, "AWAITING_DEVICE"},
                                                                {FileTransferStatus::FILE_TRANSFER, "FILE_TRANSFER"},
                                                                {FileTransferStatus::FILE_READY, "FILE_READY"},
-                                                               {FileTransferStatus::ERROR, "ERROR"},
+                                                               {FileTransferStatus::ERROR_TRANSFER, "ERROR"},
                                                                {FileTransferStatus::ABORTED, "ABORTED"},
                                                                {FileTransferStatus::UNKNOWN, "UNKNOWN"}};
 
@@ -218,7 +218,7 @@ TEST_F(TypesTests, FirmwareUpdateStatusTest)
       std::map<FirmwareUpdateStatus, std::string>{{FirmwareUpdateStatus::AWAITING_DEVICE, "AWAITING_DEVICE"},
                                                   {FirmwareUpdateStatus::INSTALLING, "INSTALLING"},
                                                   {FirmwareUpdateStatus::SUCCESS, "SUCCESS"},
-                                                  {FirmwareUpdateStatus::ERROR, "ERROR"},
+                                                  {FirmwareUpdateStatus::ERROR_UPDATE, "ERROR"},
                                                   {FirmwareUpdateStatus::ABORTED, "ABORTED"},
                                                   {FirmwareUpdateStatus::UNKNOWN, "UNKNOWN"}};
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef STRINGUTILS_H
-#define STRINGUTILS_H
+#ifndef WOLKABOUTCORE_STRINGUTILS_H
+#define WOLKABOUTCORE_STRINGUTILS_H
 
 #include "core/utilities/ByteUtils.h"
 

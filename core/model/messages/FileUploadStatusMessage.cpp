@@ -24,7 +24,7 @@ FileUploadStatusMessage::FileUploadStatusMessage(std::string name, FileTransferS
 }
 
 FileUploadStatusMessage::FileUploadStatusMessage(std::string name, FileTransferError error)
-: m_name(std::move(name)), m_status(FileTransferStatus::ERROR), m_error(error)
+: m_name(std::move(name)), m_status(FileTransferStatus::ERROR_TRANSFER), m_error(error)
 {
 }
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef BYTEUTILS_H
-#define BYTEUTILS_H
+#ifndef WOLKABOUTCORE_BYTEUTILS_H
+#define WOLKABOUTCORE_BYTEUTILS_H
 
 #include <cstdint>
 #include <string>

@@ -125,7 +125,8 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusInvalidSta
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusInvalidError)
 {
     // Make a message with an invalid error
-    auto status = FileUploadStatusMessage{TEST_FILE, FileTransferStatus::ERROR, static_cast<FileTransferError>(1234)};
+    auto status =
+      FileUploadStatusMessage{TEST_FILE, FileTransferStatus::ERROR_TRANSFER, static_cast<FileTransferError>(1234)};
 
     // Expect that protocol will return nullptr
     EXPECT_EQ(protocol->makeOutboundMessage(DEVICE_KEY, status), nullptr);
@@ -152,8 +153,8 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusSingleNonE
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUploadStatusSingleError)
 {
     // Make a message with a non-error status
-    auto status =
-      FileUploadStatusMessage{TEST_FILE, FileTransferStatus::ERROR, FileTransferError::TRANSFER_PROTOCOL_DISABLED};
+    auto status = FileUploadStatusMessage{TEST_FILE, FileTransferStatus::ERROR_TRANSFER,
+                                          FileTransferError::TRANSFER_PROTOCOL_DISABLED};
 
     // Make place for the payload
     auto message = std::unique_ptr<wolkabout::Message>{};
@@ -225,7 +226,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusInval
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusInvalidError)
 {
     // Make a message with an invalid error
-    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileTransferStatus::ERROR,
+    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileTransferStatus::ERROR_TRANSFER,
                                                static_cast<FileTransferError>(1234)};
 
     // Expect that the protocol returns a nullptr
@@ -254,7 +255,7 @@ TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusSingl
 TEST_F(WolkaboutFileManagementProtocolTests, SerializeFileUrlDownloadStatusSingleError)
 {
     // Make a valid message that is not an error
-    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileTransferStatus::ERROR,
+    auto status = FileUrlDownloadStatusMessage{TEST_URL, TEST_FILE, FileTransferStatus::ERROR_TRANSFER,
                                                FileTransferError::TRANSFER_PROTOCOL_DISABLED};
 
     // Make place for the parsed message

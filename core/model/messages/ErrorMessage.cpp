@@ -40,7 +40,7 @@ const std::string& ErrorMessage::getMessage() const
 
 MessageType ErrorMessage::getMessageType() const
 {
-    return MessageType::ERROR;
+    return MessageType::ERROR_MESSAGE;
 }
 
 const std::chrono::system_clock::time_point& ErrorMessage::getArrivalTime() const

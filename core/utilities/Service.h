@@ -1,5 +1,5 @@
-#ifndef SERVICE_H
-#define SERVICE_H
+#ifndef WOLKABOUTCORE_SERVICE_H
+#define WOLKABOUTCORE_SERVICE_H
 
 namespace wolkabout
 {
@@ -25,4 +25,4 @@ public:
 };
 }    // namespace wolkabout
 
-#endif    // SERVICE_H
+#endif    // WOLKABOUTCORE_SERVICE_H
