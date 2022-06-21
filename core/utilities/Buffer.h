@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef BUFFER_H
-#define BUFFER_H
+#ifndef WOLKABOUTCORE_BUFFER_H
+#define WOLKABOUTCORE_BUFFER_H
 
 #include "core/utilities/Logger.h"
 

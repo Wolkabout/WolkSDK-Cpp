@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef WOLKABOUTCORE_TIMER_H
+#define WOLKABOUTCORE_TIMER_H
 
 #include <atomic>
 #include <condition_variable>
@@ -45,4 +45,4 @@ private:
 
 }    // namespace wolkabout
 
-#endif    // TIMER_H
+#endif    // WOLKABOUTCORE_TIMER_H

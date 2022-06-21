@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef FILESYSTEMUTILS_H
-#define FILESYSTEMUTILS_H
+#ifndef WOLKABOUTCORE_FILESYSTEMUTILS_H
+#define WOLKABOUTCORE_FILESYSTEMUTILS_H
 
 #include "core/utilities/ByteUtils.h"
 

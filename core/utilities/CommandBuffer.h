@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef COMMAND_BUFFER_H
-#define COMMAND_BUFFER_H
+#ifndef WOLKABOUTCORE_COMMAND_BUFFER_H
+#define WOLKABOUTCORE_COMMAND_BUFFER_H
 
 #include <atomic>
 #include <condition_variable>
