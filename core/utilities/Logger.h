@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef WOLKABOUTCORE_LOGGER_H
+#define WOLKABOUTCORE_LOGGER_H
 
 #include <memory>
 #include <mutex>
@@ -162,4 +162,4 @@ constexpr auto ERROR = wolkabout::LogLevel::ERROR;
 #endif
 }    // namespace wolkabout
 
-#endif    // LOGGER_H
+#endif    // WOLKABOUTCORE_LOGGER_H
