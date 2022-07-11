@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef WOLKABOUTCORE_TIMER_H
+#define WOLKABOUTCORE_TIMER_H
 
 #include <atomic>
 #include <condition_variable>
@@ -45,4 +45,4 @@ private:
 
 }    // namespace wolkabout
 
-#endif    // TIMER_H
+#endif    // WOLKABOUTCORE_TIMER_H

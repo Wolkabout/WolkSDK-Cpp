@@ -1,5 +1,5 @@
-/*
- * Copyright 2020 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@
 #ifndef MQTTCALLBACK_H
 #define MQTTCALLBACK_H
 
-#include <mqtt/callback.h>
-
 #include <functional>
+#include <mqtt/callback.h>
 #include <string>
 
 namespace wolkabout

@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef FILESYSTEMUTILS_H
-#define FILESYSTEMUTILS_H
+#ifndef WOLKABOUTCORE_FILESYSTEMUTILS_H
+#define WOLKABOUTCORE_FILESYSTEMUTILS_H
 
 #include "core/utilities/ByteUtils.h"
 
@@ -39,7 +39,7 @@ public:
 
     static time_t getLastModified(const std::string& path);
 
-    static double getFileSize(const std::string& path);
+    static std::uint64_t getFileSize(const std::string& path);
 
     static bool isDirectoryPresent(const std::string& dirPath);
 

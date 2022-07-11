@@ -1,5 +1,5 @@
-/*
- * Copyright 2019 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef STRINGUTILS_H
-#define STRINGUTILS_H
+#ifndef WOLKABOUTCORE_STRINGUTILS_H
+#define WOLKABOUTCORE_STRINGUTILS_H
 
 #include "core/utilities/ByteUtils.h"
 
@@ -58,6 +58,8 @@ public:
     static std::string toUpperCase(const std::string& string);
 
     template <typename T> static std::string toString(const T& value);
+
+    static std::vector<std::string> tokenize(std::string const& str, const char delim);
 
     static const std::string EMPTY_STRING;
     static const std::string BOOL_TRUE;

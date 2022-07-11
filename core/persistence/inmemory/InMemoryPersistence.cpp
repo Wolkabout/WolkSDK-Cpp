@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,53 +14,50 @@
  * limitations under the License.
  */
 
-#include "InMemoryPersistence.h"
+#include "core/persistence/inmemory/InMemoryPersistence.h"
 
-#include <cstddef>
-#include <mutex>
+#include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
 
 namespace wolkabout
 {
-bool InMemoryPersistence::putSensorReading(const std::string& key, std::shared_ptr<SensorReading> sensorReading)
+bool InMemoryPersistence::putReading(const std::string& key, const Reading& reading)
 {
-    getOrCreateSensorReadingsByKey(key).push_back(sensorReading);
+    getOrCreateReadingsByKey(key).push_back(std::make_shared<Reading>(reading));
     return true;
 }
 
-std::vector<std::shared_ptr<SensorReading>> InMemoryPersistence::getSensorReadings(const std::string& key,
-                                                                                   uint_fast64_t count)
+std::vector<std::shared_ptr<Reading>> InMemoryPersistence::getReadings(const std::string& key, std::uint_fast64_t count)
 {
     if (m_readings.find(key) == m_readings.end())
     {
         return {};
     }
 
-    std::vector<std::shared_ptr<SensorReading>>& sensorReadings = m_readings.at(key);
-    auto size = static_cast<uint_fast64_t>(sensorReadings.size());
-    return std::vector<std::shared_ptr<SensorReading>>(sensorReadings.begin(),
-                                                       sensorReadings.begin() + (count < size ? count : size));
+    std::vector<std::shared_ptr<Reading>>& readings = m_readings.at(key);
+    auto size = static_cast<uint_fast64_t>(readings.size());
+    return {readings.begin(), readings.begin() + static_cast<std::int64_t>((count < size ? count : size))};
 }
 
-void InMemoryPersistence::removeSensorReadings(const std::string& key, uint_fast64_t count)
+void InMemoryPersistence::removeReadings(const std::string& key, uint_fast64_t count)
 {
     if (m_readings.find(key) == m_readings.end())
     {
         return;
     }
 
-    std::vector<std::shared_ptr<SensorReading>>& readings = getOrCreateSensorReadingsByKey(key);
+    std::vector<std::shared_ptr<Reading>>& readings = getOrCreateReadingsByKey(key);
     auto size = static_cast<uint_fast64_t>(readings.size());
-    readings.erase(readings.begin(), readings.begin() + (count < size ? count : size));
+    readings.erase(readings.begin(), readings.begin() + static_cast<std::int64_t>((count < size ? count : size)));
     readings.shrink_to_fit();
 }
 
-std::vector<std::string> InMemoryPersistence::getSensorReadingsKeys()
+std::vector<std::string> InMemoryPersistence::getReadingsKeys()
 {
     std::vector<std::string> keys;
-    for (const std::pair<std::string, std::vector<std::shared_ptr<SensorReading>>>& pair : m_readings)
+    for (const auto& pair : m_readings)
     {
         if (!pair.second.empty())
         {
@@ -71,135 +68,96 @@ std::vector<std::string> InMemoryPersistence::getSensorReadingsKeys()
     return keys;
 }
 
-bool InMemoryPersistence::putAlarm(const std::string& key, std::shared_ptr<Alarm> alarm)
+bool InMemoryPersistence::putAttribute(const std::string& key, std::shared_ptr<Attribute> attribute)
 {
-    getOrCreateAlarmsByKey(key).push_back(alarm);
+    m_attributes.emplace(key, std::move(attribute));
     return true;
 }
 
-std::vector<std::shared_ptr<Alarm>> InMemoryPersistence::getAlarms(const std::string& key, uint_fast64_t count)
+std::map<std::string, std::shared_ptr<Attribute>> InMemoryPersistence::getAttributes()
 {
-    if (m_alarms.find(key) == m_alarms.end())
-    {
+    return m_attributes;
+}
+
+std::shared_ptr<Attribute> InMemoryPersistence::getAttributeUnderKey(const std::string& key)
+{
+    const auto it = m_attributes.find(key);
+    if (it == m_attributes.cend())
         return {};
-    }
-
-    std::vector<std::shared_ptr<Alarm>>& alarms = m_alarms.at(key);
-    auto size = static_cast<uint_fast64_t>(alarms.size());
-    return std::vector<std::shared_ptr<Alarm>>(alarms.begin(), alarms.begin() + (count < size ? count : size));
+    return it->second;
 }
 
-void InMemoryPersistence::removeAlarms(const std::string& key, uint_fast64_t count)
+void InMemoryPersistence::removeAttributes()
 {
-    if (m_alarms.find(key) == m_alarms.end())
-    {
-        return;
-    }
-
-    std::vector<std::shared_ptr<Alarm>>& alarms = getOrCreateAlarmsByKey(key);
-    auto size = static_cast<uint_fast64_t>(alarms.size());
-    alarms.erase(alarms.begin(), alarms.begin() + (count < size ? count : size));
-    alarms.shrink_to_fit();
+    m_attributes.clear();
 }
 
-std::vector<std::string> InMemoryPersistence::getAlarmsKeys()
+void InMemoryPersistence::removeAttributes(const std::string& key)
 {
-    std::vector<std::string> keys;
-    for (const std::pair<std::string, std::vector<std::shared_ptr<Alarm>>>& pair : m_alarms)
-    {
-        if (!pair.second.empty())
-        {
-            keys.push_back(pair.first);
-        }
-    }
+    const auto it = m_attributes.find(key);
+    if (it != m_attributes.cend())
+        m_attributes.erase(it);
+}
 
+std::vector<std::string> InMemoryPersistence::getAttributeKeys()
+{
+    auto keys = std::vector<std::string>{};
+    std::transform(m_attributes.cbegin(), m_attributes.cend(), keys.end(),
+                   [&](const std::pair<std::string, std::shared_ptr<Attribute>>& pair) { return pair.first; });
     return keys;
 }
 
-bool InMemoryPersistence::putActuatorStatus(const std::string& key, std::shared_ptr<ActuatorStatus> actuatorStatus)
+bool InMemoryPersistence::putParameter(const std::string& key, Parameter parameter)
 {
-    m_actuatorStatuses[key] = actuatorStatus;
+    m_parameters.emplace(key, std::move(parameter));
     return true;
 }
 
-std::shared_ptr<ActuatorStatus> InMemoryPersistence::getActuatorStatus(const std::string& key)
+std::map<std::string, Parameter> InMemoryPersistence::getParameters()
 {
-    return m_actuatorStatuses.at(key);
+    return m_parameters;
 }
 
-void InMemoryPersistence::removeActuatorStatus(const std::string& key)
+Parameter InMemoryPersistence::getParameterForKey(const std::string& key)
 {
-    m_actuatorStatuses.erase(key);
+    const auto it = m_parameters.find(key);
+    if (it == m_parameters.cend())
+        return {};
+    return it->second;
 }
 
-std::vector<std::string> InMemoryPersistence::getActuatorStatusesKeys()
+void InMemoryPersistence::removeParameters()
 {
-    std::vector<std::string> keys;
-    for (const std::pair<std::string, std::shared_ptr<ActuatorStatus>>& pair : m_actuatorStatuses)
-    {
-        keys.push_back(pair.first);
-    }
+    m_parameters.clear();
+}
 
+void InMemoryPersistence::removeParameters(const std::string& key)
+{
+    const auto it = m_parameters.find(key);
+    if (it != m_parameters.cend())
+        m_parameters.erase(it);
+}
+
+std::vector<std::string> InMemoryPersistence::getParameterKeys()
+{
+    auto keys = std::vector<std::string>{};
+    std::transform(m_parameters.cbegin(), m_parameters.cend(), keys.end(),
+                   [&](const std::pair<std::string, Parameter>& pair) { return pair.first; });
     return keys;
 }
 
-bool InMemoryPersistence::isEmpty()
-{
-    return getSensorReadingsKeys().empty() && m_actuatorStatuses.empty();
-}
-
-std::vector<std::shared_ptr<SensorReading>>& InMemoryPersistence::getOrCreateSensorReadingsByKey(const std::string& key)
+std::vector<std::shared_ptr<Reading>>& InMemoryPersistence::getOrCreateReadingsByKey(const std::string& key)
 {
     if (m_readings.find(key) == m_readings.end())
     {
-        m_readings.emplace(std::pair<std::string, std::vector<std::shared_ptr<SensorReading>>>(key, {}));
+        m_readings.emplace(std::pair<std::string, std::vector<std::shared_ptr<Reading>>>(key, {}));
     }
 
     return m_readings.at(key);
 }
 
-std::vector<std::shared_ptr<Alarm>>& InMemoryPersistence::getOrCreateAlarmsByKey(const std::string& key)
+bool InMemoryPersistence::isEmpty()
 {
-    if (m_alarms.find(key) == m_alarms.end())
-    {
-        m_alarms.emplace(std::pair<std::string, std::vector<std::shared_ptr<Alarm>>>(key, {}));
-    }
-
-    return m_alarms.at(key);
-}
-
-bool InMemoryPersistence::putConfiguration(const std::string& key,
-                                           std::shared_ptr<std::vector<ConfigurationItem>> configuration)
-{
-    m_configurations[key] = configuration;
-    return true;
-}
-
-std::shared_ptr<std::vector<ConfigurationItem>> InMemoryPersistence::getConfiguration(const std::string& key)
-{
-    auto it = m_configurations.find(key);
-
-    if (it != m_configurations.end())
-    {
-        return it->second;
-    }
-
-    return nullptr;
-}
-
-void InMemoryPersistence::removeConfiguration(const std::string& key)
-{
-    m_configurations.erase(key);
-}
-
-std::vector<std::string> InMemoryPersistence::getConfigurationKeys()
-{
-    std::vector<std::string> keys;
-    for (const auto& pair : m_configurations)
-    {
-        keys.push_back(pair.first);
-    }
-
-    return keys;
+    return m_readings.empty() && m_attributes.empty() && m_parameters.empty();
 }
 }    // namespace wolkabout

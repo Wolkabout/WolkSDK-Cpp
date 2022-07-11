@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 #include "CommandBuffer.h"
 
-#include <atomic>
-#include <condition_variable>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -36,7 +34,7 @@ CommandBuffer::~CommandBuffer()
     stop();
 }
 
-void CommandBuffer::pushCommand(std::shared_ptr<Command> command)
+void CommandBuffer::pushCommand(const std::shared_ptr<Command>& command)
 {
     std::unique_lock<std::mutex> unique_lock(m_lock);
 
@@ -47,7 +45,10 @@ void CommandBuffer::pushCommand(std::shared_ptr<Command> command)
 
 void CommandBuffer::stop()
 {
-    m_isRunning = false;
+    {
+        std::lock_guard<std::mutex> lg{m_lock};
+        m_isRunning = false;
+    }
     notify();
 
     if (m_worker && m_worker->joinable())
@@ -80,9 +81,7 @@ void CommandBuffer::switchBuffers()
     std::unique_lock<std::mutex> unique_lock(m_lock);
 
     if (m_pushCommandQueue.empty())
-    {
-        m_condition.wait(unique_lock);
-    }
+        m_condition.wait(unique_lock, [&] { return !m_pushCommandQueue.empty() || !m_isRunning; });
 
     std::swap(m_pushCommandQueue, m_popCommandQueue);
 }
@@ -95,6 +94,9 @@ void CommandBuffer::notify()
 void CommandBuffer::processCommands()
 {
     switchBuffers();
+
+    if (!m_isRunning)
+        return;
 
     std::shared_ptr<std::function<void()>> command;
     while ((command = popCommand()) != nullptr)

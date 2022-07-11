@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -189,6 +189,7 @@ std::string FileSystemUtils::absolutePath(const std::string& path)
 
     return "";
 }
+
 std::time_t FileSystemUtils::getLastModified(const std::string& path)
 {
     std::time_t lastModified = 0;
@@ -200,19 +201,15 @@ std::time_t FileSystemUtils::getLastModified(const std::string& path)
     }
     return fileInfo.st_mtime;
 }
-double FileSystemUtils::getFileSize(const std::string& path)
+
+std::uint64_t FileSystemUtils::getFileSize(const std::string& path)
 {
-    double size = 0;
     struct stat fileInfo;
     if (stat(path.c_str(), &fileInfo) != 0)
     {
         LOG(ERROR) << "File '" << path << "' does not exist!";
-        return size;
+        return 0;
     }
-
-    size = static_cast<double>(fileInfo.st_size);
-
-    return size;
+    return static_cast<std::uint64_t>(fileInfo.st_size);
 }
-
 }    // namespace wolkabout

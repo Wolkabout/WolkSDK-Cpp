@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,32 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef FIRMWAREUPDATEPROTOCOL_H
-#define FIRMWAREUPDATEPROTOCOL_H
 
+#ifndef WOLKABOUTCORE_FIRMWAREUPDATEPROTOCOL_H
+#define WOLKABOUTCORE_FIRMWAREUPDATEPROTOCOL_H
+
+#include "core/model/messages/FirmwareUpdateAbortMessage.h"
+#include "core/model/messages/FirmwareUpdateInstallMessage.h"
+#include "core/model/messages/FirmwareUpdateStatusMessage.h"
 #include "core/protocol/Protocol.h"
-
-#include <memory>
 
 namespace wolkabout
 {
-class FirmwareUpdateCommand;
-class FirmwareUpdateResponse;
-class Message;
-
+/**
+ * This is an interface defining a FirmwareUpdateProtocol, used to accomplish the FirmwareUpdate functionality of the
+ * platform.
+ * This protocol defines the serializers/deserializers for a bunch of messages that are necessary to accomplish that
+ * functionality.
+ */
 class FirmwareUpdateProtocol : public Protocol
 {
 public:
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const FirmwareUpdateResponse& firmwareUpdateResponse) const = 0;
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a FirmwareUpdateStatusMessage.
+     *
+     * @param deviceKey The device key for which the FirmwareUpdateStatusMessage is regarding.
+     * @param message The message containing information about the FirmwareUpdate process.
+     * @return A newly generated MqttMessage. `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const FirmwareUpdateStatusMessage& message) = 0;
 
-    virtual std::unique_ptr<Message> makeFromFirmwareVersion(const std::string& deviceKey,
-                                                             const std::string& firmwareVerion) const = 0;
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a FirmwareUpdateInstallMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid FirmwareUpdateInstallMessage.
+     * @return A parsed FirmwareUpdateInstallMessage. `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<FirmwareUpdateInstallMessage> parseFirmwareUpdateInstall(
+      const std::shared_ptr<Message>& message) = 0;
 
-    virtual bool isFirmwareUpdateMessage(const Message& message) const = 0;
-
-    virtual std::unique_ptr<FirmwareUpdateCommand> makeFirmwareUpdateCommand(const Message& message) const = 0;
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a FirmwareUpdateAbortMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid FirmwareUpdateAbortMessage.
+     * @return A parsed FirmwareUpdateAbortMessage. `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<FirmwareUpdateAbortMessage> parseFirmwareUpdateAbort(
+      const std::shared_ptr<Message>& message) = 0;
 };
 }    // namespace wolkabout
 
-#endif    // FIRMWAREUPDATEPROTOCOL_H
+#endif    // WOLKABOUTCORE_FIRMWAREUPDATEPROTOCOL_H

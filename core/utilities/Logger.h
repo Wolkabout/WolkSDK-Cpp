@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef WOLKABOUTCORE_LOGGER_H
+#define WOLKABOUTCORE_LOGGER_H
 
 #include <memory>
 #include <mutex>
 #include <sstream>
+#include <string>
+#include <type_traits>
 #include <vector>
 
 namespace spdlog
@@ -27,7 +29,7 @@ namespace spdlog
 class logger;
 namespace sinks
 {
-    template <typename Mutex> class ringbuffer_sink;
+template <typename T> class ringbuffer_sink;
 }
 }    // namespace spdlog
 
@@ -37,11 +39,11 @@ class Log;
 
 enum class LogLevel
 {
-    INFO = 0,
+    TRACE = 0,
+    DEBUG,
+    INFO,
     WARN,
     ERROR,
-    DEBUG,
-    TRACE,
     OFF
 };
 
@@ -53,12 +55,6 @@ enum class LogLevel
  */
 wolkabout::LogLevel from_string(std::string level);
 
-/**
- * @brief The Logger class
- *
- * Abstract class that should be extended by specific logger. Logger is accessed
- * as a singleton. But this single instance must be set via #setInstance.
- */
 class Logger
 {
 public:
@@ -69,49 +65,29 @@ public:
         BUFFER = 4
     };
 
-    /**
-     * @brief Logger destructor.
-     */
     virtual ~Logger() = default;
 
-    /**
-     * @brief Prints a log message to a standard output.
-     * @param log log to be printed
-     */
-    void operator+=(Log& log);
+    static void set(std::unique_ptr<Logger> logger);
 
-    void logEntry(const Log& log);
+    static Logger& getInstance();
 
-    /**
-     * @brief Sets the log level of the logger.
-     * @param level log level to be set
-     */
-    void setLevel(wolkabout::LogLevel level);
-
-    /**
-     * @brief Initialize logger.
-     * @param level Indicates logging level
-     * @param type Type of logger to use
-     * @param filePathWithExtension File path when using file based logger
-     */
     static void init(LogLevel level, Type type, const std::string& filePathWithExtension = "");
 
-    /**
-     * @brief Provides a logger singleton instance.
-     * @return logger instance
-     */
-    static Logger& getInstance();
+    void operator+=(const Log& log);
+
+    virtual void logEntry(const Log& log);
 
     std::vector<std::string> buffer();
 
 private:
-    Logger() = default;
     void logMessage(const Log& log, spdlog::logger& logger);
 
     static void setupFileLogger(const std::string& filePathWithExtension);
     static void setupConsoleLogger();
     static void setupBufferLogger();
     static void setupLoggerParams(LogLevel level);
+
+    static std::unique_ptr<Logger> m_instance;
 
     std::shared_ptr<spdlog::logger> m_fileLogger = nullptr;
     std::shared_ptr<spdlog::logger> m_consoleLogger = nullptr;
@@ -129,41 +105,19 @@ inline constexpr bool operator&(Logger::Type a, Logger::Type b)
     return static_cast<int>(a) & static_cast<int>(b);
 }
 
-/**
- * @brief The Log class
- *
- * This class holds a message that should be printed in the log file or console.
- */
 class Log
 {
 public:
-    /**
-     * @brief Log constructor.
-     * @param level log level that will be used for this log
-     */
-    explicit Log(wolkabout::LogLevel level);
+    Log(LogLevel level);
 
-    /**
-     * @brief This is log appender for string value
-     * @param value value to be appended
-     * @return reference to appended log instance
-     */
     template <typename T> Log& operator<<(T value);
 
-    /**
-     * @brief Provides a log level for this log.
-     * @return log level
-     */
-    wolkabout::LogLevel getLogLevel() const;
+    LogLevel getLogLevel() const;
 
-    /**
-     * @brief Provides a message for this log.
-     * @return message
-     */
     std::string getMessage() const;
 
 private:
-    const wolkabout::LogLevel m_level;
+    const LogLevel m_level;
     std::stringstream m_message;
 };
 
@@ -173,13 +127,39 @@ template <typename T> Log& Log::operator<<(T value)
     return *this;
 }
 
-#define METHOD_INFO __FILE__ << ":" << __func__ << ":" << __LINE__ << ": "
+class LOG
+{
+public:
+    explicit LOG(wolkabout::LogLevel level, bool doLog = true);
+    virtual ~LOG();
 
-#define PREPEND_NAMED_SCOPE(logLevel) wolkabout::LogLevel::logLevel
+    template <typename T> LOG& operator<<(T value)
+    {
+        m_log << value;
+        return *this;
+    }
 
-#define LOG_(level) wolkabout::Logger::getInstance() += wolkabout::Log(level)
+private:
+    wolkabout::Log m_log;
+    bool m_doLog;
+};
 
-#define LOG(level) LOG_(PREPEND_NAMED_SCOPE(level))
+class LOG_WHEN_TRUE : public LOG
+{
+public:
+    using LOG::LOG;
+    LOG_WHEN_TRUE(wolkabout::LogLevel) = delete;
+};
+
+constexpr auto TRACE = wolkabout::LogLevel::TRACE;
+constexpr auto DEBUG = wolkabout::LogLevel::DEBUG;
+constexpr auto INFO = wolkabout::LogLevel::INFO;
+constexpr auto WARN = wolkabout::LogLevel::WARN;
+constexpr auto ERROR = wolkabout::LogLevel::ERROR;
+
+#ifndef METHOD_INFO
+#define METHOD_INFO __PRETTY_FUNCTION__
+#endif
 }    // namespace wolkabout
 
-#endif    // LOGGER_H
+#endif    // WOLKABOUTCORE_LOGGER_H

@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@
 #ifndef PERSISTENCE_H
 #define PERSISTENCE_H
 
-#include "core/model/ActuatorStatus.h"
-#include "core/model/Alarm.h"
-#include "core/model/ConfigurationItem.h"
-#include "core/model/SensorReading.h"
+#include "core/Types.h"
+#include "core/model/Attribute.h"
+#include "core/model/Feed.h"
+#include "core/model/Reading.h"
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -30,11 +31,9 @@ namespace wolkabout
 {
 /**
  * @brief A storage designed for holding elements in persistent store prior to
- * publishing to WolkAbout IoT Platform.
+ * publishing to Wolkabout IoT Platform.
  *
  * Multiple Readings can be stored under the same key.
- * Multiple Alarms can be stored under the same key.
- * Single ActuatorStatus can be stored under one key.
  *
  * Implementation storing/retrieving strategy must be FIFO.
  */
@@ -47,166 +46,145 @@ public:
     virtual ~Persistence() = default;
 
     /**
-     * @brief Inserts the wolkabout::SensorReading
+     * @brief Inserts the wolkabout::Reading
      *
-     * @param key     with which wolkabout::SensorReading should be associated
+     * @param key     with which wolkabout::Reading should be associated
      * @param reading to be inserted
      * @return {@code true} if successful, or {@code false} if
      * element can not be inserted
      */
-    virtual bool putSensorReading(const std::string& key, std::shared_ptr<SensorReading> sensorReading) = 0;
+    virtual bool putReading(const std::string& key, const Reading& reading) = 0;
 
     /**
-     * @brief Retrieves, first {@code count} wolkabout::SensorReadings of this
+     * @brief Retrieves, first {@code count} wolkabout::Readings of this
      * storage, associated with given {@code key} or returns empty {@code
-     * std::vector<std::shared_ptr<SensorReading>>} if this storage is empty.
+     * std::vector<std::shared_ptr<Reading>>} if this storage is empty.
      *
-     * @param key   of the wolkabout::SensorReadings
+     * @param key   of the wolkabout::Readings
      * @param count number of items to peek
-     * @return {@code std::vector<std::shared_ptr<SensorReading>>} containing
-     * {@code count} wolkabout::SensorReadings starting from the head, or returns
-     * less than {@code count} wolkabout::SensorReadings if this storage does not
+     * @return {@code std::vector<std::shared_ptr<Reading>>} containing
+     * {@code count} wolkabout::Readings starting from the head, or returns
+     * less than {@code count} wolkabout::Readings if this storage does not
      * have requested number of elements
      */
-    virtual std::vector<std::shared_ptr<SensorReading>> getSensorReadings(const std::string& key,
-                                                                          std::uint_fast64_t count) = 0;
+    virtual std::vector<std::shared_ptr<Reading>> getReadings(const std::string& key, std::uint_fast64_t count) = 0;
 
     /**
-     * @brief Removes first {@code count} wolkabout::SensorReadings of this
+     * @brief Removes first {@code count} wolkabout::Readings of this
      * storage, associated with given {@code key}.
      *
-     * @param key   of the wolkabout::SensorReadings
+     * @param key   of the wolkabout::Readings
      * @param count number of items to remove
      */
-    virtual void removeSensorReadings(const std::string& key, std::uint_fast64_t count) = 0;
+    virtual void removeReadings(const std::string& key, std::uint_fast64_t count) = 0;
 
     /**
-     * Returns {@code std::vector<std::string>>} of wolkabout::SensorReadings keys
+     * Returns {@code std::vector<std::string>>} of wolkabout::Readings keys
      * contained in this storage.
      *
      * @return {@code std::vector<std::string>} containing keys, or empty {@code
-     * std::vector<std::string>>} if no wolkabout::SensorReadings are present.
+     * std::vector<std::string>>} if no wolkabout::Readings are present.
      */
-    virtual std::vector<std::string> getSensorReadingsKeys() = 0;
+    virtual std::vector<std::string> getReadingsKeys() = 0;
 
     /**
-     * @brief Inserts the wolkabout::Alarm
+     * @brief Inserts the device attribute.
      *
-     * @param key     with which wolkabout::Alarm should be associated
-     * @param reading to be inserted
+     * @param key of the wolkabout::Attribute
+     * @param attribute  to be inserted
      * @return {@code true} if successful, or {@code false} if
      * element can not be inserted
      */
-    virtual bool putAlarm(const std::string& key, std::shared_ptr<Alarm> alarm) = 0;
+    virtual bool putAttribute(const std::string& key, std::shared_ptr<Attribute> attribute) = 0;
 
     /**
-     * @brief Retrieves, first {@code count} wolkabout::SensorReadings of this
-     * storage, associated with given {@code key} or returns empty {@code
-     * std::vector<std::shared_ptr<SensorReading>>} if this storage is empty.
+     * @brief Retrieves device attributes contained in this storage.
      *
-     * @param key   of the wolkabout::SensorReadings
-     * @param count number of items to peek
-     * @return {@code std::vector<std::shared_ptr<SensorReading>>} containing
-     * {@code count} wolkabout::SensorReadings starting from the head, or returns
-     * less than {@code count} wolkabout::SensorReadings if this storage does not
-     * have requested number of elements
+     * @return Device attribute as {@code std::map<std::string, std::shared_ptr<Attribute>>}, or an empty map
+     * if this storage does not contain persisted device attributes
      */
-    virtual std::vector<std::shared_ptr<Alarm>> getAlarms(const std::string& key, std::uint_fast64_t count) = 0;
+    virtual std::map<std::string, std::shared_ptr<Attribute>> getAttributes() = 0;
 
     /**
-     * @brief Removes first {@code count} wolkabout::Alarms of this storage,
-     * associated with given {@code key}.
+     * @brief Retrieves device attribute contained in this storage.
      *
-     * @param key   of the wolkabout::Alarms
-     * @param count number of items to remove
+     * @param key The key of the attribute which should be obtained.
+     * @return Device attribute as {@code std::shared_ptr<Attribute>}, or a {@code nullptr} if an attribute with the key
+     * couldn't be found.
      */
-    virtual void removeAlarms(const std::string& key, std::uint_fast64_t count) = 0;
+    virtual std::shared_ptr<Attribute> getAttributeUnderKey(const std::string& key) = 0;
 
     /**
-     * @brief Returns {@code std::vector<std::string>>} of wolkabout::Alarm keys
-     * contained in this storage
+     * @brief Removes device attributes from this storage.
+     */
+    virtual void removeAttributes() = 0;
+
+    /**
+     * @brief Removes device attributes from this storage.
      *
-     * @return {@code std::vector<std::string>>} containing keys, or empty {@code
-     * std::vector<std::string>>} if no wolkabout::Alarms are present.
+     * @param key Key filter that can be used to delete a specific attribute.
      */
-    virtual std::vector<std::string> getAlarmsKeys() = 0;
+    virtual void removeAttributes(const std::string& key) = 0;
 
     /**
-     * @brief Inserts the wolkabout::ActuatorStatus.
+     * Returns {@code std::vector<std::string>>} of wolkabout::Attribute keys contained in this storage.
      *
-     * @param key  with which wolkabout::ActuatorStatus should be associated.
-     * @param actuatorStatus to be inserted
-     * @return {@code true} if successful, or {@code false} if
-     * element can not be inserted
+     * @return {@code std::vector<std::string>>} containing keys, or empty {@code std::vector<std::string>>} if no
+     * wolkabout::Attributes are present.
      */
-    virtual bool putActuatorStatus(const std::string& key, std::shared_ptr<ActuatorStatus> actuatorStatus) = 0;
+    virtual std::vector<std::string> getAttributeKeys() = 0;
 
     /**
-     * @brief Retrieves, wolkabout::ActuatorStatus of this storage, associated
-     * with given {@code key}.
+     * @brief Inserts the device parameter.
      *
-     * @param key of the wolkabout::ActuatorStatus.
-     * @return {@code std::shared_ptr<wolkabout::ActuatorStatus>} for given {@code
-     * key}
+     * @param key of the wolkabout::Parameter
+     * @param parameter to be inserted
+     * @return {@code true} if successful, or {@code false} if element can not be inserted
      */
-    virtual std::shared_ptr<ActuatorStatus> getActuatorStatus(const std::string& key) = 0;
+    virtual bool putParameter(const std::string& key, Parameter parameter) = 0;
 
     /**
-     * @brief Removes wolkabout::ActuatorStatus from this storage, associated with
-     * given {@code key}.
+     * @brief Retrieves device parameters contained in this storage.
      *
-     * @param key of the wolkabout::Reading
+     * @return Device parameters as {@code std::map<std::string, wolkabout::Parameter>}, or an empty map if this storage
+     * does not contain persisted device parameters.
      */
-    virtual void removeActuatorStatus(const std::string& key) = 0;
+    virtual std::map<std::string, Parameter> getParameters() = 0;
 
     /**
-     * Returns {@code std::vector<std::string>} of wolkabout::ActuatorStatus keys
-     * contained in this storage.
+     * @brief Retrieves device parameters contained in this storage.
      *
-     * @return {@code std::vector<std::string>} containing keys, or empty {@code
-     * std::vector<std::string>} if no wolkabout::ActuatorStatuses are present.
+     * @param key The key of the parameter which should be obtained.
+     * @return Device parameter as {@code Parameter}, or a {@code {}} if a parameter with the key couldn't be found.
      */
-    virtual std::vector<std::string> getActuatorStatusesKeys() = 0;
+    virtual Parameter getParameterForKey(const std::string& key) = 0;
 
     /**
-     * @brief Inserts the device configuration.
+     * @brief Removes device parameters from the storage.
+     */
+    virtual void removeParameters() = 0;
+
+    /**
+     * @brief Removes device parameters from the storage.
      *
-     * @param key  with which configuration should be associated.
-     * @param configuration  to be inserted
-     * @return {@code true} if successful, or {@code false} if
-     * element can not be inserted
+     * @param key Key filter that can be used to delete a specific parameter.
      */
-    virtual bool putConfiguration(const std::string& key,
-                                  std::shared_ptr<std::vector<ConfigurationItem>> configuration) = 0;
+    virtual void removeParameters(const std::string& key) = 0;
 
     /**
-     * @brief Retrieves device configuration contained in this storage.
+     * Returns {@code std::vector<std::string>} of wolkabout::Parameter keys contained in this storage.
      *
-     * @return Device configuration as {@code std::shared_ptr<std::vector<ConfigurationItem>>}, or {@code nullptr}
-     * if this storage does not contain persisted device configuration
+     * @return {@code std::vector<std::string>>} containing keys, or empty {@code std::vector<std::string>>] if no
+     * wolkabout::Parameters are present.
      */
-    virtual std::shared_ptr<std::vector<ConfigurationItem>> getConfiguration(const std::string& key) = 0;
+    virtual std::vector<std::string> getParameterKeys() = 0;
 
     /**
-     * @brief Removes device configuration from this storage, associated with given {@code key}.
-     */
-    virtual void removeConfiguration(const std::string& key) = 0;
-
-    /**
-     * Returns {@code std::vector<std::string>} of configuration keys
-     * contained in this storage.
+     * Returns {@code true} if this storage contains no wolkabout::Readings,
+     * wolkabout::Attributes associated with any key.
      *
-     * @return {@code std::vector<std::string>} containing keys, or empty {@code
-     * std::vector<std::string>} if no configurations are present.
-     */
-    virtual std::vector<std::string> getConfigurationKeys() = 0;
-
-    /**
-     * Returns {@code true} if this storage contains no wolkabout::SensorReadings,
-     * wolkabout::ActuatorStatuses and wolkabout::Alarms associated with any key.
-     *
-     * @return {@code true} if this storage contains no wolkabout::SensorReadings,
-     * wolkabout::ActuatorStatuses and wolkabout::Alarms associated with any key
+     * @return {@code true} if this storage contains no wolkabout::Readings,
+     * wolkabout::Attributes associated with any key
      */
     virtual bool isEmpty() = 0;
 };

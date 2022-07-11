@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef BUFFER_H
-#define BUFFER_H
+#ifndef WOLKABOUTCORE_BUFFER_H
+#define WOLKABOUTCORE_BUFFER_H
 
 #include "core/utilities/Logger.h"
 
@@ -62,7 +62,10 @@ template <class T> Buffer<T>::~Buffer()
 
 template <class T> void Buffer<T>::stop()
 {
-    m_exitCondition = true;
+    {
+        std::lock_guard<std::mutex> lg{m_pushLock};
+        m_exitCondition = true;
+    }
     m_condition.notify_one();
 }
 
@@ -92,7 +95,7 @@ template <class T> T Buffer<T>::pop()
 
     if (m_popQueue.empty())
     {
-        LOG(ERROR) << "Poping from empty buffer";
+        LOG(ERROR) << "Popping from empty buffer";
         return {};
     }
 
@@ -107,9 +110,7 @@ template <class T> void Buffer<T>::swapBuffers()
     std::unique_lock<std::mutex> pushGuard(m_pushLock);
 
     if (m_pushQueue.empty())
-    {
         m_condition.wait(pushGuard, [&] { return !m_pushQueue.empty() || m_exitCondition; });
-    }
 
     std::lock_guard<std::mutex> popGuard{m_popLock};
     std::swap(m_pushQueue, m_popQueue);

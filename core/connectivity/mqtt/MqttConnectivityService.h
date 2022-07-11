@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,27 @@
 #define MQTTCONNECTIVITYSERVICE_H
 
 #include "core/connectivity/ConnectivityService.h"
+#include "core/connectivity/OutboundMessageHandler.h"
 #include "core/connectivity/mqtt/MqttClient.h"
+#include "core/utilities/Buffer.h"
 
 #include <atomic>
 #include <memory>
 #include <string>
+#include <thread>
 
 namespace wolkabout
 {
-class MqttConnectivityService : public ConnectivityService
+class MessagePersistence;
+
+class MqttConnectivityService : public ConnectivityService, public OutboundMessageHandler
 {
 public:
     MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
-                            std::string host, std::string trustStore = "");
-    MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key, std::string password,
-                            std::string host, std::string trustStore, std::string clientId);
-    virtual ~MqttConnectivityService() = default;
+                            std::string host, std::string trustStore, std::string clientId,
+                            std::shared_ptr<MessagePersistence> messagePersistence = nullptr);
+
+    ~MqttConnectivityService() override;
 
     bool connect() override;
     void disconnect() override;
@@ -41,11 +46,41 @@ public:
 
     bool isConnected() override;
 
-    bool publish(std::shared_ptr<Message> outboundMessage, bool persistent) override;
+    bool publish(std::shared_ptr<Message> outboundMessages) override;
 
-    void setUncontrolledDisonnectMessage(std::shared_ptr<Message> outboundMessage, bool persistent) override;
+    void addMessage(std::shared_ptr<Message> message) override;
 
 private:
+    class State
+    {
+    public:
+        State(MqttConnectivityService& service);
+        virtual ~State() = default;
+        virtual void run() = 0;
+
+    protected:
+        MqttConnectivityService& m_service;
+    };
+
+    class DisconnectedState : public State
+    {
+    public:
+        using State::State;
+        void run() override;
+    };
+
+    class ConnectedState : public State
+    {
+    public:
+        using State::State;
+        void run() override;
+    };
+
+    void changeToState(State* state);
+
+    void run();
+
+    // ConnectivityService fields
     std::shared_ptr<MqttClient> m_mqttClient;
 
     const std::string m_key;
@@ -58,7 +93,17 @@ private:
     std::string m_lastWillPayload;
     bool m_lastWillRetain;
 
-    std::atomic_bool m_connected;
+    // OutboundMessageHandler fields
+    std::shared_ptr<MessagePersistence> m_persistence;
+
+    ConnectedState m_connectedState;
+    DisconnectedState m_disconnectedState;
+    std::atomic<State*> m_currentState;
+
+    Buffer<std::shared_ptr<Message>> m_buffer;
+
+    std::atomic_bool m_run;
+    std::unique_ptr<std::thread> m_worker;
 };
 }    // namespace wolkabout
 

@@ -1,8 +1,8 @@
-/*
- * Copyright (c) 2021 WolkAbout
+/**
+ * Copyright (c) 2022 Wolkabout
  */
-#ifndef LOGUPLOADER_H
-#define LOGUPLOADER_H
+#ifndef WOLKABOUTCORE_LOGUPLOADER_H
+#define WOLKABOUTCORE_LOGUPLOADER_H
 
 #include <string>
 #include <vector>
@@ -32,4 +32,4 @@ public:
 };
 }    // namespace wolkabout
 
-#endif    // LOGUPLOADER_H
+#endif    // WOLKABOUTCORE_LOGUPLOADER_H

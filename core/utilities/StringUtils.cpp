@@ -1,5 +1,5 @@
-/*
- * Copyright 2019 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -267,7 +267,21 @@ std::string StringUtils::toUpperCase(const std::string& string)
 {
     std::string transformed = string;
     std::transform(transformed.begin(), transformed.end(), transformed.begin(), ::toupper);
-
     return transformed;
+}
+
+std::vector<std::string> StringUtils::tokenize(const std::string& str, const char delimiter)
+{
+    size_t start;
+    size_t end = 0;
+    std::vector<std::string> out{};
+
+    while ((start = str.find_first_not_of(delimiter, end)) != std::string::npos)
+    {
+        end = str.find(delimiter, start);
+        out.push_back(str.substr(start, end - start));
+    }
+
+    return out;
 }
 }    // namespace wolkabout

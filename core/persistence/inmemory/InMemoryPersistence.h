@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,47 +28,54 @@
 namespace wolkabout
 {
 class Reading;
-class Alarm;
-class ActuatorStatus;
+
 class InMemoryPersistence : public Persistence
 {
 public:
-    InMemoryPersistence() = default;
-    virtual ~InMemoryPersistence() = default;
+    ~InMemoryPersistence() override = default;
 
-    bool putSensorReading(const std::string& key, std::shared_ptr<SensorReading> sensorReading) override;
-    std::vector<std::shared_ptr<SensorReading>> getSensorReadings(const std::string& key,
-                                                                  std::uint_fast64_t count) override;
-    void removeSensorReadings(const std::string& key, std::uint_fast64_t count) override;
-    std::vector<std::string> getSensorReadingsKeys() override;
+    bool putReading(const std::string& key, const Reading& reading) override;
 
-    bool putAlarm(const std::string& key, std::shared_ptr<Alarm> alarm) override;
-    std::vector<std::shared_ptr<Alarm>> getAlarms(const std::string& key, std::uint_fast64_t count) override;
-    void removeAlarms(const std::string& key, std::uint_fast64_t count) override;
-    std::vector<std::string> getAlarmsKeys() override;
+    std::vector<std::shared_ptr<Reading>> getReadings(const std::string& key, std::uint_fast64_t count) override;
 
-    bool putActuatorStatus(const std::string& key, std::shared_ptr<ActuatorStatus> actuatorStatus) override;
-    std::shared_ptr<ActuatorStatus> getActuatorStatus(const std::string& key) override;
-    void removeActuatorStatus(const std::string& key) override;
-    std::vector<std::string> getActuatorStatusesKeys() override;
+    void removeReadings(const std::string& key, std::uint_fast64_t count) override;
 
-    bool putConfiguration(const std::string& key,
-                          std::shared_ptr<std::vector<ConfigurationItem>> configuration) override;
-    std::shared_ptr<std::vector<ConfigurationItem>> getConfiguration(const std::string& key) override;
-    void removeConfiguration(const std::string& key) override;
-    std::vector<std::string> getConfigurationKeys() override;
+    std::vector<std::string> getReadingsKeys() override;
+
+    bool putAttribute(const std::string& key, std::shared_ptr<Attribute> attribute) override;
+
+    std::map<std::string, std::shared_ptr<Attribute>> getAttributes() override;
+
+    std::shared_ptr<Attribute> getAttributeUnderKey(const std::string& key) override;
+
+    void removeAttributes() override;
+
+    void removeAttributes(const std::string& key) override;
+
+    std::vector<std::string> getAttributeKeys() override;
+
+    bool putParameter(const std::string& key, Parameter parameter) override;
+
+    std::map<std::string, Parameter> getParameters() override;
+
+    Parameter getParameterForKey(const std::string& key) override;
+
+    void removeParameters() override;
+
+    void removeParameters(const std::string& key) override;
+
+    std::vector<std::string> getParameterKeys() override;
 
     bool isEmpty() override;
 
 private:
-    std::vector<std::shared_ptr<SensorReading>>& getOrCreateSensorReadingsByKey(const std::string& key);
-    std::vector<std::shared_ptr<Alarm>>& getOrCreateAlarmsByKey(const std::string& key);
+    std::vector<std::shared_ptr<Reading>>& getOrCreateReadingsByKey(const std::string& key);
 
-    std::map<std::string, std::vector<std::shared_ptr<SensorReading>>> m_readings;
-    std::map<std::string, std::vector<std::shared_ptr<Alarm>>> m_alarms;
-    std::map<std::string, std::shared_ptr<ActuatorStatus>> m_actuatorStatuses;
+    std::map<std::string, std::vector<std::shared_ptr<Reading>>> m_readings;
 
-    std::map<std::string, std::shared_ptr<std::vector<ConfigurationItem>>> m_configurations;
+    std::map<std::string, std::shared_ptr<Attribute>> m_attributes;
+
+    std::map<std::string, Parameter> m_parameters;
 };
 }    // namespace wolkabout
 

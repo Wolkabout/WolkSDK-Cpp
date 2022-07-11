@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef COMMAND_BUFFER_H
-#define COMMAND_BUFFER_H
+#ifndef WOLKABOUTCORE_COMMAND_BUFFER_H
+#define WOLKABOUTCORE_COMMAND_BUFFER_H
 
 #include <atomic>
 #include <condition_variable>
@@ -35,7 +35,7 @@ public:
     CommandBuffer();
     virtual ~CommandBuffer();
 
-    void pushCommand(std::shared_ptr<Command> command);
+    void pushCommand(const std::shared_ptr<Command>& command);
 
     void stop();
 

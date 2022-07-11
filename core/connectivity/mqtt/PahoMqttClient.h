@@ -1,5 +1,5 @@
-/*
- * Copyright 2018 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class PahoMqttClient : public MqttClient
 {
 public:
     explicit PahoMqttClient(unsigned short keepAliveSec = 60);
-    virtual ~PahoMqttClient();
+    ~PahoMqttClient() override;
 
     bool connect(const std::string& username, const std::string& password, const std::string& host,
                  const std::string& clientId) override;
@@ -58,9 +58,9 @@ private:
 
     std::mutex m_mutex;
 
-    static const unsigned short MQTT_CONNECTION_COMPLETITION_TIMEOUT_MSEC;
-    static const unsigned short MQTT_ACTION_COMPLETITION_TIMEOUT_MSEC;
-    static const unsigned short MQTT_QOS;
+    static const std::uint16_t MQTT_CONNECTION_COMPLETION_TIMEOUT_MSEC;
+    static const std::uint16_t MQTT_ACTION_COMPLETION_TIMEOUT_MSEC;
+    static const std::uint16_t MQTT_QOS;
 };
 }    // namespace wolkabout
 

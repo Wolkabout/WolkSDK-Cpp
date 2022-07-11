@@ -1,5 +1,5 @@
-/*
- * Copyright 2019 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,54 +14,96 @@
  * limitations under the License.
  */
 
-#ifndef REGISTRATIONPROTOCOL_H
-#define REGISTRATIONPROTOCOL_H
+#ifndef WOLKABOUTCORE_REGISTRATIONPROTOCOL_H
+#define WOLKABOUTCORE_REGISTRATIONPROTOCOL_H
 
+#include "core/model/messages/ChildrenSynchronizationRequestMessage.h"
+#include "core/model/messages/ChildrenSynchronizationResponseMessage.h"
+#include "core/model/messages/DeviceRegistrationMessage.h"
+#include "core/model/messages/DeviceRegistrationResponseMessage.h"
+#include "core/model/messages/DeviceRemovalMessage.h"
+#include "core/model/messages/RegisteredDevicesRequestMessage.h"
+#include "core/model/messages/RegisteredDevicesResponseMessage.h"
 #include "core/protocol/Protocol.h"
-
-#include <memory>
-#include <string>
 
 namespace wolkabout
 {
-class Message;
-class GatewayUpdateRequest;
-class GatewayUpdateResponse;
-class SubdeviceDeletionRequest;
-class SubdeviceRegistrationRequest;
-class SubdeviceRegistrationResponse;
-class SubdeviceUpdateRequest;
-class SubdeviceUpdateResponse;
-
+/**
+ * This is the interface that defines the protocol for gateway specific messages.
+ * This includes messages regarding registering and deleting devices, and obtaining information about devices.
+ */
 class RegistrationProtocol : public Protocol
 {
 public:
-    virtual bool isSubdeviceRegistrationResponse(const Message& message) const = 0;
-    virtual bool isGatewayUpdateResponse(const Message& message) const = 0;
-    virtual bool isSubdeviceDeletionResponse(const Message& message) const = 0;
-    virtual bool isSubdeviceUpdateResponse(const Message& message) const = 0;
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a DeviceRegistrationMessage.
+     *
+     * @param deviceKey The key of the device sending the request message.
+     * @param request The message containing the request information.
+     * @return A newly generated MQTT message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const DeviceRegistrationMessage& request) = 0;
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const SubdeviceRegistrationRequest& request) const = 0;
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a DeviceRemovalMessage.
+     *
+     * @param deviceKey The key of the device sending the request message.
+     * @param request The message containing the request information.
+     * @return A newly generated MQTT message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const DeviceRemovalMessage& request) = 0;
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const GatewayUpdateRequest& request) const = 0;
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a
+     * ChildrenSynchronizationRequestMessage.
+     *
+     * @param deviceKey The key of the device sending the request message.
+     * @param request The request itself.
+     * @return A newly generated MQTT message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const ChildrenSynchronizationRequestMessage& request) = 0;
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const SubdeviceDeletionRequest& request) const = 0;
+    /**
+     * This method is a serialization method to create a send-able MQTT message from a RegisteredDevicesRequestMessage.
+     *
+     * @param deviceKey The key of the device sending the request message.
+     * @param request The message containing the request information.
+     * @return A newly generated MQTT message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<Message> makeOutboundMessage(const std::string& deviceKey,
+                                                         const RegisteredDevicesRequestMessage& request) = 0;
 
-    virtual std::unique_ptr<Message> makeMessage(const std::string& deviceKey,
-                                                 const SubdeviceUpdateRequest& request) const = 0;
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a
+     * ChildrenSynchronizationResponseMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid ChildrenSynchronizationResponse message.
+     * @return A parsed ChildrenSynchronizationResponse message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<ChildrenSynchronizationResponseMessage> parseChildrenSynchronizationResponse(
+      const std::shared_ptr<Message>& message) = 0;
 
-    virtual std::unique_ptr<SubdeviceRegistrationResponse> makeSubdeviceRegistrationResponse(
-      const Message& message) const = 0;
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a DeviceRegistrationResponseMessage.
+     *
+     * @param message The received MQTT message that is potentially a valid DeviceRegistrationResponse message.
+     * @return A parsed DeviceRegistrationResponse message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<DeviceRegistrationResponseMessage> parseDeviceRegistrationResponse(
+      const std::shared_ptr<Message>& message) = 0;
 
-    virtual std::unique_ptr<GatewayUpdateResponse> makeGatewayUpdateResponse(const Message& message) const = 0;
-
-    virtual std::unique_ptr<SubdeviceUpdateResponse> makeSubdeviceUpdateResponse(const Message& message) const = 0;
-
-    virtual std::string getResponseChannel(const std::string& deviceKey, const Message& message) const = 0;
+    /**
+     * This method is a deserialization method used to parse a MQTT message into a RegisteredDevicesResponse.
+     *
+     * @param message The received MQTT message that is potentially a valid RegisteredDevicesResponse message.
+     * @return A parsed RegisteredDevicesResponse message. A `nullptr` if an error has occurred.
+     */
+    virtual std::unique_ptr<RegisteredDevicesResponseMessage> parseRegisteredDevicesResponse(
+      const std::shared_ptr<Message>& message) = 0;
 };
 }    // namespace wolkabout
 
-#endif
+#endif    // WOLKABOUTCORE_REGISTRATIONPROTOCOL_H

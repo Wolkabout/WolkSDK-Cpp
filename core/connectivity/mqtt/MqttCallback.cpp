@@ -1,5 +1,5 @@
-/*
- * Copyright 2020 WolkAbout Technology s.r.o.
+/**
+ * Copyright 2022 Wolkabout Technology s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-#include "MqttCallback.h"
+#include "core/connectivity/mqtt/MqttCallback.h"
+
+#include <utility>
 
 namespace wolkabout
 {
 MqttCallback::MqttCallback(std::function<void()> onConnect, std::function<void()> onConnectionLost,
                            std::function<void(mqtt::const_message_ptr)> onMessageArrived,
                            std::function<void(mqtt::delivery_token_ptr)> onDeliveryComplete)
-: m_onConnectCallback(onConnect)
-, m_onConnectionLostCallback(onConnectionLost)
-, m_onMessageArrivedCallback(onMessageArrived)
-, m_onDeliveryCompleteCallback(onDeliveryComplete)
+: m_onConnectCallback(std::move(onConnect))
+, m_onConnectionLostCallback(std::move(onConnectionLost))
+, m_onMessageArrivedCallback(std::move(onMessageArrived))
+, m_onDeliveryCompleteCallback(std::move(onDeliveryComplete))
 {
 }
+
 void MqttCallback::connected(const mqtt::string& /* cause */)
 {
     m_onConnectCallback();
