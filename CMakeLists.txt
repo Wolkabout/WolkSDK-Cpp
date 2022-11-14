@@ -206,19 +206,10 @@ set(UTILITY_HEADER_FILES core/utilities/Buffer.h
         core/utilities/StringUtils.h
         core/utilities/Timer.h)
 
-set(NLOHMANN_JSON_FILES core/utilities/nlohmann/json.hpp
-        core/utilities/nlohmann/json-patch.cpp
-        core/utilities/nlohmann/json-patch.hpp
-        core/utilities/nlohmann/json-schema-draft7.json.cpp
-        core/utilities/nlohmann/json-schema.hpp
-        core/utilities/nlohmann/json-uri.cpp
-        core/utilities/nlohmann/json-validator.cpp
-        core/utilities/nlohmann/string-format-check.cpp)
-
 # path for interface files
 file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/utilities PATTERN *.cpp EXCLUDE)
 
-add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES} ${NLOHMANN_JSON_FILES})
+add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
 target_link_libraries(${PROJECT_NAME}Utility crypto Threads::Threads)
 target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})

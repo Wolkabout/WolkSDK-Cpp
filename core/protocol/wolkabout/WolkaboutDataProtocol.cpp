@@ -21,9 +21,9 @@
 #include "core/model/Reading.h"
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
-#include "core/utilities/nlohmann/json.hpp"
 
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <string>
 
 using nlohmann::json;

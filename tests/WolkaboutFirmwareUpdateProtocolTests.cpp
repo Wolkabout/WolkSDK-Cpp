@@ -22,7 +22,8 @@
 
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
-#include "core/utilities/nlohmann/json.hpp"
+
+#include <nlohmann/json.hpp>
 
 #include <gtest/gtest.h>
 
