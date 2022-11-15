@@ -7,6 +7,7 @@ set(GTEST_VERSION "1.10.0")
 set(POCO_VERSION "1.10.1")
 set(AWS_SDK_VERSION "1.8.173")
 set(NLOHMANN_JSON_VERSION "3.11.2")
+set(JSON_SCHEMA_VERSION "2.1.0")
 
 if (NOT TARGET spdlog)
     ExternalProject_Add(spdlog
