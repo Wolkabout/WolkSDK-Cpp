@@ -19,7 +19,7 @@ if (NOT TARGET spdlog)
             )
 endif ()
 
-if (BUILD_CONNECTIVITY)
+if (BUILD_CONNECTIVITY AND NOT TARGET pahomqttc AND NOT TARGET pahomqttcpp)
     ExternalProject_Add(pahomqttc
             GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.c"
             GIT_TAG "v${PAHO_MQTT_C_VERSION}"
@@ -42,7 +42,7 @@ if (BUILD_CONNECTIVITY)
             )
 endif ()
 
-if (BUILD_GTEST)
+if (BUILD_GTEST AND NOT TARGET libgtest)
     ExternalProject_Add(libgtest
             GIT_REPOSITORY "https://github.com/google/googletest"
             GIT_TAG "release-${GTEST_VERSION}"
@@ -52,7 +52,7 @@ if (BUILD_GTEST)
             )
 endif ()
 
-if (BUILD_POCO)
+if (BUILD_POCO AND NOT TARGET libpoco)
     if (NOT DEFINED POCO_INSTALL_DIR)
         set(POCO_INSTALL_DIR ${CMAKE_PREFIX_PATH})
     endif ()
@@ -91,7 +91,7 @@ if (BUILD_POCO)
             )
 endif ()
 
-if (BUILD_AWS_LOG_UPLOADER)
+if (BUILD_AWS_LOG_UPLOADER AND NOT TARGET aws-sdk-cpp)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(AWS_UNITY_BUILD "OFF")
         set(AWS_MINIMIZE_SIZE "OFF")
