@@ -19,9 +19,8 @@
 
 #include "core/Types.h"
 #include "core/model/Message.h"
-#include "core/utilities/nlohmann/json.hpp"
-
 #include <memory>
+#include <nlohmann/json.hpp>
 
 namespace wolkabout
 {

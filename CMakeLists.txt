@@ -206,19 +206,10 @@ set(UTILITY_HEADER_FILES core/utilities/Buffer.h
         core/utilities/StringUtils.h
         core/utilities/Timer.h)
 
-set(NLOHMANN_JSON_FILES core/utilities/nlohmann/json.hpp
-        core/utilities/nlohmann/json-patch.cpp
-        core/utilities/nlohmann/json-patch.hpp
-        core/utilities/nlohmann/json-schema-draft7.json.cpp
-        core/utilities/nlohmann/json-schema.hpp
-        core/utilities/nlohmann/json-uri.cpp
-        core/utilities/nlohmann/json-validator.cpp
-        core/utilities/nlohmann/string-format-check.cpp)
-
 # path for interface files
 file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/utilities PATTERN *.cpp EXCLUDE)
 
-add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES} ${NLOHMANN_JSON_FILES})
+add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
 target_link_libraries(${PROJECT_NAME}Utility crypto Threads::Threads)
 target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
@@ -401,12 +392,12 @@ if (BUILD_CONNECTIVITY)
     file(COPY core/protocol/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/protocol PATTERN *.cpp EXCLUDE)
 
     add_library(${PROJECT_NAME} ${LIB_TYPE} ${LIB_SOURCE_FILES} ${LIB_HEADER_FILES})
-    target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as)
+    target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as nlohmann_json_schema_validator)
     target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR})
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${WOLKSDK_VERSION_STRING} SOVERSION ${WOLKSDK_VERSION_MAJOR}.${WOLKSDK_VERSION_MINOR}.${WOLKSDK_VERSION_PATCH})
-    add_dependencies(${PROJECT_NAME} pahomqttcpp)
+    add_dependencies(${PROJECT_NAME} pahomqttcpp json-schema)
 
     set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
             tests/BufferTests.cpp

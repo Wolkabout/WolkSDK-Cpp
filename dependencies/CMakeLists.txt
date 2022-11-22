@@ -6,16 +6,20 @@ set(PAHO_MQTT_CPP_VERSION "1.2.0")
 set(GTEST_VERSION "1.10.0")
 set(POCO_VERSION "1.10.1")
 set(AWS_SDK_VERSION "1.8.173")
+set(NLOHMANN_JSON_VERSION "3.11.2")
+set(JSON_SCHEMA_VERSION "2.1.0")
 
-ExternalProject_Add(spdlog
-        GIT_REPOSITORY "https://github.com/gabime/spdlog"
-        GIT_TAG "v${SPDLOG_VERSION}"
-        CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
-        -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
-        )
+if (NOT TARGET spdlog)
+    ExternalProject_Add(spdlog
+            GIT_REPOSITORY "https://github.com/gabime/spdlog"
+            GIT_TAG "v${SPDLOG_VERSION}"
+            CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
+            -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+            )
+endif ()
 
-if (BUILD_CONNECTIVITY)
+if (BUILD_CONNECTIVITY AND NOT TARGET pahomqttc AND NOT TARGET pahomqttcpp)
     ExternalProject_Add(pahomqttc
             GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.c"
             GIT_TAG "v${PAHO_MQTT_C_VERSION}"
@@ -38,7 +42,7 @@ if (BUILD_CONNECTIVITY)
             )
 endif ()
 
-if (BUILD_GTEST)
+if (BUILD_GTEST AND NOT TARGET libgtest)
     ExternalProject_Add(libgtest
             GIT_REPOSITORY "https://github.com/google/googletest"
             GIT_TAG "release-${GTEST_VERSION}"
@@ -48,7 +52,7 @@ if (BUILD_GTEST)
             )
 endif ()
 
-if (BUILD_POCO)
+if (BUILD_POCO AND NOT TARGET libpoco)
     if (NOT DEFINED POCO_INSTALL_DIR)
         set(POCO_INSTALL_DIR ${CMAKE_PREFIX_PATH})
     endif ()
@@ -87,7 +91,7 @@ if (BUILD_POCO)
             )
 endif ()
 
-if (BUILD_AWS_LOG_UPLOADER)
+if (BUILD_AWS_LOG_UPLOADER AND NOT TARGET aws-sdk-cpp)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(AWS_UNITY_BUILD "OFF")
         set(AWS_MINIMIZE_SIZE "OFF")
@@ -107,4 +111,27 @@ if (BUILD_AWS_LOG_UPLOADER)
             -DENABLE_TESTING=OFF
             -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
             -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH})
+endif ()
+
+if (NOT TARGET nlohmann_json)
+    ExternalProject_Add(nlohmann_json
+            GIT_REPOSITORY "https://github.com/nlohmann/json"
+            GIT_TAG "v${NLOHMANN_JSON_VERSION}"
+            CMAKE_ARGS
+            -DJSON_BuildTests=OFF
+            -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+            -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH})
+endif ()
+
+if (NOT TARGET json-schema)
+    ExternalProject_Add(json-schema
+            GIT_REPOSITORY "https://github.com/pboettch/json-schema-validator"
+            GIT_TAG "${JSON_SCHEMA_VERSION}"
+            CMAKE_ARGS
+            -DBUILD_SHARED_LIBS=ON
+            -DBUILD_TESTS=OFF
+            -DBUILD_EXAMPLES=OFF
+            -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+            -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH})
+    add_dependencies(json-schema nlohmann_json)
 endif ()
