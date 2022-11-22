@@ -123,7 +123,7 @@ if (NOT TARGET nlohmann_json)
             -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH})
 endif ()
 
-if (NOT TARGET nlohmann_json_schema_validator)
+if (NOT TARGET json-schema)
     ExternalProject_Add(json-schema
             GIT_REPOSITORY "https://github.com/pboettch/json-schema-validator"
             GIT_TAG "${JSON_SCHEMA_VERSION}"
