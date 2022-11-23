@@ -6,6 +6,9 @@
                                                 /_/   /_/
 ========================================================================================================================
 
+**Version 3.2.0**
+    - [IMPROVEMENTS] - Moved the `nlohmann-json` and `nlohmann-json-schema-validator` out into submodules.
+
 **Version 3.1.0-prerelease**
     - [IMPROVEMENTS] - Added a lot of new protocols that allow the WolkSDK-Cpp to be used in WolkConnect-Cpp to communicate on behalf of subdevices, and also as a Gateway.
     - [IMPROVEMENTS] - Implemented JSON schemas for processing incoming payloads and filtering out invalid payloads.
