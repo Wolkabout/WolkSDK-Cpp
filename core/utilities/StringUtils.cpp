@@ -284,4 +284,15 @@ std::vector<std::string> StringUtils::tokenize(const std::string& str, const cha
 
     return out;
 }
+
+std::string StringUtils::replaceAll(std::string sourceString, const std::string& search, const std::string& replace)
+{
+    auto it = sourceString.find(search);
+    while (it != std::string::npos)
+    {
+        sourceString.replace(it, search.size(), replace);
+        it = sourceString.find(search);
+    }
+    return sourceString;
+}
 }    // namespace wolkabout

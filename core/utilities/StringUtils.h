@@ -61,6 +61,17 @@ public:
 
     static std::vector<std::string> tokenize(std::string const& str, const char delim);
 
+    /**
+	 * This is the method that will search the source string for all instances of the search string and replace with the
+	 * replace string.
+	 *
+	 * @param sourceString The original string.
+	 * @param search All sequences that need to be replaced.
+	 * @param replace The sequence with which every occurence of the sequence will be replaced.
+	 * @return The resulting string.
+     */
+    static std::string replaceAll(std::string sourceString, const std::string& search, const std::string& replace);
+
     static const std::string EMPTY_STRING;
     static const std::string BOOL_TRUE;
     static const std::string BOOL_FALSE;
