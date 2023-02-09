@@ -6,6 +6,9 @@
                                                 /_/   /_/
 ========================================================================================================================
 
+**Version 3.2.1**
+    - [FEATURE] - Added the `replaceAll` method to the `StringUtils`.
+
 **Version 3.2.0**
     - [IMPROVEMENTS] - Moved the `nlohmann-json` and `nlohmann-json-schema-validator` out into submodules.
 
