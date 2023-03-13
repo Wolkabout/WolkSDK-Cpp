@@ -1,6 +1,6 @@
 include(ExternalProject)
 
-set(SPDLOG_VERSION "1.5.0")
+set(SPDLOG_VERSION "1.8.5")
 set(PAHO_MQTT_C_VERSION "1.3.8")
 set(PAHO_MQTT_CPP_VERSION "1.2.0")
 set(GTEST_VERSION "1.10.0")
