@@ -19,6 +19,8 @@
 #include "core/model/Message.h"
 #include "core/persistence/inmemory/InMemoryMessagePersistence.h"
 
+using namespace wolkabout::legacy;
+
 namespace wolkabout
 {
 MqttConnectivityService::MqttConnectivityService(std::shared_ptr<MqttClient> mqttClient, std::string key,

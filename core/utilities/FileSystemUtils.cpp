@@ -22,7 +22,7 @@
 #include <fstream>
 #include <sys/stat.h>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 const char FileSystemUtils::PATH_DELIMITER = '/';
 

@@ -23,6 +23,8 @@
 #include <mqtt/async_client.h>
 #include <string>
 
+using namespace wolkabout::legacy;
+
 namespace wolkabout
 {
 const std::uint16_t PahoMqttClient::MQTT_CONNECTION_COMPLETION_TIMEOUT_MSEC = 2000;

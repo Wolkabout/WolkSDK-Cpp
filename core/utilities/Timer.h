@@ -23,7 +23,7 @@
 #include <memory>
 #include <thread>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 class Timer
 {

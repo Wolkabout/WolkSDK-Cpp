@@ -23,7 +23,7 @@
 
 namespace wolkabout
 {
-class AwsLogUploader : public wolkabout::LogUploader
+class AwsLogUploader : public wolkabout::legacy::LogUploader
 {
 public:
     AwsLogUploader(const std::string& bucketName, const std::string& region);

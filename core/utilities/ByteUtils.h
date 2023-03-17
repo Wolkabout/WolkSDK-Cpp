@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 using Byte = std::uint8_t;
 using ByteArray = std::vector<Byte>;

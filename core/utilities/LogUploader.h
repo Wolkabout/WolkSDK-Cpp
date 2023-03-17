@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 /**
  * This is an abstract class that is meant for providing means of uploading log files to a remote destination.

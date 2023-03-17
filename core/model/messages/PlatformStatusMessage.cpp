@@ -20,6 +20,8 @@
 
 #include <algorithm>
 
+using namespace wolkabout::legacy;
+
 namespace wolkabout
 {
 std::string toString(ConnectivityStatus value)

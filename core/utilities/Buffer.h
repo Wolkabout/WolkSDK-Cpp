@@ -24,7 +24,7 @@
 #include <mutex>
 #include <queue>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 template <class T> class Buffer
 {

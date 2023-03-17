@@ -22,7 +22,7 @@
 #include <random>
 #include <sstream>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 ByteArray ByteUtils::toByteArray(const std::string& data)
 {

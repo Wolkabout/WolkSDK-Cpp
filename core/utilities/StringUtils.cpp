@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <cctype>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                         "abcdefghijklmnopqrstuvwxyz"

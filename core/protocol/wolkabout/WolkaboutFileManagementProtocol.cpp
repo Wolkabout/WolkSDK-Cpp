@@ -22,6 +22,7 @@
 #include <nlohmann/json.hpp>
 
 using nlohmann::json;
+using namespace wolkabout::legacy;
 
 namespace wolkabout
 {

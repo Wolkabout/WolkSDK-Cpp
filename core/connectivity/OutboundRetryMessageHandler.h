@@ -60,7 +60,7 @@ private:
 
     OutboundMessageHandler& m_messageHandler;
 
-    std::map<unsigned long long, std::tuple<RetryMessageStruct, std::unique_ptr<Timer>, short, bool>> m_messages;
+	std::map<unsigned long long, std::tuple<RetryMessageStruct, std::unique_ptr<legacy::Timer>, short, bool>> m_messages;
 
     std::atomic_bool m_run;
     std::condition_variable m_condition;

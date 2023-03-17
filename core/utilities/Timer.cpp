@@ -16,7 +16,7 @@
 
 #include "Timer.h"
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 Timer::Timer() : m_isRunning(false) {}
 

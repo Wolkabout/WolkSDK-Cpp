@@ -22,7 +22,7 @@
 #include <queue>
 #include <thread>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 CommandBuffer::CommandBuffer()
 : m_isRunning(true), m_worker(std::unique_ptr<std::thread>(new std::thread(&CommandBuffer::run, this)))

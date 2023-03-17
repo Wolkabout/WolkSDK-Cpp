@@ -28,6 +28,8 @@
 #include <fstream>
 #include <sys/stat.h>
 
+using namespace wolkabout::legacy;
+
 namespace wolkabout
 {
 AwsLogUploader::AwsLogUploader(const std::string& bucketName, const std::string& region)

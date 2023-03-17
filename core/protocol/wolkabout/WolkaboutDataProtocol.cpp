@@ -27,6 +27,7 @@
 #include <string>
 
 using nlohmann::json;
+using namespace wolkabout::legacy;
 
 namespace wolkabout
 {

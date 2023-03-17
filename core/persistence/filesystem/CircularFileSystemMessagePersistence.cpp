@@ -20,6 +20,8 @@
 #include "core/utilities/FileSystemUtils.h"
 #include "core/utilities/Logger.h"
 
+using namespace wolkabout::legacy;
+
 namespace wolkabout
 {
 CircularFileSystemMessagePersistence::CircularFileSystemMessagePersistence(const std::string& persistPath,
@@ -58,7 +60,7 @@ void CircularFileSystemMessagePersistence::pop()
 
     const auto reading = m_method == PersistenceMethod::FIFO ? firstReading() : lastReading();
 
-    auto size = static_cast<unsigned>(FileSystemUtils::getFileSize(readingPath(reading)));
+	auto size = static_cast<unsigned>(FileSystemUtils::getFileSize(readingPath(reading)));
 
     m_totalFileSize = size > m_totalFileSize ? 0 : m_totalFileSize - size;
 

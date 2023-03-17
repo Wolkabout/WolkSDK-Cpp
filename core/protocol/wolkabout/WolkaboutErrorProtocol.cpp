@@ -19,6 +19,8 @@
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/utilities/Logger.h"
 
+using namespace wolkabout::legacy;
+
 namespace wolkabout
 {
 WolkaboutErrorProtocol::WolkaboutErrorProtocol(bool isGateway)

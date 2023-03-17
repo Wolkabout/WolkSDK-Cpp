@@ -30,7 +30,7 @@ namespace
 const unsigned BURRER_LOG_SIZE = 2500;
 }
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 std::unique_ptr<Logger> Logger::m_instance;
 
@@ -231,43 +231,43 @@ std::string Log::getMessage() const
     return m_message.str();
 }
 
-LOG::LOG(wolkabout::LogLevel level, bool doLog) : m_log(level), m_doLog(doLog) {}
+LOG::LOG(wolkabout::legacy::LogLevel level, bool doLog) : m_log(level), m_doLog(doLog) {}
 
 LOG::~LOG()
 {
     if (m_doLog)
     {
-        wolkabout::Logger::getInstance() += m_log;
+		wolkabout::legacy::Logger::getInstance() += m_log;
     }
 }
 
-wolkabout::LogLevel from_string(std::string level)
+wolkabout::legacy::LogLevel from_string(std::string level)
 {
     std::transform(level.begin(), level.end(), level.begin(), ::toupper);
 
     if (level == "TRACE")
     {
-        return wolkabout::LogLevel::TRACE;
+		return wolkabout::legacy::LogLevel::TRACE;
     }
     else if (level == "DEBUG")
     {
-        return wolkabout::LogLevel::DEBUG;
+		return wolkabout::legacy::LogLevel::DEBUG;
     }
     else if (level == "INFO")
     {
-        return wolkabout::LogLevel::INFO;
+		return wolkabout::legacy::LogLevel::INFO;
     }
     else if (level == "WARN")
     {
-        return wolkabout::LogLevel::WARN;
+		return wolkabout::legacy::LogLevel::WARN;
     }
     else if (level == "OFF")
     {
-        return wolkabout::LogLevel::OFF;
+		return wolkabout::legacy::LogLevel::OFF;
     }
     else
     {
-        return wolkabout::LogLevel::ERROR;
+		return wolkabout::legacy::LogLevel::ERROR;
     }
 }
 }    // namespace wolkabout
