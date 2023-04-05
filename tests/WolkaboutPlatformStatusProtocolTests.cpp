@@ -28,6 +28,7 @@
 #include <gtest/gtest.h>
 
 using namespace wolkabout;
+using namespace wolkabout::legacy;
 
 class WolkaboutPlatformStatusProtocolTests : public ::testing::Test
 {

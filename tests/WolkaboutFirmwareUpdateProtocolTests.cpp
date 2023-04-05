@@ -32,6 +32,7 @@
 using namespace ::testing;
 using namespace nlohmann;
 using namespace wolkabout;
+using namespace wolkabout::legacy;
 
 class WolkaboutFirmwareUpdateProtocolTests : public Test
 {

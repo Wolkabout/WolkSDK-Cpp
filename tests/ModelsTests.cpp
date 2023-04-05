@@ -32,6 +32,7 @@
 #include <gtest/gtest.h>
 
 using namespace wolkabout;
+using namespace wolkabout::legacy;
 using namespace ::testing;
 
 class ModelsTests : public ::testing::Test

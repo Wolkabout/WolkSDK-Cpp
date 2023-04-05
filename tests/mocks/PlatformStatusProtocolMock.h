@@ -22,6 +22,7 @@
 #include <gmock/gmock.h>
 
 using namespace wolkabout;
+using namespace wolkabout::legacy;
 
 class PlatformStatusProtocolMock : public PlatformStatusProtocol
 {
