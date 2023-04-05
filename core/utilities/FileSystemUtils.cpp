@@ -212,4 +212,4 @@ std::uint64_t FileSystemUtils::getFileSize(const std::string& path)
     }
     return static_cast<std::uint64_t>(fileInfo.st_size);
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy

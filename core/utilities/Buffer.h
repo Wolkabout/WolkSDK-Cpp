@@ -127,6 +127,6 @@ template <class T> void Buffer<T>::notify()
 {
     m_condition.notify_one();
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif

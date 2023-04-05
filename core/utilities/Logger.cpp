@@ -237,7 +237,7 @@ LOG::~LOG()
 {
     if (m_doLog)
     {
-		wolkabout::legacy::Logger::getInstance() += m_log;
+        wolkabout::legacy::Logger::getInstance() += m_log;
     }
 }
 
@@ -247,27 +247,27 @@ wolkabout::legacy::LogLevel from_string(std::string level)
 
     if (level == "TRACE")
     {
-		return wolkabout::legacy::LogLevel::TRACE;
+        return wolkabout::legacy::LogLevel::TRACE;
     }
     else if (level == "DEBUG")
     {
-		return wolkabout::legacy::LogLevel::DEBUG;
+        return wolkabout::legacy::LogLevel::DEBUG;
     }
     else if (level == "INFO")
     {
-		return wolkabout::legacy::LogLevel::INFO;
+        return wolkabout::legacy::LogLevel::INFO;
     }
     else if (level == "WARN")
     {
-		return wolkabout::legacy::LogLevel::WARN;
+        return wolkabout::legacy::LogLevel::WARN;
     }
     else if (level == "OFF")
     {
-		return wolkabout::legacy::LogLevel::OFF;
+        return wolkabout::legacy::LogLevel::OFF;
     }
     else
     {
-		return wolkabout::legacy::LogLevel::ERROR;
+        return wolkabout::legacy::LogLevel::ERROR;
     }
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy

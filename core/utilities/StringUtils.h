@@ -96,6 +96,6 @@ template <> inline std::string StringUtils::toString<const char*>(const char* co
 {
     return std::string{value};
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif

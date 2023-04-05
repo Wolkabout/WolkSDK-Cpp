@@ -130,7 +130,7 @@ template <typename T> Log& Log::operator<<(T value)
 class LOG
 {
 public:
-	explicit LOG(wolkabout::legacy::LogLevel level, bool doLog = true);
+    explicit LOG(wolkabout::legacy::LogLevel level, bool doLog = true);
     virtual ~LOG();
 
     template <typename T> LOG& operator<<(T value)
@@ -140,7 +140,7 @@ public:
     }
 
 private:
-	wolkabout::legacy::Log m_log;
+    wolkabout::legacy::Log m_log;
     bool m_doLog;
 };
 
@@ -148,7 +148,7 @@ class LOG_WHEN_TRUE : public LOG
 {
 public:
     using LOG::LOG;
-	LOG_WHEN_TRUE(wolkabout::legacy::LogLevel) = delete;
+    LOG_WHEN_TRUE(wolkabout::legacy::LogLevel) = delete;
 };
 
 constexpr auto TRACE = wolkabout::legacy::LogLevel::TRACE;
@@ -160,6 +160,6 @@ constexpr auto ERROR = wolkabout::legacy::LogLevel::ERROR;
 #ifndef METHOD_INFO
 #define METHOD_INFO __PRETTY_FUNCTION__
 #endif
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif    // WOLKABOUTCORE_LOGGER_H

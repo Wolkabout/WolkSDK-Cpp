@@ -30,6 +30,6 @@ public:
      */
     virtual std::vector<std::string> getRemoteLogs() = 0;
 };
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif    // WOLKABOUTCORE_LOGUPLOADER_H

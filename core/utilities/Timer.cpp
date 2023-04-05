@@ -82,4 +82,4 @@ bool Timer::running() const
     return m_isRunning;
 }
 
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy

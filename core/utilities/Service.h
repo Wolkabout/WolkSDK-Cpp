@@ -23,6 +23,6 @@ public:
         start();
     }
 };
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif    // WOLKABOUTCORE_SERVICE_H

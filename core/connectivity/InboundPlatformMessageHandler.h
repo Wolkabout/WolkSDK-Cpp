@@ -45,7 +45,7 @@ private:
 
     std::vector<std::string> m_deviceKeys;
 
-	std::unique_ptr<legacy::CommandBuffer> m_commandBuffer;
+    std::unique_ptr<legacy::CommandBuffer> m_commandBuffer;
 
     std::vector<std::weak_ptr<MessageListener>> m_listeners;
 

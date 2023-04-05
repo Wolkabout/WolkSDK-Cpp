@@ -229,7 +229,7 @@ std::vector<std::string> LogManager::getLogsToUpload()
 
     for (auto log : remoteFiles)
     {
-		log = wolkabout::legacy::StringUtils::removePrefix(log, m_logDirectory + "/");
+        log = wolkabout::legacy::StringUtils::removePrefix(log, m_logDirectory + "/");
     }
 
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
@@ -258,7 +258,7 @@ std::vector<std::string> LogManager::getLogFileNames()
     logFiles = FileSystemUtils::listFiles(m_logDirectory);
     logFiles.erase(std::remove_if(logFiles.begin(), logFiles.end(),
                                   [&](const std::string& file) -> bool {
-									  return !wolkabout::legacy::StringUtils::endsWith(file, m_logExtension);
+                                      return !wolkabout::legacy::StringUtils::endsWith(file, m_logExtension);
                                   }),
                    logFiles.end());
     return logFiles;
@@ -324,7 +324,7 @@ void LogManager::deleteOldLogs()
     for (auto& oldLog : oldLogs)
     {
         LOG(INFO) << "Deleting '" << oldLog << "'";
-		if (!wolkabout::legacy::FileSystemUtils::deleteFile(FileSystemUtils::composePath(oldLog, m_logDirectory)))
+        if (!wolkabout::legacy::FileSystemUtils::deleteFile(FileSystemUtils::composePath(oldLog, m_logDirectory)))
         {
             LOG(WARN) << "Failed to delete log '" << oldLog << "'";
         }
@@ -358,10 +358,10 @@ void LogManager::checkLogOverflow()
 
         for (auto& log : logs)
         {
-            logsWithAge.emplace_back(std::make_pair(
-              log, std::difftime(
-                     std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
-					 wolkabout::legacy::FileSystemUtils::getLastModified(FileSystemUtils::composePath(log, m_logDirectory)))));
+            logsWithAge.emplace_back(
+              std::make_pair(log, std::difftime(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()),
+                                                wolkabout::legacy::FileSystemUtils::getLastModified(
+                                                  FileSystemUtils::composePath(log, m_logDirectory)))));
         }
 
         std::sort(logsWithAge.begin(), logsWithAge.end(),
@@ -373,7 +373,7 @@ void LogManager::checkLogOverflow()
 
         LOG(INFO) << "Deleting oldest log file: " << oldLog;
 
-		if (!wolkabout::legacy::FileSystemUtils::deleteFile(FileSystemUtils::composePath(oldLog, m_logDirectory)))
+        if (!wolkabout::legacy::FileSystemUtils::deleteFile(FileSystemUtils::composePath(oldLog, m_logDirectory)))
         {
             LOG(ERROR) << "Failed to delete log file: " << oldLog;
             retryCounter++;
@@ -389,8 +389,8 @@ double LogManager::getTotalLogSize()
 
     for (auto& log : logs)
     {
-		logSize += wolkabout::legacy::FileSystemUtils::getFileSize(FileSystemUtils::composePath(log, m_logDirectory));
+        logSize += wolkabout::legacy::FileSystemUtils::getFileSize(FileSystemUtils::composePath(log, m_logDirectory));
     }
     return logSize;
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy

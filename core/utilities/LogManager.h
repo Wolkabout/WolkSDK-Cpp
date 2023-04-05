@@ -59,7 +59,7 @@ public:
     void setDeleteAfter(const std::chrono::hours& deleteAfter);
     const std::string& getLogExtension() const;
     void setLogExtension(const std::string& logExtension);
-	void setLogUploader(const std::shared_ptr<wolkabout::legacy::LogUploader>& logUploader);
+    void setLogUploader(const std::shared_ptr<wolkabout::legacy::LogUploader>& logUploader);
 
 private:
     std::vector<std::string> getLogsToUpload();
@@ -71,9 +71,9 @@ private:
     std::string m_logExtension;
     int m_maxSize;
 
-	wolkabout::legacy::Timer m_overflowTimer;
-	wolkabout::legacy::Timer m_deleteTimer;
-	wolkabout::legacy::Timer m_uploadTimer;
+    wolkabout::legacy::Timer m_overflowTimer;
+    wolkabout::legacy::Timer m_deleteTimer;
+    wolkabout::legacy::Timer m_uploadTimer;
     std::atomic_bool m_running;
 
     std::chrono::hours m_deleteEvery;
@@ -84,5 +84,5 @@ private:
     std::shared_ptr<LogUploader> m_logUploader = nullptr;
 };
 
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 #endif    // WOLKABOUTCORE_LOGMANAGER_H

@@ -100,7 +100,7 @@ private:
     DisconnectedState m_disconnectedState;
     std::atomic<State*> m_currentState;
 
-	legacy::Buffer<std::shared_ptr<Message>> m_buffer;
+    legacy::Buffer<std::shared_ptr<Message>> m_buffer;
 
     std::atomic_bool m_run;
     std::unique_ptr<std::thread> m_worker;

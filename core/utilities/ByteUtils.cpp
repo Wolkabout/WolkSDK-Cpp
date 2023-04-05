@@ -124,4 +124,4 @@ ByteArray ByteUtils::hashMDA5(const ByteArray& value)
         hash.emplace_back(hashCStr[i]);
     return hash;
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy

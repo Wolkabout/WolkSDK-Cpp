@@ -58,6 +58,6 @@ public:
 private:
     static const char PATH_DELIMITER;
 };
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif

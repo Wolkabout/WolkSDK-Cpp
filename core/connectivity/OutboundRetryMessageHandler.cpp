@@ -60,7 +60,7 @@ void OutboundRetryMessageHandler::addMessage(RetryMessageStruct msg)
 
     // setup retry
     const auto id = getUniqueId();
-	m_messages[id] = std::make_tuple(msg, std::unique_ptr<legacy::Timer>(new legacy::Timer()), 0, false);
+    m_messages[id] = std::make_tuple(msg, std::unique_ptr<legacy::Timer>(new legacy::Timer()), 0, false);
 
     auto& tup = m_messages[id];
     auto& timer = std::get<TIMER_INDEX>(tup);
@@ -113,7 +113,7 @@ void OutboundRetryMessageHandler::messageReceived(std::shared_ptr<Message> respo
     {
         auto& tuple = kvp.second;
         const auto& retryMessage = std::get<RETRY_MESSAGE_INDEX>(tuple);
-		if (legacy::StringUtils::mqttTopicMatch(response->getChannel(), retryMessage.responseChannel))
+        if (legacy::StringUtils::mqttTopicMatch(response->getChannel(), retryMessage.responseChannel))
         {
             LOG(DEBUG) << "Response received on channel " << retryMessage.responseChannel
                        << ", for message on channel: " << retryMessage.message->getChannel();

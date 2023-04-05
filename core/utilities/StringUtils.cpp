@@ -295,4 +295,4 @@ std::string StringUtils::replaceAll(std::string sourceString, const std::string&
     }
     return sourceString;
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy

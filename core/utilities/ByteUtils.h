@@ -48,6 +48,6 @@ public:
     static const std::uint16_t SHA_256_HASH_BYTE_LENGTH = 256;
     static const std::uint16_t UUID_VECTOR_SIZE = 16;
 };
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif    // BYTE_H

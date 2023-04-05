@@ -112,4 +112,4 @@ void CommandBuffer::run()
         processCommands();
     }
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
