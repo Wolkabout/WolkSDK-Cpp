@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 /**
  * This is an abstract class that is meant for providing means of uploading log files to a remote destination.
@@ -30,6 +30,6 @@ public:
      */
     virtual std::vector<std::string> getRemoteLogs() = 0;
 };
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif    // WOLKABOUTCORE_LOGUPLOADER_H

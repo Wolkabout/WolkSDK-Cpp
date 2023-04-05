@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 class FileSystemUtils
 {
@@ -58,6 +58,6 @@ public:
 private:
     static const char PATH_DELIMITER;
 };
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif

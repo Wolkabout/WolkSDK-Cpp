@@ -30,6 +30,7 @@
 #include <regex>
 
 using namespace wolkabout;
+using namespace wolkabout::legacy;
 
 class WolkaboutRegistrationProtocolTests : public ::testing::Test
 {

@@ -24,7 +24,7 @@
 #include <mutex>
 #include <queue>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 template <class T> class Buffer
 {
@@ -127,6 +127,6 @@ template <class T> void Buffer<T>::notify()
 {
     m_condition.notify_one();
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif

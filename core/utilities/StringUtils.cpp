@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <cctype>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                         "abcdefghijklmnopqrstuvwxyz"
@@ -295,4 +295,4 @@ std::string StringUtils::replaceAll(std::string sourceString, const std::string&
     }
     return sourceString;
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy

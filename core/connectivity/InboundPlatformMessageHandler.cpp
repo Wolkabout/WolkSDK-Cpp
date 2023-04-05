@@ -23,10 +23,12 @@
 
 #include <algorithm>
 
+using namespace wolkabout::legacy;
+
 namespace wolkabout
 {
 InboundPlatformMessageHandler::InboundPlatformMessageHandler(std::vector<std::string> deviceKeys)
-: m_deviceKeys{std::move(deviceKeys)}, m_commandBuffer{new CommandBuffer}
+: m_deviceKeys{std::move(deviceKeys)}, m_commandBuffer{new legacy::CommandBuffer}
 {
 }
 

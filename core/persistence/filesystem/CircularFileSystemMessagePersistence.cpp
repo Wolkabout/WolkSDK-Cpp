@@ -20,6 +20,8 @@
 #include "core/utilities/FileSystemUtils.h"
 #include "core/utilities/Logger.h"
 
+using namespace wolkabout::legacy;
+
 namespace wolkabout
 {
 CircularFileSystemMessagePersistence::CircularFileSystemMessagePersistence(const std::string& persistPath,

@@ -23,7 +23,7 @@
 #include <memory>
 #include <thread>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 class Timer
 {
@@ -43,6 +43,6 @@ private:
     std::unique_ptr<std::thread> m_worker;
 };
 
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif    // WOLKABOUTCORE_TIMER_H

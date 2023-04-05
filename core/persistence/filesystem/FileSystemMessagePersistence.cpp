@@ -28,6 +28,8 @@ const std::string READING_FILE_NAME = "reading_";
 const std::string REGEX = READING_FILE_NAME + "(\\d+)";
 }    // namespace
 
+using namespace wolkabout::legacy;
+
 namespace wolkabout
 {
 FileSystemMessagePersistence::FileSystemMessagePersistence(std::string persistPath, PersistenceMethod method)

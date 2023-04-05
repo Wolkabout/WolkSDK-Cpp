@@ -16,7 +16,7 @@
 
 #include "Timer.h"
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 Timer::Timer() : m_isRunning(false) {}
 
@@ -82,4 +82,4 @@ bool Timer::running() const
     return m_isRunning;
 }
 
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy

@@ -33,7 +33,7 @@ template <typename T> class ringbuffer_sink;
 }
 }    // namespace spdlog
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 class Log;
 
@@ -53,7 +53,7 @@ enum class LogLevel
  * @return corresponding log level (supported: ERROR, WARN, INFO, DEBUG, TRACE and
  * OFF. All other will be considered as ERROR)
  */
-wolkabout::LogLevel from_string(std::string level);
+wolkabout::legacy::LogLevel from_string(std::string level);
 
 class Logger
 {
@@ -130,7 +130,7 @@ template <typename T> Log& Log::operator<<(T value)
 class LOG
 {
 public:
-    explicit LOG(wolkabout::LogLevel level, bool doLog = true);
+    explicit LOG(wolkabout::legacy::LogLevel level, bool doLog = true);
     virtual ~LOG();
 
     template <typename T> LOG& operator<<(T value)
@@ -140,7 +140,7 @@ public:
     }
 
 private:
-    wolkabout::Log m_log;
+    wolkabout::legacy::Log m_log;
     bool m_doLog;
 };
 
@@ -148,18 +148,18 @@ class LOG_WHEN_TRUE : public LOG
 {
 public:
     using LOG::LOG;
-    LOG_WHEN_TRUE(wolkabout::LogLevel) = delete;
+    LOG_WHEN_TRUE(wolkabout::legacy::LogLevel) = delete;
 };
 
-constexpr auto TRACE = wolkabout::LogLevel::TRACE;
-constexpr auto DEBUG = wolkabout::LogLevel::DEBUG;
-constexpr auto INFO = wolkabout::LogLevel::INFO;
-constexpr auto WARN = wolkabout::LogLevel::WARN;
-constexpr auto ERROR = wolkabout::LogLevel::ERROR;
+constexpr auto TRACE = wolkabout::legacy::LogLevel::TRACE;
+constexpr auto DEBUG = wolkabout::legacy::LogLevel::DEBUG;
+constexpr auto INFO = wolkabout::legacy::LogLevel::INFO;
+constexpr auto WARN = wolkabout::legacy::LogLevel::WARN;
+constexpr auto ERROR = wolkabout::legacy::LogLevel::ERROR;
 
 #ifndef METHOD_INFO
 #define METHOD_INFO __PRETTY_FUNCTION__
 #endif
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif    // WOLKABOUTCORE_LOGGER_H

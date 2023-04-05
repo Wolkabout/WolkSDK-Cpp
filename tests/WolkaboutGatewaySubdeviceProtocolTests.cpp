@@ -34,6 +34,7 @@
 #include <gtest/gtest.h>
 
 using namespace wolkabout;
+using namespace wolkabout::legacy;
 using namespace ::testing;
 
 class WolkaboutGatewaySubdeviceProtocolTests : public ::testing::Test
@@ -202,7 +203,7 @@ TEST_F(WolkaboutGatewaySubdeviceProtocolTests, ParseIncomingFileBinaryResponse)
 {
     // Make the incoming message
     const auto message = std::make_shared<wolkabout::Message>(
-      R"([{"payload": ")" + wolkabout::StringUtils::base64Encode(ByteArray(64, 100)) + R"(", "device": "AD1"}])",
+      R"([{"payload": ")" + StringUtils::base64Encode(ByteArray(64, 100)) + R"(", "device": "AD1"}])",
       "p2g/" + DEVICE_KEY + "/file_binary_response");
     LogMessage(*message);
 

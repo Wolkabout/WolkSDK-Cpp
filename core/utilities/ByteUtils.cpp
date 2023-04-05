@@ -22,7 +22,7 @@
 #include <random>
 #include <sstream>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 ByteArray ByteUtils::toByteArray(const std::string& data)
 {
@@ -124,4 +124,4 @@ ByteArray ByteUtils::hashMDA5(const ByteArray& value)
         hash.emplace_back(hashCStr[i]);
     return hash;
 }
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy

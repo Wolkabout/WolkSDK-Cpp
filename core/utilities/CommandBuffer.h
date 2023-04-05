@@ -25,7 +25,7 @@
 #include <queue>
 #include <thread>
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 class CommandBuffer
 {
@@ -62,6 +62,6 @@ private:
     std::atomic_bool m_isRunning;
     std::unique_ptr<std::thread> m_worker;
 };
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif

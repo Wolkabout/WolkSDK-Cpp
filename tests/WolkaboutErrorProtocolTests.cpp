@@ -28,6 +28,7 @@
 #include <gtest/gtest.h>
 
 using namespace wolkabout;
+using namespace wolkabout::legacy;
 using namespace ::testing;
 
 class WolkaboutErrorProtocolTests : public ::testing::Test

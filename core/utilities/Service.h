@@ -1,7 +1,7 @@
 #ifndef WOLKABOUTCORE_SERVICE_H
 #define WOLKABOUTCORE_SERVICE_H
 
-namespace wolkabout
+namespace wolkabout::legacy
 {
 /**
  * This is an abstract class that is meant as a guideline for implementing any kind of class that implements
@@ -23,6 +23,6 @@ public:
         start();
     }
 };
-}    // namespace wolkabout
+}    // namespace wolkabout::legacy
 
 #endif    // WOLKABOUTCORE_SERVICE_H
