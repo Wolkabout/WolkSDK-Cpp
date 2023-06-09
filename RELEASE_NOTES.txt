@@ -6,6 +6,9 @@
                                                 /_/   /_/
 ========================================================================================================================
 
+**Version 3.3.0**
+    - [IMPROVEMENT] - Modernized the CMake a little bit more to appeal to more modern way of including headers.
+
 **Version 3.2.1**
     - [FEATURE] - Added the `replaceAll` method to the `StringUtils`.
 
