@@ -137,8 +137,7 @@ if (NOT DEFINED CMAKE_PREFIX_PATH)
 endif ()
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}     -Wall -Wextra -pedantic                                                    \
-                                            -pedantic-errors -Wcast-align                                              \
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}     -Wall -Wextra -Wcast-align                                                 \
                                             -Wcast-qual -Wconversion                                                   \
                                             -Wdisabled-optimization                                                    \
                                             -Wfloat-equal -Wformat=2                                                   \
@@ -167,7 +166,6 @@ endif ()
 add_subdirectory(dependencies)
 link_directories(${CMAKE_PREFIX_PATH}/lib)
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-include_directories(SYSTEM ${CMAKE_PREFIX_PATH}/include)
 
 find_package(Threads REQUIRED)
 
@@ -212,7 +210,8 @@ file(COPY core/utilities/ DESTINATION ${CMAKE_LIBRARY_INCLUDE_DIRECTORY}/core/ut
 add_library(${PROJECT_NAME}Utility ${LIB_TYPE} ${UTILITY_SOURCE_FILES} ${UTILITY_HEADER_FILES})
 target_link_libraries(${PROJECT_NAME}Utility crypto Threads::Threads)
 target_include_directories(${PROJECT_NAME}Utility PRIVATE ${PROJECT_SOURCE_DIR})
-target_include_directories(${PROJECT_NAME}Utility PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
+target_include_directories(${PROJECT_NAME}Utility PRIVATE $<BUILD_INTERFACE:${CMAKE_PREFIX_PATH}/include>)
+target_include_directories(${PROJECT_NAME}Utility PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES INSTALL_RPATH "$ORIGIN")
 set_target_properties(${PROJECT_NAME}Utility PROPERTIES VERSION ${WOLKSDK_VERSION_STRING} SOVERSION ${WOLKSDK_VERSION_MAJOR}.${WOLKSDK_VERSION_MINOR}.${WOLKSDK_VERSION_PATCH})
 add_dependencies(${PROJECT_NAME}Utility spdlog)
@@ -229,7 +228,8 @@ if (BUILD_AWS_LOG_UPLOADER)
     add_library(${PROJECT_NAME}Aws ${LIB_TYPE} ${ALU_SOURCE_FILES} ${ALU_HEADER_FILES})
     target_link_libraries(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-cpp-sdk-core aws-cpp-sdk-s3)
     target_include_directories(${PROJECT_NAME}Aws PRIVATE ${PROJECT_SOURCE_DIR})
-    target_include_directories(${PROJECT_NAME}Aws PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
+    target_include_directories(${PROJECT_NAME}Aws PRIVATE $<BUILD_INTERFACE:${CMAKE_PREFIX_PATH}/include>)
+    target_include_directories(${PROJECT_NAME}Aws PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
     set_target_properties(${PROJECT_NAME}Aws PROPERTIES INSTALL_RPATH "$ORIGIN")
     set_target_properties(${PROJECT_NAME}Aws PROPERTIES VERSION ${WOLKSDK_VERSION_STRING} SOVERSION ${WOLKSDK_VERSION_MAJOR}.${WOLKSDK_VERSION_MINOR}.${WOLKSDK_VERSION_PATCH})
     add_dependencies(${PROJECT_NAME}Aws ${PROJECT_NAME}Utility aws-sdk-cpp)
@@ -394,7 +394,8 @@ if (BUILD_CONNECTIVITY)
     add_library(${PROJECT_NAME} ${LIB_TYPE} ${LIB_SOURCE_FILES} ${LIB_HEADER_FILES})
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Utility paho-mqttpp3 paho-mqtt3as nlohmann_json_schema_validator)
     target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
+    target_include_directories(${PROJECT_NAME} PRIVATE $<BUILD_INTERFACE:${CMAKE_PREFIX_PATH}/include>)
+    target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
     set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${WOLKSDK_VERSION_STRING} SOVERSION ${WOLKSDK_VERSION_MAJOR}.${WOLKSDK_VERSION_MINOR}.${WOLKSDK_VERSION_PATCH})
     add_dependencies(${PROJECT_NAME} pahomqttcpp json-schema)
@@ -451,7 +452,8 @@ if (${BUILD_TESTS} AND (NOT ("${TESTS_SOURCE_FILES}" STREQUAL "")))
     add_executable(${PROJECT_NAME}Tests ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES})
     target_link_libraries(${PROJECT_NAME}Tests ${PROJECT_NAME} gtest gmock gtest_main Threads::Threads)
     target_include_directories(${PROJECT_NAME}Tests PRIVATE ${PROJECT_SOURCE_DIR})
-    target_include_directories(${PROJECT_NAME}Tests PUBLIC ${CMAKE_LIBRARY_INCLUDE_DIRECTORY})
+    target_include_directories(${PROJECT_NAME}Tests PRIVATE $<BUILD_INTERFACE:${CMAKE_PREFIX_PATH}/include>)
+    target_include_directories(${PROJECT_NAME}Tests PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
     set_target_properties(${PROJECT_NAME}Tests PROPERTIES INSTALL_RPATH "$ORIGIN/../lib")
     add_dependencies(${PROJECT_NAME}Tests libgtest)
 
