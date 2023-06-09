@@ -16,6 +16,8 @@
 
 #include "core/model/Device.h"
 
+#include <stdexcept>
+
 namespace wolkabout
 {
 Device::Device(std::string key, std::string password, OutboundDataMode type, std::string name)
