@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # Set the version policy
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 cmake_policy(SET CMP0048 NEW)
 
 # Define the project
@@ -43,6 +44,9 @@ OPTION(INSTALL_TARGET "Add the installation target for the project." ON)
 # Check the GTEST and TESTS option
 if (NOT ${BUILD_GTEST} AND ${BUILD_TESTS})
     message(FATAL_ERROR "The library can not build TESTS without GTEST.")
+endif ()
+if (${BUILD_TESTS})
+    enable_testing()
 endif ()
 
 # Add the poco options

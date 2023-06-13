@@ -1,9 +1,6 @@
 # Place the sub-folder this target is placed into a variable
 set(SUBDIRECTORY_PATH connectivity/tests)
 
-# Enable testing
-enable_testing()
-
 # Include the dependencies
 include(cmake/dependencies.cmake)
 
