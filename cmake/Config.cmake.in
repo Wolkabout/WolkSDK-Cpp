@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/@NAMESPACE@@PROJECT_NAME@Targets.cmake")
+
+check_required_components(@NAMESPACE@@PROJECT_NAME@)
+
+find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)

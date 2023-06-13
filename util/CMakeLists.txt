@@ -1,6 +1,3 @@
-# Place the sub-folder this target is placed into a variable
-set(SUBDIRECTORY_PATH util)
-
 # Include the util dependencies
 include(cmake/dependencies.cmake)
 
@@ -41,10 +38,10 @@ target_sources(${UTIL_TARGET_NAME} PRIVATE core/utility/Buffer.h
 # Add the private include directories
 target_include_directories(${UTIL_TARGET_NAME}
         PRIVATE
-        ${PROJECT_SOURCE_DIR}/${SUBDIRECTORY_PATH})
+        ${PROJECT_SOURCE_DIR}/${UTIL_SUBDIRECTORY_PATH})
 
 # Add the public include directories
 target_include_directories(${UTIL_TARGET_NAME}
         PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${SUBDIRECTORY_PATH}>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${UTIL_SUBDIRECTORY_PATH}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

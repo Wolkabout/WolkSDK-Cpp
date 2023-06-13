@@ -22,13 +22,15 @@ set(PROJECT_VERSION_SUFFIX)
 set(NAMESPACE Wolkabout)
 set(EMAIL elab@wolkabout.com)
 set(REPO_LINK https://github.com/Wolkabout/WolkUtil-CXX)
-set(SOURCE_PREFIX_FOLDER connectivity/core)
-set(SOURCE_ROOT_FOLDER wolkabout)
+set(SOURCE_ROOT_FOLDER core)
 
 # Define the names for all modules
 set(UTIL_TARGET_NAME ${PROJECT_NAME}Util)
+set(UTIL_SUBDIRECTORY_PATH util)
 set(AWS_LOG_UPLOADER_TARGET_NAME ${PROJECT_NAME}AwsLogUploader)
+set(AWS_LOG_UPLOADER_SUBDIRECTORY_PATH aws)
 set(CONNECTIVITY_TARGET_NAME ${PROJECT_NAME})
+set(CONNECTIVITY_SUBDIRECTORY_PATH connectivity)
 
 # Options for our library
 OPTION(BUILD_CONNECTIVITY "Build the library with Paho MQTT and allow MQTT connection to the platform." ON)
@@ -36,6 +38,7 @@ OPTION(BUILD_POCO "Build the library with Poco." ON)
 OPTION(BUILD_GTEST "Build the library with GTest." ON)
 OPTION(BUILD_AWS_LOG_UPLOADER "Build the library with AwsLogUploader." OFF)
 OPTION(BUILD_TESTS "Build the unit tests" ON)
+OPTION(INSTALL_TARGET "Add the installation target for the project." ON)
 
 # Check the GTEST and TESTS option
 if (NOT ${BUILD_GTEST} AND ${BUILD_TESTS})
@@ -59,7 +62,12 @@ if (${BUILD_AWS_LOG_UPLOADER})
     add_subdirectory(aws)
 endif ()
 
-## If Connectivity should be built
+# If Connectivity should be built
 if (${BUILD_CONNECTIVITY})
     add_subdirectory(connectivity)
+endif ()
+
+# If install should be included
+if (${INSTALL_TARGET})
+    include(cmake/install.cmake)
 endif ()

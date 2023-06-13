@@ -1,6 +1,3 @@
-# Place the sub-folder this target is placed into a variable
-set(SUBDIRECTORY_PATH aws)
-
 # Include the util dependencies
 include(cmake/dependencies.cmake)
 
@@ -26,10 +23,10 @@ target_sources(${AWS_LOG_UPLOADER_TARGET_NAME} PRIVATE core/log_uploader/AwsLogU
 # Add the private include directories
 target_include_directories(${AWS_LOG_UPLOADER_TARGET_NAME}
         PRIVATE
-        ${PROJECT_SOURCE_DIR}/${SUBDIRECTORY_PATH})
+        ${PROJECT_SOURCE_DIR}/${AWS_LOG_UPLOADER_SUBDIRECTORY_PATH})
 
 # Add the public include directories
 target_include_directories(${AWS_LOG_UPLOADER_TARGET_NAME}
         PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${SUBDIRECTORY_PATH}>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${AWS_LOG_UPLOADER_SUBDIRECTORY_PATH}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

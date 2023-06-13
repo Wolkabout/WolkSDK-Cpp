@@ -1,6 +1,3 @@
-# Place the sub-folder this target is placed into a variable
-set(SUBDIRECTORY_PATH connectivity)
-
 # Include the util dependencies
 include(cmake/dependencies.cmake)
 
@@ -172,7 +169,7 @@ target_sources(${CONNECTIVITY_TARGET_NAME} PRIVATE core/connectivity/Connectivit
 # Add the private include directories
 target_include_directories(${CONNECTIVITY_TARGET_NAME}
         PRIVATE
-        ${PROJECT_SOURCE_DIR}/${SUBDIRECTORY_PATH})
+        ${PROJECT_SOURCE_DIR}/${CONNECTIVITY_SUBDIRECTORY_PATH})
 
 # Add the system private include directories
 target_include_directories(${CONNECTIVITY_TARGET_NAME}
@@ -182,7 +179,7 @@ target_include_directories(${CONNECTIVITY_TARGET_NAME}
 # Add the public include directories
 target_include_directories(${CONNECTIVITY_TARGET_NAME}
         PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${SUBDIRECTORY_PATH}>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${CONNECTIVITY_SUBDIRECTORY_PATH}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 # Include tests if the options is enabled

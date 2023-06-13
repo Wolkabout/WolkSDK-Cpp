@@ -17,10 +17,6 @@
 # Create the directory used
 mkdir -p out
 
-# Add the pre-commit hook to check code format with .clang-format
-cp tools/git/pre-commit .git/hooks/pre-commit
-chmod +x .git/hooks/pre-commit
-
 # Enter the directory and start the CMake build
 pushd out || exit
 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..

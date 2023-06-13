@@ -44,6 +44,12 @@ FetchContent_Declare(
         GIT_TAG v${NLOHMANN_JSON_VERSION}
 )
 
+# Save the flags, for reset after we run the cmake for schema
+set(_BUILD_TESTS ${BUILD_TESTS})
+set(_BUILD_EXAMPLES ${BUILD_EXAMPLES})
+set(BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+
 FetchContent_Declare(
         json-schema
         GIT_REPOSITORY https://github.com/pboettch/json-schema-validator
@@ -52,6 +58,10 @@ FetchContent_Declare(
 
 # Make everything available
 FetchContent_MakeAvailable(nlohmann_json json-schema)
+
+# Reset the flags for schema
+set(BUILD_TESTS ${_BUILD_TESTS} CACHE BOOL "Build tests" FORCE)
+set(BUILD_EXAMPLES ${_BUILD_EXAMPLES} CACHE BOOL "Build examples" FORCE)
 
 # Adjust the compile options for `nlohmann_json` to disable the shadow and pedantic
 target_compile_options(nlohmann_json_schema_validator PRIVATE "-Wno-shadow;-Wno-pedantic")
