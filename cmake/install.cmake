@@ -26,14 +26,14 @@ foreach (INDEX RANGE ${TARGETS_LENGTH})
     endif ()
 
     # Create the install rule for the main target
-    #    install(TARGETS ${TARGET}
-    #            EXPORT ${PROJECT_NAME}Targets
-    #            LIBRARY
-    #            COMPONENT ${REL_COMPONENT}
-    #            NAMELINK_SKIP
-    #            PUBLIC_HEADER
-    #            DESTINATION ${PUBLIC_HEADERS_DESTINATION}
-    #            INCLUDES DESTINATION ${PUBLIC_HEADERS_DESTINATION})
+    install(TARGETS ${TARGET}
+            EXPORT ${PROJECT_NAME}Targets
+            LIBRARY
+            COMPONENT ${REL_COMPONENT}
+            NAMELINK_SKIP
+            PUBLIC_HEADER
+            DESTINATION ${PUBLIC_HEADERS_DESTINATION}
+            INCLUDES DESTINATION ${PUBLIC_HEADERS_DESTINATION})
 
     # Install all the header files
     get_target_property(HEADER_FILES ${TARGET} SOURCES)
@@ -78,7 +78,7 @@ foreach (INDEX RANGE ${TARGETS_LENGTH})
                 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
         # Install the json schema validator target
-        install(TARGETS nlohmann_json_schema_validator
+        install(TARGETS nlohmann_json nlohmann_json_schema_validator
                 EXPORT ${PROJECT_NAME}Targets
                 LIBRARY
                 COMPONENT ${REL_COMPONENT}

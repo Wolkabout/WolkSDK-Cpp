@@ -11,6 +11,7 @@ include(cmake/dependencies.cmake)
 add_executable(${PROJECT_NAME}Tests)
 
 # Link the libraries
+target_link_directories(${PROJECT_NAME}Tests PUBLIC ${CMAKE_BINARY_DIR}/lib)
 target_link_libraries(${PROJECT_NAME}Tests ${CONNECTIVITY_TARGET_NAME} ${UTIL_TARGET_NAME} gtest gmock gtest_main)
 
 # Set some target properties
