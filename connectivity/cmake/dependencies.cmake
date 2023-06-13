@@ -59,4 +59,4 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(nlohmann_json json-schema)
 
 # Adjust the compile options for `nlohmann_json` to disable the shadow error
-target_compile_options(nlohmann_json_schema_validator PRIVATE "-Wno-shadow")
+target_compile_options(nlohmann_json_schema_validator PRIVATE "-Wno-shadow;-Wno-pedantic")
