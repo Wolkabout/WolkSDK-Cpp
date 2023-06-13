@@ -17,7 +17,7 @@
 #ifndef AWSLOGUPLOADER_H
 #define AWSLOGUPLOADER_H
 
-#include "core/utilities/LogUploader.h"
+#include "core/utility/LogUploader.h"
 
 #include <aws/core/utils/memory/stl/AWSString.h>
 

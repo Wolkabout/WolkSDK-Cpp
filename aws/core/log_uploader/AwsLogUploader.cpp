@@ -16,7 +16,7 @@
 
 #include "core/log_uploader/AwsLogUploader.h"
 
-#include "core/utilities/Logger.h"
+#include "core/utility/Logger.h"
 
 #include <algorithm>
 #include <aws/core/Aws.h>
