@@ -30,10 +30,6 @@ set(UTIL_TARGET_NAME ${PROJECT_NAME}Util)
 set(AWS_LOG_UPLOADER_TARGET_NAME ${PROJECT_NAME}AwsLogUploader)
 set(CONNECTIVITY_TARGET_NAME ${PROJECT_NAME})
 
-# Define the installation components
-set(REL_COMPONENT RELEASE)
-set(DEV_COMPONENT DEV)
-
 # Options for our library
 OPTION(BUILD_CONNECTIVITY "Build the library with Paho MQTT and allow MQTT connection to the platform." ON)
 OPTION(BUILD_POCO "Build the library with Poco." ON)
@@ -55,9 +51,6 @@ include(cmake/paths.cmake)
 # Set up the C++ settings
 include(cmake/cxx-settings.cmake)
 
-# Import dependencies
-include(cmake/dependencies.cmake)
-
 # Add the util library
 add_subdirectory(util)
 
@@ -70,19 +63,3 @@ endif ()
 if (${BUILD_CONNECTIVITY})
     add_subdirectory(connectivity)
 endif ()
-
-## Create the install rule
-#install(DIRECTORY ${CMAKE_LIBRARY_INCLUDE_DIRECTORY} DESTINATION ${CMAKE_INSTALL_PREFIX} PATTERN *.h)
-#install(DIRECTORY ${CMAKE_PREFIX_PATH}/include DESTINATION ${CMAKE_INSTALL_PREFIX} PATTERN *.h)
-#install(DIRECTORY ${CMAKE_PREFIX_PATH}/lib DESTINATION ${CMAKE_INSTALL_PREFIX})
-#install(TARGETS ${INSTALL_TARGETS} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-#
-## Add the format rule
-#file(GLOB_RECURSE ALL_FILES ${CMAKE_SOURCE_DIR}/**/*.cpp ${CMAKE_SOURCE_DIR}/**/*.hpp ${CMAKE_SOURCE_DIR}/**/*.h)
-#list(FILTER ALL_FILES EXCLUDE REGEX "/out")
-#list(FILTER ALL_FILES EXCLUDE REGEX "json.hpp")
-#add_custom_target(format
-#        COMMAND "clang-format" -i -sort-includes -style=file ${ALL_FILES}
-#        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-#        COMMENT "[Formatting source code]"
-#        VERBATIM)

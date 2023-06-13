@@ -19,11 +19,13 @@
 
 #define private public
 #define protected public
-#include "core/utilities/CommandBuffer.h"
+#include "core/connectivity/mqtt/MqttConnectivityService.h"
 #undef private
 #undef protected
 
-#include "core/utilities/Logger.h"
+#include "core/utility/Logger.h"
+#include "tests/mocks/MessagePersistenceMock.h"
+#include "tests/mocks/PahoMqttClientMock.h"
 
 #include <gtest/gtest.h>
 
@@ -31,8 +33,22 @@ using namespace wolkabout;
 using namespace wolkabout::legacy;
 using namespace ::testing;
 
-class CommandBufferTests : public ::testing::Test
+class MqttConnectivityServiceTests : public ::testing::Test
 {
 public:
     static void SetUpTestCase() { Logger::init(LogLevel::TRACE, Logger::Type::CONSOLE); }
+
+    void SetUp() override
+    {
+        mqttClientMock = std::make_shared<StrictMock<PahoMqttClientMock>>();
+        messagePersistenceMock = std::make_shared<StrictMock<MessagePersistenceMock>>();
+        EXPECT_CALL(*mqttClientMock, isConnected).WillOnce(Return(false));
+        service = std::make_shared<MqttConnectivityService>(mqttClientMock, "", "", "", "ca.crt", "");
+    }
+
+    std::shared_ptr<MqttConnectivityService> service;
+
+    std::shared_ptr<PahoMqttClientMock> mqttClientMock;
+
+    std::shared_ptr<MessagePersistenceMock> messagePersistenceMock;
 };

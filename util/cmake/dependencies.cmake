@@ -3,6 +3,7 @@ include(FetchContent)
 
 # Add the pre-installed libraries
 find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
 
 # Define the spdlog version
 set(SPDLOG_VERSION "1.8.5")

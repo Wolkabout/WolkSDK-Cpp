@@ -17,7 +17,7 @@
 #ifndef WOLKABOUTCORE_BUFFER_H
 #define WOLKABOUTCORE_BUFFER_H
 
-#include "Logger.h"
+#include "core/utility/Logger.h"
 
 #include <atomic>
 #include <condition_variable>

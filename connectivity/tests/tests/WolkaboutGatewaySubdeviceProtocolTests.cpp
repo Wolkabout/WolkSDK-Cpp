@@ -28,8 +28,8 @@
 #include "core/protocol/wolkabout/WolkaboutDataProtocol.h"
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
 #include "core/protocol/wolkabout/WolkaboutRegistrationProtocol.h"
-#include "core/utilities/Logger.h"
-#include "core/utilities/StringUtils.h"
+#include "core/utility/Logger.h"
+#include "core/utility/StringUtils.h"
 
 #include <gtest/gtest.h>
 

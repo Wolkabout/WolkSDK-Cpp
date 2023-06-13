@@ -1,4 +1,23 @@
-set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
+# Place the sub-folder this target is placed into a variable
+set(SUBDIRECTORY_PATH connectivity/tests)
+
+# Enable testing
+enable_testing()
+
+# Include the dependencies
+include(cmake/dependencies.cmake)
+
+# Create the target
+add_executable(${PROJECT_NAME}Tests)
+
+# Link the libraries
+target_link_libraries(${PROJECT_NAME}Tests ${CONNECTIVITY_TARGET_NAME} ${UTIL_TARGET_NAME} gtest gmock gtest_main)
+
+# Set some target properties
+set_target_properties(${PROJECT_NAME}Tests PROPERTIES OUTPUT_NAME "${NAMESPACE}${PROJECT_NAME}Tests")
+set_target_properties(${PROJECT_NAME}Tests PROPERTIES INSTALL_RPATH "$ORIGIN/../lib")
+
+target_sources(${PROJECT_NAME}Tests PRIVATE
         tests/BufferTests.cpp
         tests/ByteUtilsTests.cpp
         tests/CommandBufferTests.cpp
@@ -23,35 +42,36 @@ set(TESTS_SOURCE_FILES ${TESTS_SOURCE_FILES}
         tests/WolkaboutGatewaySubdeviceProtocolTests.cpp
         tests/WolkaboutPlatformStatusProtocolTests.cpp
         tests/WolkaboutRegistrationProtocolTests.cpp)
-set(TESTS_HEADER_FILES ${TESTS_HEADER_FILES}
-        tests/mocks/ConnectivityServiceMock.h
-        tests/mocks/DataProtocolMock.h
-        tests/mocks/ErrorProtocolMock.h
-        tests/mocks/FileManagementProtocolMock.h
-        tests/mocks/FirmwareUpdateProtocolMock.h
-        tests/mocks/GatewayPlatformStatusProtocolMock.h
-        tests/mocks/GatewayRegistrationProtocolMock.h
-        tests/mocks/GatewaySubdeviceProtocolMock.h
-        tests/mocks/InboundMessageHandlerMock.h
-        tests/mocks/MessageListenerMock.h
-        tests/mocks/MessagePersistenceMock.h
-        tests/mocks/OutboundMessageHandlerMock.h
-        tests/mocks/OutboundRetryMessageHandlerMock.h
-        tests/mocks/PahoMqttClientMock.h
-        tests/mocks/PersistenceMock.h
-        tests/mocks/PlatformStatusProtocolMock.h
-        tests/mocks/ProtocolMock.h
-        tests/mocks/RegistrationProtocolMock.h)
 
-list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
+target_sources(${PROJECT_NAME}Tests PRIVATE
+        mocks/ConnectivityServiceMock.h
+        mocks/DataProtocolMock.h
+        mocks/ErrorProtocolMock.h
+        mocks/FileManagementProtocolMock.h
+        mocks/FirmwareUpdateProtocolMock.h
+        mocks/GatewayPlatformStatusProtocolMock.h
+        mocks/GatewayRegistrationProtocolMock.h
+        mocks/GatewaySubdeviceProtocolMock.h
+        mocks/InboundMessageHandlerMock.h
+        mocks/MessageListenerMock.h
+        mocks/MessagePersistenceMock.h
+        mocks/OutboundMessageHandlerMock.h
+        mocks/OutboundRetryMessageHandlerMock.h
+        mocks/PahoMqttClientMock.h
+        mocks/PersistenceMock.h
+        mocks/PlatformStatusProtocolMock.h
+        mocks/ProtocolMock.h
+        mocks/RegistrationProtocolMock.h)
 
-add_executable(${PROJECT_NAME}Tests ${TESTS_SOURCE_FILES} ${TESTS_HEADER_FILES})
-target_link_libraries(${PROJECT_NAME}Tests ${PROJECT_NAME} gtest gmock gtest_main Threads::Threads)
-target_include_directories(${PROJECT_NAME}Tests PRIVATE ${PROJECT_SOURCE_DIR})
-target_include_directories(${PROJECT_NAME}Tests SYSTEM PRIVATE ${CMAKE_PREFIX_PATH}/include)
-target_include_directories(${PROJECT_NAME}Tests PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-set_target_properties(${PROJECT_NAME}Tests PROPERTIES INSTALL_RPATH "$ORIGIN/../lib")
-add_dependencies(${PROJECT_NAME}Tests libgtest)
+# Add the private include directories
+target_include_directories(${PROJECT_NAME}Tests
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/${SUBDIRECTORY_PATH})
 
-enable_testing()
+# Add the system private include directories
+target_include_directories(${PROJECT_NAME}Tests
+        SYSTEM PRIVATE
+        ${CMAKE_BINARY_DIR}/include)
+
+# Add it to CTest
 add_test(NAME "WolkSDK-Cpp_Tests" COMMAND ${PROJECT_NAME}Tests)

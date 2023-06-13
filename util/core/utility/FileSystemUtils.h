@@ -17,7 +17,7 @@
 #ifndef WOLKABOUTCORE_FILESYSTEMUTILS_H
 #define WOLKABOUTCORE_FILESYSTEMUTILS_H
 
-#include "ByteUtils.h"
+#include "core/utility/ByteUtils.h"
 
 #include <string>
 #include <vector>

@@ -27,7 +27,7 @@
 #undef private
 #undef protected
 
-#include "core/utilities/Logger.h"
+#include "core/utility/Logger.h"
 
 #include <gtest/gtest.h>
 

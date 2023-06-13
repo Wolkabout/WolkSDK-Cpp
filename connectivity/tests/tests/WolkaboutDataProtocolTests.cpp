@@ -21,7 +21,7 @@
 #undef protected
 
 #include "core/protocol/wolkabout/WolkaboutProtocol.h"
-#include "core/utilities/Logger.h"
+#include "core/utility/Logger.h"
 
 #include <nlohmann/json.hpp>
 

@@ -5,8 +5,8 @@
 #ifndef WOLKABOUTCORE_LOGMANAGER_H
 #define WOLKABOUTCORE_LOGMANAGER_H
 
-#include "LogUploader.h"
-#include "Timer.h"
+#include "core/utility/LogUploader.h"
+#include "core/utility/Timer.h"
 
 #include <atomic>
 #include <chrono>

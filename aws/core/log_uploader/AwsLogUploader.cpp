@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "AwsLogUploader.h"
+#include "core/log_uploader/AwsLogUploader.h"
 
 #include "core/utilities/Logger.h"
 

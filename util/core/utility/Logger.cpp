@@ -18,12 +18,12 @@
 
 #include <algorithm>
 #include <iostream>
-#include "spdlog/common.h"
-#include "spdlog/details/file_helper.h"
-#include "spdlog/sinks/daily_file_sink.h"
-#include "spdlog/sinks/ringbuffer_sink.h"
-#include "spdlog/sinks/stdout_sinks.h"
-#include "spdlog/spdlog.h"
+#include <spdlog/common.h>
+#include <spdlog/details/file_helper.h>
+#include <spdlog/sinks/daily_file_sink.h>
+#include <spdlog/sinks/ringbuffer_sink.h>
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/spdlog.h>
 
 namespace
 {

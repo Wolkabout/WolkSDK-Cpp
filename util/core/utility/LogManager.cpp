@@ -2,12 +2,12 @@
  * Copyright (c) 2022 Wolkabout.
  */
 
-#include "LogManager.h"
+#include "core/utility/LogManager.h"
 
-#include "FileSystemUtils.h"
-#include "Logger.h"
-#include "StringUtils.h"
-#include "Timer.h"
+#include "core/utility/FileSystemUtils.h"
+#include "core/utility/Logger.h"
+#include "core/utility/StringUtils.h"
+#include "core/utility/Timer.h"
 
 #include <algorithm>
 #include <ctime>

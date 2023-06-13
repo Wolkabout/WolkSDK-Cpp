@@ -19,11 +19,9 @@
 
 #define private public
 #define protected public
-#include "core/connectivity/mqtt/PahoMqttClient.h"
+#include "core/utility/Logger.h"
 #undef private
 #undef protected
-
-#include "core/utilities/Logger.h"
 
 #include <gtest/gtest.h>
 
@@ -31,8 +29,27 @@ using namespace wolkabout;
 using namespace wolkabout::legacy;
 using namespace ::testing;
 
-class PahoMqttClientTests : public ::testing::Test
+class LoggerTests : public ::testing::Test
 {
 public:
-    static void SetUpTestCase() { Logger::init(LogLevel::TRACE, Logger::Type::CONSOLE); }
+    Logger logger;
 };
+
+TEST_F(LoggerTests, AppendLogButItsOff)
+{
+    auto log = Log{LogLevel::OFF};
+    log << "Hello World!";
+    logger += log;
+    EXPECT_TRUE(logger.buffer().empty());
+}
+
+TEST_F(LoggerTests, LogLevelTest)
+{
+    const auto map =
+      std::map<LogLevel, std::string>{{LogLevel::TRACE, "TRACE"}, {LogLevel::DEBUG, "DEBUG"}, {LogLevel::INFO, "INFO"},
+                                      {LogLevel::WARN, "WARN"},   {LogLevel::ERROR, "ERROR"}, {LogLevel::OFF, "OFF"}};
+
+    // Check the reverse function
+    for (const auto& pair : map)
+        EXPECT_EQ(from_string(pair.second), pair.first);
+}

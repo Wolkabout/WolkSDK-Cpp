@@ -19,11 +19,11 @@
 
 #define private public
 #define protected public
-#include "core/utilities/LogManager.h"
+#include "core/utility/CommandBuffer.h"
 #undef private
 #undef protected
 
-#include "core/utilities/Logger.h"
+#include "core/utility/Logger.h"
 
 #include <gtest/gtest.h>
 
@@ -31,7 +31,7 @@ using namespace wolkabout;
 using namespace wolkabout::legacy;
 using namespace ::testing;
 
-class LogManagerTests : public ::testing::Test
+class CommandBufferTests : public ::testing::Test
 {
 public:
     static void SetUpTestCase() { Logger::init(LogLevel::TRACE, Logger::Type::CONSOLE); }

@@ -17,7 +17,7 @@
 #ifndef WOLKABOUTCORE_STRINGUTILS_H
 #define WOLKABOUTCORE_STRINGUTILS_H
 
-#include "ByteUtils.h"
+#include "core/utility/ByteUtils.h"
 
 #include <string>
 #include <vector>

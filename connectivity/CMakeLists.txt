@@ -9,7 +9,7 @@ add_library(${CONNECTIVITY_TARGET_NAME})
 add_library(${NAMESPACE}::${CONNECTIVITY_TARGET_NAME} ALIAS ${CONNECTIVITY_TARGET_NAME})
 
 # Link the libraries
-target_link_directories(${CONNECTIVITY_TARGET_NAME} PRIVATE ${CMAKE_PREFIX_PATH}/lib)
+target_link_directories(${CONNECTIVITY_TARGET_NAME} PRIVATE ${CMAKE_BINARY_DIR}/lib)
 target_link_libraries(${CONNECTIVITY_TARGET_NAME} PRIVATE ${UTIL_TARGET_NAME} paho-mqttpp3 paho-mqtt3as nlohmann_json_schema_validator)
 
 # Add the dependency
@@ -177,7 +177,7 @@ target_include_directories(${CONNECTIVITY_TARGET_NAME}
 # Add the system private include directories
 target_include_directories(${CONNECTIVITY_TARGET_NAME}
         SYSTEM PRIVATE
-        ${CMAKE_PREFIX_PATH}/include)
+        ${CMAKE_BINARY_DIR}/include)
 
 # Add the public include directories
 target_include_directories(${CONNECTIVITY_TARGET_NAME}
@@ -186,7 +186,6 @@ target_include_directories(${CONNECTIVITY_TARGET_NAME}
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 # Include tests if the options is enabled
-# TODO Uncomment
-#if (${BUILD_TESTS})
-#    add_subdirectory(tests)
-#endif ()
+if (${BUILD_TESTS})
+    add_subdirectory(tests)
+endif ()

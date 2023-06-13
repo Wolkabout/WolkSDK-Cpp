@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "OutboundRetryMessageHandler.h"
+#include "core/connectivity/OutboundRetryMessageHandler.h"
 
-#include "OutboundMessageHandler.h"
+#include "core/connectivity/OutboundMessageHandler.h"
 #include "core/model/Message.h"
 #include "core/utility/Logger.h"
 #include "core/utility/StringUtils.h"

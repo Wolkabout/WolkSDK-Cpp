@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "FileSystemUtils.h"
+#include "core/utility/FileSystemUtils.h"
 
-#include "Logger.h"
+#include "core/utility/Logger.h"
 
 #include <dirent.h>
 #include <fstream>

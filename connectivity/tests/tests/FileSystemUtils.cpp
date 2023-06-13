@@ -19,11 +19,11 @@
 
 #define private public
 #define protected public
-#include "core/utilities/FileSystemUtils.h"
+#include "core/utility/FileSystemUtils.h"
 #undef private
 #undef protected
 
-#include "core/utilities/Logger.h"
+#include "core/utility/Logger.h"
 
 #include <gtest/gtest.h>
 

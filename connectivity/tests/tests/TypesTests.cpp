@@ -19,11 +19,11 @@
 
 #define private public
 #define protected public
-#include "core/utility/Types.h"
+#include "core/Types.h"
 #undef private
 #undef protected
 
-#include "core/utilities/Logger.h"
+#include "core/utility/Logger.h"
 
 #include <gtest/gtest.h>
 
