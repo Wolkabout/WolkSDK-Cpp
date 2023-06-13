@@ -5,7 +5,7 @@ include(FetchContent)
 # Define the versions
 set(PAHO_MQTT_C_VERSION "1.3.8")
 set(PAHO_MQTT_CPP_VERSION "1.2.0")
-set(NLOHMANN_JSON_VERSION "3.11.2")
+set(NLOHMANN_JSON_VERSION "3.7.3")
 set(JSON_SCHEMA_VERSION "2.1.0")
 
 # Include PahoMQTT for both C and C++
