@@ -57,7 +57,10 @@ FetchContent_Declare(
 )
 
 # Make everything available
-FetchContent_MakeAvailable(json json-schema)
+FetchContent_Populate(json)
+FetchContent_Populate(json-schema)
+add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR})
+add_subdirectory(${json-schema_SOURCE_DIR} ${json-schema_BINARY_DIR})
 
 # Reset the flags for schema
 set(BUILD_TESTS ${_BUILD_TESTS} CACHE BOOL "Build tests" FORCE)

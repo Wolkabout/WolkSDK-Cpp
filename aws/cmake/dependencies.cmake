@@ -25,4 +25,5 @@ FetchContent_Declare(
 )
 
 # Make available
-FetchContent_MakeAvailable(aws-sdk-cpp)
+FetchContent_Populate(aws-sdk-cpp)
+add_subdirectory(${aws-sdk-cpp_SOURCE_DIR} ${aws-sdk-cpp_BINARY_DIR})

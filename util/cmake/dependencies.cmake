@@ -16,4 +16,5 @@ FetchContent_Declare(
 )
 
 # Make available
-FetchContent_MakeAvailable(spdlog)
+FetchContent_Populate(spdlog)
+add_subdirectory(${spdlog_SOURCE_DIR} ${spdlog_BINARY_DIR})

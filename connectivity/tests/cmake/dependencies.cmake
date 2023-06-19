@@ -12,7 +12,8 @@ FetchContent_Declare(
 )
 
 # Make available
-FetchContent_MakeAvailable(libgtest)
+FetchContent_Populate(libgtest)
+add_subdirectory(${libgtest_SOURCE_DIR} ${libgtest_BINARY_DIR})
 
 # Adjust the compile options for `nlohmann_json` to disable the compilation errors with our flags
 target_compile_options(gtest PRIVATE "-Wno-error=maybe-uninitialized;-Wno-error=suggest-attribute=noreturn")
