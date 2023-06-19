@@ -17,7 +17,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 cmake_policy(SET CMP0048 NEW)
 
 # Define the project
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.5)
 project(SDKCore VERSION 3.4.0)
 set(PROJECT_VERSION_SUFFIX)
 set(NAMESPACE Wolkabout)
