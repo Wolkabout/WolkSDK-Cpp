@@ -8,7 +8,7 @@ include(cmake/dependencies.cmake)
 add_executable(${PROJECT_NAME}Tests)
 
 # Link the libraries
-target_link_directories(${PROJECT_NAME}Tests PUBLIC ${CMAKE_BINARY_DIR}/lib)
+target_link_directories(${PROJECT_NAME}Tests PUBLIC ${CMAKE_PREFIX_PATH}/lib)
 target_link_libraries(${PROJECT_NAME}Tests ${CONNECTIVITY_TARGET_NAME} ${UTIL_TARGET_NAME} gtest gmock gtest_main)
 
 # Set some target properties
@@ -69,7 +69,7 @@ target_include_directories(${PROJECT_NAME}Tests
 # Add the system private include directories
 target_include_directories(${PROJECT_NAME}Tests
         SYSTEM PRIVATE
-        ${CMAKE_BINARY_DIR}/include)
+        ${CMAKE_PREFIX_PATH}/include)
 
 # Add it to CTest
 add_test(NAME "WolkSDK-Cpp_Tests" COMMAND ${PROJECT_NAME}Tests)

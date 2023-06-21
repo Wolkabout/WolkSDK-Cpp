@@ -14,10 +14,22 @@ ExternalProject_Add(pahomqttc
         GIT_TAG v${PAHO_MQTT_C_VERSION}
         UPDATE_COMMAND ""
         CMAKE_ARGS
-        -DPAHO_WITH_SSL=TRUE
+        # Options for pahomqttc
+        -DPAHO_WITH_SSL=ON
+        -DPAHO_BUILD_SHARED=ON
+        -DPAHO_BUILD_STATIC=OFF
+        -DPAHO_BUILD_DOCUMENTATION=OFF
+        -DPAHO_BUILD_SAMPLES=OFF
+        -DPAHO_BUILD_DEB_PACKAGE=OFF
+        -DPAHO_ENABLE_TESTING=OFF
+        -DPAHO_ENABLE_CPACK=OFF
+
+        # Target path for installation
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
+
+        # In case the library needs to cross-compile
         -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
         -DARP_TOOLCHAIN_ROOT=${ARP_TOOLCHAIN_ROOT}
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
         )
 
 ExternalProject_Add(pahomqttcpp
@@ -25,12 +37,23 @@ ExternalProject_Add(pahomqttcpp
         GIT_TAG v${PAHO_MQTT_CPP_VERSION}
         UPDATE_COMMAND ""
         CMAKE_ARGS
-        -DPAHO_WITH_SSL=TRUE
+        # Options for pahomqttcpp
+        -DPAHO_WITH_SSL=ON
+        -DPAHO_BUILD_SHARED=ON
+        -DPAHO_BUILD_STATIC=OFF
+        -DPAHO_BUILD_DOCUMENTATION=OFF
+        -DPAHO_BUILD_SAMPLES=OFF
+        -DPAHO_BUILD_DEB_PACKAGE=OFF
+        -DPAHO_BUILD_TESTS=OFF
+
+        # Target path for installation
         -DPAHO_MQTT_C_INCLUDE_DIRS=${CMAKE_BINARY_DIR}/include
+        -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
+
+        # In case the library needs to cross-compile
         -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
         -DARP_TOOLCHAIN_ROOT=${ARP_TOOLCHAIN_ROOT}
-        -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
         DEPENDS pahomqttc
         )
 

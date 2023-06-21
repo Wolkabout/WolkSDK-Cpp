@@ -65,15 +65,15 @@ foreach (INDEX RANGE ${TARGETS_LENGTH})
     # Add the connectivity extra targets
     if (${TARGET} STREQUAL ${CONNECTIVITY_TARGET_NAME})
         # Install libpaho files
-        install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/
+        install(DIRECTORY ${CMAKE_PREFIX_PATH}/lib/
                 COMPONENT ${REL_COMPONENT}
                 DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 FILES_MATCHING PATTERN REGEX "libpaho(.*).so")
-        install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/
+        install(DIRECTORY ${CMAKE_PREFIX_PATH}/lib/
                 COMPONENT ${REL_COMPONENT}
                 DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 FILES_MATCHING PATTERN REGEX "(.*)[Pp]aho(.*).cmake")
-        install(DIRECTORY ${CMAKE_BINARY_DIR}/include/
+        install(DIRECTORY ${CMAKE_PREFIX_PATH}/include/
                 COMPONENT ${DEV_COMPONENT}
                 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
