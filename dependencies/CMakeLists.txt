@@ -9,8 +9,8 @@ set(AWS_SDK_VERSION "1.8.173")
 set(NLOHMANN_JSON_VERSION "3.7.3")
 set(JSON_SCHEMA_VERSION "2.1.0")
 
-if (NOT TARGET spdlog)
-    ExternalProject_Add(spdlog
+if (NOT TARGET libspdlog)
+    ExternalProject_Add(libspdlog
             GIT_REPOSITORY "https://github.com/gabime/spdlog"
             GIT_TAG "v${SPDLOG_VERSION}"
             CMAKE_ARGS
