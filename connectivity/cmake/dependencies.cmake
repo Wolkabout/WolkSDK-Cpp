@@ -47,7 +47,7 @@ ExternalProject_Add(pahomqttcpp
         -DPAHO_BUILD_TESTS=OFF
 
         # Target path for installation
-        -DPAHO_MQTT_C_INCLUDE_DIRS=${CMAKE_BINARY_DIR}/include
+        -DPAHO_MQTT_C_INCLUDE_DIRS=${CMAKE_PREFIX_PATH}/include
         -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
         -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH}
 
