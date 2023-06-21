@@ -2,7 +2,7 @@
 include(FetchContent)
 
 # Define the AWS version
-set(AWS_SDK_VERSION "1.8.173")
+set(AWS_SDK_VERSION 1.8.173)
 
 # Set the flags for AWS based on the CMake build type
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -25,5 +25,4 @@ FetchContent_Declare(
 )
 
 # Make available
-FetchContent_Populate(aws-sdk-cpp)
-add_subdirectory(${aws-sdk-cpp_SOURCE_DIR} ${aws-sdk-cpp_BINARY_DIR})
+FetchContent_MakeAvailable(aws-sdk-cpp)

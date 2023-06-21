@@ -6,7 +6,7 @@ find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
 
 # Define the spdlog version
-set(SPDLOG_VERSION "1.8.5")
+set(SPDLOG_VERSION 1.8.5)
 
 # Add spdlog
 FetchContent_Declare(
@@ -16,5 +16,4 @@ FetchContent_Declare(
 )
 
 # Make available
-FetchContent_Populate(spdlog)
-add_subdirectory(${spdlog_SOURCE_DIR} ${spdlog_BINARY_DIR})
+FetchContent_MakeAvailable(spdlog)

@@ -3,15 +3,15 @@ include(ExternalProject)
 include(FetchContent)
 
 # Define the versions
-set(PAHO_MQTT_C_VERSION "1.3.8")
-set(PAHO_MQTT_CPP_VERSION "1.2.0")
-set(NLOHMANN_JSON_VERSION "3.7.3")
-set(JSON_SCHEMA_VERSION "2.1.0")
+set(PAHO_MQTT_C_VERSION 1.3.8)
+set(PAHO_MQTT_CPP_VERSION 1.2.0)
+set(NLOHMANN_JSON_VERSION 3.7.3)
+set(JSON_SCHEMA_VERSION 2.1.0)
 
 # Include PahoMQTT for both C and C++
 ExternalProject_Add(pahomqttc
         GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.c"
-        GIT_TAG "v${PAHO_MQTT_C_VERSION}"
+        GIT_TAG v${PAHO_MQTT_C_VERSION}
         UPDATE_COMMAND ""
         CMAKE_ARGS
         -DPAHO_WITH_SSL=TRUE
@@ -22,7 +22,7 @@ ExternalProject_Add(pahomqttc
 
 ExternalProject_Add(pahomqttcpp
         GIT_REPOSITORY "https://github.com/eclipse/paho.mqtt.cpp"
-        GIT_TAG "v${PAHO_MQTT_CPP_VERSION}"
+        GIT_TAG v${PAHO_MQTT_CPP_VERSION}
         UPDATE_COMMAND ""
         CMAKE_ARGS
         -DPAHO_WITH_SSL=TRUE
@@ -57,10 +57,7 @@ FetchContent_Declare(
 )
 
 # Make everything available
-FetchContent_Populate(json)
-FetchContent_Populate(json-schema)
-add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR})
-add_subdirectory(${json-schema_SOURCE_DIR} ${json-schema_BINARY_DIR})
+FetchContent_MakeAvailable(json json-schema)
 
 # Reset the flags for schema
 set(BUILD_TESTS ${_BUILD_TESTS} CACHE BOOL "Build tests" FORCE)

@@ -2,7 +2,7 @@
 include(FetchContent)
 
 # Define the gtest/gmock version
-set(GTEST_VERSION "1.10.0")
+set(GTEST_VERSION 1.10.0)
 
 # Add gtest/gmock
 FetchContent_Declare(
@@ -12,8 +12,7 @@ FetchContent_Declare(
 )
 
 # Make available
-FetchContent_Populate(libgtest)
-add_subdirectory(${libgtest_SOURCE_DIR} ${libgtest_BINARY_DIR})
+FetchContent_MakeAvailable(libgtest)
 
 # Adjust the compile options for `nlohmann_json` to disable the compilation errors with our flags
 target_compile_options(gtest PRIVATE "-Wno-error=maybe-uninitialized;-Wno-error=suggest-attribute=noreturn")
