@@ -6,7 +6,8 @@ add_library(${AWS_LOG_UPLOADER_TARGET_NAME})
 add_library(${NAMESPACE}::${AWS_LOG_UPLOADER_TARGET_NAME} ALIAS ${AWS_LOG_UPLOADER_TARGET_NAME})
 
 # Link the libraries
-target_link_libraries(${AWS_LOG_UPLOADER_TARGET_NAME} ${UTIL_TARGET_NAME} aws-cpp-sdk-core aws-cpp-sdk-s3)
+target_link_libraries(${AWS_LOG_UPLOADER_TARGET_NAME} PUBLIC ${UTIL_TARGET_NAME})
+target_link_libraries(${AWS_LOG_UPLOADER_TARGET_NAME} PRIVATE aws-cpp-sdk-core aws-cpp-sdk-s3)
 
 # Set some target properties
 set_target_properties(${AWS_LOG_UPLOADER_TARGET_NAME} PROPERTIES OUTPUT_NAME "${NAMESPACE}${AWS_LOG_UPLOADER_TARGET_NAME}")

@@ -6,7 +6,7 @@ add_library(${UTIL_TARGET_NAME})
 add_library(${NAMESPACE}::${UTIL_TARGET_NAME} ALIAS ${UTIL_TARGET_NAME})
 
 # Link the libraries
-target_link_libraries(${UTIL_TARGET_NAME} OpenSSL::Crypto spdlog::spdlog Threads::Threads)
+target_link_libraries(${UTIL_TARGET_NAME} PRIVATE OpenSSL::Crypto spdlog::spdlog Threads::Threads)
 
 # Set some target properties
 set_target_properties(${UTIL_TARGET_NAME} PROPERTIES OUTPUT_NAME "${NAMESPACE}${UTIL_TARGET_NAME}")

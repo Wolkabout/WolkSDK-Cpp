@@ -7,7 +7,8 @@ add_library(${NAMESPACE}::${CONNECTIVITY_TARGET_NAME} ALIAS ${CONNECTIVITY_TARGE
 
 # Link the libraries
 target_link_directories(${CONNECTIVITY_TARGET_NAME} PRIVATE ${CMAKE_PREFIX_PATH}/lib)
-target_link_libraries(${CONNECTIVITY_TARGET_NAME} PRIVATE paho-mqttpp3 paho-mqtt3as ${UTIL_TARGET_NAME} nlohmann_json::nlohmann_json nlohmann_json_schema_validator)
+target_link_libraries(${CONNECTIVITY_TARGET_NAME} PUBLIC paho-mqttpp3 paho-mqtt3as ${UTIL_TARGET_NAME})
+target_link_libraries(${CONNECTIVITY_TARGET_NAME} PRIVATE nlohmann_json::nlohmann_json nlohmann_json_schema_validator)
 
 # Add the dependency
 add_dependencies(${CONNECTIVITY_TARGET_NAME} pahomqttcpp)
