@@ -18,7 +18,7 @@ cmake_policy(SET CMP0048 NEW)
 
 # Define the project
 cmake_minimum_required(VERSION 3.11)
-project(SDKCore VERSION 3.4.0)
+project(SDKCore VERSION 3.4.1)
 set(PROJECT_VERSION_SUFFIX)
 set(NAMESPACE Wolkabout)
 set(EMAIL elab@wolkabout.com)

@@ -6,6 +6,9 @@
                                                 /_/   /_/
 ========================================================================================================================
 
+**Version 3.4.1**
+    - [BUGFIX] - Fixed the case of value showing up in JSON but having null as value.
+
 **Version 3.4.0**
     - [IMPROVEMENT] - Completely reworked the CMake structure of the project.
 
