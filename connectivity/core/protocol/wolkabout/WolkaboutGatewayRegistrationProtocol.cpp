@@ -47,7 +47,7 @@ static void to_json(json& j, const RegisteredDeviceInformation& information)
 
 template <class T> static T extractValueIfPresent(const json& j, const std::string& key)
 {
-    if (j.find(key) != j.cend())
+    if (j.find(key) != j.cend() && !j[key].is_null())
         return j[key].get<T>();
     return {};
 }
