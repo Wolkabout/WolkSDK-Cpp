@@ -122,10 +122,10 @@ const json registered_devices_schema = R"(
         "type": "number"
       },
       "deviceType": {
-        "type": "string"
+        "type": ["string", "null"]
       },
       "externalId": {
-        "type": "string"
+        "type": ["string", "null"]
       },
       "matchingDevices": {
         "type": "array",
@@ -137,14 +137,14 @@ const json registered_devices_schema = R"(
               "pattern": "^(?!\\s*$).+"
             },
             "externalId": {
-              "type": "string"
+              "type": ["string", "null"]
             },
             "deviceType": {
-              "type": "string"
+              "type": ["string", "null"]
             }
           },
           "required": [
-            "deviceKey", "deviceType"
+            "deviceKey"
           ]
         }
       }

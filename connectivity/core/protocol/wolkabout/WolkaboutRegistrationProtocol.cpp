@@ -349,8 +349,8 @@ std::unique_ptr<RegisteredDevicesResponseMessage> WolkaboutRegistrationProtocol:
         auto matchingDevices = j["matchingDevices"].get<std::vector<RegisteredDeviceInformation>>();
 
         // Return the message
-        return std::unique_ptr<RegisteredDevicesResponseMessage>(new RegisteredDevicesResponseMessage{
-          std::chrono::milliseconds(timestampFrom), deviceType, externalId, std::move(matchingDevices)});
+        return std::make_unique<RegisteredDevicesResponseMessage>(std::chrono::milliseconds(timestampFrom), deviceType,
+                                                                  externalId, std::move(matchingDevices));
     }
     catch (const std::exception& exception)
     {
