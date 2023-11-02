@@ -78,7 +78,7 @@ foreach (INDEX RANGE ${TARGETS_LENGTH})
                 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
         # Install the json schema validator target
-        install(TARGETS nlohmann_json nlohmann_json_schema_validator
+        install(TARGETS nlohmann_json_schema_validator
                 EXPORT ${PROJECT_NAME}Targets
                 LIBRARY
                 COMPONENT ${REL_COMPONENT}
