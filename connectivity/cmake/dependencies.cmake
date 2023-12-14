@@ -5,6 +5,7 @@ include(FetchContent)
 # Define the versions
 set(PAHO_MQTT_C_VERSION 1.3.8)
 set(PAHO_MQTT_CPP_VERSION 1.2.0)
+set(NLOHMANN_JSON_VERSION_PREFIX 3.7)
 set(NLOHMANN_JSON_VERSION 3.7.3)
 set(JSON_SCHEMA_VERSION 2.1.0)
 
@@ -62,9 +63,10 @@ option(JSON_BuildTests "Build the unit tests when BUILD_TESTING is enabled." OFF
 
 # Include nlohmann json and the schema)
 FetchContent_Declare(
-        json
+        nlohmann_json
         GIT_REPOSITORY https://github.com/nlohmann/json
         GIT_TAG v${NLOHMANN_JSON_VERSION}
+        FIND_PACKAGE_ARGS ${NLOHMANN_JSON_VERSION_PREFIX} NAMES nlohmann-json3-dev
 )
 
 # Save the flags, for reset after we run the cmake for schema
@@ -80,7 +82,7 @@ FetchContent_Declare(
 )
 
 # Make everything available
-FetchContent_MakeAvailable(json json-schema)
+FetchContent_MakeAvailable(nlohmann_json json-schema)
 
 # Reset the flags for schema
 set(BUILD_TESTS ${_BUILD_TESTS} CACHE BOOL "Build tests" FORCE)
