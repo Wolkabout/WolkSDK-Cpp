@@ -77,6 +77,15 @@ foreach (INDEX RANGE ${TARGETS_LENGTH})
                 COMPONENT ${DEV_COMPONENT}
                 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
+        install(TARGETS paho-mqtt3as
+                EXPORT ${PROJECT_NAME}Targets
+                LIBRARY
+                COMPONENT ${REL_COMPONENT}
+                NAMELINK_SKIP
+                PUBLIC_HEADER
+                DESTINATION ${PUBLIC_HEADERS_DESTINATION}
+                INCLUDES DESTINATION ${PUBLIC_HEADERS_DESTINATION})
+
         # Install the json target
         install(TARGETS nlohmann_json
                 EXPORT ${PROJECT_NAME}Targets
