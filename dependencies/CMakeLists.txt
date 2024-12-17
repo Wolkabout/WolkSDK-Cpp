@@ -113,7 +113,7 @@ if (BUILD_AWS_LOG_UPLOADER AND NOT TARGET aws-sdk-cpp)
             -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH})
 endif ()
 
-if (NOT TARGET nlohmann_json)
+if (BUILD_NL_JSON AND NOT TARGET nlohmann_json)
     ExternalProject_Add(nlohmann_json
             GIT_REPOSITORY "https://github.com/nlohmann/json"
             GIT_TAG "v${NLOHMANN_JSON_VERSION}"
@@ -123,7 +123,7 @@ if (NOT TARGET nlohmann_json)
             -DCMAKE_INSTALL_PREFIX=${CMAKE_PREFIX_PATH})
 endif ()
 
-if (NOT TARGET json-schema)
+if (BUILD_JSON_SCHEMA AND NOT TARGET json-schema)
     ExternalProject_Add(json-schema
             GIT_REPOSITORY "https://github.com/pboettch/json-schema-validator"
             GIT_TAG "${JSON_SCHEMA_VERSION}"

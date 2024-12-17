@@ -22,6 +22,8 @@ OPTION(BUILD_POCO "Build the library with Poco." ON)
 OPTION(BUILD_GTEST "Build the library with GTest." ON)
 OPTION(BUILD_AWS_LOG_UPLOADER "Build the library with AwsLogUploader." ON)
 OPTION(BUILD_TESTS "Build the unit tests" ON)
+option(BUILD_NL_JSON "Build NLohmann JSON" ON)
+option(BUILD_JSON_SCHEMA "Building json-schema validator" ON)
 
 # Check the GTEST and TESTS option
 if (NOT ${BUILD_GTEST} AND ${BUILD_TESTS})
