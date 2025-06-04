@@ -16,6 +16,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}     -Wall -Wextra -pedantic             
                                             -Wwrite-strings -Werror=non-virtual-dtor -Werror=return-type")
 
 # Set the tests flags
-if (${BUILD_TESTS})
+if (WOLKSDK_BUILD_TESTS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -g")
 endif ()

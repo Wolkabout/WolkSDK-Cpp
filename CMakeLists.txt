@@ -36,16 +36,12 @@ set(CONNECTIVITY_SUBDIRECTORY_PATH connectivity)
 # Options for our library
 OPTION(BUILD_CONNECTIVITY "Build the library with Paho MQTT and allow MQTT connection to the platform." ON)
 OPTION(BUILD_POCO "Build the library with Poco." ON)
-OPTION(BUILD_GTEST "Build the library with GTest." ON)
 OPTION(BUILD_AWS_LOG_UPLOADER "Build the library with AwsLogUploader." OFF)
-OPTION(BUILD_TESTS "Build the unit tests" ON)
 OPTION(INSTALL_TARGET "Add the installation target for the project." ON)
 
-# Check the GTEST and TESTS option
-if (NOT ${BUILD_GTEST} AND ${BUILD_TESTS})
-    message(FATAL_ERROR "The library can not build TESTS without GTEST.")
-endif ()
-if (${BUILD_TESTS})
+check_build_tests(WOLKSDK_BUILD_TESTS)
+
+if (WOLKSDK_BUILD_TESTS)
     enable_testing()
 endif ()
 

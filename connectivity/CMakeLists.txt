@@ -180,6 +180,6 @@ target_include_directories(${CONNECTIVITY_TARGET_NAME}
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 # Include tests if the options is enabled
-if (${BUILD_TESTS})
+if (WOLKSDK_BUILD_TESTS)
     add_subdirectory(tests)
 endif ()
