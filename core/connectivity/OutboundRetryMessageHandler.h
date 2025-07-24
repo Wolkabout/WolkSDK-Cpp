@@ -27,6 +27,7 @@
 #include <mutex>
 #include <thread>
 #include <tuple>
+#include <string>
 
 namespace wolkabout
 {

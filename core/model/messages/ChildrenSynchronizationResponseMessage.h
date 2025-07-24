@@ -18,6 +18,7 @@
 #define WOLKABOUTCORE_CHILDRENSYNCHRONIZATIONRESPONSEMESSAGE_H
 
 #include "core/model/messages/MessageModel.h"
+#include <string>
 
 namespace wolkabout
 {

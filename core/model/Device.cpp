@@ -15,6 +15,9 @@
  */
 
 #include "core/model/Device.h"
+#include <stdexcept>
+#include <string>
+	
 
 namespace wolkabout
 {

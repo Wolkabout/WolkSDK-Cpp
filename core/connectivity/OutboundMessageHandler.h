@@ -20,6 +20,7 @@
 #include "core/model/Message.h"
 
 #include <memory>
+#include <string>
 
 namespace wolkabout
 {

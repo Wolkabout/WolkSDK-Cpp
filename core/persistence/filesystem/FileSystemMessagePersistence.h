@@ -22,6 +22,7 @@
 #include <list>
 #include <mutex>
 #include <queue>
+#include <string>
 
 namespace wolkabout
 {

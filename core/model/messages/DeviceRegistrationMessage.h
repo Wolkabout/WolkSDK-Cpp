@@ -20,6 +20,7 @@
 #include "core/model/Attribute.h"
 #include "core/model/Feed.h"
 #include "core/model/messages/MessageModel.h"
+#include <string>
 
 #include <map>
 

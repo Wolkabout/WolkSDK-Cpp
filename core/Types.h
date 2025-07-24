@@ -19,6 +19,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace wolkabout
 {
@@ -265,7 +266,8 @@ enum class FileTransferStatus
     FILE_READY,
     ERROR_TRANSFER,
     ABORTED,
-    UNKNOWN
+    UNKNOWN,
+    ERROR_TRANSFER
 };
 
 std::string toString(wolkabout::FileTransferStatus status);
@@ -298,7 +300,8 @@ enum class FirmwareUpdateStatus
     SUCCESS,
     ERROR_UPDATE,
     ABORTED,
-    UNKNOWN
+    UNKNOWN,
+    ERROR_UPDATE
 };
 
 std::string toString(wolkabout::FirmwareUpdateStatus status);

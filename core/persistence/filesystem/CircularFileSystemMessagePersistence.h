@@ -18,6 +18,7 @@
 #define CIRCULARFILESYSTEMMESSAGEPERSISTENCE_H
 
 #include "core/persistence/filesystem/FileSystemMessagePersistence.h"
+#include <string>
 
 namespace wolkabout
 {
