@@ -266,8 +266,7 @@ enum class FileTransferStatus
     FILE_READY,
     ERROR_TRANSFER,
     ABORTED,
-    UNKNOWN,
-    ERROR_TRANSFER
+    UNKNOWN
 };
 
 std::string toString(wolkabout::FileTransferStatus status);
@@ -300,8 +299,7 @@ enum class FirmwareUpdateStatus
     SUCCESS,
     ERROR_UPDATE,
     ABORTED,
-    UNKNOWN,
-    ERROR_UPDATE
+    UNKNOWN
 };
 
 std::string toString(wolkabout::FirmwareUpdateStatus status);
