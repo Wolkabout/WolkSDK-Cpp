@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <cstdint>
 
 namespace wolkabout
 {

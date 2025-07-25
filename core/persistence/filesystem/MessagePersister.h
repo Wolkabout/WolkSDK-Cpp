@@ -18,6 +18,7 @@
 #define MESSAGEPERSISTER_H
 
 #include "core/model/Message.h"
+#include <string>
 
 #include <memory>
 
