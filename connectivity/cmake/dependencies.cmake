@@ -3,7 +3,7 @@ include(ExternalProject)
 include(FetchContent)
 
 # Define the versions
-set(PAHO_MQTT_C_VERSION 1.3.8)
+set(PAHO_MQTT_C_VERSION 1.3.15)
 set(PAHO_MQTT_CPP_VERSION 1.2.0)
 set(NLOHMANN_JSON_VERSION_PREFIX 3.7)
 set(NLOHMANN_JSON_VERSION 3.7.3)
